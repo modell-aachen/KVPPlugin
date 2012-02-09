@@ -83,15 +83,15 @@ sub initPlugin {
         }
     }
 
-#    # Copy/Paste/Modify from MetaCommentPlugin
-#    # SMELL: this is not reliable as it depends on plugin order
-#    # if (Foswiki::Func::getContext()->{SolrPluginEnabled}) {
-#    if ($Foswiki::cfg{Plugins}{SolrPlugin}{Enabled}) {
-#      require Foswiki::Plugins::SolrPlugin;
-#      Foswiki::Plugins::SolrPlugin::registerIndexTopicHandler(
-#        \&indexTopicHandler
-#      );
-#    }
+    # Copy/Paste/Modify from MetaCommentPlugin
+    # SMELL: this is not reliable as it depends on plugin order
+    # if (Foswiki::Func::getContext()->{SolrPluginEnabled}) {
+    if ($Foswiki::cfg{Plugins}{SolrPlugin}{Enabled}) {
+      require Foswiki::Plugins::SolrPlugin;
+      Foswiki::Plugins::SolrPlugin::registerIndexTopicHandler(
+        \&indexTopicHandler
+      );
+    }
 
     return 1;
 }
@@ -1220,7 +1220,7 @@ sub _restFork {
    
     # reset Auto-Mailinglist     
     $meta->putKeyed('WORKFLOWMAILINGLIST', 
-            { AUTO => Foswiki::Func::getWikiUserName(), PERMANENT => $controlledTopic->getExtraNotify('PERMANENT')});
+            { AUTO => '', PERMANENT => $controlledTopic->getExtraNotify('PERMANENT')});
     # mark as state change (althought it isn't) so it passes beforeSaveHandler
     local $isStateChange = 1; 
     Foswiki::Func::saveTopic($w, $t, $meta, $text,
@@ -1462,6 +1462,16 @@ Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
         $meta->putKeyed( "WORKFLOWMAILINGLIST", $controlledTopic->{mailing} ); 
     }
     
+}
+
+sub indexTopicHandler {
+  my ($indexer, $doc, $web, $topic, $meta, $text) = @_;
+
+  # Modac : Mega Easy Implementation
+  my $workflow = $meta->get('WORKFLOW');
+  return unless $workflow;
+  my $state = $workflow->{name};
+  $doc->add_fields( process_state_s => $state) if $state;
 }
 
 1;
