@@ -365,6 +365,7 @@ sub purgeExtraNotify {
 # does notify the change to listeners.
 sub changeState {
     my ( $this, $action ) = @_;
+    my $oldstate = $this->{state}->{name};
 
     my $state = $this->{workflow}->getNextState( $this, $action );
 unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeState: No NextState! Action=".$action." currentState=".$this->{state}->{name}); return;} # XXX Debug
@@ -413,7 +414,7 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
     }    # else leave the existing form in place
 
     # Send mails
-    if (($this->{workflow}->hasAttribute($state, $action, 'NOEXTRANOTIFY') eq '0') && ($notify || $extranotify)) {
+    if (($this->{workflow}->hasAttribute($oldstate, $action, 'NOEXTRANOTIFY') eq '0') && ($notify || $extranotify)) {
 
         # Expand vars in the notify list. This supports picking up the
         # value of the notifees from the topic itself.
@@ -486,7 +487,7 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
         
         # Alex: Emails versenden
         if ( scalar(@emails) ) {
-
+		Foswiki::Func::writeWarning("Mails: ".join(',', @emails));
             # Have a list of recipients
             my $text = Foswiki::Func::loadTemplate('mailworkflowtransition');
             Foswiki::Func::setPreferencesValue( 'EMAILTO',
