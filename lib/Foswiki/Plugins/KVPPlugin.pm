@@ -20,7 +20,7 @@ use Foswiki::OopsException ();
 use Foswiki::Sandbox ();
 
 our $VERSION          = '$Rev: 7808 (2010-06-15) $';
-our $RELEASE          = '1.5.2';
+our $RELEASE          = '1.5.3';
 our $SHORTDESCRIPTION = 'Kontinuierliche Verbesserung im Wiki';
 our $NO_PREFS_IN_TOPIC = 1;
 our $pluginName       = 'KVPPlugin';
@@ -917,6 +917,7 @@ sub _changeState {
 	            #Alex TrashTopic ausloten:             	           	
 	            #Alex: Checken ob Topic schon einmal in den Müll verschoben wurde
                     my $trashTopic = $appWeb . $appTopic;
+		    $trashTopic =~ s#/|\.##g; # remove subweb-deliminators
                     { # scope
                         my $numberedTrashTopic = $trashTopic;
 	           	my $i = 1;
