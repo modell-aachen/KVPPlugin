@@ -275,7 +275,11 @@ sub _initTOPIC {
     ( $web, $topic ) =
       Foswiki::Func::normalizeWebTopicName( $web, $topic );
     my $controlledTopic = $cache{"$web.$topic"};
-    return $controlledTopic if $controlledTopic;
+
+    if($controlledTopic) {
+      return if($controlledTopic eq '_undef');
+      return  $controlledTopic;
+    }
 
 #Foswiki::Func::writeWarning("Initing without cache $web.$topic cache: ".%cache." entries: ".join(", ", keys %cache)); # XXX debug
     if (defined &Foswiki::Func::isValidTopicName) {
@@ -310,7 +314,7 @@ sub _initTOPIC {
         }
     }
 
-    $cache{"$web.$topic"} = $controlledTopic;
+    $cache{"$web.$topic"} = $controlledTopic || '_undef';
 
     return $controlledTopic;
 }
