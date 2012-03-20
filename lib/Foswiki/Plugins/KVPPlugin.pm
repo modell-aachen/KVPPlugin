@@ -68,6 +68,8 @@ sub initPlugin {
         'GETWORKFLOWROW', \&_GETWORKFLOWROW );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWEDITPERM', \&_WORKFLOWEDITPERM );
+    Foswiki::Func::registerTagHandler(
+        'WORKFLOWORIGIN', \&_WORKFLOWORIGIN );
 
     # XXX Ist das wirklich der richtige Ort?!? Vielleicht BeforeRender, oder sowas?
     my $controlledTopic = _initTOPIC( $web, $topic );
@@ -213,42 +215,6 @@ sub isInList {
     return 0;
 }
 
-## Handler for SolrSearch
-## Will return who subscribed.
-## Will return each row in state.
-#sub indexTopicHandler {
-#  my ($indexer, $doc, $web, $topic, $meta, $text) = @_;
-#
-#  my $controlledTopic = _initTOPIC($web, $topic);
-#  return unless $controlledTopic;
-#
-##todo
-#  # reindex this comment
-#  my $commentDoc = $indexer->newDocument();
-#  $commentDoc->add_fields(
-#    $controlledTopic->getFields()
-##    'text' => $comment->{text},
-##    'url' => $url,
-##    'state' => ($comment->{state}||''),
-#  );
-#  #$doc->add_fields('catchall' => $title);
-#  #$doc->add_fields('catchall' => $comment->{text});
-#  #$doc->add_fields('contributor' => $comment->{author});
-#
-#  # add the document to the index
-#  try {
-#    $indexer->add($commentDoc);
-#    $indexer->commit();
-#  } catch Error::Simple with {
-#    my $e = shift;
-#    $indexer->log("ERROR: ".$e->{-text});
-#  };
-
-
-#asdf  my $indexFields = getIndexFields($web, $topic, $meta);
-#asdf  $doc->add_fields(@$indexFields) if $indexFields;
-#}
-
 # Tag handler for WORKFLOWSUFFIX but is also used whenever the suffix is needed.
 # Please do not change this function to return anything but the suffix.
 # Returns the suffix that should be used.
@@ -261,7 +227,17 @@ sub _WORKFLOWSUFFIX {
     return $forkSuffix;
 }
 
-# Tag handler
+# Tag handler, returns the topicname without suffix
+sub _WORKFLOWORIGIN {
+    my ( $session, $attributes, $topic, $web ) = @_;
+    my $suffix = _WORKFLOWSUFFIX();
+    if($topic =~ /(.*)$suffix/) {
+      return $1;
+    } else {
+      return $topic;
+    }
+}
+
 sub _initTOPIC {
     my ( $web, $topic ) = @_;
 
