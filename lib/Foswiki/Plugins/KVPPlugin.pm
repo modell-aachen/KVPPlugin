@@ -991,17 +991,21 @@ sub _changeState {
                         # transfer ACLs from old document to new
                         transferACL($appWeb, $appTopic, $controlledTopic);
                         $controlledTopic->purgeExtraNotify();
-	            	$controlledTopic->save(1);
+                        # Will save changes after moving original topic away
 	            	
 	            	$url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
 					            	
 	            	#Alex: Force new Revision, damit Änderungen auf jeden Fall in der History sichtbar werden
 	            	#try{
                         # only move topic if it has a talk suffix
-                        unless($appTopic eq $topic) {
+                        if($appTopic eq $topic) {
+	            	        $controlledTopic->save(1);
+                        } else {
 	            		#Zuerst kommt das alte Topic in den Müll, dann wird das neue verschoben
 
 		            	Foswiki::Func::moveTopic( $appWeb, $appTopic, "Trash", $trashTopic);
+				# Save now that I know i can move it afterwards
+	            	        $controlledTopic->save(1);
 		            	Foswiki::Func::moveTopic( $web, $topic, $appWeb, $appTopic );
                         }
 	            	#Alex: Abfangroutine bei Fehlern muss hinzu
