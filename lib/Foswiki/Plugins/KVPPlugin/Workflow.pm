@@ -373,6 +373,9 @@ sub _isAllowed {
     }
 
     return 0 if ( defined($allow) && $allow =~ /^\s*nobody\s*$/ );
+    if($allow =~ /\bLOGGEDIN\b/ && not Foswiki::Func::isGuest()) {
+        return 1;
+    }
 
     if ( ref( $Foswiki::Plugins::SESSION->{user} )
         && $Foswiki::Plugins::SESSION->{user}->can("isInList") )
