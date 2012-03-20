@@ -169,13 +169,13 @@ sub setState {
     $this->{state}->{"LASTTIME_$state"} =
       Foswiki::Time::formatTime( time(), '$day.$mo.$year', 'servertime' );
     $this->{meta}->putKeyed( "WORKFLOW", $this->{state} );
-    # set accesspermissions to the ones defined in the table
-    my $writeAcls = $this->{workflow}->getChangeACL($this, $state);
-    $this->{meta}->putKeyed("PREFERENCE",
-                          { name => 'ALLOWTOPICCHANGE', value => $writeAcls }) if ($writeAcls);
-    my $viewAcls = $this->{workflow}->getViewACL($this, $state);
-    $this->{meta}->putKeyed("PREFERENCE",
-                          { name => 'ALLOWTOPICVIEW', value => $viewAcls }) if ($viewAcls);
+    ## set accesspermissions to the ones defined in the table
+    #my $writeAcls = $this->{workflow}->getChangeACL($this, $state);
+    #$this->{meta}->putKeyed("PREFERENCE",
+    #                      { name => 'ALLOWTOPICCHANGE', value => $writeAcls }) if ($writeAcls);
+    #my $viewAcls = $this->{workflow}->getViewACL($this, $state);
+    #$this->{meta}->putKeyed("PREFERENCE",
+    #                      { name => 'ALLOWTOPICVIEW', value => $viewAcls }) if ($viewAcls);
     # manage comments
     my $allowComment = $this->{workflow}->getRow($this, 'allowcomment');
     if($allowComment) {
