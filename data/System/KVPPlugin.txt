@@ -60,7 +60,6 @@ Jede Aktion kann mehrere Attribute haben.
 | DELETECOMMENTS | Durch diese Aktion werden alle Kommentare gel&ouml;scht. | |
 | ALLOWDELETECOMMENTS | Bei dieser Aktion hat der Durchf&uuml;hrende die M&ouml;glichkeit alle Kommentare zu l&ouml;schen. | Vorauswahl: Kommentare nicht l&ouml;schen. |
 | SUGGESTDELETECOMMENTS | Wie ALLOWDELETECOMMENTS, aber andere Vorauswahl. | Vorauswahl: Kommentare l&ouml;schen. |
-| NOEXTRANOTIFY | Bei dieser Aktion werden keine Emails zur Statusbenachrichtigung versendet. | Unterbindet *nicht* WebNotify. |
 
 ---+++ Einschalten des Workflows in Topics
 Der Workflow wird auf Topic/Web Ebene angeschaltet mit
@@ -72,48 +71,12 @@ Soll er in einem Topic deaktiviert werden, so geschieht dies mit
 &nbsp;&nbsp;&nbsp;* Set WORKFLOW =
 </pre>
 
----++ Beispiel
-In einem Wiki soll das KVPPlugin aktiviert werden. Es gelten folgende Anforderungen:
-   * A1: Alle Vorhandenen Artikel sollen als "nicht Freigegeben" angezeigt werden.
-   * A2: Diskussionen sollen als "nicht Freigegeben" angezeigt werden.
-   * A3: Neue Artikel sollen gekennzeichnet und als "nicht Freigegeben" angezeigt werden.
-   * A4: Nur die Gruppen Abteilungsleitung und Gesch&auml;ftsf&uuml;hrung d&uuml;rfen Artikel anlegen.
-   * A4.5 Nur Abteilungsleitung, Prozesseigner und Gesch&auml;ftsf&uuml;hrung d&uuml;rfen neue Artikel bearbeiten.
-   * A5: Nur Prozesseigner d&uuml;rfen Diskussionen zur Freigabe vorschlagen.
-   * A6: Nur die Gesch&auml;ftf&uuml;hrung darf Artikel freigeben.
-   * A7: Nur Abteilungsleiter und Prozesseigner d&uuml;rfen Artikel zur L&ouml;schung vorschlagen.
-   * A8: Nur die Gesch&auml;ftsf&uuml;hrung darf freigegebene Artikel l&ouml;schen.
-   * A9: Nur die Gesch&auml;ftsf&uuml;hrung darf freigegebene Artikel bearbeiten.
-   * A10: Alle d&uuml;rfen Diskutieren.
-   * A11: Nur der Prozesseigner, Abteilungsleiter  und die F&uuml;hrung d&uuml;rfen Diskussionen verwerfen.
-   * A11: Nur im Diskussionsstand darf Kommentiert werden.
-   * A12: Bei zur Freigabe Vorgeschlagenen Artikel darf nicht Kommentiert werden, aber Kommentare werden angzeigt.
-
-State Table:
-| *State* | *Allow Edit* | *Allow View* | *Allow Comment* | *Message* | *State Group* | *Anforderung* |
-| Kein Freigabeprozess | Fuehrung, Abteilungsleitung | All | | Dieser Artikel unterliegt noch nicht dem Freigabeprozess. | nicht Freigegeben | A1 |
-| Neu Erstellt | Fuehrung, Abteilungsleitung, percentQUERY{"Prozesseigner"}percent | All | | Dieser Artikel wurde neu erstellt. | nicht Freigegeben | A3, A4 |
-| Freigegeben | Fuehrung | All | | Dieser Artikel wurde freigegeben. | Freigegeben | A9 |
-| Diskussion | All | All | All | Dieser Artikel wird diskutiert. | nicht Freigegeben | A2, A10, A11 |
-| Verworfen | nobody | Fuehrung | Dieser Artikel wurde verworfen. | |
-| Vorgeschlagen | nobody | All | nobody | Dieser Artikel wurde zur Freigabe vorgeschlagen. | nicht Freigegeben | A12 |
-| Zur Loeschung | Fuehrung | All | | Dieser Artikel wurde zur L&ouml;schung vorgeschlagen. | | A7 |
-
-Transitions:
-| *State* | *Action* | *Next State* | *Allowed* | *Attribute* | *Anforderung* |
-| Kein Freigabeprozess | Neu erstellen | Neu Erstellt | Fuehrung, Abteilungsleitung | NEW | A3, A4 |
-| Kein Freigabeprozess | Freigeben | Freigegeben | Fuehrung | | A6, Alten Artikel freigeben |
-| Neu Erstellt | Freigeben | Freigegeben | Fuehrung | | A6, Neu erstellten Artikel freigeben |
-| Freigegeben | Diskutieren | Diskussion | All | FORK | A10 |
-| Diskussion | Zur Freigabe vorschlagen | Vorgeschlagen | percentQUERY{"Prozesseigner"}percent | | A5 |
-| Diskussion | Verwerfen | percentQUERY{"Prozesseigner"}pecent, Fuehrung, Abteilungsleiter | DISCARD | A11 |
-| Freigegeben | Zur Loeschung vorschlagen | Zur Loeschung | percentQUERY{"Prozesseigner"}percent, Abteilungsleiter | | A7 |
-| Kein Freigabeprozess | Zur Loeschung vorschlagen | Zur Loeschung | percentQUERY{"Prozesseigner"}percent, Abteilungsleiter | | A7 |
-| Vorgeschlagen | Freigeben | Freigegeben | Fuehrung | ACCEPT | A6 |
-| Freigegeben | Loeschen | Verworfen | Fuehrung | DISCARD | A8, es geht weiterhin das Verschieben in Trasch |
-| Zur Loeschung | Loeschen | Verworfen | Fuehrung | DISCARD | A8 |
-| Zur Loeschung | nicht loeschen | Freigegeben | Fuehrung | | A8 |
----++ Installation Instructions
+---+++ Weitere Makros
+| *Makro* | *Parameter* | *Beschreibung* | *Beispiel* | *Hauptanwendungsgebiete* |
+| %WORKFLOW%NOP%ORIGIN | - | Gibt den Namen des Artikels ohne Talk-Suffix aus (den Originalartikel zu einer Diskussion). | Zum Freigegebenenstand geht es %WORKFLOW%NOP%ORIGIN%][hier]] | Skin, Mails |
+| %WORKFLOW%NOP%CONTRIBUTORS% | - | Liste aller User, die eine Diskussion seit dem letzten ACCEPT bearbeitet haben. | | Notify-Listen |
+| %WORKFLOW%NOP%EDITPERM% | - | Liefert 1, falls der aktuelle User einen Artikel bearbeiten darf. | %%NOP%IF{"%WORKFLOW%NOP%ORIGIN% = '1'" then="Editieren sie jetzt!"}% | Skin |
+| %WORKFLOW%NOP%GETROW% | Name der Spalte ohne Leerzeichen und komplett klein geschrieben | Liefert die angegebene Spalte aus dem State-Table für den aktuellen status. | Editieren darf: %WORKFLOW%NOP%GETROW{'allowedit'}% | Skin |
 
 %$INSTALL_INSTRUCTIONS%
 

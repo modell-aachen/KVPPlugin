@@ -275,9 +275,6 @@ sub getNotifyList {
             && _isAllowed( $allowed ) )
         {
             my $notifylist = $topic->expandMacros( $_->{notify} );
-            
-#            my $topic->{meta}->find( 'MailNotify' );
-#            $notifylist = qw( ) unless ($notifylist);
             return $notifylist;
         }
     }

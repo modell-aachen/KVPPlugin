@@ -65,6 +65,8 @@ sub initPlugin {
     Foswiki::Func::registerTagHandler(
         'WORKFLOWNOTIFY', \&_WORKFLOWNOTIFY );
     Foswiki::Func::registerTagHandler(
+        'WORKFLOWCONTRIBUTORS', \&_WORKFLOWCONTRIBUTORS );
+    Foswiki::Func::registerTagHandler(
         'GETWORKFLOWROW', \&_GETWORKFLOWROW );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWEDITPERM', \&_WORKFLOWEDITPERM );
@@ -186,6 +188,15 @@ HTML
 HTML
     
     return $ret;
+}
+
+# Tag handler for WORKFLOWCONTRIBUTORS
+# Will return a list of users that have contributed to this topic until last ACCEPT.
+sub _WORKFLOWCONTRIBUTORS {
+    my ( $session, $params, $topic, $web ) = @_;
+    my $controlledTopic = _initTOPIC( $web, $topic );
+
+    return $controlledTopic->getExtraNotify();
 }
 
 # XXX Copy/Paste from Workflow::_isAllowed
@@ -989,34 +1000,6 @@ sub _changeState {
 	            		#my $error = shift;
 	            		#Foswiki::Func::moveTopic( "Trash", $trashTopic, $web, $appTopic);
 	            	#}
-	            	
-	            	#Alex: Metadatenbearbeitung
-	            	#Metadaten die nur während des Workflows interessant sind, löschen!
-					
-#				my ($meta2, $text2) = Foswiki::Func::readTopic($appWeb, $appTopic);
-#				my $meta = new Foswiki::Meta($session, $appWeb, $appTopic);
-#					
-#				foreach my $k ( keys %$meta2 ) {
-#			        	# Alle Einstellungen werden gespeichert:
-#			        	# Aktuell werden WORKFLOWSAVED gelöscht!
-#			        	next if ($k =~ /^_/ || $k =~ /^WORKFLOWSAVED_/ || $k eq 'WORKFLOWHISTORY' || $k eq 'WORKFLOWMAILINGLIST');
-#			        	
-#			        	{
-#	        	                    my @saveddata;
-#				            foreach my $sitem ( @{ $meta2->{$k} } ) {
-#				                my %sdatum = %$sitem;
-#				                push( @saveddata, \%sdatum );
-#				            }
-#			                    $meta->putAll( $k, @saveddata );
-#			        		
-#			        	}
-#			        }
-#
-#				$meta->remove("COMMENT");
-#				$meta->remove("METACOMMENT");
-#					
-#	            	Foswiki::Func::saveTopic( $appWeb, $appTopic, $meta, $text2);
-	
 	            }
 	            else{
 	            	$controlledTopic->save(1);
@@ -1441,7 +1424,7 @@ Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
     # Append current user to the mailing list unless asked not to (ie. _changeMailingList)
     my $noappend = $query->param('NOAPPEND');
     unless($noappend && $noappend eq '1') {
-        $controlledTopic->addExtraNotify(Foswiki::Func::getWikiUserName());   
+        $controlledTopic->addExtraNotify(Foswiki::Func::getWikiUserName(), 'AUTO');   
         # XXX Need to dublicate this because addExtraNotify works only on the metadata of the controlled topic and not necessarily on the $meta object that will be saved
         # simply using the $meta data of the controlled topic seems like a bad idea in case another plugin worked on it
         $meta->putKeyed( "WORKFLOWMAILINGLIST", $controlledTopic->{mailing} ); 

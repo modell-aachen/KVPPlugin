@@ -414,8 +414,7 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
     }    # else leave the existing form in place
 
     # Send mails
-    if (($this->{workflow}->hasAttribute($oldstate, $action, 'NOEXTRANOTIFY') eq '0') && ($notify || $extranotify)) {
-
+    if ($notify) {
         # Expand vars in the notify list. This supports picking up the
         # value of the notifees from the topic itself.
         $notify = $this->expandMacros($notify);
