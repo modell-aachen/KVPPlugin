@@ -263,6 +263,8 @@ sub _initTOPIC {
       Foswiki::Func::normalizeWebTopicName( $web, $topic );
     my $controlledTopic = $cache{"$web.$topic"};
 
+    return undef unless(Foswiki::Func::isValidWebName( $web ));
+
     if($controlledTopic) {
       return if($controlledTopic eq '_undef');
       return  $controlledTopic;
