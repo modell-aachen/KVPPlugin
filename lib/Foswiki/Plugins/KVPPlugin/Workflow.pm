@@ -164,7 +164,7 @@ sub getForkingAction {
         if ( $_->{state} eq $currentState 
                 && $_->{action} eq $action ) {
             my $fork = $_->{attribute};
-            if ($fork =~ /(?:\W|^)(FORK|ACCEPT|DISCARD)(?:\W|$)/) {
+            if ($fork && $fork =~ /(?:\W|^)(FORK|ACCEPT|DISCARD)(?:\W|$)/) {
                 return $1;
             } else {
                 return '';
