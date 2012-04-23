@@ -1255,8 +1255,8 @@ sub beforeEditHandler {
     # check in this case)
     my $changingState = 1;
     my $query = Foswiki::Func::getCgiQuery();
-    foreach my $p qw(WORKFLOWPENDINGACTION WORKFLOWCURRENTSTATE
-                     WORKFLOWPENDINGSTATE WORKFLOWWORKFLOW) {
+    foreach my $p ('WORKFLOWPENDINGACTION', 'WORKFLOWCURRENTSTATE',
+                     'WORKFLOWPENDINGSTATE', 'WORKFLOWWORKFLOW') {
         if (!defined $query->param($p)) {
             # All params must be present to change state
             $changingState = 0;
@@ -1303,8 +1303,8 @@ sub beforeSaveHandler {
     my $query = Foswiki::Func::getCgiQuery();
     my $changingState = 1;
     my %stateChangeInfo;
-    foreach my $p qw(WORKFLOWPENDINGACTION WORKFLOWCURRENTSTATE
-                     WORKFLOWPENDINGSTATE WORKFLOWWORKFLOW) {
+    foreach my $p ('WORKFLOWPENDINGACTION', 'WORKFLOWCURRENTSTATE',
+                     'WORKFLOWPENDINGSTATE', 'WORKFLOWWORKFLOW') {
         $stateChangeInfo{$p} = $query->param($p);
         if (defined $stateChangeInfo{$p}) {
             $query->delete($p);
