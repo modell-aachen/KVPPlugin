@@ -515,11 +515,13 @@ SCRIPT
         );
     }
     else {
+	my %labels = map{$_ => Foswiki::Func::expandCommonVariables("\%MAKETEXT{\"$_\"}\%")} @actions;
         push(
             @fields,
             CGI::popup_menu(
                 -name   => 'WORKFLOWACTION',
                 -values => \@actions,
+		-labels => \%labels,
                 -id => 'WORKFLOWmenu'
             )
         );
