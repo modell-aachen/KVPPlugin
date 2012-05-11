@@ -7,7 +7,7 @@ $Foswiki::cfg{Extensions}{KVPPlugin}{suffix} = 'TALK';
 
 # **STRING**
 # Alle Topicnamen die diese Regex matchen werden vom Workflow ausgenommen ('   Set WORKFLOW =').
-$Foswiki::cfg{Extensions}{KVPPlugin}{except} = '^WikiGroups$|^WikiUsers$|^WebChanges$|^WebCreateNewTopic$|^SolrSearch$|^WebTopicList$|^WebPreferences$|^SitePreferences$|^WebAtom$|^WebNotify$|WebIndex$|^WebStatistics$';
+$Foswiki::cfg{Extensions}{KVPPlugin}{except} = '^(WikiGroups|WikiUsers|WebChanges|WebCreateNewTopic|SolrSearch|WebSearch|WebTopicList|WebPreferences|SitePreferences|WebAtom|WebNotify|WebIndex|WebStatistics)$';
 
 # **PERL**
 # Falls GETWORKFLOWROW für ein Topic ohne Workflow aufgerufen wird, werden diese Werte benutzt.
