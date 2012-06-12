@@ -57,51 +57,62 @@ sub new {
         },
         $class
     );
-    my $inBlock = 0;
+    my $inTable;
     my @fields;
 
-    # | *Current state* | *Action* | *Next state* | *Allowed* | *Fork*
-    foreach ( split( /\n/, $text ) ) {
-        if (/^\s*\|[\s*]*State[\s*]*\|[\s*]*Action[\s*]*\|.*\|.*\|/i) {
+    # Yet another table parser
+    # State table:
+    # | *State*       | *Allow Edit* | *Message* |
+    # Transition table:
+    # | *State* | *Action* | *Next state* | *Allowed* |
+    foreach my $line ( split( /\n/, $text ) ) {
+        if (
+            $line =~ s/^\s*\|([\s*]*State[\s*]*\|
+                           [\s*]*Action[\s*]*\|.*)\|$/$1/ix
+          )
+        {
 
-            @fields = map { _cleanField( lc($_) ) } split(/\s*\|\s*/);
-            shift @fields;
+            # Transition table header
+            @fields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
 
-            # from now on, we are in the TRANSITION table
-            $inBlock = 1;
+            $inTable = 'TRANSITION';
         }
-        # | *Current state* | *Allow Edit* | *Allow Fork* | *Message* |
-        elsif (/^\s*\|[\s*]*State[\s*]*\|[\s*]*Allow Edit[\s*]*\|.*\|$/i) {
+        elsif (
+            $line =~ s/^\s*\|([\s*]*State[\s*]*\|
+                              [\s*]*Allow\s*Edit[\s*]*\|.*)\|$/$1/ix
+          )
+        {
 
-            @fields = map { _cleanField( lc($_) ) } split(/\s*\|\s*/);
-            shift @fields;
+            # State table header
+            @fields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
 
-            # from now on, we are in the STATE table
-            $inBlock = 2;
-
+            $inTable = 'STATE';
         }
-        elsif (/^(?:\t|   )+\*\sSet\s(\w+)\s=\s*(.*)$/) {
+        elsif ( $line =~ /^(?:\t|   )+\*\sSet\s(\w+)\s=\s*(.*)$/ ) {
 
             # store preferences
             $this->{preferences}->{$1} = $2;
         }
-        elsif ( $inBlock == 1 && s/^\s*\|\s*// ) {
+        elsif ( defined($inTable) && $line =~ s/^\s*\|\s*(.*?)\s*\|$/$1/ ) {
 
-            # read row in TRANSITION table
             my %data;
-            @data{@fields} = split(/\s*\|\s*/);
-            push( @{ $this->{transitions} }, \%data );
-        }
-        elsif ( $inBlock == 2 && s/^\s*\|\s*//o ) {
+            my $i = 0;
+            foreach my $col ( split( /\s*\|\s*/, $line ) ) {
+                $data{ $fields[ $i++ ] } = $col;
+            }
 
-            # read row in STATE table
-            my %data;
-            @data{@fields} = split(/\s*\|\s*/);
-            $this->{defaultState} ||= $data{state};
-            $this->{states}->{ $data{state} } = \%data;
+            if ( $inTable eq 'TRANSITION' ) {
+                push( @{ $this->{transitions} }, \%data );
+            }
+            elsif ( $inTable eq 'STATE' ) {
+
+                # read row in STATE table
+                $this->{defaultState} ||= $data{state};
+                $this->{states}->{ $data{state} } = \%data;
+            }
         }
         else {
-            $inBlock = 0;
+            undef $inTable;
         }
     }
     die "Invalid state table in $web.$topic" unless $this->{defaultState};
