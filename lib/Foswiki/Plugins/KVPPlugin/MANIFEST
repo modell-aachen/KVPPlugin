@@ -1,5 +1,7 @@
 # Release manifest for KVPPlugin
 data/System/KVPPlugin.txt 0644 Documentation
+data/System/KvpSkinTopExtendedTemplate 0644 Template for header
+data/System/KvpSkinTransitionsTemplate 0644 Template for transitionmenue
 lib/Foswiki/Plugins/KVPPlugin.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/ControlledTopic.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/Workflow.pm 0666
@@ -8,4 +10,5 @@ templates/mailworkflowtransition.tmpl 0666
 templates/oopswfplease.tmpl 0666
 templates/oopsworkflowerr.tmpl 0666
 templates/workflowedit.tmpl 0666
-
+templates/viewtopicactionbuttons.kvp.tmpl 0666
+templates/view.kvp.tmpl 0666

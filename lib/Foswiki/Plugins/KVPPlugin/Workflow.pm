@@ -57,51 +57,62 @@ sub new {
         },
         $class
     );
-    my $inBlock = 0;
+    my $inTable;
     my @fields;
 
-    # | *Current state* | *Action* | *Next state* | *Allowed* | *Fork*
-    foreach ( split( /\n/, $text ) ) {
-        if (/^\s*\|[\s*]*State[\s*]*\|[\s*]*Action[\s*]*\|.*\|.*\|/i) {
+    # Yet another table parser
+    # State table:
+    # | *State*       | *Allow Edit* | *Message* |
+    # Transition table:
+    # | *State* | *Action* | *Next state* | *Allowed* |
+    foreach my $line ( split( /\n/, $text ) ) {
+        if (
+            $line =~ s/^\s*\|([\s*]*State[\s*]*\|
+                           [\s*]*Action[\s*]*\|.*)\|$/$1/ix
+          )
+        {
 
-            @fields = map { _cleanField( lc($_) ) } split(/\s*\|\s*/);
-            shift @fields;
+            # Transition table header
+            @fields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
 
-            # from now on, we are in the TRANSITION table
-            $inBlock = 1;
+            $inTable = 'TRANSITION';
         }
-        # | *Current state* | *Allow Edit* | *Allow Fork* | *Message* |
-        elsif (/^\s*\|[\s*]*State[\s*]*\|[\s*]*Allow Edit[\s*]*\|.*\|$/i) {
+        elsif (
+            $line =~ s/^\s*\|([\s*]*State[\s*]*\|
+                              [\s*]*Allow\s*Edit[\s*]*\|.*)\|$/$1/ix
+          )
+        {
 
-            @fields = map { _cleanField( lc($_) ) } split(/\s*\|\s*/);
-            shift @fields;
+            # State table header
+            @fields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
 
-            # from now on, we are in the STATE table
-            $inBlock = 2;
-
+            $inTable = 'STATE';
         }
-        elsif (/^(?:\t|   )+\*\sSet\s(\w+)\s=\s*(.*)$/) {
+        elsif ( $line =~ /^(?:\t|   )+\*\sSet\s(\w+)\s=\s*(.*)$/ ) {
 
             # store preferences
             $this->{preferences}->{$1} = $2;
         }
-        elsif ( $inBlock == 1 && s/^\s*\|\s*// ) {
+        elsif ( defined($inTable) && $line =~ s/^\s*\|\s*(.*?)\s*\|$/$1/ ) {
 
-            # read row in TRANSITION table
             my %data;
-            @data{@fields} = split(/\s*\|\s*/);
-            push( @{ $this->{transitions} }, \%data );
-        }
-        elsif ( $inBlock == 2 && s/^\s*\|\s*//o ) {
+            my $i = 0;
+            foreach my $col ( split( /\s*\|\s*/, $line ) ) {
+                $data{ $fields[ $i++ ] } = $col;
+            }
 
-            # read row in STATE table
-            my %data;
-            @data{@fields} = split(/\s*\|\s*/);
-            $this->{defaultState} ||= $data{state};
-            $this->{states}->{ $data{state} } = \%data;
+            if ( $inTable eq 'TRANSITION' ) {
+                push( @{ $this->{transitions} }, \%data );
+            }
+            elsif ( $inTable eq 'STATE' ) {
+
+                # read row in STATE table
+                $this->{defaultState} ||= $data{state};
+                $this->{states}->{ $data{state} } = \%data;
+            }
         }
         else {
-            $inBlock = 0;
+            undef $inTable;
         }
     }
     die "Invalid state table in $web.$topic" unless $this->{defaultState};
@@ -133,9 +144,9 @@ sub getActions {
 sub getFFStatus {
     my ( $this, $topic ) = @_;
     my $currentState = $topic->getState();
-    foreach ( values %{ $this->{states} } ) {
-        if ( $_->{state} eq $currentState ) {
-            return $_->{stategroup};
+    foreach my $state( values %{ $this->{states} } ) {
+        if ( $state->{state} eq $currentState ) {
+            return $state->{stategroup};
         }
     }
     return '';
@@ -145,11 +156,11 @@ sub getFFStatus {
 sub getActionWithAttribute {
     my ( $this, $topic, $attribute ) = @_;
     my $currentState = $topic->getState();
-    foreach ( @{ $this->{transitions} } ) {
-        if ( $_->{state} && $_->{state} eq $currentState && $_->{attribute} && $_->{attribute} =~ /(?:^|\W)$attribute(?:\W|$)/ ) {
-            my $allowed = $topic->expandMacros( $_->{allowed} );
+    foreach my $t( @{ $this->{transitions} } ) {
+        if ( $t->{state} && $t->{state} eq $currentState && $t->{attribute} && $t->{attribute} =~ /(?:^|\W)$attribute(?:\W|$)/ ) {
+            my $allowed = $topic->expandMacros( $t->{allowed} );
             if ( _isAllowed($allowed) ) {
-                return $_->{action};
+                return $t->{action};
             }
         }
     }
@@ -160,10 +171,10 @@ sub getActionWithAttribute {
 sub getForkingAction {
     my ( $this, $topic, $action ) = @_;
     my $currentState = $topic->getState();
-    foreach ( @{ $this->{transitions} } ) {
-        if ( $_->{state} eq $currentState 
-                && $_->{action} eq $action ) {
-            my $fork = $_->{attribute};
+    foreach my $t ( @{ $this->{transitions} } ) {
+        if ( $t->{state} eq $currentState 
+                && $t->{action} eq $action ) {
+            my $fork = $t->{attribute};
             if ($fork && $fork =~ /(?:\W|^)(FORK|ACCEPT|DISCARD)(?:\W|$)/) {
                 return $1;
             } else {
@@ -178,9 +189,9 @@ sub getForkingAction {
 # return '1' if set, '0' otherwise.
 sub hasAttribute {
     my ( $this, $state, $action, $attribute ) = @_;
-    foreach ( @{ $this->{transitions} } ) {
-        if ( $_->{state} eq $state && $_->{action} eq $action ) {
-            if ( $_->{attribute} && $_->{attribute} =~ /(?:\W|^)$attribute(?:\W|$)/ ) {
+    foreach my $t ( @{ $this->{transitions} } ) {
+        if ( $t->{state} eq $state && $t->{action} eq $action ) {
+            if ( $t->{attribute} && $t->{attribute} =~ /(?:\W|^)$attribute(?:\W|$)/ ) {
                 return 1;
             } else {
                 return 0;
@@ -199,13 +210,13 @@ sub getDelActions {
     my $allow = ',';
     my $suggest = ',';
 
-    foreach ( @{ $this->{transitions} } ) {
-        if ($_->{attribute}) {
-            if( $_->{attribute} =~ /(?:\W|^)ALLOWDELETECOMMENTS(?:\W|$)/ ) {
-                $allow = $allow.$_->{action}.',';
+    foreach my $t ( @{ $this->{transitions} } ) {
+        if ($t->{attribute}) {
+            if( $t->{attribute} =~ /(?:\W|^)ALLOWDELETECOMMENTS(?:\W|$)/ ) {
+                $allow = $allow.$t->{action}.',';
             }
-            if( $_->{attribute} =~ /(?:\W|^)SUGGESTDELETECOMMENTS(?:\W|$)/ ) {
-                $suggest = $suggest.$_->{action}.',';
+            if( $t->{attribute} =~ /(?:\W|^)SUGGESTDELETECOMMENTS(?:\W|$)/ ) {
+                $suggest = $suggest.$t->{action}.',';
             }
         }
     }
@@ -231,11 +242,11 @@ sub getNextState {
     my ( $this, $topic, $action ) = @_;
 unless($action) {Foswiki::Func::writeWarning("No action! topic: ".$topic); return undef;} # XXX 
     my $currentState = $topic->getState();
-    foreach ( @{ $this->{transitions} } ) {
-        my $allowed = $topic->expandMacros( $_->{allowed} );
-        my $nextState = $topic->expandMacros( $_->{nextstate} );
-        if (   $_->{state} eq $currentState
-            && $_->{action} eq $action
+    foreach my $t ( @{ $this->{transitions} } ) {
+        my $allowed = $topic->expandMacros( $t->{allowed} );
+        my $nextState = $topic->expandMacros( $t->{nextstate} );
+        if (   $t->{state} eq $currentState
+            && $t->{action} eq $action
             && _isAllowed($allowed) && $nextState )
         {
             return $nextState;
@@ -250,13 +261,13 @@ unless($action) {Foswiki::Func::writeWarning("No action! topic: ".$topic); retur
 sub getNextForm {
     my ( $this, $topic, $action ) = @_;
     my $currentState = $topic->getState();
-    foreach ( @{ $this->{transitions} } ) {
-        my $allowed = $topic->expandMacros( $_->{allowed} );
-        if (   $_->{state} eq $currentState
-            && $_->{action} eq $action
+    foreach my $t ( @{ $this->{transitions} } ) {
+        my $allowed = $topic->expandMacros( $t->{allowed} );
+        if (   $t->{state} eq $currentState
+            && $t->{action} eq $action
             && _isAllowed($allowed) )
         {
-            return $_->{form};
+            return $t->{form};
         }
     }
     return undef;
@@ -268,13 +279,13 @@ sub getNextForm {
 sub getNotifyList {
     my ( $this, $topic, $action ) = @_;
     my $currentState = $topic->getState();
-    foreach ( @{ $this->{transitions} } ) {
-        my $allowed = $topic->expandMacros( $_->{allowed} );
-        if (   $_->{state} eq $currentState
-            && $_->{action} eq $action
+    foreach my $t ( @{ $this->{transitions} } ) {
+        my $allowed = $topic->expandMacros( $t->{allowed} );
+        if (   $t->{state} eq $currentState
+            && $t->{action} eq $action
             && _isAllowed( $allowed ) )
         {
-            my $notifylist = $topic->expandMacros( $_->{notify} );
+            my $notifylist = $topic->expandMacros( $t->{notify} );
             return $notifylist;
         }
     }

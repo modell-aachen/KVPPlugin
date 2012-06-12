@@ -1,0 +1,4 @@
+%TMPL:INCLUDE{"renameattachmentdelete"}%
+
+%TMPL:DEF{"topicactionbuttons"}%%IF{"$WORKFLOWEDITPERM" then="<input type='submit' class='foswikiSubmit' value=' %MAKETEXT{"Delete"}% ' /> %MAKETEXT{"or"}% " else="<em>%MAKETEXT{"not permitted"}%</em>   "}%%TMPL:P{"canceltopicaction"}%%TMPL:END%
+

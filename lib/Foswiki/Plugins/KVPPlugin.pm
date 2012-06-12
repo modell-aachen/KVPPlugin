@@ -73,17 +73,15 @@ sub initPlugin {
     Foswiki::Func::registerTagHandler(
         'WORKFLOWORIGIN', \&_WORKFLOWORIGIN );
 
-    # XXX Ist das wirklich der richtige Ort?!? Vielleicht BeforeRender, oder sowas?
     my $controlledTopic = _initTOPIC( $web, $topic );
     if ($controlledTopic) {
-        my $templateName = $controlledTopic->getViewTemplate();
-        if ($templateName) {
-            # Copy/Paste AutoTemplatePlugin
-            if ($Foswiki::Plugins::VERSION >= 2.1 ) {
-              Foswiki::Func::setPreferencesValue('VIEW_TEMPLATE', $templateName);
-            } else {
-              $Foswiki::Plugins::SESSION->{prefs}->pushPreferenceValues( 'SESSION', { 'VIEW_TEMPLATE' => $templateName } );
-            }
+        my $context = Foswiki::Func::getContext();
+        $context->{'KVPControlled'} = 1;
+	if ($controlledTopic->canEdit()) {
+            $context->{'KVPEdit'} = 1;
+        }
+	unless ($controlledTopic->getRow( 'approved' )) {
+            $context->{'KVPDiscussion'} = 1;
         }
     }
 

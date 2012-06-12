@@ -1,0 +1,37 @@
+%TMPL:INCLUDE{"viewtopicactionbuttons"}%
+
+
+%TMPL:DEF{"modacEdit_dis"}% %IF{"defined rev" then="" else="$percntTMPL:P{modacEditLATEST}$percnt"}%%TMPL:END%
+%TMPL:DEF{"modacEditLATEST"}%%IF{"$WORKFLOWEDITPERM" else="<!--"}%%TMPL:PREV%%IF{"$WORKFLOWEDITPERM" else="-->"}%%TMPL:END%
+
+%TMPL:DEF{"modacAttach"}%%IF{"$WORKFLOWEDITPERM" else="<!--"}%%TMPL:PREV%%IF{"$WORKFLOWEDITPERM" else="-->"}%%TMPL:END%
+
+%{ ------------------------------------ TALK --------------------------------------------------------------- }%
+
+%{ Talk Suffix definieren }%
+%TMPL:DEF{"talktopic"}%%WORKFLOWSUFFIX%%TMPL:END%
+%TMPL:DEF{talktopiccreatetemplate}%?topicparent=%WEB%.%TOPIC%;onlynewtopic=1%IF{"defined TALKTOPICTEMPLATE" then=";templatetopic=%TALKTOPICTEMPLATE%"}%%IF{"defined TALKTOPICFORMTEMPLATE" then=";formtemplate=%TALKTOPICFORMTEMPLATE%"}%%TMPL:END%
+
+%{ Talk Buttons definieren }%
+%TMPL:DEF{"topictabaction"}%%TMPL:P{context="KVPDiscussion" else="approvedtopicactionbuttonactive" then="approvedtopicactionbuttoninactive"}%</li><li>%TMPL:P{talktopicactionbutton}%%TMPL:END%
+
+%{ Link zum freigegebenen Stand je nach aktivem Bearbeitungsstand ausgeben }%
+%TMPL:DEF{approvedtopicactionbuttoninactive}%%IF{"$TOPIC = '%WORKFLOWORIGIN%' OR NOT istopic '%WEB%.%WORKFLOWORIGIN%'" then="<a><strike>%MAKETEXT{"%GETWORKFLOWROW{stategroup}%"}%</strike></a>" else="<a href='$percentSCRIPTURLPATH{$quotview$quot}$percent/$percentWEB$percent/$percentWORKFLOWORIGIN$percent' rel='nofollow' title='$percentMAKETEXT{$percentGETWORKFLOWROW{stategroup}$percent}$percent' >$percentMAKETEXT{$percentGETWORKFLOWROW{stategroup}$percent}$percent</a>"}%%TMPL:END%
+%TMPL:DEF{approvedtopicactionbuttonactive}%<div class="modacActionButtonACTIVE"><a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%' rel='nofollow' title='%MAKETEXT{%GETWORKFLOWROW{stategroup}%}%' >%MAKETEXT{%GETWORKFLOWROW{stategroup}%}%</a></div>%TMPL:END%
+
+%{ Diskussionsstand je nach Bearbeitungsstand ausgeben }%
+%TMPL:DEF{"talktopicactionbutton"}%%TMPL:P{context="KVPDiscussion" else="talktopicactionviewinactive" then="talktopicactionviewactive"}%%TMPL:END%
+
+%{ Anzeige im Diskussionsstand Alex: HIER MUSS NEN TAG HINZUKOMMEN}%
+%TMPL:DEF{"talktopicactionviewactive"}%<div class="modacActionButtonACTIVE"><a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%' rel='nofollow' title='%MAKETEXT{"Discussion about Improvements"}%' >%MAKETEXT{%GETWORKFLOWROW{"discussionlabel"}%}%</a></div>%TMPL:END%
+
+%{ Anzeige im freigegebenen Stand }%
+%TMPL:DEF{"talktopicactionviewinactive"}%%IF{"istopic '%WEB%.%TOPIC%%TMPL:P{talktopic}%'" then="$percntTMPL:P{talktopicactionviewinactivebearbeiten}$percnt" else="$percntTMPL:P{talktopicactionviewinactiveneu}$percnt"}%%TMPL:END%
+
+%{ Diskussionsstand bearbeiten }%
+%TMPL:DEF{"talktopicactionviewinactivebearbeiten"}%<a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%%TMPL:P{talktopic}%' rel='nofollow' title='%MAKETEXT{"Discussion about Improvements"}%' >%MAKETEXT{%GETWORKFLOWROW{"discussionlabel"}%}%</a>%TMPL:END%
+
+%{ Diskussionsstand neu erstellen }%
+%TMPL:DEF{"talktopicactionviewinactiveneu"}%%WORKFLOWFORK{newnames="%WEB%.%TOPIC%%TMPL:P{talktopic}%", label="%MAKETEXT{"start new discussion"}%", lockdown="off"}%%TMPL:END%
+
+%{ ------------------------------------ /TALK --------------------------------------------------------------- }%
