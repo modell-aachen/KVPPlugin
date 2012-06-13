@@ -16,9 +16,9 @@ $build = new Foswiki::Contrib::Build('KVPPlugin');
 # name of web to upload to
 $build->{UPLOADTARGETWEB} = 'Extensions';
 # Full URL of pub directory
-$build->{UPLOADTARGETPUB} = 'extensions.open-quality.com/pub';
+$build->{UPLOADTARGETPUB} = 'http://extensions.open-quality.com/pub';
 # Full URL of bin directory
-$build->{UPLOADTARGETSCRIPT} = 'extensions.open-quality.com/bin';
+$build->{UPLOADTARGETSCRIPT} = 'http://extensions.open-quality.com/bin';
 # Script extension
 $build->{UPLOADTARGETSUFFIX} = '';
 
