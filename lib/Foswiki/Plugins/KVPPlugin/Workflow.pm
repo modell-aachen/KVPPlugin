@@ -279,7 +279,7 @@ sub getNextForm {
 sub getNotifyList {
     my ( $this, $topic, $action ) = @_;
     my $currentState = $topic->getState();
-    foreach ( @{ $this->{transitions} } ) {
+    foreach my $_ ( @{ $this->{transitions} } ) {
         my $allowed = $topic->expandMacros( $_->{allowed} );
         if (   $_->{state} eq $currentState
             && $_->{action} eq $action
