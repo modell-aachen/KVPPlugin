@@ -100,6 +100,12 @@ sub new {
             foreach my $col ( split( /\s*\|\s*/, $line ) ) {
                 $data{ $fields[ $i++ ] } = $col;
             }
+	    ## Hier jetzt sowas...
+	    #my $defaultValue = $data { $defaultCol }
+	    #my $defaultRow = default{ defaultCol };
+	    #foreach my $def (keys $defaultRow){
+	    #   $data{ $def } = $defaultRow{ $def };
+	    #}
 
             if ( $inTable eq 'TRANSITION' ) {
                 push( @{ $this->{transitions} }, \%data );
