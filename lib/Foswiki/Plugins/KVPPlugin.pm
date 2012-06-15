@@ -531,7 +531,7 @@ SCRIPT
 #                -class => $buttonClass,
 #                -value => 'Change status'
 #            )
-            "%BUTTON{\"%MAKETEXT{\"Change status\"}%\" type=\"submit\"}%"
+            "<span style='float: right'>%BUTTON{\"%MAKETEXT{\"Change status\"}%\" type=\"submit\"}%</span>"
         );
     }
 
