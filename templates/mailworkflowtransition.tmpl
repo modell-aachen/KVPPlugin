@@ -1,6 +1,6 @@
 From: %WIKIWEBMASTERNAME% <%WIKIWEBMASTER%>
 To: %EMAILTO%
-Subject: %TOPIC% - wartet auf Ihre Freigabe - Status: %TARGET_STATE%
+Subject: : %IF{"$'GETWORKFLOWROW{istdiskussion}' = 1" then="%TOPIC%" else="%WORKFLOWORIGIN%"}% hat einen neuen Status: %TARGET_STATE%
 MIME-Version: 1.0
 Content-Type: multipart/alternative; boundary="=_=0i0k0i0w0tXuOi0E0A"
 
@@ -9,12 +9,15 @@ This is a multi-part message in MIME format.
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-%WIKINAME% hat den Artikel %TOPIC% bearbeitet. Aktueller Status ist: %TARGET_STATE%.
+%WIKINAME% hat den Artikel %IF{"$'GETWORKFLOWROW{istdiskussion}' = 1" then="%TOPIC%" else="%WORKFLOWORIGIN%"}% bearbeitet.
 
-Sie sind nun an der Reihe! Bitte führen Sie Ihren Bearbeitungsschritt unter %SCRIPTURL{"view"}%/%WEB%/%IF{"$'GETWORKFLOWROW{istdiskussion}' = 1" then="%TOPIC%" else="%WORKFLOWORIGIN%"}% durch.
+%GETWORKFLOWROW{message}%
 
-Sie kennen das neue Workflowmanagement-System noch nicht? Dann finden Sie hier weitere Informationen: "Hier könnte Ihr Link stehen"
+Link zur Seite: %SCRIPTURL{"view"}%/%WEB%/%IF{"$'GETWORKFLOWROW{istdiskussion}' = 1" then="%TOPIC%" else="%WORKFLOWORIGIN%"}%
 
-%SCRIPTURL{"view"}%/%WEB%/WebChanges
+Dies ist eine automatisch generierte Benachrichtigung. Bitte antworten Sie nicht auf diese E-Mail.
+
+Bei Fragen wenden Sie sich bitte an:
+%WIKIWEBMASTERNAME%
 
 --=_=0i0k0i0w0tXuOi0E0A--
