@@ -378,7 +378,10 @@ sub getRow {
     my ( $this, $topic, $row ) = @_;
 
     my $state = $topic->getState();
-    return '' unless $this->{states}->{$state};
+    if (!$this->{states}{$state}) {
+      Foswiki::Func::writeWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
+      return '';
+    }
     return $this->{states}->{$state}->{$row};
 # XXX to expand or not to expand...
 #    return $topic->expandMacros( $this->{states}->{$state}->{$row} );
