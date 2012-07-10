@@ -1402,7 +1402,7 @@ Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
 #            }
         } else {
             # Make sure that newly created topics can't cheat with their state
-            if(scalar @newStateName != 0) { # If 0 this is a new topic, or not controlled
+            if(scalar @newStateName > 1) { # If 0 this is a new topic, or not controlled, 1 it's a copy
                 throw Foswiki::OopsException(
                         'workflow',
                         def   => 'topic_access',
