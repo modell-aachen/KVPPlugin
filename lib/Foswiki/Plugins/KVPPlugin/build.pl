@@ -1,8 +1,7 @@
 #!/usr/bin/perl -w
-BEGIN { 
-	#Alex: Sonst klappt´s nicht
-	$ENV{FOSWIKI_LIBS} = 'C:/EclipseWorkbench/super/foswiki1/trunk/core/lib';
-	unshift @INC, split( /:/, $ENV{FOSWIKI_LIBS} ); }
+BEGIN {
+	unshift @INC, split( /:/, $ENV{FOSWIKI_LIBS} );
+}
 use Foswiki::Contrib::Build;
 
 # Create the build object
