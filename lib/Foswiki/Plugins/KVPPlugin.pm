@@ -20,7 +20,7 @@ use Foswiki::OopsException ();
 use Foswiki::Sandbox ();
 
 our $VERSION          = '$Rev: 7808 (2010-06-15) $';
-our $RELEASE          = '1.5.9';
+our $RELEASE          = '1.5.10';
 our $SHORTDESCRIPTION = 'Kontinuierliche Verbesserung im Wiki';
 our $NO_PREFS_IN_TOPIC = 1;
 our $pluginName       = 'KVPPlugin';
@@ -983,6 +983,8 @@ sub _changeState {
                         # transfer ACLs from old document to new
                         transferACL($appWeb, $appTopic, $controlledTopic);
                         $controlledTopic->purgeExtraNotify();
+			# increment MajorRev
+			$controlledTopic->nextMajorRev();
                         # Will save changes after moving original topic away
 	            	
 	            	$url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );

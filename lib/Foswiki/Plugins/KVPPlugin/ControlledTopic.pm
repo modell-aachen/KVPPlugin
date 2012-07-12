@@ -42,8 +42,9 @@ sub new {
             state    => $meta->get('WORKFLOW'),
             history  => $meta->get('WORKFLOWHISTORY'),
             owner    => $meta->get('PROCESSOWNER'),
-            mailing => $meta->get('WORKFLOWMAILINGLIST'),
+            mailing  => $meta->get('WORKFLOWMAILINGLIST'),
             nextuser => $meta->get('WORKFLOWNEXTUSER'),
+	    wrev     => $meta->get('WORKFLOWREV') || { 'MajorRev' => 0, 'MinorRev' => 0 },
             forkweb  => $web,
             forktopic => $topic . $forkSuffix,
         },
@@ -159,6 +160,14 @@ sub setForkWeb {
 	#$this->{meta}->put( "WORKFLOWMAILINGLIST", $this->{extranotify} );
 }
 
+# Will increase the major revision and set minor revision to 0.
+sub nextMajorRev {
+	my ( $this ) = @_;
+	$this->{wrev}->{'MinorRev'} = 0;
+	$this->{wrev}->{'MajorRev'}++;
+	$this->{meta}->put( 'WORKFLOWREV', $this->{wrev} );
+}
+
 # Set the current state in the topic
 # Alex: Bearbeiter hinzu
 sub setState {
@@ -169,6 +178,8 @@ sub setState {
     $this->{state}->{"LASTTIME_$state"} =
       Foswiki::Time::formatTime( time(), '$day.$mo.$year', 'servertime' );
     $this->{meta}->putKeyed( "WORKFLOW", $this->{state} );
+    $this->{wrev}->{'MinorRev'}++;
+    $this->{meta}->put( 'WORKFLOWREV', $this->{wrev} );
     ## set accesspermissions to the ones defined in the table
     #my $writeAcls = $this->{workflow}->getChangeACL($this, $state);
     #$this->{meta}->putKeyed("PREFERENCE",
