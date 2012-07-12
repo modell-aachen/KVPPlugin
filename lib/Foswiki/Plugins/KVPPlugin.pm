@@ -20,7 +20,7 @@ use Foswiki::OopsException ();
 use Foswiki::Sandbox ();
 
 our $VERSION          = '$Rev: 7808 (2010-06-15) $';
-our $RELEASE          = '1.5.8';
+our $RELEASE          = '1.5.9';
 our $SHORTDESCRIPTION = 'Kontinuierliche Verbesserung im Wiki';
 our $NO_PREFS_IN_TOPIC = 1;
 our $pluginName       = 'KVPPlugin';
@@ -522,7 +522,8 @@ SCRIPT
                 -name   => 'WORKFLOWACTION',
                 -values => \@actions,
 		-labels => \%labels,
-                -id => 'WORKFLOWmenu'
+                -id => 'WORKFLOWmenu',
+		-style => 'float: left'
             )
         );
         push(
@@ -531,7 +532,7 @@ SCRIPT
 #                -class => $buttonClass,
 #                -value => 'Change status'
 #            )
-            "<span style='float: right'>%BUTTON{\"%MAKETEXT{\"Change status\"}%\" type=\"submit\"}%</span>"
+            "%BUTTON{\"%MAKETEXT{\"Change status\"}%\" type=\"submit\"}%"
         );
     }
 
@@ -541,7 +542,7 @@ SCRIPT
               -selected => 0,
               -value => '1',
               -label => '%MAKETEXT{delete comments}%',
-              -id => 'WORKFLOWchkboxbox'
+              -id => 'WORKFLOWchkboxbox',
           )."</span>"
     );
 
