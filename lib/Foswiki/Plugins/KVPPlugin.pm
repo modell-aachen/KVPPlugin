@@ -511,7 +511,7 @@ SCRIPT
 #                -value => $actions[0],
 #                -id => 'WORKFLOWbutton'
 #            )
-            "%BUTTON{\"%MAKETEXT{$actions[0]}%\" id=\"WORKFLOWbutton\" type=\"submit\"}%"
+            "<noautolink>%BUTTON{\"%MAKETEXT{$actions[0]}%\" id=\"WORKFLOWbutton\" type=\"submit\"}%</noautolink>"
         );
     }
     else {
@@ -532,7 +532,7 @@ SCRIPT
 #                -class => $buttonClass,
 #                -value => 'Change status'
 #            )
-            "%BUTTON{\"%MAKETEXT{\"Change status\"}%\" type=\"submit\"}%"
+            "<noautolink>%BUTTON{\"%MAKETEXT{\"Change status\"}%\" type=\"submit\"}%</noautolink>"
         );
     }
 
