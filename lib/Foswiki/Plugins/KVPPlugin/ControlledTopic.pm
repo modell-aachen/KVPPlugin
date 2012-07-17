@@ -192,8 +192,15 @@ sub setState {
     if($allowComment) {
         $this->{meta}->putKeyed("PREFERENCE",
                           { name => 'DISPLAYCOMMENTS', value => 'on' } );
-        $this->{meta}->putKeyed("PREFERENCE",
-                          { name => 'ALLOWTOPICCOMMENT', value => $allowComment } );
+        if($allowComment =~ m/\bLOGGEDIN\b/) {
+          $this->{meta}->putKeyed("PREFERENCE",
+                            { name => 'DENYTOPICCOMMENT', value => $Foswiki::cfg{DefaultUserWikiName} } );
+          $this->{meta}->remove( 'PREFERENCE', 'ALLOWTOPICCOMMENT' );
+        } else {
+          $this->{meta}->remove( 'PREFERENCE', 'DENYTOPICCOMMENT' );
+          $this->{meta}->putKeyed("PREFERENCE",
+                            { name => 'ALLOWTOPICCOMMENT', value => $allowComment } );
+        }
     } else {
         $this->{meta}->putKeyed("PREFERENCE",
                           { name => 'DISPLAYCOMMENTS', value => 'off' } );
