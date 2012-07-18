@@ -1205,7 +1205,7 @@ sub _restFork {
                 { forcenewrevision => 1, ignorepermissions => 1 });
     
     # Modell Aachen Settings:
-    # Überführen in Underrevision:
+    # Ueberfuehren in Underrevision:
     my $newcontrolledTopic = _initTOPIC( $w, $t );
     my $url;
 
