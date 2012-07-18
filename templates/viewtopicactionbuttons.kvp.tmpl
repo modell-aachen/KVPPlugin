@@ -1,7 +1,6 @@
 %TMPL:INCLUDE{"viewtopicactionbuttons"}%
 
 
-%TMPL:DEF{"modacEdit_dis"}% %IF{"defined rev" then="" else="$percntTMPL:P{modacEditLATEST}$percnt"}%%TMPL:END%
 %TMPL:DEF{"modacEditLATEST"}%%IF{"$WORKFLOWEDITPERM" else="<!--"}%%TMPL:PREV%%IF{"$WORKFLOWEDITPERM" else="-->"}%%TMPL:END%
 
 %TMPL:DEF{"modacAttach"}%%IF{"$WORKFLOWEDITPERM" else="<!--"}%%TMPL:PREV%%IF{"$WORKFLOWEDITPERM" else="-->"}%%TMPL:END%
