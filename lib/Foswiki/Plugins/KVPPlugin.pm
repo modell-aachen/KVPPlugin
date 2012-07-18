@@ -1290,6 +1290,7 @@ sub beforeSaveHandler {
     # Otherwise we need to check if the packet of state change information
     # is present.
     my $query = Foswiki::Func::getCgiQuery();
+    return if($query->url() =~ m#/bin/jsonrpc$#); # XXX always pass MetaCommentPlugin
     my $changingState = 1;
     my %stateChangeInfo;
     foreach my $p ('WORKFLOWPENDINGACTION', 'WORKFLOWCURRENTSTATE',
