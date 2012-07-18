@@ -41,8 +41,7 @@ sub new {
             text     => $text,
             state    => $meta->get('WORKFLOW'),
             history  => $meta->get('WORKFLOWHISTORY'),
-            owner    => $meta->get('PROCESSOWNER'),
-            mailing => $meta->get('WORKFLOWMAILINGLIST'),
+            mailing  => $meta->get('WORKFLOWMAILINGLIST'),
             nextuser => $meta->get('WORKFLOWNEXTUSER'),
 	    wrev => $meta->get('WORKFLOWREV') || { 'MajorRev' => 0, 'MinorRev' => 0 },
             forkweb  => $web,
@@ -375,7 +374,6 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
     #Alex: Es muss garantiert sein, dass die Form nicht leer ist (also " ")
     my $form = $this->{workflow}->getNextForm( $this, $action );
     my $notify = $this->{workflow}->getNotifyList( $this, $action );
-    my $extranotify = $this->getExtraNotify('ALL');
 
     my ( $revdate, $revuser, $version ) = $this->{meta}->getRevisionInfo();
     if (ref($revdate) eq 'HASH') {
@@ -423,7 +421,7 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
         $notify = $this->expandMacros($notify);
 		
         # Dig up the bodies
-        my @groups = split( /\s*,\s*/, $notify.",".$extranotify );
+        my @groups = split( /\s*,\s*/, $notify );
         my @persons;
         my @emails;
         
