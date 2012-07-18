@@ -1131,16 +1131,17 @@ sub _restFork {
     my $now = Foswiki::Func::formatTime( time(), undef, 'servertime' );
     my $who = Foswiki::Func::getWikiUserName();
     
-    #Alex: Wird ggf. durch newname = Web.Topic überschrieben.
-    my $forkSuffix = _WORKFLOWSUFFIX();
-    my $newForkWeb = $forkWeb . $forkSuffix;
     my $newForkTopic;
+    if ( $newname ) {
+	$newForkTopic = Foswiki::Sandbox::untaintUnchecked( $newname );
+    } else {
+        my $forkSuffix = _WORKFLOWSUFFIX();
+	$newForkTopic = $forkTopic.$forkSuffix;
+    }
 
     # create the new topic
-    $newname =
-        Foswiki::Sandbox::untaintUnchecked( $newname );
     my ($w, $t) =
-        Foswiki::Func::normalizeWebTopicName( $newForkWeb, $newname );
+        Foswiki::Func::normalizeWebTopicName( $forkWeb, $newForkTopic );
         
     if (Foswiki::Func::topicExists($w, $t)) {
         # TalkTopic already exists... redirect to it
@@ -1190,7 +1191,7 @@ sub _restFork {
                          
     my $history = $ttmeta->get('WORKFLOWHISTORY') || {};
     $history->{value} .= "<br>Forked to " .
-        "[[$forkWeb.$newname]]" . " by $who at $now";
+        "[[$w.$t]]" . " by $who at $now";
     $ttmeta->put( "WORKFLOWHISTORY", $history );
 
     if ($lockdown) {
@@ -1230,7 +1231,6 @@ sub _restFork {
     $newcontrolledTopic->save(1);
 
     #Redirect zum neuen Disskusions Topic
-    my $testTopic = $newname;
     return $response->redirect(Foswiki::Func::getViewUrl($w, $t));
 }
 
