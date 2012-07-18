@@ -59,6 +59,9 @@ sub new {
     );
     my $inTable;
     my @fields;
+    my $defaultCol;
+    my %default = ();
+    my @defaultfields;
 
     # Yet another table parser
     # State table:
@@ -89,33 +92,55 @@ sub new {
             $inTable = 'STATE';
         }
         elsif ( $line =~ /^(?:\t|   )+\*\sSet\s(\w+)\s=\s*(.*)$/ ) {
-
             # store preferences
             $this->{preferences}->{$1} = $2;
         }
+	elsif (
+            $line =~ s/^\s*\|([\s*]*State\s*Type[\s*]*\|.*)\|$/$1/ix
+	 )
+	{
+            $inTable = 'DEFAULT';
+	    $defaultCol = 'statetype'; # XXX
+	    @defaultfields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
+	}
         elsif ( defined($inTable) && $line =~ s/^\s*\|\s*(.*?)\s*\|$/$1/ ) {
 
             my %data;
             my $i = 0;
-            foreach my $col ( split( /\s*\|\s*/, $line ) ) {
-                $data{ $fields[ $i++ ] } = $col;
-            }
-	    ## Hier jetzt sowas...
-	    #my $defaultValue = $data { $defaultCol }
-	    #my $defaultRow = default{ defaultCol };
-	    #foreach my $def (keys $defaultRow){
-	    #   $data{ $def } = $defaultRow{ $def };
-	    #}
+            if ( $inTable eq 'DEFAULT' ) {
+                foreach my $col ( split( /\s*\|\s*/, $line ) ) {
+                    $data{ $defaultfields[ $i++ ] } = $col;
+                }
 
-            if ( $inTable eq 'TRANSITION' ) {
-                push( @{ $this->{transitions} }, \%data );
-            }
-            elsif ( $inTable eq 'STATE' ) {
+               $default{ $data{ $defaultCol } } = \%data;
+	    } else {
+                foreach my $col ( split( /\s*\|\s*/, $line ) ) {
+                    $data{ $fields[ $i++ ] } = $col;
+                }
 
-                # read row in STATE table
-                $this->{defaultState} ||= $data{state};
-                $this->{states}->{ $data{state} } = \%data;
-            }
+                if ( $inTable eq 'TRANSITION' ) {
+                    push( @{ $this->{transitions} }, \%data );
+                }
+                elsif ( $inTable eq 'STATE' ) {
+
+                    # read row in STATE table
+                    $this->{defaultState} ||= $data{state};
+                    $this->{states}->{ $data{state} } = \%data;
+
+                    # Insert default values
+                    if ( $defaultCol ) {
+                      my $defaultKey = $data{ $defaultCol };
+                      if ($defaultKey) {
+                        my $defaultRow = $default{ $defaultKey };
+                        if( $defaultRow ) {
+                          foreach my $def (keys $defaultRow){
+                            $data{ $def } = $defaultRow->{ $def } unless $data { $def };
+                          }
+                        }
+                      }
+                    }
+                }
+	    }
         }
         else {
             undef $inTable;
@@ -165,7 +190,8 @@ sub getActionWithAttribute {
     foreach my $t( @{ $this->{transitions} } ) {
         if ( $t->{state} && $t->{state} eq $currentState && $t->{attribute} && $t->{attribute} =~ /(?:^|\W)$attribute(?:\W|$)/ ) {
             my $allowed = $topic->expandMacros( $t->{allowed} );
-            if ( _isAllowed($allowed) ) {
+	    Foswiki::Func::writeWarning("Condition: ".$topic->expandMacros($t->{condition})." -> "._isTrue($topic->expandMacros($t->{condition})));
+            if ( _isAllowed($allowed) && _isTrue($topic->expandMacros($t->{condition})) ) {
                 return $t->{action};
             }
         }
