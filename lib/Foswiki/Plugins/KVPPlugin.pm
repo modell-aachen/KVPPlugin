@@ -57,8 +57,6 @@ sub initPlugin {
     Foswiki::Func::registerTagHandler(
         'WORKFLOWFORK', \&_WORKFLOWFORK );
     Foswiki::Func::registerTagHandler(
-        'WORKFLOWPROCESSOWNER', \&_WORKFLOWPROCESSOWNER );
-    Foswiki::Func::registerTagHandler(
         'WORKFLOWMETA', \&_WORKFLOWMETA );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWSUFFIX', \&_WORKFLOWSUFFIX );
@@ -400,18 +398,6 @@ sub _WORKFLOWHISTORY {
     return '' unless $controlledTopic;
 
     return $controlledTopic->getHistoryText();
-}
-
-# Tag handlder
-# XXX Was hat das im KVPPlugin zu suchen?
-sub _WORKFLOWPROCESSOWNER {
-    my ( $session, $attributes, $topic, $web ) = @_;
-
-    ($web, $topic) = _getTopicName($attributes, $web, $topic);
-    my $controlledTopic = _initTOPIC( $web, $topic );
-    return '' unless $controlledTopic;
-
-    return $controlledTopic->getProcessOwner();
 }
 
 sub _WORKFLOWMETA {

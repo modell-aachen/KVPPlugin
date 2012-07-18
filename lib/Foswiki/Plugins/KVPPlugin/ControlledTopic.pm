@@ -77,14 +77,6 @@ sub getActions {
     return $this->{workflow}->getActions($this);
 }
 
-# Alex: Get the given Processowner
-# XXX Was hat das im KVPPlugin zu suchen?
-sub getProcessOwner {
-    my $this = shift;
-    return $this->{owner}->{name} || 'no Processowner';
-}
-
-# Alex: Get the given Processowner
 sub getWorkflowMeta {
     my ( $this, $attributes ) = @_;
     
