@@ -505,8 +505,9 @@ SCRIPT
             CGI::popup_menu(
                 -name   => 'WORKFLOWACTION',
                 -values => \@actions,
-		-labels => \%labels,
-                -id => 'WORKFLOWmenu'
+                -labels => \%labels,
+                -id => 'WORKFLOWmenu',
+                -style => 'float: left'
             )
         );
         push(
