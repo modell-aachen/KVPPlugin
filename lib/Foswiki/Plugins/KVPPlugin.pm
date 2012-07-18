@@ -967,6 +967,8 @@ sub _changeState {
                         # transfer ACLs from old document to new
                         transferACL($appWeb, $appTopic, $controlledTopic);
                         $controlledTopic->purgeExtraNotify();
+			# increment MajorRev
+			$controlledTopic->nextMajorRev();
                         # Will save changes after moving original topic away
 	            	
 	            	$url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
