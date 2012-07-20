@@ -1283,14 +1283,66 @@ sub beforeEditHandler {
 sub beforeSaveHandler {
     my ( $text, $topic, $web, $meta ) = @_;
 
+    my $query = Foswiki::Func::getCgiQuery();
+    return if($query->url() =~ m#/bin/jsonrpc$#); # XXX always pass MetaCommentPlugin
+
+    # Do the RemoveMeta, SetForm, SetField, SetPref if save came from a template
+    if($query->param('templatetopic')) {
+      # RemoveMeta:
+      my $removeMeta = $meta->get( 'PREFERENCE', 'RemoveMeta' );
+      if($removeMeta) {
+        $meta->remove('PREFERENCE', 'RemoveMeta');
+        my $removeList = $removeMeta->{value};
+        my @toRemove = split(",", $removeList);
+        foreach my $item (@toRemove) {
+          $item =~ s#^\s*##;
+          $item =~ s#\s*$##;
+          $meta->remove($item);
+        }
+      }
+      # SetForm:
+      my $setForm = $meta->get( 'PREFERENCE', 'SetForm' );
+      if($setForm) {
+        $meta->remove('PREFERENCE', 'SetForm');
+        $setForm = $setForm->{value};
+        $setForm =~ s#^\s*##g;
+        $setForm =~ s#\s*$##g;
+        $meta->put('FORM', { name => $setForm } );
+      }
+      # SetField:
+      my $setField = $meta->get( 'PREFERENCE', 'SetField' );
+      if($setField) {
+        $meta->remove('PREFERENCE', 'SetField');
+        $setField = $setField->{value};
+        while($setField =~ m/"\s*([^"]+?)\s*=\s*([^"]*?)\s*"/g) {
+          my $toSet = $1;
+          my $value = $2;
+	  $value =~ s#\$quot#"#g;
+	  $value =~ s#\$dollar#\$#g;
+          $meta->putKeyed('FIELD', { name => $toSet, title => $toSet, type => 'Set', value => $value } );
+        }
+      }
+      # SetPref:
+      my $setMeta = $meta->get( 'PREFERENCE', 'SetPref' );
+      if($setMeta) {
+        $meta->remove('PREFERENCE', 'SetPref');
+        $setMeta = $setMeta->{value};
+        while($setMeta =~ m/"\s*([^"]+?)\s*=\s*([^"]*?)\s*"/g) {
+          my $toSet = $1;
+          my $value = $2;
+	  $value =~ s#\$quot#"#g;
+	  $value =~ s#\$dollar#\$#g;
+          $meta->putKeyed('PREFERENCE', { name => $toSet, title => $toSet, type => 'Set', value => $value } );
+        }
+      }
+    }
+
     # $isStateChange is true if state has just been changed in this session.
     # In this case we don't need the access check.
     return if ($isStateChange);
 
     # Otherwise we need to check if the packet of state change information
     # is present.
-    my $query = Foswiki::Func::getCgiQuery();
-    return if($query->url() =~ m#/bin/jsonrpc$#); # XXX always pass MetaCommentPlugin
     my $changingState = 1;
     my %stateChangeInfo;
     foreach my $p ('WORKFLOWPENDINGACTION', 'WORKFLOWCURRENTSTATE',
