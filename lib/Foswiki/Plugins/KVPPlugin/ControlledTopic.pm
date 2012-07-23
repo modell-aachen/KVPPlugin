@@ -148,8 +148,15 @@ sub setExtraNotify {
 sub addExtraNotify {
 	my ( $this, $extraname, $type ) = @_;
 	
+	return unless $extraname;
+
 	#Alex: Verbesserungsfähig?
-	$this->setExtraNotify( $this->{mailing}->{$type} . "," . $extraname, $type );
+	my $oldlist = $this->{mailing}->{$type};
+        if($oldlist) {
+          $this->setExtraNotify( $oldlist . "," . $extraname, $type );
+	} else {
+          $this->setExtraNotify( $extraname, $type );
+	}
 }
 
 # Alex: Forkweb
