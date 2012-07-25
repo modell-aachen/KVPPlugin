@@ -79,11 +79,19 @@ sub getActions {
 
 sub getWorkflowMeta {
     my ( $this, $attributes ) = @_;
-    
+
+    if($attributes eq 'Revision') {
+        my $wrev = $this->{meta}->get( 'WORKFLOWREV' );
+        return unless $wrev;
+        my $major = $wrev->{'MajorRev'};
+        return "0" unless $major;
+        return "$major.$wrev->{'MinorRev'}";
+    }
+
     if (defined $this->{meta}->get('WORKFLOW')) {
     	return $this->{meta}->get('WORKFLOW')->{$attributes} || '';
     }
-    	return '';
+    return '';
 }
 
 # Alex: Get the extra Mailinglist (People involved in the Discussion)
