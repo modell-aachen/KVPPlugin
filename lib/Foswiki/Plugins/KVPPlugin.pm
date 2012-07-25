@@ -419,18 +419,32 @@ sub _WORKFLOWPROCESSOWNER {
 sub _WORKFLOWMETA {
     my ( $session, $attributes, $topic, $web ) = @_;
 
-	my $attr;
-    my $controlledTopic = _initTOPIC( $web, $topic );
-    return '' unless $controlledTopic;
-    
-    if (!defined $attributes->{name}) {
-        # Old interpretation, for compatibility
-        $attr = $attributes->{_DEFAULT};
-    } else {
-        $attr = $attributes->{name};
-    }
-
-    return $controlledTopic->getWorkflowMeta($attr);
+    my $rWeb = $attributes->{web} || $web; 
+    my $rTopic = $attributes->{topic} || $topic; 
+    my $alt = $attributes->{alt} || ''; 
+ 
+    my $attr; 
+    my $controlledTopic = _initTOPIC( $web, $topic ); 
+    return $alt unless $controlledTopic; 
+     
+    if (!defined $attributes->{name}) { 
+        # Old interpretation, for compatibility 
+        $attr = $attributes->{_DEFAULT}; 
+    } else { 
+        $attr = $attributes->{name}; 
+    } 
+    $attr ||= 'name'; 
+ 
+    my $ret = $controlledTopic->getWorkflowMeta($attr); 
+    if(!$ret) { 
+        my $list = $attributes->{or}; 
+        if($list) { 
+            while(!$ret && $list =~ m/([a-zA-Z_]*)/g) { 
+                $ret = $controlledTopic->getWorkflowMeta($1); 
+            } 
+        } 
+    } 
+    return  $ret || $alt;
 }
 
 # Tag handler
