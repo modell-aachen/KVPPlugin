@@ -246,7 +246,7 @@ sub _WORKFLOWORIGIN {
 }
 
 sub _initTOPIC {
-    my ( $web, $topic ) = @_;
+    my ( $web, $topic, $rev, $meta, $text, $forceNew ) = @_;
 
     # Skip system web for performance
     if($web eq "System") {return undef;}
@@ -255,28 +255,32 @@ sub _initTOPIC {
     my $exceptions = $Foswiki::cfg{Extensions}{KVPPlugin}{except};
     return undef if $exceptions && $topic =~ /$exceptions/;
 
-    ( $web, $topic ) =
-      Foswiki::Func::normalizeWebTopicName( $web, $topic );
-    my $controlledTopic = $cache{"$web.$topic"};
+    $rev ||= 99999;    # latest
 
+    ( $web, $topic ) = Foswiki::Func::normalizeWebTopicName( $web, $topic );
     return undef unless(Foswiki::Func::isValidWebName( $web ));
+    
+    my $controlledTopic;
 
-    if($controlledTopic) {
-      return if($controlledTopic eq '_undef');
-      return  $controlledTopic;
+    unless ($forceNew) {
+        $controlledTopic = $cache{"$web.$topic.$rev"};
+        if ($controlledTopic) {
+            return if $controlledTopic eq '_undef';
+            return $controlledTopic;
+        }
     }
 
-#Foswiki::Func::writeWarning("Initing without cache $web.$topic cache: ".%cache." entries: ".join(", ", keys %cache)); # XXX debug
-    if (defined &Foswiki::Func::isValidTopicName) {
+    if ( defined &Foswiki::Func::isValidTopicName ) {
+
         # Allow non-wikiwords
         return undef unless Foswiki::Func::isValidTopicName( $topic, 1 );
-    } else {
+    }
+    else {
+
         # (tm)wiki doesn't have isValidTopicName
         # best we can do
-        return undef unless Foswiki::Func::isValidWikiWord( $topic );
+        return undef unless Foswiki::Func::isValidWikiWord($topic);
     }
-
-    my ( $meta, $text ) = Foswiki::Func::readTopic( $web, $topic );
 
     Foswiki::Func::pushTopicContext( $web, $topic );
     my $workflowName = Foswiki::Func::getPreferencesValue('WORKFLOW');
@@ -286,21 +290,23 @@ sub _initTOPIC {
         ( my $wfWeb, $workflowName ) =
           Foswiki::Func::normalizeWebTopicName( $web, $workflowName );
 
-        return undef unless Foswiki::Func::topicExists(
-            $wfWeb, $workflowName );
+        if ( Foswiki::Func::topicExists( $wfWeb, $workflowName ) ) {
+            my $workflow =
+              new Foswiki::Plugins::KVPPlugin::Workflow( $wfWeb,
+                $workflowName );
 
-        my $workflow = new Foswiki::Plugins::KVPPlugin::Workflow( $wfWeb,
-            $workflowName );
-
-        if ($workflow) {
-            $controlledTopic =
-              new Foswiki::Plugins::KVPPlugin::ControlledTopic( $workflow,
-                $web, $topic, $meta, $text );
+            if ($workflow) {
+                ( $meta, $text ) =
+                  Foswiki::Func::readTopic( $web, $topic, $rev )
+                  unless defined $meta;
+                $controlledTopic =
+                  new Foswiki::Plugins::KVPPlugin::ControlledTopic(
+                    $workflow, $web, $topic, $meta, $text );
+            }
         }
     }
 
-    $cache{"$web.$topic"} = $controlledTopic || '_undef';
-
+    $cache{"$web.$topic.$rev"} = $controlledTopic || '_undef';
     return $controlledTopic;
 }
 
@@ -1187,8 +1193,7 @@ sub _restFork {
             { forcenewrevision => 0, ignorepermissions => 1 });
     $isStateChange = 0;
     # need to clear cache or _initTOPIC might return old meta
-    delete($cache{"$w.$t"});
-                         
+
     my $history = $ttmeta->get('WORKFLOWHISTORY') || {};
     $history->{value} .= "<br>Forked to " .
         "[[$w.$t]]" . " by $who at $now";
@@ -1206,7 +1211,8 @@ sub _restFork {
     
     # Modell Aachen Settings:
     # Ueberfuehren in Underrevision:
-    my $newcontrolledTopic = _initTOPIC( $w, $t );
+    
+    my $newcontrolledTopic = _initTOPIC( $w, $t, undef, $meta, $text, 1);
     my $url;
 
     unless ($newcontrolledTopic) {
@@ -1221,11 +1227,6 @@ sub _restFork {
         return "Error";
     }
  
-# Again checked above      
-#    return unless $action
-#        && $state
-#          && $state eq $newcontrolledTopic->getState()
-#            && $newcontrolledTopic->haveNextState($action);
     $newcontrolledTopic->changeState($forkAction);
     local $isStateChange = 1;
     $newcontrolledTopic->save(1);
@@ -1358,7 +1359,6 @@ sub beforeSaveHandler {
     }
 
     my $controlledTopic;
-#Hat nicht geklappt, FrischerTest7 hat den alten State nicht gelöscht. Eventuell aus dem Text löschen? Auch todo: NextUser
     if ($changingState) {
         # See if we are expecting to apply a new state from query
         # params
@@ -1374,7 +1374,7 @@ sub beforeSaveHandler {
 
     } else {
         # Otherwise we are *not* changing state so we can use initTOPIC
-        $controlledTopic = _initTOPIC( $web, $topic );
+        $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, 1 );
 
     }
 
@@ -1456,11 +1456,7 @@ Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
 #always overwrite?            unless ($mstate && $mstate->{ state }) {
                 my $newAction = $controlledTopic->getActionWithAttribute('NEW');
                 if($newAction) {
-                     # XXX Very dirty! Have to give the controlled topic the current meta-object or those changes will go nowhere
-                    $controlledTopic->{meta} = $meta; 
                     $controlledTopic->changeState($newAction);
-                    # don't think this is neccesary but better safe than sorry
-                    delete($cache{"$web.$topic"});
                 }
         }
     }
