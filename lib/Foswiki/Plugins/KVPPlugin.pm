@@ -412,10 +412,11 @@ sub _WORKFLOWMETA {
     my $rWeb = $attributes->{web} || $web;
     my $rTopic = $attributes->{topic} || $topic;
     my $rev = $attributes->{rev} || 0;
+    my $alt = $attributes->{alt} || '';
 
     my $attr;
     my $controlledTopic = _initTOPIC( $web, $topic, $rev );
-    return '' unless $controlledTopic;
+    return $alt unless $controlledTopic;
     
     if (!defined $attributes->{name}) {
         # Old interpretation, for compatibility
@@ -425,7 +426,16 @@ sub _WORKFLOWMETA {
     }
     $attr ||= 'name';
 
-    return $controlledTopic->getWorkflowMeta($attr);
+    my $ret = $controlledTopic->getWorkflowMeta($attr);
+    if(!$ret) {
+        my $list = $attributes->{or};
+	if($list) {
+            while(!$ret && $list =~ m/([a-zA-Z_]*)/g) {
+                $ret = $controlledTopic->getWorkflowMeta($1);
+            }
+        }
+    }
+    return  $ret || $alt;
 }
 
 # Tag handler
