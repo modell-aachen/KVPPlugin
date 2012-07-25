@@ -196,6 +196,7 @@ sub _WORKFLOWCONTRIBUTORS {
     my ( $session, $params, $topic, $web ) = @_;
     my $controlledTopic = _initTOPIC( $web, $topic );
 
+    return unless $controlledTopic;
     return $controlledTopic->getExtraNotify();
 }
 
