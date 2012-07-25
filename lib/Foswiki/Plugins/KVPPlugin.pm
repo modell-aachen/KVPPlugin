@@ -409,8 +409,12 @@ sub _WORKFLOWHISTORY {
 sub _WORKFLOWMETA {
     my ( $session, $attributes, $topic, $web ) = @_;
 
-	my $attr;
-    my $controlledTopic = _initTOPIC( $web, $topic );
+    my $rWeb = $attributes->{web} || $web;
+    my $rTopic = $attributes->{topic} || $topic;
+    my $rev = $attributes->{rev} || 0;
+
+    my $attr;
+    my $controlledTopic = _initTOPIC( $web, $topic, $rev );
     return '' unless $controlledTopic;
     
     if (!defined $attributes->{name}) {
@@ -419,6 +423,7 @@ sub _WORKFLOWMETA {
     } else {
         $attr = $attributes->{name};
     }
+    $attr ||= 'name';
 
     return $controlledTopic->getWorkflowMeta($attr);
 }
@@ -1032,7 +1037,6 @@ sub _changeState {
     };
     return undef;
 }
-
 
 # Forces write permission
 sub transferACL {
