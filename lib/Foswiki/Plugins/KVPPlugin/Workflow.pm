@@ -133,7 +133,7 @@ sub new {
                       if ($defaultKey) {
                         my $defaultRow = $default{ $defaultKey };
                         if( $defaultRow ) {
-                          foreach my $def (keys $defaultRow){
+                          foreach my $def (keys %$defaultRow){
                             $data{ $def } = $defaultRow->{ $def } unless $data { $def };
                           }
                         }
