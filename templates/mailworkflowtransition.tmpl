@@ -1,6 +1,6 @@
 From: %WIKIWEBMASTERNAME% <%WIKIWEBMASTER%>
 To: %EMAILTO%
-Subject: : %IF{"$'GETWORKFLOWROW{istdiskussion}' = 1" then="%TOPIC%" else="%WORKFLOWORIGIN%"}% hat einen neuen Status: %TARGET_STATE%
+Subject: %IF{"$'GETWORKFLOWROW{istdiskussion}' = 1" then="%TOPIC%" else="%WORKFLOWORIGIN%"}% hat einen neuen Status: %TARGET_STATE%
 MIME-Version: 1.0
 Content-Type: multipart/alternative; boundary="=_=0i0k0i0w0tXuOi0E0A"
 
