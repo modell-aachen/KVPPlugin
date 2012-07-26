@@ -414,6 +414,7 @@ sub _WORKFLOWMETA {
     my $rTopic = $attributes->{topic} || $topic;
     my $rev = $attributes->{rev} || 0;
     my $alt = $attributes->{alt} || '';
+    my $remove = $attributes->{nousersweb};
 
     my $attr;
     my $controlledTopic = _initTOPIC( $web, $topic, $rev );
@@ -436,7 +437,11 @@ sub _WORKFLOWMETA {
             }
         }
     }
-    return  $ret || $alt;
+    if($ret) {
+        $ret =~ s#^$Foswiki::cfg{UsersWebName}\.##g if $remove;
+        return $ret;
+    }
+    return  $alt;
 }
 
 # Tag handler
