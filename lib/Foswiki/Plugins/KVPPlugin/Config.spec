@@ -14,4 +14,6 @@ $Foswiki::cfg{Extensions}{KVPPlugin}{except} = '^(WikiGroups|WikiUsers|WebChange
 # Die Voreinstellung ist auf den ModacSkin abgestimmt.
 $Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow} = {'stategroup' => 'Infoseite', 'discussionlabel' => 'alte Diskussion', 'istdiskussion' => 0};
 
-
+# **BOOLEAN**
+# Detailierte Logs f&uuml;r Emails aktivieren.
+$Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails} = 0;

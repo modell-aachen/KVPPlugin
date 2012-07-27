@@ -514,7 +514,6 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
         
         # Alex: Emails versenden
         if ( scalar(@emails) ) {
-		Foswiki::Func::writeWarning("Mails: ".join(',', @emails));
             # Have a list of recipients
             my $text = Foswiki::Func::loadTemplate('mailworkflowtransition');
             Foswiki::Func::setPreferencesValue( 'EMAILTO',
@@ -528,6 +527,9 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
                     'Failed to send transition mails: ' . $errors );
             }
         }
+        Foswiki::Func::writeWarning("Topic: '$this->{web}.$this->{topic}' Transition: '$action' Notify column: '$notify' Mails: ".join(", ", @emails)) if ($Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails});
+    } else {
+        Foswiki::Func::writeWarning("Topic: '$this->{web}.$this->{topic}' Transition: '$action' Notify column: empty") if ($Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails});
     }
 
     return undef;
