@@ -190,7 +190,6 @@ sub getActionWithAttribute {
     foreach my $t( @{ $this->{transitions} } ) {
         if ( $t->{state} && $t->{state} eq $currentState && $t->{attribute} && $t->{attribute} =~ /(?:^|\W)$attribute(?:\W|$)/ ) {
             my $allowed = $topic->expandMacros( $t->{allowed} );
-	    Foswiki::Func::writeWarning("Condition: ".$topic->expandMacros($t->{condition})." -> "._isTrue($topic->expandMacros($t->{condition})));
             if ( _isAllowed($allowed) && _isTrue($topic->expandMacros($t->{condition})) ) {
                 return $t->{action};
             }
