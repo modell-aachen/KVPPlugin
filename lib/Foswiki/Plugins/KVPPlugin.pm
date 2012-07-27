@@ -1309,11 +1309,16 @@ sub beforeSaveHandler {
 
     # Do the RemoveMeta, SetForm, SetField, SetPref if save came from a template
     if($query->param('templatetopic')) {
-      # RemoveMeta:
       my $removeMeta = $meta->get( 'PREFERENCE', 'RemoveMeta' );
+      my $setForm = $meta->get( 'PREFERENCE', 'SetForm' );
+      my $setField = $meta->get( 'PREFERENCE', 'SetField' );
+      my $setMeta = $meta->get( 'PREFERENCE', 'SetPref' );
+
+      # RemoveMeta:
       if($removeMeta) {
         $meta->remove('PREFERENCE', 'RemoveMeta');
-        my $removeList = $removeMeta->{value};
+        my $removeList = Foswiki::Func::expandCommonVariables(
+            $removeMeta->{value}, $topic, $web, $meta);
         my @toRemove = split(",", $removeList);
         foreach my $item (@toRemove) {
           $item =~ s#^\s*##;
@@ -1322,19 +1327,19 @@ sub beforeSaveHandler {
         }
       }
       # SetForm:
-      my $setForm = $meta->get( 'PREFERENCE', 'SetForm' );
       if($setForm) {
         $meta->remove('PREFERENCE', 'SetForm');
-        $setForm = $setForm->{value};
+        $setForm = Foswiki::Func::expandCommonVariables(
+            $setForm->{value}, $topic, $web, $meta);
         $setForm =~ s#^\s*##g;
         $setForm =~ s#\s*$##g;
         $meta->put('FORM', { name => $setForm } );
       }
       # SetField:
-      my $setField = $meta->get( 'PREFERENCE', 'SetField' );
       if($setField) {
         $meta->remove('PREFERENCE', 'SetField');
-        $setField = $setField->{value};
+        $setField = Foswiki::Func::expandCommonVariables(
+            $setField->{value}, $topic, $web, $meta);
         while($setField =~ m/"\s*([^"]+?)\s*=\s*([^"]*?)\s*"/g) {
           my $toSet = $1;
           my $value = $2;
@@ -1344,10 +1349,10 @@ sub beforeSaveHandler {
         }
       }
       # SetPref:
-      my $setMeta = $meta->get( 'PREFERENCE', 'SetPref' );
       if($setMeta) {
         $meta->remove('PREFERENCE', 'SetPref');
-        $setMeta = $setMeta->{value};
+        $setMeta = Foswiki::Func::expandCommonVariables(
+            $setMeta->{value}, $topic, $web, $meta);
         while($setMeta =~ m/"\s*([^"]+?)\s*=\s*([^"]*?)\s*"/g) {
           my $toSet = $1;
           my $value = $2;
