@@ -522,7 +522,7 @@ SCRIPT
 #                -value => $actions[0],
 #                -id => 'WORKFLOWbutton'
 #            )
-            "<noautolink>%BUTTON{\"%MAKETEXT{$actions[0]}%\" id=\"WORKFLOWbutton\" type=\"submit\"}%</noautolink>"
+            "<noautolink>%BUTTON{\"%MAKETEXT{$actions[0]}%\" id=\"WORKFLOWbutton\" type=\"submit\" onclick=\"jQuery('#KVPTransitions').block()\"}%</noautolink>"
         );
     }
     else {
@@ -543,7 +543,7 @@ SCRIPT
 #                -class => $buttonClass,
 #                -value => 'Change status'
 #            )
-            "<noautolink>%BUTTON{\"%MAKETEXT{\"Change status\"}%\" type=\"submit\"}%</noautolink>"
+            "<noautolink>%BUTTON{\"%MAKETEXT{\"Change status\"}%\" type=\"submit\" onclick=\"jQuery('#KVPTransitions').block()\"}%</noautolink>"
         );
     }
 

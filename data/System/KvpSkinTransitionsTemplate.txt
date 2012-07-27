@@ -1,7 +1,7 @@
 %{ Modell Aachen KVP Prozess }%
 
 %TMPL:DEF{"kvptransitions"}%
-<div class="modacKVPtable">
+<div class="modacKVPtable" id="KVPTransitions">
 | *%MAKETEXT{"Improvement Process"}%* ||
 | %MAKETEXT{"State"}% | %MAKETEXT{"%WORKFLOWSTATEMESSAGE%"}% |
 %IF{"istopic '%WORKFLOWORIGIN%'" then="| $percentMAKETEXT{$quotDifference to approved version$quot}$percent | $percentBUTTON{$quot$percentMAKETEXT{$quotCompare with approved version$quot}$percent$quot target=$quot$percentSCRIPTURL{compare}$percent/%WEB%/%TOPIC%?external=$percentWORKFLOWORIGIN$percent$quot}$percent |$n"}%| %MAKETEXT{"Next step"}% | %WORKFLOWTRANSITION% |
