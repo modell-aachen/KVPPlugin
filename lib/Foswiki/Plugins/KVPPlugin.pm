@@ -584,17 +584,6 @@ sub _WORKFLOWSTATE {
 }
 
 # Tag handler
-sub _WORKFLOWNEXTUSER {
-    my ( $session, $attributes, $topic, $web ) = @_;
-
-    ($web, $topic) = _getTopicName($attributes, $web, $topic);
-    my $controlledTopic = _initTOPIC( $web, $topic );
-    return '' unless $controlledTopic;
-
-    return $controlledTopic->getNextUser();
-}
-
-# Tag handler
 sub _WORKFLOWFORK {
     my ( $session, $attributes, $topic, $web ) = @_;
 

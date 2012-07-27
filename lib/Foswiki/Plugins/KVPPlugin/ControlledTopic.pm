@@ -42,7 +42,6 @@ sub new {
             state    => $meta->get('WORKFLOW'),
             history  => $meta->get('WORKFLOWHISTORY'),
             mailing  => $meta->get('WORKFLOWMAILINGLIST'),
-            nextuser => $meta->get('WORKFLOWNEXTUSER'),
 	    wrev => $meta->get('WORKFLOWREV') || { 'MajorRev' => 0, 'MinorRev' => 0 },
             forkweb  => $web,
             forktopic => $topic . $forkSuffix,
@@ -113,21 +112,6 @@ sub getExtraNotify {
     }
 
     return $this->{mailing}->{$type};
-}
-
-# Alex: Get the extra Mailinglist (People involved in the Discussion)
-sub getNextUser {
-    my $this = shift;
-    return $this->{nextuser}->{value};
-}
-
-# Alex: Set the extra Mailinglist (People involved in the Discussion)
-sub setNextUser {
-	my ( $this, @users ) = @_;
-	
-	#Alex: Verbesserungsfähig?
-	$this->{nextuser}->{value} = join(',', @users);
-	$this->{meta}->put( "WORKFLOWNEXTUSER", $this->{nextuser} );
 }
 
 # Alex: Set the extra Mailinglist (People involved in the Discussion)
@@ -494,13 +478,6 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
         # Alex: Email Doubletten verhindern:
         @emails = del_double(@emails);
 #Foswiki::Func::writeWarning("changeState mails: ".join(",", @emails));
-        
-        # Alex: Notify Einträge machen - das muss in Allow User rein:
-        if ( scalar(@persons) )
-        {
-       	    $this->setNextUser(@persons);
-        }
-        
         
         # Alex: Emails versenden
         if ( scalar(@emails) ) {
