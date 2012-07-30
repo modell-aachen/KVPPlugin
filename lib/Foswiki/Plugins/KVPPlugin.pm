@@ -1296,25 +1296,16 @@ sub beforeSaveHandler {
     my $query = Foswiki::Func::getCgiQuery();
     return if($query->url() =~ m#/bin/jsonrpc$#); # XXX always pass MetaCommentPlugin
 
-    # Do the RemoveMeta, SetForm, SetField, SetPref if save came from a template
+    # Do the RemoveMeta, RemovePref, SetForm, SetField, SetPref if save came from a template
     if($query->param('templatetopic')) {
+      # Got to get those values now, or they might be removed
       my $removeMeta = $meta->get( 'PREFERENCE', 'RemoveMeta' );
+      my $removePref = $meta->get( 'PREFERENCE', 'RemovePref' );
       my $setForm = $meta->get( 'PREFERENCE', 'SetForm' );
       my $setField = $meta->get( 'PREFERENCE', 'SetField' );
       my $setMeta = $meta->get( 'PREFERENCE', 'SetPref' );
 
-      # RemoveMeta:
-      if($removeMeta) {
-        $meta->remove('PREFERENCE', 'RemoveMeta');
-        my $removeList = Foswiki::Func::expandCommonVariables(
-            $removeMeta->{value}, $topic, $web, $meta);
-        my @toRemove = split(",", $removeList);
-        foreach my $item (@toRemove) {
-          $item =~ s#^\s*##;
-          $item =~ s#\s*$##;
-          $meta->remove($item);
-        }
-      }
+      # First set stuff, as it might require values that are to be removed.
       # SetForm:
       if($setForm) {
         $meta->remove('PREFERENCE', 'SetForm');
@@ -1348,6 +1339,30 @@ sub beforeSaveHandler {
 	  $value =~ s#\$quot#"#g;
 	  $value =~ s#\$dollar#\$#g;
           $meta->putKeyed('PREFERENCE', { name => $toSet, title => $toSet, type => 'Set', value => $value } );
+        }
+      }
+      # RemoveMeta:
+      if($removeMeta) {
+        $meta->remove('PREFERENCE', 'RemoveMeta');
+        my $removeList = Foswiki::Func::expandCommonVariables(
+            $removeMeta->{value}, $topic, $web, $meta);
+        my @toRemove = split(",", $removeList);
+        foreach my $item (@toRemove) {
+          $item =~ s#^\s*##;
+          $item =~ s#\s*$##;
+          $meta->remove($item);
+        }
+      }
+      # RemovePref:
+      if($removePref) {
+        $meta->remove('PREFERENCE', 'RemoveMeta');
+        my $removeList = Foswiki::Func::expandCommonVariables(
+            $removeMeta->{value}, $topic, $web, $meta);
+        my @toRemove = split(",", $removeList);
+        foreach my $item (@toRemove) {
+          $item =~ s#^\s*##;
+          $item =~ s#\s*$##;
+          $meta->remove('PREFERENCE', $item);
         }
       }
     }
