@@ -38,9 +38,6 @@ sub initPlugin {
     Foswiki::Func::registerRESTHandler(
         'fork', \&_restFork,
         authenticate => 1, http_allow => 'GET' );
-    Foswiki::Func::registerRESTHandler(
-        'changeMList', \&_changeMList,
-        http_allow => 'POST' );
 
     Foswiki::Func::registerTagHandler(
         'WORKFLOWSTATE', \&_WORKFLOWSTATE );
@@ -60,8 +57,6 @@ sub initPlugin {
         'WORKFLOWMETA', \&_WORKFLOWMETA );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWSUFFIX', \&_WORKFLOWSUFFIX );
-    Foswiki::Func::registerTagHandler(
-        'WORKFLOWNOTIFY', \&_WORKFLOWNOTIFY );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWCONTRIBUTORS', \&_WORKFLOWCONTRIBUTORS );
     Foswiki::Func::registerTagHandler(
@@ -110,80 +105,6 @@ sub _WORKFLOWEDITPERM {
     return Foswiki::Func::checkAccessPermission(
         'CHANGE', $Foswiki::Plugins::SESSION->{user},
         undef, $topic, $web, undef) ? 1 : 0;
-}
-
-# Tag handler for WORKFLOWNOTIFY
-# Will render a textfield and a button to add users to the notify list
-# The form will call changeMList
-# Possible lists: auto, permanent
-sub _WORKFLOWNOTIFY {
-    my ( $session, $params, $topic, $web ) = @_;
-    my $controlledTopic = _initTOPIC( $web, $topic );
-    return '' unless ($controlledTopic); # needed if a topic is not under workflow
-    my $type = $params->{_DEFAULT};
-    return '' unless ($type =~ /AUTO|PERMANENT/);
-    my $list = $controlledTopic->getExtraNotify($type) || '';
-
-# TODO: changestatus button muss schauen, ob liste verändert und evntl nachfragen ob vorher speichern
-# TODO: Permanente Liste
-# XXX: Verwirrend: Emails von Notify
-
-    my $url = Foswiki::Func::getScriptUrl(
-        $pluginName, 'changeMList', 'rest' );
-
-    my $ret = '';
-    # formfield for full change possibilities if allowed to, otherwise just the list
-    if ($controlledTopic->getChangeMail()) {
-        $ret .= <<HTML;
-%JQREQUIRE{"textboxlist"}%
-<form action='$url' method='post'>
-<div class='foswikiFormSteps'>
-  <div class='foswikiFormStep'>
-  </div>
-  <div class='foswikiFormStep'>
-    <a name='WORKFLOWMListButton'>
-    <input id='WORKFLOWMailinglist' type='text' class='foswikiInputField jqTextboxList' size='20' name='users' value='$list' />
-    %BUTTON{"%MAKETEXT{"Personen übernehmen"}%" icon="tick" type="submit"}%
-    %CLEAR%
-    </a>
-  </div>
-</div>
-<input type='hidden' name='cweb' value='$web' />
-<input type='hidden' name='ctopic' value='$topic' />
-<input type='hidden' name='NOAPPEND' value='1' />
-<input type='hidden' name='ctype' value='$type' />
-</form>
-HTML
-    } else {
-       $ret .= "<span>$list</span>";
-    }
-
-    my $message;
-    my $icon;
-    my $action;
-    if (isInList($list)) {
-        $message = 'Statusänderungen nicht mehr beobachten';
-        $icon = 'delete';
-    } else {
-        $message = 'Statusänderungen beobachten';
-        $icon = 'add';
-    }
-
-    $ret .= <<HTML;
-<form action='$url' method='post'>
-  <div class='foswikiFormStep'>
-    %BUTTON{"%MAKETEXT{"$message"}%" icon="$icon" type="submit"}%
-    <input type='hidden' name='cweb' value='$web' />
-    <input type='hidden' name='ctopic' value='$topic' />
-    <input type='hidden' name='NOAPPEND' value='1' />
-    <input type='hidden' name='ctype' value='$type' />
-    <input type='hidden' name='useraction' value='$icon' />
-    %CLEAR%
-  </div>
-</form>
-HTML
-    
-    return $ret;
 }
 
 # Tag handler for WORKFLOWCONTRIBUTORS
@@ -644,140 +565,6 @@ sub _GETWORKFLOWROW {
     my $configure = $Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow};
     return '' unless $configure;
     return $configure->{$param};
-}
-
-# REST handler, updates the Workflow mailing list
-sub _changeMList {
-    my ($session) = @_;
-    my $query = Foswiki::Func::getCgiQuery();
-    return unless $query;
-
-    my $web   = $query->param('cweb'); 
-    my $topic = $query->param('ctopic');
-    my $type = $query->param('ctype');
-    my @listArray = $query->param('users');
-    my $useraction = $query->param('useraction');
-
-    # Check if type is supported
-    unless ($type eq 'AUTO' || $type eq 'PERMANENT') {
-        my $url = Foswiki::Func::getScriptUrl(
-            $web, $topic, 'oops',
-            template => "oopsworkflowerr",
-            param1   => "Internal error, type of workflow mailing-List is not given!"
-              . ( 'web: '.$web   || '' ) . '.'
-                . ( 'topic: '.$topic || '' )
-               );
-        Foswiki::Func::redirectCgiQuery( undef, $url );
-        return undef;
-    }
-
-#XXX Debug
-    die("Kein Web angegeben!") unless $web;
-    die("Kein Topic angegeben!") unless $topic;
-
-    ($web, $topic) =
-      Foswiki::Func::normalizeWebTopicName( $web, $topic );
-
-    my $controlledTopic = _initTOPIC( $web, $topic );
-
-    unless ($controlledTopic) {
-        my $url = Foswiki::Func::getScriptUrl(
-            $web, $topic, 'oops',
-            template => "oopsworkflowerr",
-            param1   => "Could not initialise workflow for "
-              . ( 'web: '.$web   || '' ) . '.'
-                . ( 'topic: '.$topic || '' )
-               );
-        Foswiki::Func::redirectCgiQuery( undef, $url );
-        return undef;
-    }
-
-    # remove/add user if requested, otherwise change complete list
-    my $list = '';
-#die("action: $useraction type: $type");
-    if($useraction) {
-        my $user = Foswiki::Func::getWikiUserName();
-        if($useraction eq 'delete') {
-            # going to split user in username and userweb in case
-            # the userweb was omitted in the list
-            my $userweb;
-            my $useruser;
-            if($user =~ /(^.*\.)(.*)/) {
-                $userweb = $1;
-                $useruser = $2;
-            } else {
-                $useruser = $user;
-            }
-          
-            $list = $controlledTopic->getExtraNotify($type) || '';
-            # remove user from list (beginning, middle/end of list)
-            $list =~ s/^\s*$userweb?$useruser\s*,?//;
-            $list =~ s/,\s*$userweb?$useruser\s*//g;
-
-            $controlledTopic->setExtraNotify($list, $type);
-        } elsif($useraction eq 'add') {
-            $controlledTopic->addExtraNotify($user, $type);
-        }
-    } else {
-        # check if user is allowed to change
-        unless ($controlledTopic->getChangeMail()) {
-            my $url = Foswiki::Func::getScriptUrl(
-                $web, $topic, 'oops',
-                template => "oopsworkflowerr",
-                param1   => "You are not allowed to change the mailing list for "
-                . ( 'web: '.$web   || '' ) . '.'
-                . ( 'topic: '.$topic || '' )
-                . ' in it\'s current state'
-            );
-            Foswiki::Func::redirectCgiQuery( undef, $url );
-            return undef;
-        }
-
-        # replace list
-        # check if users exist
-        foreach my $each (@listArray) {
-            next unless $each; # Skip empty user (emtpy input field!) or active user will always be added.
-            # Check if email or username
-            if($each =~ /^$Foswiki::regex{emailAddrRegex}$/) {
-                my @user = Foswiki::Func::emailToWikiNames( $each );
-                unless( scalar @user ) {
-                    # no user found for this mail -> Cancel with error
-                    my $url = Foswiki::Func::getScriptUrl(
-                        $web, $topic, 'oops',
-                        template => "oopsworkflowerr",  # XXX template
-                        param1   => "Could not find user for email ".$each."!"
-                    );
-                    Foswiki::Func::redirectCgiQuery( undef, $url );
-                    return undef;
-                }
-                # Add all found users (multiple users per mail) although one would be enough for good overview
-                $list .= join(",", @user);                
-            } else {
-                my $user = Foswiki::Func::getWikiUserName($each);
-                if ( Foswiki::Func::wikiToUserName($user) ) {
-                    $list .= $user.",";
-                } elsif ( Foswiki::Func::isGroup($each) ) {
-                    $list .= $each.",";
-                } else {
-                    # Cancel with error
-                    my $url = Foswiki::Func::getScriptUrl(
-                        $web, $topic, 'oops',
-                        template => "oopsworkflowerr", # XXX template! 
-                        param1   => "Could not find user ".$user."!"
-                    );
-                    Foswiki::Func::redirectCgiQuery( undef, $url );
-                    return undef;
-                }
-            }
-        }
-        $controlledTopic->setExtraNotify($list, $type);
-    }
-
-    local $isStateChange = 1; 
-    $controlledTopic->save(1);
-    local $isStateChange = 0;
-    Foswiki::Func::redirectCgiQuery( undef, "/$web/$topic#WORKFLOWMListButton" );
-    return undef; 
 }
 
 # Handle actions. REST handler, on changeState action.
