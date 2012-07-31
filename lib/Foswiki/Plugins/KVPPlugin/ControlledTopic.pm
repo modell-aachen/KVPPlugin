@@ -162,7 +162,7 @@ sub setState {
     $this->{state}->{name} = $state;
     $this->{state}->{"LASTVERSION_$state"} = $version;
     $this->{state}->{"LASTPROCESSOR_$state"} = Foswiki::Func::getWikiUserName();
-    $this->{state}->{"LEAVING_$oldState"} = Foswiki::Func::getWikiUserName();
+    $this->{state}->{"LEAVING_$oldState"} = Foswiki::Func::getWikiUserName() if($oldState);
     $this->{state}->{"LASTTIME_$state"} =
       Foswiki::Time::formatTime( time(), '$day.$mo.$year', 'servertime' );
     $this->{meta}->putKeyed( "WORKFLOW", $this->{state} );
