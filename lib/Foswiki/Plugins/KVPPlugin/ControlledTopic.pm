@@ -355,7 +355,7 @@ sub newForm {
 # removes the entries from AUTO in the mailinglist.
 sub purgeExtraNotify {
     my ( $this ) = @_;
-    my $list = {PERMANENT => $this->{mailing}->{PERMANENT}, AUTO => ""};
+    my $list = {name => 'WORKFLOWMAILINGLIST', PERMANENT => $this->{mailing}->{PERMANENT}, AUTO => ""};
     $this->{meta}->putKeyed("WORKFLOWMAILINGLIST", $list);
     $this->{mailing} = $list;
 }

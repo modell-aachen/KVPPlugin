@@ -982,7 +982,10 @@ sub _restFork {
    
     # reset Auto-Mailinglist     
     $meta->putKeyed('WORKFLOWMAILINGLIST', 
-            { AUTO => '', PERMANENT => $controlledTopic->getExtraNotify('PERMANENT')});
+            { name => 'WORKFLOWMAILINGLIST',
+              PERMANENT => $controlledTopic->getExtraNotify('PERMANENT'),
+              AUTO => ''
+    });
     # mark as state change (althought it isn't) so it passes beforeSaveHandler
     local $isStateChange = 1; 
     Foswiki::Func::saveTopic($w, $t, $meta, $text,
@@ -1280,10 +1283,7 @@ Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
     # Append current user to the mailing list unless asked not to (ie. _changeMailingList)
     my $noappend = $query->param('NOAPPEND');
     unless($noappend && $noappend eq '1') {
-        $controlledTopic->addExtraNotify(Foswiki::Func::getWikiUserName(), 'AUTO');   
-        # XXX Need to dublicate this because addExtraNotify works only on the metadata of the controlled topic and not necessarily on the $meta object that will be saved
-        # simply using the $meta data of the controlled topic seems like a bad idea in case another plugin worked on it
-        $meta->putKeyed( "WORKFLOWMAILINGLIST", $controlledTopic->{mailing} ); 
+        $controlledTopic->addExtraNotify(Foswiki::Func::getWikiUserName(), 'AUTO');
     }
     
 }
