@@ -718,25 +718,8 @@ sub _changeState {
                          my $origMeta = $controlledTopic->{meta};
 
                          # Move topic to trash
-                         if ( $controlledTopic->canEdit() ) {
-                             $controlledTopic->save(1);
-                             
-                             Foswiki::Func::moveTopic( $web, $topic, "Trash", $trashTopic );
-                         } else {
-                             # XXX Changing change permissions to current user so I can move the topic and finally change them back.
-                             # This is a bad design flaw but at the moment I don't see any way around it
-                             $controlledTopic->{meta}->putKeyed("PREFERENCE", { name => 'ALLOWTOPICCHANGE', value => Foswiki::Func::getWikiUserName() }); 
-                             
-                             $controlledTopic->save(1);
-	            	 	            	 
-                             Foswiki::Func::moveTopic( $web, $topic, "Trash", $trashTopic );
-                             
-                             # restore old acl
-                             my ($newMeta, $text) = Foswiki::Func::readTopic( "Trash", $trashTopic );
-                             # XXX XXX It won't save into Trash if ClassificationPlugin is enabled (can't read metadata)
-                             # Have to rely on Foswikis protection of Trash in that case
-                             Foswiki::Func::saveTopic( "Trash", $trashTopic, $origMeta, $text, { forcenewrevision => 0, minor =>1, dontlog => 1, ignorepermissions => 1 }) unless ($Foswiki::cfg{Plugins}{ClassificationPlugin}{Enabled} && $Foswiki::cfg{Plugins}{ClassificationPlugin}{Enabled} eq '1');
-                         }
+                         $controlledTopic->save(1);
+                         Foswiki::Func::moveTopic( $web, $topic, "Trash", $trashTopic );
 
                          # Only unlock / add to history if appWeb exists (does not when topic)
                          if(Foswiki::Func::topicExists( $appWeb, $appTopic )) {
