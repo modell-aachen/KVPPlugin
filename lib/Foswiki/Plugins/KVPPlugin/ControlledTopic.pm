@@ -89,11 +89,7 @@ sub getWorkflowMeta {
     my ( $this, $attributes ) = @_;
 
     if($attributes eq 'Revision') {
-        my $wrev = $this->{meta}->get( 'WORKFLOWREV' );
-        return unless $wrev;
-        my $major = $wrev->{'MajorRev'};
-        return "0" unless $major;
-        return "$major.$wrev->{'MinorRev'}";
+        return "$this->{wrev}->{'MajorRev'}.$this->{wrev}->{'MinorRev'}";
     }
 
     if (defined $this->{meta}->get('WORKFLOW')) {
