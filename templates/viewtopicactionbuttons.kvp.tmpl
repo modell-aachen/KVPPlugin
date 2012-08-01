@@ -31,6 +31,6 @@
 %TMPL:DEF{"talktopicactionviewinactivebearbeiten"}%<a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%%TMPL:P{talktopic}%' rel='nofollow' title='%MAKETEXT{"Discussion about Improvements"}%' >%MAKETEXT{%GETWORKFLOWROW{"discussionlabel"}%}%</a>%TMPL:END%
 
 %{ Diskussionsstand neu erstellen }%
-%TMPL:DEF{"talktopicactionviewinactiveneu"}%%WORKFLOWFORK{newnames="%WEB%.%TOPIC%%TMPL:P{talktopic}%", label="%MAKETEXT{"start new discussion"}%", lockdown="off"}%%TMPL:END%
+%TMPL:DEF{"talktopicactionviewinactiveneu"}%%WORKFLOWFORK{label="%MAKETEXT{"Start new Discussion"}%" lockdown="off" title="%MAKETEXT{"Discussion about Improvements"}%"}%%TMPL:END%
 
 %{ ------------------------------------ /TALK --------------------------------------------------------------- }%

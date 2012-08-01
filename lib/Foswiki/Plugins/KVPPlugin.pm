@@ -523,33 +523,29 @@ sub _WORKFLOWFORK {
         ($web, $topic) = _getTopicName($attributes, $web, $topic);
         $newnames = $attributes->{newnames};
     }
-    return '' unless $newnames;
+
     my $lockdown = Foswiki::Func::isTrue($attributes->{lockdown});
 
     if (!Foswiki::Func::topicExists($web, $topic)) {
     	return "";
         return "<span class='foswikiAlert'>WORKFLOWFORK: '$topic' does not exist</span>";
     }
-    my $errors = '';
-    foreach my $newname ( split(',', $newnames ) ) {
-        my ($w, $t) =
-          Foswiki::Func::normalizeWebTopicName( $web, $newname );
-        if (Foswiki::Func::topicExists($w, $t)) {
-            $errors .= "<span class='foswikiAlert'>WORKFLOWFORK: $w.$t exists</span><br />";
-        }
-    }
-    return $errors if $errors;
 
     my $label = $attributes->{label} || 'Fork';
+    my $title = $attributes->{title};
+    $title = ($title)?"title='$title'":'';
     my $buttonClass =
       Foswiki::Func::getPreferencesValue('WORKFLOWTRANSITIONCSSCLASS')
       || 'foswikiChangeFormButton foswikiSubmit"';
       
-    my $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'rest', topic=> "$web.$topic", newnames=> $newnames, lockdown=> $lockdown);
+    my $url;
+    if ( $newnames ) {
+        $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'rest', topic=> "$web.$topic", lockdown=> $lockdown, newnames=> $newnames );
+    } else {
+        $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'rest', topic=> "$web.$topic", lockdown=> $lockdown );
+    }
     
-	
-	return "<a href='$url'" . " %MAKETEXT{title='Discussion about Improvements' >Start Discussion}%</a>";
-
+    return "<a href='$url' $title>$label</a>";
 }
 
 # Tag handler
@@ -876,9 +872,10 @@ sub _restFork {
     # Update the history in the template topic and the new topic
     my $query = Foswiki::Func::getCgiQuery();
     my $forkTopic = $query->param('topic');
-#    my @newnames = split(/,/, $query->param('newnames'));
-    my $newname = $query->param('newnames');
+    my @newnames = split(/,/, $query->param('newnames') || $forkTopic.(_WORKFLOWSUFFIX()));
+#    my $newname = $query->param('newnames');
     my $lockdown = $query->param('lockdown');
+
 
     (my $forkWeb, $forkTopic) =
       Foswiki::Func::normalizeWebTopicName( undef, $forkTopic );
@@ -915,103 +912,98 @@ sub _restFork {
 
     my $now = Foswiki::Func::formatTime( time(), undef, 'servertime' );
     my $who = Foswiki::Func::getWikiUserName();
-    
-    my $newForkTopic;
-    if ( $newname ) {
-	$newForkTopic = Foswiki::Sandbox::untaintUnchecked( $newname );
-    } else {
+
+    # Default to topicTALKSUFFIX if no newnames are given
+    if ( scalar @newnames == 0 ) {
         my $forkSuffix = _WORKFLOWSUFFIX();
-	$newForkTopic = $forkTopic.$forkSuffix;
+	@newnames = ($forkTopic.$forkSuffix);
     }
 
-    # create the new topic
-    my ($w, $t) =
-        Foswiki::Func::normalizeWebTopicName( $forkWeb, $newForkTopic );
+    my ($w, $t);
+
+    foreach my $newname (@newnames) {    
+        my $newForkTopic = Foswiki::Sandbox::untaintUnchecked( $newname );
+
+        # create the new topic
+        ($w, $t) =
+            Foswiki::Func::normalizeWebTopicName( $forkWeb, $newForkTopic );
         
-    if (Foswiki::Func::topicExists($w, $t)) {
-        # TalkTopic already exists... redirect to it
-        Foswiki::Func::redirectCgiQuery(undef, Foswiki::Func::getViewUrl($w, $t));
-        return undef;
-#       return "<span class='foswikiAlert'>WORKFLOWFORK: '$w.$t' already exists</span>";
-    }
+        next if (Foswiki::Func::topicExists($w, $t)); 
         
-    #Alex: Test of Allow Fork
-        
-    #Alex: Topic mit allen Dateien kopieren
-    my $handler = $session->{store}->getHandler( $forkWeb, $forkTopic );
-    $handler->copyTopic($session->{store}, $w, $t);
+        #Alex: Topic mit allen Dateien kopieren
+        my $handler = $session->{store}->getHandler( $forkWeb, $forkTopic );
+        $handler->copyTopic($session->{store}, $w, $t);
         
         #Modac: Foswiki 1.0.9
         #$session->{store}->copyTopic($who, $forkWeb, $forkTopic, $w, $t);
         
-    my $text = $tttext;
-    my $meta = new Foswiki::Meta($session, $w, $t);
-    # Alte Daten mit dem Prefix WORKFLOWSAVED_ abspeichern
-    foreach my $k ( keys %$ttmeta ) {
-        # Note that we don't carry over the history from the forked topic
-        next if ( $k =~ /^_/ || $k eq 'WORKFLOWHISTORY' );
-        my @data;
-        foreach my $item ( @{ $ttmeta->{$k} } ) {
-            my %datum = %$item;
-            push( @data, \%datum );
+        my $text = $tttext;
+        my $meta = new Foswiki::Meta($session, $w, $t);
+        foreach my $k ( keys %$ttmeta ) {
+            # Note that we don't carry over the history from the forked topic
+            next if ( $k =~ /^_/ || $k eq 'WORKFLOWHISTORY' );
+            my @data;
+            foreach my $item ( @{ $ttmeta->{$k} } ) {
+                my %datum = %$item;
+                push( @data, \%datum );
+            }
+            $meta->putAll( $k, @data );
         }
-        $meta->putAll( $k, @data );
-    }
     
-    my $forkhistory = {
-        value => "<br>Forked from [[$forkWeb.$forkTopic]] by $who at $now",
-    };
-    $meta->put( "WORKFLOWHISTORY", $forkhistory );
+        my $forkhistory = {
+            value => "<br>Forked from [[$forkWeb.$forkTopic]] by $who at $now",
+        };
+        $meta->put( "WORKFLOWHISTORY", $forkhistory );
    
-    # reset Auto-Mailinglist     
-    $meta->putKeyed('WORKFLOWMAILINGLIST', 
+        # reset Auto-Mailinglist     
+        $meta->putKeyed('WORKFLOWMAILINGLIST', 
             { name => 'WORKFLOWMAILINGLIST',
               PERMANENT => $controlledTopic->getExtraNotify('PERMANENT'),
               AUTO => ''
-    });
-    # mark as state change (althought it isn't) so it passes beforeSaveHandler
-    local $isStateChange = 1; 
-    Foswiki::Func::saveTopic($w, $t, $meta, $text,
+        });
+        # mark as state change (althought it isn't) so it passes beforeSaveHandler
+        local $isStateChange = 1; 
+        Foswiki::Func::saveTopic($w, $t, $meta, $text,
             { forcenewrevision => 0, ignorepermissions => 1 });
-    $isStateChange = 0;
-    # need to clear cache or _initTOPIC might return old meta
+        $isStateChange = 0;
 
-    my $history = $ttmeta->get('WORKFLOWHISTORY') || {};
-    $history->{value} .= "<br>Forked to " .
+        my $history = $ttmeta->get('WORKFLOWHISTORY') || {};
+        $history->{value} .= "<br>Forked to " .
         "[[$w.$t]]" . " by $who at $now";
-    $ttmeta->put( "WORKFLOWHISTORY", $history );
+        $ttmeta->put( "WORKFLOWHISTORY", $history );
 
-    if ($lockdown) {
-        $ttmeta->putKeyed("PREFERENCE",
+        if ($lockdown) {
+            $ttmeta->putKeyed("PREFERENCE",
                 { name => 'ALLOWTOPICCHANGE', value => 'nobody' });
-    }
+        }
 	
-    # Modac: Save old Topic
-    local $isStateChange = 1;
-    Foswiki::Func::saveTopic( $forkWeb, $forkTopic, $ttmeta, $tttext,
+        # Modac: Save old Topic
+        local $isStateChange = 1;
+        Foswiki::Func::saveTopic( $forkWeb, $forkTopic, $ttmeta, $tttext,
                 { forcenewrevision => 1, ignorepermissions => 1 });
     
-    # Modell Aachen Settings:
-    # Ueberfuehren in Underrevision:
-    
-    my $newcontrolledTopic = _initTOPIC( $w, $t, undef, $meta, $text, 1);
-    my $url;
+        # Modell Aachen Settings:
+        # Ueberfuehren in Underrevision:    
+        my $newcontrolledTopic = _initTOPIC( $w, $t, undef, $meta, $text, 1);
+        my $url;
 
-    unless ($newcontrolledTopic) {
-        $url = Foswiki::Func::getScriptUrl(
-            $w, $t, 'oops',
-            template => "oopssaveerr",
-            param1   => "Could not initialise workflow for "
-              . ( $w   || '' ) . '.'
-                . ( $t || '' )
-               );
-        Foswiki::Func::redirectCgiQuery( undef, $url );
-        return "Error";
-    }
+        # I'll assume if it fails for one it fails for all newnames 
+        unless ($newcontrolledTopic) {
+            $url = Foswiki::Func::getScriptUrl(
+                $w, $t, 'oops',
+                template => "oopssaveerr",
+                param1   => "Could not initialise workflow for "
+                    . ( $w   || '' ) . '.'
+                    . ( $t || '' )
+                );
+           Foswiki::Func::redirectCgiQuery( undef, $url );
+           return "Error";
+        }
  
-    $newcontrolledTopic->changeState($forkAction);
-    local $isStateChange = 1;
-    $newcontrolledTopic->save(1);
+        $newcontrolledTopic->changeState($forkAction);
+        local $isStateChange = 1;
+        $newcontrolledTopic->save(1);
+    }
 
     #Redirect zum neuen Disskusions Topic
     return $response->redirect(Foswiki::Func::getViewUrl($w, $t));
