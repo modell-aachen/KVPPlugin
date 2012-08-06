@@ -604,7 +604,7 @@ sub _changeState {
     my $action = $query->param('WORKFLOWACTION');
     my $state  = $query->param('WORKFLOWSTATE');
     
-    #Alex: Die Bad State ist nicht schön
+    #Alex: Die Bad State ist nicht schoen
     die "BAD STATE $action $state!=", $controlledTopic->getState()
       unless $action
         && $state
@@ -691,8 +691,8 @@ sub _changeState {
 
                 # Flag that this is a state change to the beforeSaveHandler
                 local $isStateChange = 1;
-                #Alex: Zugehöriges Topic finden
-                #Alex: Das Item kann hier raus, wenn das neue Trash Web läuft
+                #Alex: Zugehriges Topic finden
+                #Alex: Das Item kann hier raus, wenn das neue Trash Web laeuft
                     my $forkSuffix = _WORKFLOWSUFFIX();
 	            my $appTopic = $topic;
 	            $appTopic =~ s/$forkSuffix$//g;
@@ -700,7 +700,7 @@ sub _changeState {
 	            my $appWeb = $web;
 	            $appWeb =~ s/$forkSuffix$//g;
 	            #Alex TrashTopic ausloten:             	           	
-	            #Alex: Checken ob Topic schon einmal in den Müll verschoben wurde
+	            #Alex: Checken ob Topic schon einmal in den Muell verschoben wurde
                     my $trashTopic = $appWeb . $appTopic;
 		    $trashTopic =~ s#/|\.##g; # remove subweb-deliminators
                     { # scope
@@ -742,7 +742,7 @@ sub _changeState {
 	            	         $meta->remove("WORKFLOWHISTORY"); 	
 	            	     }
 	            	 
-	            	     #Alex: Keine neue Revision erzeugen, Autor nicht überschreiben
+	            	     #Alex: Keine neue Revision erzeugen, Autor nicht ueberschreiben
 	            	     Foswiki::Func::saveTopic( $appWeb, $appTopic, $meta, $text, { forcenewrevision => 0, minor => 1, dontlog => 1, ignorepermissions => 1 });
 	            	 } else {
                              # if non-talk topic does not exist redirect to parent
@@ -761,13 +761,13 @@ sub _changeState {
 	            	
 	            	$url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
 					            	
-	            	#Alex: Force new Revision, damit Änderungen auf jeden Fall in der History sichtbar werden
+	            	#Alex: Force new Revision, damit Aenderungen auf jeden Fall in der History sichtbar werden
 	            	#try{
                         # only move topic if it has a talk suffix
                         if($appTopic eq $topic) {
 	            	        $controlledTopic->save(1);
                         } else {
-	            		#Zuerst kommt das alte Topic in den Müll, dann wird das neue verschoben
+	            		#Zuerst kommt das alte Topic in den Muell, dann wird das neue verschoben
 
 		            	Foswiki::Func::moveTopic( $appWeb, $appTopic, "Trash", $trashTopic);
 				# Save now that I know i can move it afterwards
@@ -844,7 +844,7 @@ sub transferACL {
     }
 
 
-    #Alex: Keine neue Revision erzeugen, Autor nicht überschreiben
+    #Alex: Keine neue Revision erzeugen, Autor nicht ueberschreiben
 #    Foswiki::Func::saveTopic( $dstWeb, $dstTopic, $dstMeta, $dstText, { forcenewrevision => 0, minor => 1, dontlog => 1, ignorepermissions => 1 });
 }
 
@@ -1254,7 +1254,7 @@ Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
                      'The Workflowstate '.$newStateName[0]->{name}.'does not match the old state '.$oldState->{name}.'! Topic can not be saved!' ]
                 );
             }
-# XXX Kommentare sind nicht schreibgeschützt
+# XXX Kommentare sind nicht schreibgeschtzt
 #remove klappt nicht, weils im text steht            $meta->remove('COMMENT');
 #            foreach my $comment ($oldMeta->find( 'COMMENT' )) {
 #                $meta->putKeyed('COMMENT', $comment);

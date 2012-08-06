@@ -393,7 +393,7 @@ sub getRow {
 sub _isAllowed {
     my ($allow) = @_;
     
-    #Modac: Hier könnte ein Abfangen von ACLDISCUSS, ACLCHANGE, ACLVIEW, ACLRENAME hin
+    #Modac: Hier knnte ein Abfangen von ACLDISCUSS, ACLCHANGE, ACLVIEW, ACLRENAME hin
 
     return 1 unless ($allow);
 

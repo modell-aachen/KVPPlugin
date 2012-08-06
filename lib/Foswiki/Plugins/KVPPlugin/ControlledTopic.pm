@@ -132,7 +132,7 @@ sub purgeConributors {
 # Alex: Forkweb
 sub setForkWeb {
 	my ( $this, $forkweb ) = @_;
-	#Alex: Verbesserungsfähig?
+	#Alex: Verbesserungsfhig?
 	$this->{forkweb}->{value} = $forkweb;
 	#$this->{meta}->put( "WRKFLWCONTRIBUTORS", $this->{extranotify} );
 }
@@ -423,7 +423,7 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
 	                        #  . "Gruppenmitglied: '$user" );
 			    }
         	}
-        	# Alex: Handler für Nicht-Gruppen
+        	# Alex: Handler fr Nicht-Gruppen
         	else {
         		#Alex: Debug
         		#Foswiki::Func::writeWarning( __PACKAGE__
@@ -431,7 +431,7 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
         		push( @persons, $group);
         	}
         	
-        	# Alex notify und extranotify zusammenführen und doppelte Werte verrrrnichten!!!
+        	# Alex notify und extranotify zusammenfhren und doppelte Werte verrrrnichten!!!
 			#foreach(@extrapersons) {
   			#	push(@persons,$_);
 			#}
@@ -501,7 +501,7 @@ sub save {
        );
 }
 
-# Alex: Alle doppelten Werte aus einem Array löschen
+# Alex: Alle doppelten Werte aus einem Array lschen
 sub del_double{
 	my %all=();
 	@all{@_}=1;
