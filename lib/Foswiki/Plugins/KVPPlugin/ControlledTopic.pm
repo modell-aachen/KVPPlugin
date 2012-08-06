@@ -145,6 +145,13 @@ sub nextMajorRev {
 	$this->{meta}->put( 'WORKFLOWREV', $this->{wrev} );
 }
 
+# Will increase the minor revision (does not touch major revision).
+sub nextMinorRev {
+	my ( $this ) = @_;
+	$this->{wrev}->{'MinorRev'}++;
+	$this->{meta}->put( 'WORKFLOWREV', $this->{wrev} );
+}
+
 # Set the current state in the topic
 # Alex: Bearbeiter hinzu
 sub setState {
@@ -157,8 +164,6 @@ sub setState {
     $this->{state}->{"LASTTIME_$state"} =
       Foswiki::Time::formatTime( time(), '$day.$mo.$year', 'servertime' );
     $this->{meta}->putKeyed( "WORKFLOW", $this->{state} );
-    $this->{wrev}->{'MinorRev'}++;
-    $this->{meta}->put( 'WORKFLOWREV', $this->{wrev} );
     ## set accesspermissions to the ones defined in the table
     #my $writeAcls = $this->{workflow}->getChangeACL($this, $state);
     #$this->{meta}->putKeyed("PREFERENCE",

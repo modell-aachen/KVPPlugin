@@ -1282,6 +1282,7 @@ Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
     }
 
     $controlledTopic->addConributors(Foswiki::Func::getWikiUserName());
+    $controlledTopic->nextMinorRev(); # XXX will also increment if no new revision created
 }
 
 sub indexTopicHandler {
