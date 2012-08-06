@@ -1212,7 +1212,7 @@ sub beforeSaveHandler {
         # Not a state change, make sure the AllowEdit in the state table
         # permits this action
         throw Foswiki::OopsException(
-            'workflow',
+            'workflowerr',
             def   => 'topic_access',
             web   => $_[2],
             topic => $_[1],
@@ -1225,7 +1225,7 @@ sub beforeSaveHandler {
          my @newStateName = $newMeta->find('WORKFLOW');
         if(scalar @newStateName > 1) { # If 0 this is a new topic, or not controlled, or created without workflow
             throw Foswiki::OopsException(
-                    'workflow',
+                    'workflowerr',
                      def   => 'topic_access',
                      web   => $_[2],
                      topic => $_[1],
@@ -1248,7 +1248,7 @@ sub beforeSaveHandler {
             unless($newStateName[0]->{name} eq $oldState->{name}) {
 Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
                 throw Foswiki::OopsException(
-                    'workflow',
+                    'workflowerr',
                      def   => 'topic_access',
                      web   => $_[2],
                      topic => $_[1],
@@ -1266,7 +1266,7 @@ Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
             # Make sure that newly created topics can't cheat with their state
             if(scalar @newStateName > 1) { # If 0 this is a new topic, or not controlled, if it's a copy it may be 1.
                 throw Foswiki::OopsException(
-                        'workflow',
+                        'workflowerr',
                         def   => 'topic_access',
                         web   => $_[2],
                         topic => $_[1],
