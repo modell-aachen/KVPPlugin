@@ -34,16 +34,15 @@ sub new {
 
     my $this = bless(
         {
-            workflow => $workflow,
-            web      => $web,
-            topic    => $topic,
-            meta     => $meta,
-            text     => $text,
-            state    => $meta->get('WORKFLOW'),
-            history  => $meta->get('WORKFLOWHISTORY'),
-            mailing  => $meta->get('WORKFLOWMAILINGLIST'),
-	    wrev => $meta->get('WORKFLOWREV') || { 'MajorRev' => 0, 'MinorRev' => 0 },
-            forkweb  => $web,
+            workflow  => $workflow,
+            web       => $web,
+            topic     => $topic,
+            meta      => $meta,
+            text      => $text,
+            state     => $meta->get('WORKFLOW'),
+            history   => $meta->get('WORKFLOWHISTORY'),
+            wrev      => $meta->get('WORKFLOWREV') || { 'MajorRev' => 0, 'MinorRev' => 0 },
+            forkweb   => $web,
             forktopic => $topic . $forkSuffix,
         },
         $class
@@ -90,52 +89,44 @@ sub getWorkflowMeta {
 }
 
 # Alex: Get the extra Mailinglist (People involved in the Discussion)
-sub getExtraNotify {
-    my ($this, $type) = @_;
+sub getConributors {
+    my ($this, $state) = @_;
 
-    if(!$type || $type eq 'ALL') {
-        my $auto = $this->{mailing}->{AUTO};
-        my $perm = $this->{mailing}->{PERMANENT};
+    $state ||= $this->{state}->{name};
 
-        if($auto) {
-            if($perm) {
-                return "$auto,$perm";
-            } else {
-                return $auto;
-            }
-        }
-        return $perm;
-    }
+    my $contributors = $this->{meta}->get( 'WRKFLWCONTRIBUTORS', $state);
+    return '' unless $contributors;    
 
-    return $this->{mailing}->{$type};
-}
-
-# Alex: Set the extra Mailinglist (People involved in the Discussion)
-sub setExtraNotify {
-    my ( $this, $extraname, $type ) = @_;
-    $type = 'AUTO' unless $type;
-    # clear double entries
-    my @extrapersons = split( /\s*,\s*/, $extraname );
-    @extrapersons = del_double(@extrapersons);
-    $extraname = join(',', @extrapersons);
-    # assign
-    $this->{mailing}->{$type} = $extraname;
-    $this->{meta}->put( "WORKFLOWMAILINGLIST", $this->{mailing} );
+    return $contributors->{value};
 }
 
 # Add another user to the Mailinglist
-sub addExtraNotify {
-	my ( $this, $extraname, $type ) = @_;
-	
-	return unless $extraname;
+sub addConributors {
+    my ( $this, $extraname, $state ) = @_;
 
-	#Alex: Verbesserungsfähig?
-	my $oldlist = $this->{mailing}->{$type};
-        if($oldlist) {
-          $this->setExtraNotify( $oldlist . "," . $extraname, $type );
-	} else {
-          $this->setExtraNotify( $extraname, $type );
-	}
+    $extraname =~ s/^\s*//;
+    $extraname =~ s/\s*$//;
+    return unless $extraname;
+
+    $state ||= $this->{state}->{name};
+
+    my $old = $this->{meta}->get( 'WRKFLWCONTRIBUTORS', $state);
+    my $contributorlist;
+
+    if($old) {
+        $contributorlist = $old->{value};
+        return if $contributorlist =~ /\b$extraname\b/;
+        $contributorlist = "$contributorlist,$extraname";
+    } else {
+        $contributorlist = $extraname;
+    }
+    # assign
+    $this->{meta}->putKeyed( 'WRKFLWCONTRIBUTORS', {name => $state, value => $contributorlist } );
+}
+
+sub purgeConributors {
+    my ( $this ) = @_;
+    $this->{meta}->remove( 'WRKFLWCONTRIBUTORS' );
 }
 
 # Alex: Forkweb
@@ -143,7 +134,7 @@ sub setForkWeb {
 	my ( $this, $forkweb ) = @_;
 	#Alex: Verbesserungsfähig?
 	$this->{forkweb}->{value} = $forkweb;
-	#$this->{meta}->put( "WORKFLOWMAILINGLIST", $this->{extranotify} );
+	#$this->{meta}->put( "WRKFLWCONTRIBUTORS", $this->{extranotify} );
 }
 
 # Will increase the major revision and set minor revision to 0.
@@ -352,14 +343,6 @@ sub newForm {
     return ( $form && ( !$oldForm || $oldForm ne $form ) ) ? $form : undef;
 }
 
-# removes the entries from AUTO in the mailinglist.
-sub purgeExtraNotify {
-    my ( $this ) = @_;
-    my $list = {name => 'WORKFLOWMAILINGLIST', PERMANENT => $this->{mailing}->{PERMANENT}, AUTO => ""};
-    $this->{meta}->putKeyed("WORKFLOWMAILINGLIST", $list);
-    $this->{mailing} = $list;
-}
-
 # change the state of the topic. Does *not* save the updated topic, but
 # does notify the change to listeners.
 sub changeState {
@@ -405,7 +388,7 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
     
     #Alex: Rodeeeeo!
     # Nicht mehr nach Spzifikation?
-    #    $this->addExtraNotify( Foswiki::Func::getWikiUserName() );
+    #    $this->addConributors( Foswiki::Func::getWikiUserName() );
     
     if ($form) {
         #$this->{meta}->put( "FORM", { name => $form } );

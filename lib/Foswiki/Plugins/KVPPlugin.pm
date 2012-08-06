@@ -113,10 +113,13 @@ sub _WORKFLOWEDITPERM {
 # Will return a list of users that have contributed to this topic until last ACCEPT.
 sub _WORKFLOWCONTRIBUTORS {
     my ( $session, $params, $topic, $web ) = @_;
-    my $controlledTopic = _initTOPIC( $web, $topic );
 
-    return unless $controlledTopic;
-    return $controlledTopic->getExtraNotify();
+    my $rev = $params->{rev};
+    my $state = $params->{state};
+    my $controlledTopic = _initTOPIC( $web, $topic, $rev );
+
+    return '' unless $controlledTopic;
+    return $controlledTopic->getConributors($state);
 }
 
 # XXX Copy/Paste from Workflow::_isAllowed
@@ -713,7 +716,7 @@ sub _changeState {
 	            # Hier Action 
 #	            if ("VERWORFEN" eq $controlledTopic->getState()){	
                     if ($forkingAction && $forkingAction eq "DISCARD") {
-                         $controlledTopic->purgeExtraNotify(); # XXX Wirklich?
+                         $controlledTopic->purgeConributors(); # XXX Wirklich?
                          my $origMeta = $controlledTopic->{meta};
 
                          # Move topic to trash
@@ -751,7 +754,7 @@ sub _changeState {
 	            elsif ($forkingAction && $forkingAction eq "ACCEPT"){
                         # transfer ACLs from old document to new
                         transferACL($appWeb, $appTopic, $controlledTopic);
-                        $controlledTopic->purgeExtraNotify();
+                        $controlledTopic->purgeConributors();
 			# increment MajorRev
 			$controlledTopic->nextMajorRev();
                         # Will save changes after moving original topic away
@@ -978,12 +981,6 @@ sub _restFork {
                 };
                 $meta->put( "WORKFLOWHISTORY", $forkhistory );
        
-                # reset Auto-Mailinglist     
-                $meta->putKeyed('WORKFLOWMAILINGLIST', 
-                    { name => 'WORKFLOWMAILINGLIST',
-                      PERMANENT => $controlledTopic->getExtraNotify('PERMANENT'),
-                      AUTO => ''
-                });
                 # mark as state change (althought it isn't) so it passes beforeSaveHandler
                 local $isStateChange = 1; 
                 Foswiki::Func::saveTopic($w, $t, $meta, $text,
@@ -1284,12 +1281,7 @@ Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
         }
     }
 
-    # Append current user to the mailing list unless asked not to (ie. _changeMailingList)
-    my $noappend = $query->param('NOAPPEND');
-    unless($noappend && $noappend eq '1') {
-        $controlledTopic->addExtraNotify(Foswiki::Func::getWikiUserName(), 'AUTO');
-    }
-    
+    $controlledTopic->addConributors(Foswiki::Func::getWikiUserName());
 }
 
 sub indexTopicHandler {
