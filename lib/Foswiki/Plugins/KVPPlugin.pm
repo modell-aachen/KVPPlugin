@@ -96,7 +96,9 @@ sub initPlugin {
 sub _WORKFLOWEDITPERM {
     my ( $session, $params, $topic, $web ) = @_;
 
-    my $controlledTopic = _initTOPIC( $web, $topic );
+    my $rev = $params->{rev};
+
+    my $controlledTopic = _initTOPIC( $web, $topic, $rev );
     if ($controlledTopic) {
         return $controlledTopic->canEdit() ? 1 : 0;
     }
