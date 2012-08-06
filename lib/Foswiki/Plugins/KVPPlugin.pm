@@ -947,7 +947,6 @@ sub _restFork {
             while (scalar @topics) {
                 my $newForkTopic = shift @topics;
                 my $newForkAction = shift @actions;
-                Foswiki::Func::writeWarning("forkto $newForkTopic with $newForkAction");
 
                 # create the new topic
                 ($w, $t) =
