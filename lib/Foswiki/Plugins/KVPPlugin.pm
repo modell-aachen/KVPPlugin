@@ -1077,6 +1077,29 @@ sub beforeEditHandler {
 
 }
 
+# This beforeUploadHandler will attempt to cancel an upload if the user is
+# denyed editing by the workflow.
+sub beforeUploadHandler {
+    my ( $attrs, $meta ) = @_;
+
+    my $web = $meta->web();
+    my $topic = $meta->topic();
+
+    my $controlledTopic = _initTOPIC( $web, $topic );
+    return unless $controlledTopic;
+
+    unless ( $controlledTopic->canEdit() ) {
+        my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not permitted to upload to this topic. You have been denied access by Q.Wiki"}%');
+        throw Foswiki::OopsException(
+            'workflowerr',
+            def   => 'topic_access',
+            web   => $web,
+            topic => $topic,
+            params => $message
+         );
+    }
+}
+
 # The beforeSaveHandler inspects the request parameters to see if the
 # right params are present to trigger a state change. The legality of
 # the state change is *not* checked - it's assumed that the change is
