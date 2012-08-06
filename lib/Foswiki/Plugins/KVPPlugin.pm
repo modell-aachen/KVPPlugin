@@ -555,14 +555,15 @@ sub _WORKFLOWFORK {
 sub _GETWORKFLOWROW {
     my ( $session, $attributes, $topic, $web ) = @_;
     my $param = $attributes->{_DEFAULT};
+    my $rev = $attributes->{rev};
 
-    my $controlledTopic = _initTOPIC ($web, $topic );
+    my $controlledTopic = _initTOPIC ($web, $topic, $rev );
     return $controlledTopic->getRow( $param ) if $controlledTopic;
 
     # Not cotrolled get row from values in configure
     my $configure = $Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow};
     return '' unless $configure;
-    return $configure->{$param};
+    return $configure->{$param} || '';
 }
 
 # Handle actions. REST handler, on changeState action.
