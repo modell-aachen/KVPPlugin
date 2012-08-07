@@ -152,7 +152,7 @@ sub new {
 }
 
 # Get the possible actions associated with the given state
-# Will not deliver actions with NEW or FORK
+# Will not deliver actions with NEW, FORK or HIDDEN
 sub getActions {
     my ( $this, $topic ) = @_;
     my @actions      = ();
@@ -160,7 +160,7 @@ sub getActions {
     foreach my $row ( @{ $this->{transitions} } ) {
         my $attribute = $row->{attribute} || '';
         if ( $row->{state} eq $currentState
-            && $attribute !~ /FORK|NEW/
+            && $attribute !~ /FORK|NEW|HIDDEN/
             && _isAllowed($topic->expandMacros( $row->{allowed} ))
             && _isTrue($topic->expandMacros( $row->{condition} ))
             && $topic->expandMacros( $row->{nextstate} ) )
