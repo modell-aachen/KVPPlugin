@@ -690,7 +690,7 @@ sub _changeState {
 		Foswiki::Func::writeWarning("attribs: $actionAttributes message: $remark action: $action");
                 # clear message, if workflow doesn't allow it (maybe the
                 # user entered a message and then switched state...)
-                if( $actionAttributes !~ /(?:\W|^)MESSAGE(?:\W|$)/ ) {
+                if( $actionAttributes !~ /(?:\W|^)REMARK(?:\W|$)/ ) {
                       $remark = '';
                 }
 		Foswiki::Func::writeWarning("actions: $actionAttributes message: $remark");

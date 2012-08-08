@@ -248,7 +248,7 @@ $state || die;
             if( $t->{attribute} =~ /(?:\W|^)SUGGESTDELETECOMMENTS(?:\W|$)/ ) {
                 $suggest = $suggest.$t->{action}.',';
             }
-            if( $t->{attribute} =~ /(?:\W|^)MESSAGE(?:\W|$)/ ) {
+            if( $t->{attribute} =~ /(?:\W|^)REMARK(?:\W|$)/ ) {
                 $comment = $comment.$t->{action}.',';
             }
         }
