@@ -129,7 +129,7 @@ sub getActions {
     foreach my $row ( @{ $this->{transitions} } ) {
         my $attribute = $row->{attribute} || '';
         if ( $row->{state} eq $currentState
-            && $attribute !~ /FORK|NEW/
+            && $attribute !~ /FORK|NEW|HIDDEN/
             && _isAllowed($topic->expandMacros( $row->{allowed} ))
             && _isTrue($topic->expandMacros( $row->{condition} ))
             && $topic->expandMacros( $row->{nextstate} ) )
