@@ -1228,9 +1228,7 @@ sub beforeSaveHandler {
             def   => 'topic_access',
             web   => $_[2],
             topic => $_[1],
-            params =>
-              [ 'Save topic',
-'You are not permitted to save this topic. You have been denied access by Q.Wiki' ]
+            params => 'You are not permitted to save this topic. You have been denied access by Q.Wiki' 
              );
     } else {
          my $newMeta = new Foswiki::Meta($Foswiki::Plugins::SESSION, $web, $topic, $text);
@@ -1241,9 +1239,7 @@ sub beforeSaveHandler {
                      def   => 'topic_access',
                      web   => $_[2],
                      topic => $_[1],
-                     params =>
-                         [ 'Save topic',
-                     'Must find exactly one workflow in the topic, but found '.scalar(@newStateName).'!' ]
+                     params => 'Must find exactly one workflow in the topic, but found '.scalar(@newStateName).'!'
                 );
         }
         # TODO Check if metacommentstuff changed unless workflow does so
@@ -1264,9 +1260,7 @@ Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
                      def   => 'topic_access',
                      web   => $_[2],
                      topic => $_[1],
-                     params =>
-                         [ 'Save topic',
-                     'The Workflowstate '.$newStateName[0]->{name}.'does not match the old state '.$oldState->{name}.'! Topic can not be saved!' ]
+                     params => 'The Workflowstate '.$newStateName[0]->{name}.'does not match the old state '.$oldState->{name}.'! Topic can not be saved!'
                 );
             }
 # XXX Kommentare sind nicht schreibgeschtzt
@@ -1282,9 +1276,7 @@ Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
                         def   => 'topic_access',
                         web   => $_[2],
                         topic => $_[1],
-                        params =>
-                            [ 'Save topic',
-                        'Found an invalid workflow (there must be none in a newly created topic)!' ]
+                        params => 'Found an invalid workflow (there must be none in a newly created topic)!'
                 );
             }
             # Assure that newly created topics have a state
