@@ -2,6 +2,7 @@
 data/System/KVPPlugin.txt 0644 Documentation
 data/System/KvpSkinTopExtendedTemplate.txt 0644 Template for header
 data/System/KvpSkinTransitionsTemplate.txt 0644 Template for transitionmenue
+pub/System/KVPPlugin/transitions.js 0644 Script for transition menue
 lib/Foswiki/Plugins/KVPPlugin.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/ControlledTopic.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/Workflow.pm 0666

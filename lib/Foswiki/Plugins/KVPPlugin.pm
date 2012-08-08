@@ -408,42 +408,11 @@ sub _WORKFLOWTRANSITION {
     
     Foswiki::Func::addToZone('script', 'WORKFLOW::COMMENT', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI');
 <script type="text/javascript">
-jQuery(document).ready(function() {
-  WORKFLOWallowOption = new String("$allow");
-  WORKFLOWsuggestOption = new String("$suggest");
-  WORKFLOWremarkOption = new String("$remark");
-  WORKFLOWshowCheckBox = function() {
-      var menu = jQuery('#WORKFLOWmenu');
-      var remark = document.getElementById("KVPRemark");
-      var selection = menu.val(); 
-      if(selection === undefined) {
-          menu = jQuery('#WORKFLOWbutton');
-          if (menu === undefined) return;
-          selection = menu.text().trim();
-      }
-      if(remark != null) {
-          if(WORKFLOWremarkOption.indexOf(','+selection+',') > -1) {
-              remark.style.display = 'block';
-          } else {
-              remark.style.display = 'none';
-          }
-      }
-      var box = document.getElementById("WORKFLOWchkbox");
-      if (box === undefined || box === null) return;
-      if(WORKFLOWallowOption.indexOf(','+selection+',') > -1) {
-          box.style.display = 'inline';
-          document.getElementById('WORKFLOWchkboxbox').checked = false;
-      } else if (WORKFLOWsuggestOption.indexOf(','+selection+',') > -1) {
-          box.style.display = 'inline';
-          document.getElementById('WORKFLOWchkboxbox').checked = true;
-      } else {
-          box.style.display = 'none';
-      }
-  }
-jQuery('select').change(WORKFLOWshowCheckBox);
-WORKFLOWshowCheckBox();
-});
+WORKFLOWallowOption = new String("$allow");
+WORKFLOWsuggestOption = new String("$suggest");
+WORKFLOWremarkOption = new String("$remark");
 </script>
+<script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/transitions.js"></script>
 SCRIPT
 
     if ( $numberOfActions == 1 ) {
