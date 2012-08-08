@@ -198,21 +198,18 @@ sub getActionWithAttribute {
     return '';
 }
 
-# Get forking action associated with transition
-sub getForkingAction {
-    my ( $this, $topic, $action ) = @_;
-    my $currentState = $topic->getState();
-    foreach my $t ( @{ $this->{transitions} } ) {
-        if ( $t->{state} eq $currentState 
+# Returns the attributes of the given action for the given state
+sub getAttributes {
+    my ( $this, $currentState, $action ) = @_;
+    Foswiki::Func::writeWarning("currentState: $currentState action: $action");
+    foreach my $t( @{ $this->{transitions} } ) {
+        if ( $t->{state} && $t->{state} eq $currentState
                 && $t->{action} eq $action ) {
-            my $fork = $t->{attribute};
-            if ($fork && $fork =~ /(?:\W|^)(FORK|ACCEPT|DISCARD)(?:\W|$)/) {
-                return $1;
-            } else {
-                return '';
-            }
+                Foswiki::Func::writeWarning(join(',', keys $t));
+            return $t->{attribute};
         }
     }
+    Foswiki::Func::writeWarning("getAttributes: action '$action' not found for state '$currentState'");
     return '';
 }
 
@@ -235,24 +232,29 @@ sub hasAttribute {
 # This returns two lists for a JavaScript with all actions that allow deletion of comments
 # and that suggest deletion of comments
 # Both lists will start and end with a ',' to make searches easier.
-sub getDelActions {
-    my ( $this ) = @_;
-    
+sub getTransitionAttributes {
+    my ( $this, $state ) = @_;
+
+$state || die;    
     my $allow = ',';
     my $suggest = ',';
+    my $comment = ',';
 
     foreach my $t ( @{ $this->{transitions} } ) {
-        if ($t->{attribute}) {
+        if ($t->{attribute} && $t->{state} eq $state) {
             if( $t->{attribute} =~ /(?:\W|^)ALLOWDELETECOMMENTS(?:\W|$)/ ) {
                 $allow = $allow.$t->{action}.',';
             }
             if( $t->{attribute} =~ /(?:\W|^)SUGGESTDELETECOMMENTS(?:\W|$)/ ) {
                 $suggest = $suggest.$t->{action}.',';
             }
+            if( $t->{attribute} =~ /(?:\W|^)MESSAGE(?:\W|$)/ ) {
+                $comment = $comment.$t->{action}.',';
+            }
         }
     }
     
-    return ($allow, $suggest);
+    return ($allow, $suggest, $comment);
 }
 
 # Signals if the user may change the mailing list.

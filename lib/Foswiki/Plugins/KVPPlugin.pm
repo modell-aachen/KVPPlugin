@@ -404,20 +404,29 @@ sub _WORKFLOWTRANSITION {
       Foswiki::Func::getPreferencesValue('WORKFLOWTRANSITIONCSSCLASS')
           || 'foswikiChangeFormButton foswikiSubmit"';
 
-    my ($allow, $suggest) = $controlledTopic->getDelActions();
+    my ($allow, $suggest, $remark) = $controlledTopic->getTransitionAttributes();
     
     Foswiki::Func::addToZone('script', 'WORKFLOW::COMMENT', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI');
 <script type="text/javascript">
-\$(document).ready(function() {
+jQuery(document).ready(function() {
   WORKFLOWallowOption = new String("$allow");
   WORKFLOWsuggestOption = new String("$suggest");
+  WORKFLOWremarkOption = new String("$remark");
   WORKFLOWshowCheckBox = function() {
-      var menu = \$('#WORKFLOWmenu');
+      var menu = jQuery('#WORKFLOWmenu');
+      var remark = document.getElementById("KVPRemark");
       var selection = menu.val(); 
       if(selection === undefined) {
-          menu = \$('#WORKFLOWbutton');
+          menu = jQuery('#WORKFLOWbutton');
           if (menu === undefined) return;
-          selection = menu.val();
+          selection = menu.text().trim();
+      }
+      if(remark != null) {
+          if(WORKFLOWremarkOption.indexOf(','+selection+',') > -1) {
+              remark.style.display = 'block';
+          } else {
+              remark.style.display = 'none';
+          }
       }
       var box = document.getElementById("WORKFLOWchkbox");
       if (box === undefined || box === null) return;
@@ -431,7 +440,7 @@ sub _WORKFLOWTRANSITION {
           box.style.display = 'none';
       }
   }
-\$('select').change(WORKFLOWshowCheckBox);
+jQuery('select').change(WORKFLOWshowCheckBox);
 WORKFLOWshowCheckBox();
 });
 </script>
@@ -481,6 +490,10 @@ SCRIPT
               -label => '%MAKETEXT{delete comments}%',
               -id => 'WORKFLOWchkboxbox'
           )."</span>"
+    );
+
+    push( @fields,
+        '<br /><div style="display: none" id="KVPRemark">%CLEAR%%MAKETEXT{Remarks}%:<br /><textarea name="message" cols="50" rows="3" ></textarea></div>'
     );
 
 
@@ -579,6 +592,7 @@ sub _changeState {
 	
     my $web   = $query->param('web') || $session->{webName};
     my $topic = $query->param('topic') || $session->{topicName};
+    my $remark = $query->param('message');
     my $removeComments = $query->param('removeComments') || '0';
     
     ($web, $topic) =
@@ -669,12 +683,22 @@ sub _changeState {
             }
 
                 # Get ForkingAction. This will determine, if discussion will be copied, overwritten or discarded
-                my $forkingAction = $controlledTopic->{workflow}->getForkingAction( $controlledTopic, $action );
-                $controlledTopic->changeState($action);
+                my $actionAttributes = $controlledTopic->getAttributes($action);
+                $actionAttributes =~ /(?:\W|^)(FORK|ACCEPT|DISCARD)(?:\W|$)/;
+                my $forkingAction = $1;
+
+		Foswiki::Func::writeWarning("attribs: $actionAttributes message: $remark action: $action");
+                # clear message, if workflow doesn't allow it (maybe the
+                # user entered a message and then switched state...)
+                if( $actionAttributes !~ /(?:\W|^)MESSAGE(?:\W|$)/ ) {
+                      $remark = '';
+                }
+		Foswiki::Func::writeWarning("actions: $actionAttributes message: $remark");
+                $controlledTopic->changeState($action, $remark);
 
                 # check if deleting comments is allowed if requested
                 { #scope
-                    my ($allowRemove, $suggestRemove) = $controlledTopic->getDelActions();
+                    my ($allowRemove, $suggestRemove) = $controlledTopic->getTransitionAttributes();
                     if( $removeComments eq '1' 
                         && not ($allowRemove =~ /,$action,/ || $suggestRemove =~ /,$action,/)
                     ) {

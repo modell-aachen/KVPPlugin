@@ -75,6 +75,12 @@ sub getActions {
     return $this->{workflow}->getActions($this);
 }
 
+# Get attributes for the given actoin
+sub getAttributes {
+    my ($this, $action) = @_;
+    return $this->{workflow}->getAttributes($this->{state}->{name}, $action);
+}
+
 sub getWorkflowMeta {
     my ( $this, $attributes ) = @_;
 
@@ -155,7 +161,7 @@ sub nextMinorRev {
 # Set the current state in the topic
 # Alex: Bearbeiter hinzu
 sub setState {
-    my ( $this, $state, $version ) = @_;
+    my ( $this, $state, $version, $remark ) = @_;
     my $oldState = $this->{state}->{name};
     $this->{state}->{name} = $state;
     $this->{state}->{"LASTVERSION_$state"} = $version;
@@ -163,6 +169,7 @@ sub setState {
     $this->{state}->{"LEAVING_$oldState"} = Foswiki::Func::getWikiUserName() if($oldState);
     $this->{state}->{"LASTTIME_$state"} =
       Foswiki::Time::formatTime( time(), '$day.$mo.$year', 'servertime' );
+    $this->{state}->{Remark} = $remark || '';
     $this->{meta}->putKeyed( "WORKFLOW", $this->{state} );
     ## set accesspermissions to the ones defined in the table
     #my $writeAcls = $this->{workflow}->getChangeACL($this, $state);
@@ -238,9 +245,9 @@ sub isRemovingComments {
     return $this->{workflow}->hasAttribute($state, $action, 'FORCEDELETECOMMENTS');
 }
 
-sub getDelActions {
+sub getTransitionAttributes {
     my ( $this ) = @_;
-    return $this->{workflow}->getDelActions();
+    return $this->{workflow}->getTransitionAttributes($this->{state}->{name});
 }
 
 # Check if the topic is allowed to fork
@@ -351,7 +358,7 @@ sub newForm {
 # change the state of the topic. Does *not* save the updated topic, but
 # does notify the change to listeners.
 sub changeState {
-    my ( $this, $action ) = @_;
+    my ( $this, $action, $remark ) = @_;
     my $oldstate = $this->{state}->{name};
 
     my $state = $this->{workflow}->getNextState( $this, $action );
@@ -367,7 +374,7 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
           ( $info->{date}, $info->{author}, $info->{version} );
     }
 
-    $this->setState($state, $version);
+    $this->setState($state, $version, $remark);
 
     my $fmt = Foswiki::Func::getPreferencesValue("WORKFLOWHISTORYFORMAT")
       || '<br>$state -- $date';

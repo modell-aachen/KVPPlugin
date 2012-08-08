@@ -11,7 +11,10 @@ Content-Transfer-Encoding: 8bit
 
 %WIKINAME% hat den Artikel %IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN%"}% bearbeitet.
 
-%GETWORKFLOWROW{message}%
+%GETWORKFLOWROW{message}%%IF{"$'WORKFLOWMETA{Remark}'" then="
+
+%MAKETEXT{Remarks}%:
+$percentWORKFLOWMETA{Remark}$percent"}%
 
 Link zur Seite: %SCRIPTURL{"view"}%/%WEB%/%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN%"}%
 
