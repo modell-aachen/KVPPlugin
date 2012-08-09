@@ -18,3 +18,7 @@ $Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow} = {'stategroup' => 'Infose
 # Detailierte Logs f&uuml;r Emails aktivieren.
 $Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails} = 0;
 
+# **STRING**
+# Sprache f&uuml;r Maketext in KVP-Mails.
+# Bei leerem String wird die Sprache des Browsers verwendet.
+$Foswiki::cfg{Extensions}{KVPPlugin}{MailLanguage} = '';
