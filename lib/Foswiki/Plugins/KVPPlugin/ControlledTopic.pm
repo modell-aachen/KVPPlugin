@@ -446,6 +446,12 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
 
     # Send mails
     if ($notify) {
+        # Set Language
+        my $language = $Foswiki::cfg{Extensions}{KVPPlugin}{MailLanguage};
+        if($language) {
+            Foswiki::Func::setPreferencesValue( 'LANGUAGE', $language );            
+        }
+        
         # Expand vars in the notify list. This supports picking up the
         # value of the notifees from the topic itself.
         $notify = $this->expandMacros($notify);
