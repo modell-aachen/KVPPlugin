@@ -495,7 +495,7 @@ sub _WORKFLOWTRANSITION {
       if(selection === undefined) {
           menu = \$('#WORKFLOWbutton');
           if (menu === undefined) return;
-          selection = menu.val();
+          selection = menu.text().trim();
       }
       var box = document.getElementById("WORKFLOWchkbox");
       if (box === undefined || box === null) return;
