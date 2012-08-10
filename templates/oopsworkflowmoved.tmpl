@@ -1,0 +1,15 @@
+%TMPL:INCLUDE{"oops"}%
+
+%TMPL:DEF{"titleaction"}%%MAKETEXT{"File no longer available"}% %TMPL:END%
+
+%TMPL:DEF{"webaction"}% *%MAKETEXT{"Attention"}%* %TMPL:END%
+
+%TMPL:DEF{"heading"}%%MAKETEXT{"File no longer available"}%%TMPL:END%
+
+%TMPL:DEF{"topicactionbuttons"}% [[%WEB%.%TOPIC%][%MAKETEXT{"OK"}%]] %TMPL:END%
+
+%TMPL:DEF{"message"}%
+
+%IF{"'%URLPARAM{found}%'" then="%MAKETEXT{The discussion you clicked is no longer available. You can go to the original topic by clicking OK.}%" else="%MAKETEXT{"The link you clicked is no longer available."}%"}%
+
+%TMPL:END%

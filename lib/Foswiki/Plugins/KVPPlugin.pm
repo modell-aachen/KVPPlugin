@@ -38,6 +38,9 @@ sub initPlugin {
     Foswiki::Func::registerRESTHandler(
         'fork', \&_restFork,
         authenticate => 1, http_allow => 'GET' );
+    Foswiki::Func::registerRESTHandler(
+        'link', \&_restLink, 
+        http_allow => 'GET' );
 
     Foswiki::Func::registerTagHandler(
         'WORKFLOWSTATE', \&_WORKFLOWSTATE );
@@ -864,6 +867,59 @@ sub commonTagsHandler {
 
     # Clean up unexpanded variables
     $_[0] =~ s/%WORKFLOW[A-Z_]*%//g;
+}
+
+# Will redirect to article and warn if it has changed since link was created.
+sub _restLink {
+    my ($session, $plugin, $verb, $response) = @_;
+    my $query = Foswiki::Func::getCgiQuery();
+    my $state = $query->param( 'state' );
+    my $webtopic = $query->param( 'webtopic' );
+
+    my $url;
+
+    my ($web, $topic) = Foswiki::Func::normalizeWebTopicName( undef, $webtopic );
+    unless( $webtopic and $state and $web and $topic ) {
+        Foswiki::Func::writeWarning("Wrong parameters for link: webtopici='$webtopic' state='$state'.");
+        $url = Foswiki::Func::getScriptUrl(
+            'Unknown', 'Unkown', 'oops',
+            template => "oopsworkflowlink"
+        );
+    } elsif ( Foswiki::Func::topicExists( $web, $topic ) ) {
+        # Check if article is still in correct state
+        my ( $meta, $text ) = Foswiki::Func::readTopic( $web, $topic );
+	my $wrkflw = $meta->get( 'WORKFLOW' );
+        if ( $wrkflw && $wrkflw->{name} eq $state ) {
+            # states are equal, redirecting to topic...
+            $url = Foswiki::Func::getViewUrl($web, $topic);
+        } else {
+            $url = Foswiki::Func::getScriptUrl(
+                $web, $topic, 'oops',
+                template => "oopsworkflowchanged",
+                param1   => 'changed',
+                param2   => $state || '-',
+                param3   => $wrkflw->{name} || '-',
+            );
+        }
+    } else {
+        # Try looking for origin
+        my $suffix = _WORKFLOWSUFFIX();
+        my $found = $topic =~ m/(.*)$suffix/;
+        $topic = $1;
+        if ( $found && Foswiki::Func::topicExists( $web, $topic ) ) {
+            $url = Foswiki::Func::getScriptUrl(
+                $web, $topic, 'oops',
+                template => "oopsworkflowmoved",
+                found    => "1"
+            );
+        } else {
+            $url = Foswiki::Func::getScriptUrl(
+                $web, 'WebHome', 'oops', # XXX does webhome always exist? What if web doesn't exist?
+                template => "oopsworkflowmoved"
+            );
+        }
+    }
+    return $response->redirect($url);
 }
 
 sub _restFork {

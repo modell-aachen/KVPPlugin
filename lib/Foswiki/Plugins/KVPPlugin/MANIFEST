@@ -9,7 +9,10 @@ lib/Foswiki/Plugins/KVPPlugin/Workflow.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/Config.spec 0755 Configuration
 templates/mailworkflowtransition.tmpl 0666
 templates/oopswfplease.tmpl 0666
+templates/oopsworkflowchanged.tmpl 0666
+templates/oopsworkflowmoved.tmpl 0666
 templates/oopsworkflowerr.tmpl 0666
+templates/oopsworkflowlink.tmpl 0666
 templates/oopsworkflowfork.tmpl 0666
 templates/oopshistory.kvp.tmpl 0666
 templates/workflowedit.tmpl 0666
