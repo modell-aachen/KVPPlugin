@@ -41,12 +41,22 @@ sub new {
             text      => $text,
             state     => $meta->get('WORKFLOW'),
             history   => $meta->get('WORKFLOWHISTORY'),
-            wrev      => $meta->get('WORKFLOWREV') || { 'MajorRev' => 0, 'MinorRev' => 0 },
             forkweb   => $web,
             forktopic => $topic . $forkSuffix,
         },
         $class
     );
+
+    # If old Format is present use that. Else default Revision to 0
+    unless(defined $this->{state}->{Revision}) {
+        my $wrev = $meta->get('WORKFLOWREV');
+        if ($wrev) {
+            $this->{state}->{Revision} = $wrev->{MajorRev};
+            $meta->remove( 'WORKFLOWREV' );
+        } else {
+            $this->{state}->{Revision} = 0;
+        }
+    }
 
     return $this;
 }
@@ -83,15 +93,7 @@ sub getAttributes {
 
 sub getWorkflowMeta {
     my ( $this, $attributes ) = @_;
-
-    if($attributes eq 'Revision') {
-        return "$this->{wrev}->{'MajorRev'}.$this->{wrev}->{'MinorRev'}";
-    }
-
-    if (defined $this->{meta}->get('WORKFLOW')) {
-    	return $this->{meta}->get('WORKFLOW')->{$attributes} || '';
-    }
-    return '';
+    return $this->{state}->{$attributes};
 }
 
 # Alex: Get the extra Mailinglist (People involved in the Discussion)
@@ -135,27 +137,16 @@ sub purgeConributors {
     $this->{meta}->remove( 'WRKFLWCONTRIBUTORS' );
 }
 
+# Will increase the WorkflowRev
+sub nextRev {
+    my ( $this ) = @_;
+    $this->{state}->{Revision}++;
+}
+
 # Alex: Forkweb
 sub setForkWeb {
-	my ( $this, $forkweb ) = @_;
-	#Alex: Verbesserungsfhig?
-	$this->{forkweb}->{value} = $forkweb;
-	#$this->{meta}->put( "WRKFLWCONTRIBUTORS", $this->{extranotify} );
-}
-
-# Will increase the major revision and set minor revision to 0.
-sub nextMajorRev {
-	my ( $this ) = @_;
-	$this->{wrev}->{'MinorRev'} = 0;
-	$this->{wrev}->{'MajorRev'}++;
-	$this->{meta}->put( 'WORKFLOWREV', $this->{wrev} );
-}
-
-# Will increase the minor revision (does not touch major revision).
-sub nextMinorRev {
-	my ( $this ) = @_;
-	$this->{wrev}->{'MinorRev'}++;
-	$this->{meta}->put( 'WORKFLOWREV', $this->{wrev} );
+    my ( $this, $forkweb ) = @_;
+    $this->{forkweb}->{value} = $forkweb;
 }
 
 # Set the current state in the topic

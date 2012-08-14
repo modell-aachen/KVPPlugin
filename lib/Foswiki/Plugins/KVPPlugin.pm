@@ -751,8 +751,7 @@ sub _changeState {
                         # transfer ACLs from old document to new
                         transferACL($appWeb, $appTopic, $controlledTopic);
                         $controlledTopic->purgeConributors();
-			# increment MajorRev
-			$controlledTopic->nextMajorRev();
+                        $controlledTopic->nextRev();
                         # Will save changes after moving original topic away
 	            	
 	            	$url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
@@ -1345,7 +1344,6 @@ Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
     }
 
     $controlledTopic->addConributors(Foswiki::Func::getWikiUserName());
-    $controlledTopic->nextMinorRev(); # XXX will also increment if no new revision created
 }
 
 sub indexTopicHandler {
