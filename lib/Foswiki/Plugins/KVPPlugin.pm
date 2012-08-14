@@ -358,15 +358,15 @@ sub _WORKFLOWMETA {
     $attr ||= 'name';
 
     my $ret = $controlledTopic->getWorkflowMeta($attr);
-    if(!$ret) {
+    if(!defined $ret) {
         my $list = $attributes->{or};
 	if($list) {
-            while(!$ret && $list =~ m/([a-zA-Z_]*)/g) {
+            while(!defined $ret && $list =~ m/([a-zA-Z_]*)/g) {
                 $ret = $controlledTopic->getWorkflowMeta($1);
             }
         }
     }
-    if($ret) {
+    if(defined $ret) {
         $ret =~ s#^$Foswiki::cfg{UsersWebName}\.##g if $remove;
         return $ret;
     }
