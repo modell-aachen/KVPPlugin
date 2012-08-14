@@ -422,7 +422,8 @@ sub _WORKFLOWMETA {
 
     my $rWeb = $attributes->{web} || $web; 
     my $rTopic = $attributes->{topic} || $topic; 
-    my $alt = $attributes->{alt} || ''; 
+    my $alt = $attributes->{alt} || '';
+    my $remove = $attributes->{nousersweb}; 
  
     my $attr; 
     my $controlledTopic = _initTOPIC( $web, $topic ); 
@@ -436,16 +437,20 @@ sub _WORKFLOWMETA {
     } 
     $attr ||= 'name'; 
  
-    my $ret = $controlledTopic->getWorkflowMeta($attr); 
-    if(!$ret) { 
-        my $list = $attributes->{or}; 
-        if($list) { 
-            while(!$ret && $list =~ m/([a-zA-Z_]*)/g) { 
-                $ret = $controlledTopic->getWorkflowMeta($1); 
-            } 
-        } 
-    } 
-    return  $ret || $alt;
+    my $ret = $controlledTopic->getWorkflowMeta($attr);
+    if(!defined $ret) {
+        my $list = $attributes->{or};
+	if($list) {
+            while(!defined $ret && $list =~ m/([a-zA-Z_]*)/g) {
+                $ret = $controlledTopic->getWorkflowMeta($1);
+            }
+        }
+    }
+    if(defined $ret) {
+        $ret =~ s#^$Foswiki::cfg{UsersWebName}\.##g if $remove;
+        return $ret;
+    }
+    return  $alt;
 }
 
 # Tag handler
