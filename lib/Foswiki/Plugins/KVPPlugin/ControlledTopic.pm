@@ -44,12 +44,22 @@ sub new {
             owner    => $meta->get('PROCESSOWNER'),
             mailing  => $meta->get('WORKFLOWMAILINGLIST'),
             nextuser => $meta->get('WORKFLOWNEXTUSER'),
-	    wrev     => $meta->get('WORKFLOWREV') || { 'MajorRev' => 0, 'MinorRev' => 0 },
             forkweb  => $web,
             forktopic => $topic . $forkSuffix,
         },
         $class
     );
+
+    # If old Format is present use that. Else default Revision to 0
+    unless(defined $this->{state}->{Revision}) {
+        my $wrev = $meta->get('WORKFLOWREV');
+        if ($wrev) {
+            $this->{state}->{Revision} = $wrev->{MajorRev};
+            $meta->remove( 'WORKFLOWREV' );
+        } else {
+            $this->{state}->{Revision} = 0;
+        }
+    }
 
     return $this;
 }
@@ -87,15 +97,7 @@ sub getProcessOwner {
 
 sub getWorkflowMeta {
     my ( $this, $attributes ) = @_;
-
-    if($attributes eq 'Revision') {
-        return "$this->{wrev}->{'MajorRev'}.$this->{wrev}->{'MinorRev'}";
-    }
-
-    if (defined $this->{meta}->get('WORKFLOW')) {
-    	return $this->{meta}->get('WORKFLOW')->{$attributes} || '';
-    }
-    return '';
+    return $this->{state}->{$attributes};
 }
 
 # Alex: Get the extra Mailinglist (People involved in the Discussion)
@@ -171,11 +173,9 @@ sub setForkWeb {
 }
 
 # Will increase the major revision and set minor revision to 0.
-sub nextMajorRev {
+sub nextRev {
 	my ( $this ) = @_;
-	$this->{wrev}->{'MinorRev'} = 0;
-	$this->{wrev}->{'MajorRev'}++;
-	$this->{meta}->put( 'WORKFLOWREV', $this->{wrev} );
+	$this->{state}->{Revision}++;
 }
 
 # Set the current state in the topic
@@ -188,8 +188,6 @@ sub setState {
     $this->{state}->{"LASTTIME_$state"} =
       Foswiki::Time::formatTime( time(), '$day.$mo.$year', 'servertime' );
     $this->{meta}->putKeyed( "WORKFLOW", $this->{state} );
-    $this->{wrev}->{'MinorRev'}++;
-    $this->{meta}->put( 'WORKFLOWREV', $this->{wrev} );
     ## set accesspermissions to the ones defined in the table
     #my $writeAcls = $this->{workflow}->getChangeACL($this, $state);
     #$this->{meta}->putKeyed("PREFERENCE",
