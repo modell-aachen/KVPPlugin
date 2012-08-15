@@ -536,8 +536,11 @@ sub _GETWORKFLOWROW {
     my ( $session, $attributes, $topic, $web ) = @_;
     my $param = $attributes->{_DEFAULT};
     my $rev = $attributes->{rev};
+    # XXX If $aweb.$atopic does not exist defaultstate will be assumed
+    my $atopic = $attributes->{topic} || $topic;
+    my $aweb = $attributes->{web} || $web;
 
-    my $controlledTopic = _initTOPIC ($web, $topic, $rev );
+    my $controlledTopic = _initTOPIC ($aweb, $atopic, $rev );
     return $controlledTopic->getRow( $param ) if $controlledTopic;
 
     # Not cotrolled get row from values in configure
