@@ -656,8 +656,11 @@ sub _WORKFLOWFORK {
 sub _GETWORKFLOWROW {
     my ( $session, $attributes, $topic, $web ) = @_;
     my $param = $attributes->{_DEFAULT};
+    # XXX If $aweb.$atopic does not exist defaultstate will be assumed
+    my $atopic = $attributes->{topic} || $topic;
+    my $aweb = $attributes->{web} || $web;
 
-    my $controlledTopic = _initTOPIC ($web, $topic );
+    my $controlledTopic = _initTOPIC ($aweb, $atopic);
     return $controlledTopic->getRow( $param ) if $controlledTopic;
 
     # Not cotrolled get row from values in configure
