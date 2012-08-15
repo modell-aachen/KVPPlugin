@@ -265,7 +265,6 @@ sub isForkable {
         $this->{isAllowingFork} = 
              # Allow forking if there is an action for it
              ($this->{workflow}->getActionWithAttribute($this, 'FORK')) ? 1 : 0;
-        
     }
     return $this->{isAllowingFork};
 }

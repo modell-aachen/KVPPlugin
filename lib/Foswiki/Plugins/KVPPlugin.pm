@@ -582,6 +582,8 @@ sub _changeState {
         return undef;
     }
 
+    my $oldIsApproved = $controlledTopic->getRow( "approved" );
+
     unless ($action
             && $state
             && $state eq $controlledTopic->getState()
@@ -656,7 +658,7 @@ sub _changeState {
 
                 # Get ForkingAction. This will determine, if discussion will be copied, overwritten or discarded
                 my $actionAttributes = $controlledTopic->getAttributes($action);
-                $actionAttributes =~ /(?:\W|^)(FORK|ACCEPT|DISCARD)(?:\W|$)/;
+                $actionAttributes =~ /(?:\W|^)(FORK|DISCARD)(?:\W|$)/;
                 my $forkingAction = $1;
 
                 # clear message, if workflow doesn't allow it (maybe the
@@ -745,7 +747,8 @@ sub _changeState {
                             $url = Foswiki::Func::getViewUrl($parentWeb, $parent);
                         }
                     }
-                    elsif ($forkingAction && $forkingAction eq "ACCEPT"){
+		    # Check if discussion is beeing accepted
+                    elsif (!$oldIsApproved && $controlledTopic->getRow("approved")){
                         # transfer ACLs from old document to new
                         transferACL($appWeb, $appTopic, $controlledTopic);
                         $controlledTopic->purgeConributors();
