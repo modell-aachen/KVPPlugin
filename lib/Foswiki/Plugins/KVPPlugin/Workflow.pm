@@ -177,7 +177,7 @@ sub getFFStatus {
     my $currentState = $topic->getState();
     foreach my $state( values %{ $this->{states} } ) {
         if ( $state->{state} eq $currentState ) {
-            return $state->{stategroup};
+            return $state->{lefttap};
         }
     }
     return '';
