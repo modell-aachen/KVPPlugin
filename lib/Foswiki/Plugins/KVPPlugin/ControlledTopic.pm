@@ -155,13 +155,17 @@ sub setState {
     my ( $this, $state, $version, $remark ) = @_;
     my $oldState = $this->{state}->{name};
     $this->{state}->{name} = $state;
+
     $this->{state}->{"LASTVERSION_$state"} = $version;
     $this->{state}->{"LASTPROCESSOR_$state"} = Foswiki::Func::getWikiUserName();
     $this->{state}->{"LEAVING_$oldState"} = Foswiki::Func::getWikiUserName() if($oldState);
     $this->{state}->{"LASTTIME_$state"} =
       Foswiki::Time::formatTime( time(), '$day.$mo.$year', 'servertime' );
+
     $this->{state}->{Remark} = $remark || '';
+
     $this->{meta}->putKeyed( "WORKFLOW", $this->{state} );
+
     ## set accesspermissions to the ones defined in the table
     #my $writeAcls = $this->{workflow}->getChangeACL($this, $state);
     #$this->{meta}->putKeyed("PREFERENCE",
@@ -353,7 +357,11 @@ sub changeState {
     my $oldstate = $this->{state}->{name};
 
     my $state = $this->{workflow}->getNextState( $this, $action );
-unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeState: No NextState! Action=".$action." currentState=".$this->{state}->{name}); return;} # XXX Debug
+    unless ($state) {
+        $action ||= '';
+        Foswiki::Func::writeWarning("changeState: No NextState! Action=".$action." currentState=".$this->{state}->{name});
+        return;
+    }
     #Alex: Es muss garantiert sein, dass die Form nicht leer ist (also " ")
     my $form = $this->{workflow}->getNextForm( $this, $action );
     my $notify = $this->{workflow}->getNotifyList( $this, $action );
@@ -385,7 +393,7 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
         $fmt =~ s/\$n\(\)/\n/go;
         $fmt =~ s/\$n([^$mixedAlpha]|$)/\n$1/gos;
     }
-	
+
     $this->{history}->{value} .= $fmt;
     $this->{meta}->put( "WORKFLOWHISTORY", $this->{history} );
     
@@ -416,57 +424,51 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
         
         # Alex: Get Users from Groups
         foreach my $group (@groups) {
-                next unless $group;
-        	if ( Foswiki::Func::isGroup($group)) {
-			    my $it = Foswiki::Func::eachGroupMember($group);
-			    while ($it->hasNext()) {
-			        my $user = $it->next();
-			        push( @persons, $user);
-			        #Alex: Debug
-			        #Foswiki::Func::writeWarning( __PACKAGE__
-	                        #  . "Gruppenmitglied: '$user" );
-			    }
-        	}
-        	# Alex: Handler fr Nicht-Gruppen
-        	else {
-        		#Alex: Debug
-        		#Foswiki::Func::writeWarning( __PACKAGE__
-	                #          . " Notify Mitglied: $group" );
-        		push( @persons, $group);
-        	}
-        	
-        	# Alex notify und extranotify zusammenfhren und doppelte Werte verrrrnichten!!!
-			#foreach(@extrapersons) {
-  			#	push(@persons,$_);
-			#}
-	}	
+            next unless $group;
+            if ( Foswiki::Func::isGroup($group)) {
+                my $it = Foswiki::Func::eachGroupMember($group);
+                while ($it->hasNext()) {
+                    my $user = $it->next();
+                    push( @persons, $user);
+                }
+            }
+            # Alex: Handler fr Nicht-Gruppen
+            else {
+                #Alex: Debug
+                push( @persons, $group);
+            }
+
+            # Alex notify und extranotify zusammenfhren und doppelte Werte verrrrnichten!!!
+            #foreach(@extrapersons) {
+            #    push(@persons,$_);
+            #}
+        }
         
-	# Should be enough to del_double mail adresses: @persons = del_double(@persons);
-        	
-       	# Alex: Emailadressen auslesen
+        # Should be enough to del_double mail adresses: @persons = del_double(@persons);
+
+        # Alex: Emailadressen auslesen
         foreach my $who (@persons) {
-	            if ( $who =~ /^$Foswiki::regex{emailAddrRegex}$/ ) {
-	                push( @emails, $who );
-	            }
-	            else {
-	                $who =~ s/^.*\.//;    # web name?
-	                my @list = Foswiki::Func::wikinameToEmails($who);
-	                if ( scalar(@list) ) {
-	                    push( @emails, @list );
-	                }
-	                else {
-	                    Foswiki::Func::writeWarning( __PACKAGE__
-	                          . " cannot send mail to '$who'"
-	                          . " - cannot determine an email address" );
-	                }
-	            }
-	        
+            if ( $who =~ /^$Foswiki::regex{emailAddrRegex}$/ ) {
+                push( @emails, $who );
+            }
+            else {
+                $who =~ s/^.*\.//;    # web name?
+                my @list = Foswiki::Func::wikinameToEmails($who);
+                if ( scalar(@list) ) {
+                    push( @emails, @list );
+                }
+                else {
+                    Foswiki::Func::writeWarning( __PACKAGE__
+                          . " cannot send mail to '$who'"
+                          . " - cannot determine an email address" );
+                }
+            }
+
         }
         
         # Alex: Email Doubletten verhindern:
         @emails = del_double(@emails);
-#Foswiki::Func::writeWarning("changeState mails: ".join(",", @emails));
-        
+
         # Alex: Emails versenden
         if ( scalar(@emails) ) {
             # Have a list of recipients
@@ -509,12 +511,11 @@ sub save {
 
 # Alex: Alle doppelten Werte aus einem Array lschen
 sub del_double{
-	my %all=();
-	@all{@_}=1;
+        my %all=();
+        @all{@_}=1;
         delete $all{''};
-	return (keys %all);
+        return (keys %all);
 }
-
 
 sub expandMacros {
     my ( $this, $text ) = @_;

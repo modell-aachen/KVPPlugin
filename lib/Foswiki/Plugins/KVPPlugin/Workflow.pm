@@ -95,14 +95,14 @@ sub new {
             # store preferences
             $this->{preferences}->{$1} = $2;
         }
-	elsif (
+        elsif (
             $line =~ s/^\s*\|([\s*]*State\s*Type[\s*]*\|.*)\|$/$1/ix
-	 )
-	{
+        )
+        {
             $inTable = 'DEFAULT';
-	    $defaultCol = 'statetype'; # XXX
-	    @defaultfields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
-	}
+            $defaultCol = 'statetype'; # XXX
+            @defaultfields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
+        }
         elsif ( defined($inTable) && $line =~ s/^\s*\|\s*(.*?)\s*\|$/$1/ ) {
 
             my %data;
@@ -113,7 +113,7 @@ sub new {
                 }
 
                $default{ $data{ $defaultCol } } = \%data;
-	    } else {
+            } else {
                 foreach my $col ( split( /\s*\|\s*/, $line ) ) {
                     $data{ $fields[ $i++ ] } = $col;
                 }
@@ -140,7 +140,7 @@ sub new {
                       }
                     }
                 }
-	    }
+            }
         }
         else {
             undef $inTable;
@@ -201,15 +201,12 @@ sub getActionWithAttribute {
 # Returns the attributes of the given action for the given state
 sub getAttributes {
     my ( $this, $currentState, $action ) = @_;
-    Foswiki::Func::writeWarning("currentState: $currentState action: $action");
     foreach my $t( @{ $this->{transitions} } ) {
         if ( $t->{state} && $t->{state} eq $currentState
                 && $t->{action} eq $action ) {
-                Foswiki::Func::writeWarning(join(',', keys $t));
             return $t->{attribute};
         }
     }
-    Foswiki::Func::writeWarning("getAttributes: action '$action' not found for state '$currentState'");
     return '';
 }
 
@@ -235,7 +232,6 @@ sub hasAttribute {
 sub getTransitionAttributes {
     my ( $this, $state ) = @_;
 
-$state || die;    
     my $allow = ',';
     my $suggest = ',';
     my $comment = ',';
@@ -273,7 +269,7 @@ sub getChangeMail {
 # will be undef if the transition doesn't exist, or is not allowed.
 sub getNextState {
     my ( $this, $topic, $action ) = @_;
-unless($action) {Foswiki::Func::writeWarning("No action! topic: ".$topic); return undef;} # XXX 
+    unless($action) {Foswiki::Func::writeWarning("No action! topic: ".$topic); return undef;} # XXX 
     my $currentState = $topic->getState();
     foreach my $t ( @{ $this->{transitions} } ) {
         my $allowed = $topic->expandMacros( $t->{allowed} );

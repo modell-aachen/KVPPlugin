@@ -73,10 +73,10 @@ sub initPlugin {
     if ($controlledTopic) {
         my $context = Foswiki::Func::getContext();
         $context->{'KVPControlled'} = 1;
-	if ($controlledTopic->canEdit()) {
+        if ($controlledTopic->canEdit()) {
             $context->{'KVPEdit'} = 1;
         }
-	unless ($controlledTopic->getRow( 'approved' )) {
+        unless ($controlledTopic->getRow( 'approved' )) {
             $context->{'KVPDiscussion'} = 1;
         }
     }
@@ -257,13 +257,14 @@ sub _WORKFLOWEDITTOPIC {
     
     #Editieren zulassen, falls nicht kontrolliertes Topic
     unless ($controlledTopic) {
-    	return CGI::a(
+        return CGI::a(
             {
                 href => Foswiki::Func::getScriptUrl(
                     $web, $topic, 'edit',
                     t => time() ),
             },
-            '%MAKETEXT{"Edit"}%' );
+            '%MAKETEXT{"Edit"}%'
+        );
     }
 
     # replace edit tag
@@ -299,7 +300,7 @@ sub _WORKFLOWATTACHTOPIC {
     ($web, $topic) = _getTopicName($attributes, $web, $topic);
     my $controlledTopic = _initTOPIC( $web, $topic );
     unless ($controlledTopic) {
-    	        return CGI::a(
+        return CGI::a(
             {
                 href => Foswiki::Func::getScriptUrl(
                     $web, $topic, 'attach', t => time()
@@ -360,7 +361,7 @@ sub _WORKFLOWMETA {
     my $ret = $controlledTopic->getWorkflowMeta($attr);
     if(!defined $ret) {
         my $list = $attributes->{or};
-	if($list) {
+        if($list) {
             while(!defined $ret && $list =~ m/([a-zA-Z_]*)/g) {
                 $ret = $controlledTopic->getWorkflowMeta($1);
             }
@@ -389,7 +390,7 @@ sub _WORKFLOWTRANSITION {
     my $cs              = $controlledTopic->getState();
 
     unless ($numberOfActions) {
-    	return '';
+        return '';
         return '<span class="foswikiAlert">NO AVAILABLE ACTIONS in state '
           .$cs.'</span>' if $controlledTopic->debugging();
         return '';
@@ -424,16 +425,11 @@ SCRIPT
                 .$actions[0]."' />" );
         push(
             @fields,
-#            CGI::submit(
-#                -class => $buttonClass,
-#                -value => $actions[0],
-#                -id => 'WORKFLOWbutton'
-#            )
             "<noautolink>%BUTTON{\"%MAKETEXT{$actions[0]}%\" id=\"WORKFLOWbutton\" type=\"submit\" onclick=\"jQuery('#KVPTransitions').block()\"}%</noautolink>"
         );
     }
     else {
-	my %labels = map{$_ => Foswiki::Func::expandCommonVariables("\%MAKETEXT{\"$_\"}\%")} @actions;
+        my %labels = map{$_ => Foswiki::Func::expandCommonVariables("\%MAKETEXT{\"$_\"}\%")} @actions;
         push(
             @fields,
             CGI::popup_menu(
@@ -446,10 +442,6 @@ SCRIPT
         );
         push(
             @fields,
-#            CGI::submit(
-#                -class => $buttonClass,
-#                -value => 'Change status'
-#            )
             '<noautolink>%BUTTON{"%MAKETEXT{"Change status"}%" type="submit" onclick="jQuery(\'#KVPTransitions\').block()"}%</noautolink>'
         );
     }
@@ -503,7 +495,7 @@ sub _WORKFLOWFORK {
 
     #Check we can fork
     return '' unless ($controlledTopic->canFork());
-	
+
     my $newnames;
     if (!defined $attributes->{newnames}) {
         # Old interpretation, for compatibility
@@ -517,7 +509,7 @@ sub _WORKFLOWFORK {
     my $lockdown = Foswiki::Func::isTrue($attributes->{lockdown});
 
     if (!Foswiki::Func::topicExists($web, $topic)) {
-    	return "";
+        return "";
         return "<span class='foswikiAlert'>WORKFLOWFORK: '$topic' does not exist</span>";
     }
 
@@ -561,7 +553,7 @@ sub _changeState {
     my $query = Foswiki::Func::getCgiQuery();
     
     return unless $query;
-	
+
     my $web   = $query->param('web') || $session->{webName};
     my $topic = $query->param('topic') || $session->{topicName};
     my $remark = $query->param('message');
@@ -581,7 +573,7 @@ sub _changeState {
         $url = Foswiki::Func::getScriptUrl(
             $web, $topic, 'oops',
             template => "oopswrkflwsaveerr",
-	    action   => $action
+            action   => $action
         );
         Foswiki::Func::redirectCgiQuery( undef, $url );
         return undef;
@@ -631,7 +623,7 @@ sub _changeState {
 
     try {
         try {
-        	#Alex: Forms erstmal vorenthalten
+            #Alex: Forms erstmal vorenthalten
             if ($newForm && "peter" eq "manni") {
 
                 # If there is a form with the new state, and it's not
@@ -656,7 +648,7 @@ sub _changeState {
                      );
             }
             else {
-            	$url = Foswiki::Func::getScriptUrl( $web, $topic, 'view' );
+                $url = Foswiki::Func::getScriptUrl( $web, $topic, 'view' );
             }
 
                 # Get ForkingAction. This will determine, if discussion will be copied, overwritten or discarded
@@ -664,13 +656,11 @@ sub _changeState {
                 $actionAttributes =~ /(?:\W|^)(FORK|ACCEPT|DISCARD)(?:\W|$)/;
                 my $forkingAction = $1;
 
-		Foswiki::Func::writeWarning("attribs: $actionAttributes message: $remark action: $action");
                 # clear message, if workflow doesn't allow it (maybe the
                 # user entered a message and then switched state...)
                 if( $actionAttributes !~ /(?:\W|^)REMARK(?:\W|$)/ ) {
                       $remark = '';
                 }
-		Foswiki::Func::writeWarning("actions: $actionAttributes message: $remark");
                 $controlledTopic->changeState($action, $remark);
 
                 # check if deleting comments is allowed if requested
@@ -679,8 +669,9 @@ sub _changeState {
                     if( $removeComments eq '1' 
                         && not ($allowRemove =~ /,$action,/ || $suggestRemove =~ /,$action,/)
                     ) {
+                        # this can happen by changing the popup-menue after
+                        # selecting the checkbox
                         my $username = Foswiki::Func::getWikiUserName();
-                        Foswiki::Func::writeWarning("User ".$username." tryed to remove all comments althought the action ".$action." doesn't allow it!");
                         $removeComments = '0';
                     }
                 }
@@ -695,99 +686,93 @@ sub _changeState {
                 #Alex: Zugehriges Topic finden
                 #Alex: Das Item kann hier raus, wenn das neue Trash Web laeuft
                     my $forkSuffix = _WORKFLOWSUFFIX();
-	            my $appTopic = $topic;
-	            $appTopic =~ s/$forkSuffix$//g;
-	            
-	            my $appWeb = $web;
-	            $appWeb =~ s/$forkSuffix$//g;
-	            #Alex TrashTopic ausloten:             	           	
-	            #Alex: Checken ob Topic schon einmal in den Muell verschoben wurde
+                    my $appTopic = $topic;
+                    $appTopic =~ s/$forkSuffix$//g;
+
+                    my $appWeb = $web;
+                    $appWeb =~ s/$forkSuffix$//g;
+                    #Alex TrashTopic ausloten:
+                    #Alex: Checken ob Topic schon einmal in den Muell verschoben wurde
                     my $trashTopic = $appWeb . $appTopic;
-		    $trashTopic =~ s#/|\.##g; # remove subweb-deliminators
+                    $trashTopic =~ s#/|\.##g; # remove subweb-deliminators
                     { # scope
                         my $numberedTrashTopic = $trashTopic;
-	           	my $i = 1;
-	            	while (Foswiki::Func::topicExists("Trash", $numberedTrashTopic)) {
+                        my $i = 1;
+                        while (Foswiki::Func::topicExists("Trash", $numberedTrashTopic)) {
                                 $numberedTrashTopic = $trashTopic."_$i";
-	            		$i++;
-	            	}
+                                $i++;
+                        }
                         $trashTopic = $numberedTrashTopic;
                     }
-	            
-	            # Hier Action 
-#	            if ("VERWORFEN" eq $controlledTopic->getState()){	
+
+                    # Hier Action 
                     if ($forkingAction && $forkingAction eq "DISCARD") {
-                         $controlledTopic->purgeConributors(); # XXX Wirklich?
-                         my $origMeta = $controlledTopic->{meta};
+                        $controlledTopic->purgeConributors(); # XXX Wirklich?
+                        my $origMeta = $controlledTopic->{meta};
 
-                         # Move topic to trash
-                         $controlledTopic->save(1);
-                         Foswiki::Func::moveTopic( $web, $topic, "Trash", $trashTopic );
+                        # Move topic to trash
+                        $controlledTopic->save(1);
+                        Foswiki::Func::moveTopic( $web, $topic, "Trash", $trashTopic );
 
-                         # Only unlock / add to history if appWeb exists (does not when topic)
-                         if(Foswiki::Func::topicExists( $appWeb, $appTopic )) {
-                             $url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
+                        # Only unlock / add to history if appWeb exists (does not when topic)
+                        if(Foswiki::Func::topicExists( $appWeb, $appTopic )) {
+                            $url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
 
-	            	     #Alex: Alte Metadaten wiederherstellen
-	            	     my ($meta, $text) = Foswiki::Func::readTopic($appWeb, $appTopic);	
-	            	 
-	            	     #gesperrte Seiten wieder entsperren
-	            	     if (defined $meta->get("PREFERENCE", "ALLOWTOPICCHANGE")){
-	            	         if ($meta->get("PREFERENCE", "ALLOWTOPICCHANGE")->{"value"} eq "nobody")
-	            	         {# XXX Hier muessen die permissions aus dem Workflow hin
-	            	             $meta->remove("PREFERENCE", "ALLOWTOPICCHANGE"); 	
-	            	         }
-	            	     }
-	            	     #Workflowhistory entfernen. Alex: Oder wollen wir die ggf. speichern?
-	            	     if (defined $meta->get("WORKFLOWHISTORY")){
-	            	         $meta->remove("WORKFLOWHISTORY"); 	
-	            	     }
-	            	 
-	            	     #Alex: Keine neue Revision erzeugen, Autor nicht ueberschreiben
-	            	     Foswiki::Func::saveTopic( $appWeb, $appTopic, $meta, $text, { forcenewrevision => 0, minor => 1, dontlog => 1, ignorepermissions => 1 });
-	            	 } else {
-                             # if non-talk topic does not exist redirect to parent
-                             my $parent = $origMeta->getParent();
-                             my $parentWeb = $origMeta->web();
-                             $url = Foswiki::Func::getViewUrl($parentWeb, $parent);
-                         }
-	            }
-	            elsif ($forkingAction && $forkingAction eq "ACCEPT"){
+                            #Alex: Alte Metadaten wiederherstellen
+                            my ($meta, $text) = Foswiki::Func::readTopic($appWeb, $appTopic);
+
+                            #gesperrte Seiten wieder entsperren
+                            if (defined $meta->get("PREFERENCE", "ALLOWTOPICCHANGE")){
+                            if ($meta->get("PREFERENCE", "ALLOWTOPICCHANGE")->{"value"} eq "nobody")
+                                {# XXX Hier muessen die permissions aus dem Workflow hin
+                                    $meta->remove("PREFERENCE", "ALLOWTOPICCHANGE"); 
+                                }
+                            }
+                            #Workflowhistory entfernen. Alex: Oder wollen wir die ggf. speichern?
+                            if (defined $meta->get("WORKFLOWHISTORY")){
+                                $meta->remove("WORKFLOWHISTORY"); 
+                            }
+
+                            #Alex: Keine neue Revision erzeugen, Autor nicht ueberschreiben
+                            Foswiki::Func::saveTopic( $appWeb, $appTopic, $meta, $text, { forcenewrevision => 0, minor => 1, dontlog => 1, ignorepermissions => 1 });
+                        } else {
+                            # if non-talk topic does not exist redirect to parent
+                            my $parent = $origMeta->getParent();
+                            my $parentWeb = $origMeta->web();
+                            $url = Foswiki::Func::getViewUrl($parentWeb, $parent);
+                        }
+                    }
+                    elsif ($forkingAction && $forkingAction eq "ACCEPT"){
                         # transfer ACLs from old document to new
                         transferACL($appWeb, $appTopic, $controlledTopic);
                         $controlledTopic->purgeConributors();
                         $controlledTopic->nextRev();
                         # Will save changes after moving original topic away
-	            	
-	            	$url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
-					            	
-	            	#Alex: Force new Revision, damit Aenderungen auf jeden Fall in der History sichtbar werden
-	            	#try{
+
+                        $url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
+
+                        #Alex: Force new Revision, damit Aenderungen auf jeden Fall in der History sichtbar werden
+                        #try{
                         # only move topic if it has a talk suffix
                         if($appTopic eq $topic) {
-	            	        $controlledTopic->save(1);
+                            $controlledTopic->save(1);
                         } else {
-	            		#Zuerst kommt das alte Topic in den Muell, dann wird das neue verschoben
+                            #Zuerst kommt das alte Topic in den Muell, dann wird das neue verschoben
 
-		            	Foswiki::Func::moveTopic( $appWeb, $appTopic, "Trash", $trashTopic);
-				# Save now that I know i can move it afterwards
-	            	        $controlledTopic->save(1);
-		            	Foswiki::Func::moveTopic( $web, $topic, $appWeb, $appTopic );
+                            Foswiki::Func::moveTopic( $appWeb, $appTopic, "Trash", $trashTopic);
+                            # Save now that I know i can move it afterwards
+                            $controlledTopic->save(1);
+                            Foswiki::Func::moveTopic( $web, $topic, $appWeb, $appTopic );
                         }
-	            	#Alex: Abfangroutine bei Fehlern muss hinzu
-	            	#} catch Error::Simple with {
-	            		#my $error = shift;
-	            		#Foswiki::Func::moveTopic( "Trash", $trashTopic, $web, $appTopic);
-	            	#}
-	            }
-	            else{
-	            	$controlledTopic->save(1);
-	            }
-	            #Alex: Debug
-	           
-        		#Foswiki::Func::writeWarning( __PACKAGE__
-	                #          . " State: $state" );
-            #}
+                        #Alex: Abfangroutine bei Fehlern muss hinzu
+                        #} catch Error::Simple with {
+                                #my $error = shift;
+                                #Foswiki::Func::moveTopic( "Trash", $trashTopic, $web, $appTopic);
+                        #}
+                    }
+                    else{
+                        $controlledTopic->save(1);
+                    }
 
             Foswiki::Func::redirectCgiQuery( undef, $url );
             
@@ -810,7 +795,6 @@ sub _changeState {
             # Deprecated, TWiki compatibility only
             $e->redirect($session);
         }
-
     };
     return undef;
 }
@@ -892,7 +876,7 @@ sub _restLink {
     } elsif ( Foswiki::Func::topicExists( $web, $topic ) ) {
         # Check if article is still in correct state
         my ( $meta, $text ) = Foswiki::Func::readTopic( $web, $topic );
-	my $wrkflw = $meta->get( 'WORKFLOW' );
+        my $wrkflw = $meta->get( 'WORKFLOW' );
         if ( $wrkflw && $wrkflw->{name} eq $state ) {
             # states are equal, redirecting to topic...
             $url = Foswiki::Func::getViewUrl($web, $topic);
@@ -1112,7 +1096,7 @@ sub beforeEditHandler {
 
     return unless $controlledTopic; # not controlled, so check not required
 
-	#Alex: Checken ob Edit erlaubt ist
+        #Alex: Checken ob Edit erlaubt ist
     unless ( $controlledTopic->canEdit() ) {
         throw Foswiki::OopsException(
             'accessdenied',
@@ -1189,8 +1173,8 @@ sub beforeSaveHandler {
         while($setField =~ m/"\s*([^"]+?)\s*=\s*([^"]*?)\s*"/g) {
           my $toSet = $1;
           my $value = $2;
-	  $value =~ s#\$quot#"#g;
-	  $value =~ s#\$dollar#\$#g;
+          $value =~ s#\$quot#"#g;
+          $value =~ s#\$dollar#\$#g;
           $meta->putKeyed('FIELD', { name => $toSet, title => $toSet, type => 'Set', value => $value } );
         }
       }
@@ -1202,8 +1186,8 @@ sub beforeSaveHandler {
         while($setMeta =~ m/"\s*([^"]+?)\s*=\s*([^"]*?)\s*"/g) {
           my $toSet = $1;
           my $value = $2;
-	  $value =~ s#\$quot#"#g;
-	  $value =~ s#\$dollar#\$#g;
+          $value =~ s#\$quot#"#g;
+          $value =~ s#\$dollar#\$#g;
           $meta->putKeyed('PREFERENCE', { name => $toSet, title => $toSet, type => 'Set', value => $value } );
         }
       }
