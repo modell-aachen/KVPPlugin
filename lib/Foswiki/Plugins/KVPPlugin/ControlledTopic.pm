@@ -178,8 +178,20 @@ sub setState {
     if($allowComment) {
         $this->{meta}->putKeyed("PREFERENCE",
                           { name => 'DISPLAYCOMMENTS', value => 'on' } );
-        $this->{meta}->putKeyed("PREFERENCE",
-                          { name => 'ALLOWTOPICCOMMENT', value => $allowComment } );
+        if($allowComment =~ m/\bLOGGEDIN\b/) {
+            my $wikiguest = $Foswiki::cfg{DefaultUserWikiName};
+            $this->{meta}->putKeyed("PREFERENCE",
+                { name => 'DENYTOPICCOMMENT', title => 'DENYTOPICCOMMENT',
+                    value => ($allowComment =~ m/\b$wikiguest\b/)?'nobody':$wikiguest
+                }
+            );
+            $this->{meta}->remove( 'PREFERENCE', 'ALLOWTOPICCOMMENT' );
+        } else {
+          $this->{meta}->remove( 'PREFERENCE', 'DENYTOPICCOMMENT' );
+          $this->{meta}->putKeyed("PREFERENCE",
+                { name => 'ALLOWTOPICCOMMENT', value => $allowComment }
+          );
+        }
     } else {
         $this->{meta}->putKeyed("PREFERENCE",
                           { name => 'DISPLAYCOMMENTS', value => 'off' } );
