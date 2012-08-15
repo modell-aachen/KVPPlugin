@@ -71,7 +71,7 @@ sub new {
     foreach my $line ( split( /\n/, $text ) ) {
         if (
             $line =~ s/^\s*\|([\s*]*State[\s*]*\|
-                           [\s*]*Action[\s*]*\|.*)\|$/$1/ix
+                           [\s*]*Action[\s*]*\|.*)\|\s*$/$1/ix
           )
         {
 
@@ -82,7 +82,7 @@ sub new {
         }
         elsif (
             $line =~ s/^\s*\|([\s*]*State[\s*]*\|
-                              [\s*]*Allow\s*Edit[\s*]*\|.*)\|$/$1/ix
+                              [\s*]*Allow\s*Edit[\s*]*\|.*)\|\s*$/$1/ix
           )
         {
 
@@ -96,14 +96,14 @@ sub new {
             $this->{preferences}->{$1} = $2;
         }
         elsif (
-            $line =~ s/^\s*\|([\s*]*State\s*Type[\s*]*\|.*)\|$/$1/ix
+            $line =~ s/^\s*\|([\s*]*State\s*Type[\s*]*\|.*)\|\s*$/$1/ix
         )
         {
             $inTable = 'DEFAULT';
             $defaultCol = 'statetype'; # XXX
             @defaultfields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
         }
-        elsif ( defined($inTable) && $line =~ s/^\s*\|\s*(.*?)\s*\|$/$1/ ) {
+        elsif ( defined($inTable) && $line =~ s/^\s*\|\s*(.*?)\s*\|\s*$/$1/ ) {
 
             my %data;
             my $i = 0;
