@@ -1,14 +1,17 @@
 # Release manifest for KVPPlugin
 data/System/KVPPlugin.txt 0644 Documentation
+data/System/KVPPluginCommonWords.txt 0644
 data/System/KvpSkinTopExtendedTemplate.txt 0644 Template for header
 data/System/KvpSkinTransitionsTemplate.txt 0644 Template for transitionmenue
 pub/System/KVPPlugin/transitions.js 0644 Script for transition menue
+locale/KVPPlugin/de.po 0666 German translations
 lib/Foswiki/Plugins/KVPPlugin.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/ControlledTopic.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/Workflow.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/Config.spec 0755 Configuration
 templates/mailworkflowtransition.tmpl 0666
 templates/oopswfplease.tmpl 0666
+templates/oopswrkflwsaveerr.tmpl 0666
 templates/oopsworkflowchanged.tmpl 0666
 templates/oopsworkflowmoved.tmpl 0666
 templates/oopsworkflowerr.tmpl 0666

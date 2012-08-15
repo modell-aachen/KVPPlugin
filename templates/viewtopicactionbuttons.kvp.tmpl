@@ -15,7 +15,7 @@
 %TMPL:DEF{"topictabaction"}%%TMPL:P{context="KVPDiscussion" else="approvedtopicactionbuttonactive" then="approvedtopicactionbuttoninactive"}%</li><li>%TMPL:P{talktopicactionbutton}%%TMPL:END%
 
 %{ Link zum freigegebenen Stand je nach aktivem Bearbeitungsstand ausgeben }%
-%TMPL:DEF{approvedtopicactionbuttoninactive}%%IF{"$TOPIC = '%WORKFLOWORIGIN%' OR NOT istopic '%WEB%.%WORKFLOWORIGIN%'" then="<a><strike>%MAKETEXT{"%GETWORKFLOWROW{stategroup}%"}%</strike></a>" else="<a href='$percentSCRIPTURLPATH{$quotview$quot}$percent/$percentWEB$percent/$percentWORKFLOWORIGIN$percent' rel='nofollow' title='$percentMAKETEXT{$percentGETWORKFLOWROW{stategroup}$percent}$percent' >$percentMAKETEXT{$percentGETWORKFLOWROW{stategroup}$percent}$percent</a>"}%%TMPL:END%
+%TMPL:DEF{approvedtopicactionbuttoninactive}%%IF{"$TOPIC = '%WORKFLOWORIGIN%' OR NOT istopic '%WEB%.%WORKFLOWORIGIN%'" then="<a><strike>%MAKETEXT{%GETWORKFLOWROW{stategroup}%}%</strike></a>" else="<a href='$percentSCRIPTURLPATH{$quotview$quot}$percent/$percentWEB$percent/$percentWORKFLOWORIGIN$percent' rel='nofollow' title='$percentMAKETEXT{$percentGETWORKFLOWROW{stategroup}$percent}$percent' >$percentMAKETEXT{$percentGETWORKFLOWROW{stategroup}$percent}$percent</a>"}%%TMPL:END%
 %TMPL:DEF{approvedtopicactionbuttonactive}%<div class="modacActionButtonACTIVE"><a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%' rel='nofollow' title='%MAKETEXT{%GETWORKFLOWROW{stategroup}%}%' >%MAKETEXT{%GETWORKFLOWROW{stategroup}%}%</a></div>%TMPL:END%
 
 %{ Diskussionsstand je nach Bearbeitungsstand ausgeben }%

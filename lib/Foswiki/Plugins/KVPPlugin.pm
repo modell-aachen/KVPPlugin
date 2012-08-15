@@ -450,7 +450,7 @@ SCRIPT
 #                -class => $buttonClass,
 #                -value => 'Change status'
 #            )
-            "<noautolink>%BUTTON{\"%MAKETEXT{\"Change status\"}%\" type=\"submit\" onclick=\"jQuery('#KVPTransitions').block()\"}%</noautolink>"
+            '<noautolink>%BUTTON{"%MAKETEXT{"Change status"}%" type="submit" onclick="jQuery(\'#KVPTransitions\').block()"}%</noautolink>'
         );
     }
 
@@ -566,6 +566,8 @@ sub _changeState {
     my $topic = $query->param('topic') || $session->{topicName};
     my $remark = $query->param('message');
     my $removeComments = $query->param('removeComments') || '0';
+    my $action = $query->param('WORKFLOWACTION');
+    my $state  = $query->param('WORKFLOWSTATE');
     
     ($web, $topic) =
       Foswiki::Func::normalizeWebTopicName( $web, $topic );
@@ -575,27 +577,30 @@ sub _changeState {
     my $url;
     my $controlledTopic = _initTOPIC( $web, $topic );
 
-    unless ($controlledTopic) {
+    unless ($controlledTopic && Foswiki::Func::topicExists( $web, $topic )) {
         $url = Foswiki::Func::getScriptUrl(
             $web, $topic, 'oops',
-            template => "oopssaveerr",
-            param1   => "Could not initialise workflow for "
-              . ( $web   || '' ) . '.'
-                . ( $topic || '' )
-               );
+            template => "oopswrkflwsaveerr",
+	    action   => $action
+        );
         Foswiki::Func::redirectCgiQuery( undef, $url );
         return undef;
     }
 
-    my $action = $query->param('WORKFLOWACTION');
-    my $state  = $query->param('WORKFLOWSTATE');
-    
-    #Alex: Die Bad State ist nicht schoen
-    die "BAD STATE $action $state!=", $controlledTopic->getState()
-      unless $action
-        && $state
-          && $state eq $controlledTopic->getState()
-            && $controlledTopic->haveNextState($action);
+    unless ($action
+            && $state
+            && $state eq $controlledTopic->getState()
+            && $controlledTopic->haveNextState($action) ) {
+        $url = Foswiki::Func::getScriptUrl(
+            $web, $topic, 'oops',
+            template => "oopswrkflwsaveerr",
+            state   => $state,
+            cstate   => $controlledTopic->getState(),
+            action   => $action
+        );
+        Foswiki::Func::redirectCgiQuery( undef, $url );
+        return undef;
+    }
 
     my $newForm = $controlledTopic->newForm($action);
 
@@ -945,11 +950,11 @@ sub _restFork {
           Foswiki::Sandbox::untaintUnchecked( $forkTopic );
         $controlledTopic = _initTOPIC( $forkWeb, $forkTopic );
     } else {
-        $erroneous = "%MAKETEXT{Topic to fork from does not exist:}% $forkWeb.$forkTopic";
+        $erroneous = '%MAKETEXT{"Topic to fork from does not exist:"}% '."$forkWeb.$forkTopic";
     }
 
     unless($controlledTopic) {
-        $erroneous = "%MAKETEXT{Tried to fork from a topic, which is not under any workflow:}% $forkWeb.$forkTopic" unless $erroneous;
+        $erroneous = '%MAKETEXT{"Tried to fork from a topic, which is not under any workflow:"}% '."$forkWeb.$forkTopic" unless $erroneous;
     } else {
         my $defaultAction = $controlledTopic->getActionWithAttribute('FORK');
 
@@ -975,14 +980,14 @@ sub _restFork {
             if ( $newname =~ m/\s*\[(.*)\]\[(.*)\]\s*/ ) {
                 ($newForkTopic, $newForkAction) = ($1, $2);
                 unless ( $controlledTopic->haveNextState($newForkAction) ) {
-                    $erroneous .= "%MAKETEXT{\"Cannot execute transition '[_1]' on '[_2]'\" args=\"$newForkAction, $newForkTopic\"}%\n\n";
+                    $erroneous .= '%MAKETEXT{"Cannot execute transition =[_1]= on =[_2]=!" args="'."$newForkAction, $newForkTopic\"}%\n\n";
                     next;
                 }
             } else {
                 $newForkTopic = Foswiki::Sandbox::untaintUnchecked( $newname );
                 $newForkAction = $defaultAction;
                 unless ( $newForkAction ) {
-                    $erroneous .= "%MAKETEXT{No transition with 'NEW' attribute to fork}% $newForkTopic\n\n";
+                    $erroneous .= '%MAKETEXT{"No transition with =NEW= attribute to fork"}% '."$newForkTopic\n\n";
                     next;
                 }
             }
@@ -1044,7 +1049,7 @@ sub _restFork {
                 my $newcontrolledTopic = _initTOPIC( $w, $t, undef, $meta, $text, 1);
      
                 unless ( $newcontrolledTopic ) {
-                    $erroneous .= "%MAKETEXT{Could not initialize workflow for}% $w.$t\n\n";
+                    $erroneous .= '%MAKETEXT{"Could not initialize workflow for"}% '."$w.$t\n\n";
                     next; # XXX this leaves the created topic behind
                 }
 
@@ -1136,7 +1141,7 @@ sub beforeUploadHandler {
     return unless $controlledTopic;
 
     unless ( $controlledTopic->canEdit() ) {
-        my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not permitted to upload to this topic. You have been denied access by Q.Wiki"}%');
+        my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not permitted to upload to this topic. You have been denied access by Q.Wiki."}%');
         throw Foswiki::OopsException(
             'workflowerr',
             def   => 'topic_access',
@@ -1278,23 +1283,25 @@ sub beforeSaveHandler {
     } elsif ( !$controlledTopic->canEdit() ) {
         # Not a state change, make sure the AllowEdit in the state table
         # permits this action
+        my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not permitted to save this topic. You have been denied access by Q.Wiki"}%', $topic, $web, $meta);
         throw Foswiki::OopsException(
             'workflowerr',
             def   => 'topic_access',
             web   => $_[2],
             topic => $_[1],
-            params => 'You are not permitted to save this topic. You have been denied access by Q.Wiki' 
+            params => $message
              );
     } else {
-         my $newMeta = new Foswiki::Meta($Foswiki::Plugins::SESSION, $web, $topic, $text);
-         my @newStateName = $newMeta->find('WORKFLOW');
+        my $newMeta = new Foswiki::Meta($Foswiki::Plugins::SESSION, $web, $topic, $text);
+        my @newStateName = $newMeta->find('WORKFLOW');
         if(scalar @newStateName > 1) { # If 0 this is a new topic, or not controlled, or created without workflow
+        my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"Must find exactly one workflow in the topic, but found [_1]!" args="'.scalar(@newStateName).'"}%', $topic, $web, $meta);
             throw Foswiki::OopsException(
                     'workflowerr',
                      def   => 'topic_access',
                      web   => $_[2],
                      topic => $_[1],
-                     params => 'Must find exactly one workflow in the topic, but found '.scalar(@newStateName).'!'
+                     params => $message
                 );
         }
         # TODO Check if metacommentstuff changed unless workflow does so
@@ -1309,13 +1316,13 @@ sub beforeSaveHandler {
             my $oldMeta = $controlledTopic->{meta};
             my $oldState = $oldMeta->get( 'WORKFLOW' );
             unless($newStateName[0]->{name} eq $oldState->{name}) {
-Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
+                     my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"The Workflowstate =[_1]= does not match the old state =[_2]=...maybe someone edited the topic after you opened it? Topic cannot be saved!" args="'."$newStateName[0]->{name},$oldState->{name}\"}%", $topic, $web, $meta);
                 throw Foswiki::OopsException(
                     'workflowerr',
                      def   => 'topic_access',
                      web   => $_[2],
                      topic => $_[1],
-                     params => 'The Workflowstate '.$newStateName[0]->{name}.'does not match the old state '.$oldState->{name}.'! Topic can not be saved!'
+                     params => $message
                 );
             }
 # XXX Kommentare sind nicht schreibgeschtzt
@@ -1324,14 +1331,16 @@ Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
 #                $meta->putKeyed('COMMENT', $comment);
 #            }
         } else {
+            # XXX This check does not work properly
             # Make sure that newly created topics can't cheat with their state
             if(scalar @newStateName > 1) { # If 0 this is a new topic, or not controlled, if it's a copy it may be 1.
+                my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"Found an invalid workflow (there must be none in a newly created topic)!"}%');
                 throw Foswiki::OopsException(
                         'workflowerr',
                         def   => 'topic_access',
                         web   => $_[2],
                         topic => $_[1],
-                        params => 'Found an invalid workflow (there must be none in a newly created topic)!'
+                        params => $message
                 );
             }
             # Assure that newly created topics have a state

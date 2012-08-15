@@ -1,0 +1,416 @@
+# KVPPlugin translation for German
+# Translators:
+# ModellAachen
+msgid ""
+msgstr ""
+"Project-Id-Version: KVPPlugin $Id\n"
+"Report-Msgid-Bugs-To: osthold@modell-aachen.de\n"
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: 2012-07-09 16:56+0200\n"
+"Last-Translator: Modell Aachen\n"
+"Language-Team: Modell Aachen <none>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Pootle 2.0.5\n"
+
+#: templates/mailworkflowtransition.tmpl:12
+msgid "%1 edited the topic %2."
+msgstr "%1 hat den Artikel %2 bearbeitet."
+
+#: templates/mailworkflowtransition.tmpl:3
+msgid "%1 has a new state: %2"
+msgstr "%1 hat einen neuen Status: %2"
+
+#: templates/oopswfplease.tmpl:7
+msgid "%1 is editing %2, and their lock is still active for another %3"
+msgstr "%1 bearbeitet gerade %2 und die Sperrung ist noch für %3 aktiv"
+
+#: templates/oopsworkflowerr.tmpl:3 templates/oopsworkflowfork.tmpl:4
+#: templates/oopswrkflwsaveerr.tmpl:3
+msgid "(workflow error)"
+msgstr "(Fehler im Workflow)"
+
+#: templates/oopshistory.kvp.tmpl:24
+msgid "Action"
+msgstr "Aktion"
+
+#: data/System/KVPPluginCommonWords.txt:21
+msgid "Approve contentual aspects of discussion"
+msgstr "Diskussionsstand inhaltlich freigeben"
+
+#: data/System/KVPPluginCommonWords.txt:20
+msgid "Approve contentual aspects of draft"
+msgstr "Entwurfsstand inhaltlich freigeben"
+
+#: data/System/KVPPluginCommonWords.txt:22
+msgid "Approve formal aspects of discussion"
+msgstr "Diskussionsstand formal freigeben"
+
+#: data/System/KVPPluginCommonWords.txt:19
+msgid "Approve formal aspects of draft"
+msgstr "Entwurf formal freigeben"
+
+#: data/System/KVPPluginCommonWords.txt:6
+msgid "Approved Page"
+msgstr "Freigegebener Stand"
+
+#: data/System/KvpSkinTopExtendedTemplate.txt:29
+#: data/System/KvpSkinTopExtendedTemplate.txt:66
+msgid "Approved by"
+msgstr "Freigegeben durch"
+
+#: data/System/KvpSkinTopExtendedTemplate.txt:21
+#: data/System/KvpSkinTopExtendedTemplate.txt:58
+msgid "Area of application"
+msgstr "Geltungsbereich"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:308 lib/Foswiki/Plugins/KVPPlugin.pm:320
+msgid "Attachments"
+msgstr "Anhänge"
+
+#: templates/oopswfplease.tmpl:4 templates/oopsworkflowchanged.tmpl:5
+#: templates/oopsworkflowerr.tmpl:5 templates/oopsworkflowfork.tmpl:6
+#: templates/oopsworkflowlink.tmpl:5 templates/oopsworkflowmoved.tmpl:5
+#: templates/oopswrkflwsaveerr.tmpl:5
+msgid "Attention"
+msgstr "Achtung"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:967
+msgid "Cannot execute transition =%1= on =%2=!"
+msgstr "Kann Transition =%1= nicht auf =%2= anwenden!"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:444
+msgid "Change status"
+msgstr "Status ändern"
+
+#: templates/oopshistory.kvp.tmpl:10
+msgid "Comment"
+msgstr "Kommentar"
+
+#: templates/oopsworkflowchanged.tmpl:15
+msgid "Continue to the topic here:"
+msgstr "Zum Artikel gelangen Sie hier:"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1036
+msgid "Could not initialize workflow for"
+msgstr "Konnte Workflow nicht initialisieren für"
+
+#: templates/oopswrkflwsaveerr.tmpl:14
+msgid "Could not initialize workflow for %1! Maybe the topic was deleted?"
+msgstr ""
+"Der Workflow konnte für %1 nicht initialisiert werden! Eventuell wurde der "
+"Artikel gelöscht?"
+
+#: data/System/KvpSkinTopExtendedTemplate.txt:25
+#: data/System/KvpSkinTopExtendedTemplate.txt:62
+msgid "Creator"
+msgstr "Ersteller"
+
+#: templates/oopshistory.kvp.tmpl:19 templates/oopshistory.kvp.tmpl:6
+msgid "Date"
+msgstr "Datum"
+
+#: data/System/KVPPluginCommonWords.txt:15
+msgid "Discard discussion"
+msgstr "Diskussion verwerfen"
+
+#: data/System/KVPPluginCommonWords.txt:14
+msgid "Discard draft"
+msgstr "Entwurf verwerfen"
+
+#: data/System/KVPPluginCommonWords.txt:16
+msgid "Discuss"
+msgstr "Diskutieren"
+
+#: data/System/KVPPluginCommonWords.txt:8
+msgid "Discussion"
+msgstr "Diskussion"
+
+#: templates/viewtopicactionbuttons.kvp.tmpl:25
+#: templates/viewtopicactionbuttons.kvp.tmpl:31
+#: templates/viewtopicactionbuttons.kvp.tmpl:34
+msgid "Discussion about Improvements"
+msgstr "Diskussion über Verbesserungen"
+
+#: data/System/KVPPluginCommonWords.txt:7
+msgid "Draft"
+msgstr "Entwurf"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:266 lib/Foswiki/Plugins/KVPPlugin.pm:277
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: templates/oopsworkflowlink.tmpl:3 templates/oopsworkflowlink.tmpl:7
+msgid "Error in link"
+msgstr "Fehler im Link"
+
+#: templates/oopsworkflowerr.tmpl:7 templates/oopsworkflowfork.tmpl:8
+#: templates/oopswrkflwsaveerr.tmpl:7
+msgid "Error in workflow"
+msgstr "Fehler im Workflow"
+
+#: templates/mailworkflowtransition.tmpl:23
+msgid "For questions, please refer to:"
+msgstr "Bei Fragen wenden Sie sich bitte an:"
+
+#: templates/oopswfplease.tmpl:17
+msgid "Force the transition anyway"
+msgstr "Transition dennoch durchführen"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1321
+msgid ""
+"Found an invalid workflow (there must be none in a newly created topic)!"
+msgstr ""
+"Ungültigen Workflow gefunden (in einem neuen Artikel darf keiner vorhanden "
+"sein)!"
+
+#: data/System/KvpSkinTransitionsTemplate.txt:5
+msgid "Improvement Process"
+msgstr "Verbesserungsprozess"
+
+#: templates/oopswfplease.tmpl:12
+msgid "In an emergency you can transition the topic anyway, by clicking "
+msgstr ""
+"In dringenden Fällen könnnen Sie die Transition dennoch durchführen, durch "
+"Klicken von "
+
+#: templates/oopsworkflowchanged.tmpl:14
+msgid "It used to be in %1 but is now in %2"
+msgstr "Er war im Status %1, aber ist jetzt in %2"
+
+#: data/System/KvpSkinTransitionsTemplate.txt:10
+msgid "Last approved revision"
+msgstr "Letzte freigegebene Revision"
+
+#: data/System/KvpSkinTransitionsTemplate.txt:9
+msgid "Last approved version"
+msgstr "Letzte freigegebene Version"
+
+#: data/System/KvpSkinTransitionsTemplate.txt:8
+msgid "Last editing person"
+msgstr "Letzter Bearbeiter"
+
+#: templates/mailworkflowtransition.tmpl:19
+msgid "Link to the page:"
+msgstr "Link zur Seite:"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1282
+msgid "Must find exactly one workflow in the topic, but found %1!"
+msgstr "Erwarte genau einen Workflow im Artikel, habe aber %1 gefunden!"
+
+#: data/System/KvpSkinTransitionsTemplate.txt:7
+msgid "Next step"
+msgstr "Nächster Schritt"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:974
+msgid "No transition with =NEW= attribute to fork"
+msgstr "Keine Transition mit =NEW= Attribut zum Forken von"
+
+#: templates/oopsworkflowchanged.tmpl:9 templates/oopsworkflowerr.tmpl:9
+#: templates/oopsworkflowfork.tmpl:10 templates/oopsworkflowmoved.tmpl:9
+#: templates/oopswrkflwsaveerr.tmpl:9
+msgid "OK"
+msgstr "OK"
+
+#: data/System/KVPPluginCommonWords.txt:12
+msgid "Put under CIP"
+msgstr "In KVP überführen"
+
+#: data/System/KvpSkinTopExtendedTemplate.txt:31
+#: data/System/KvpSkinTopExtendedTemplate.txt:68
+msgid "Release date"
+msgstr "Freigabedatum"
+
+#: templates/oopshistory.kvp.tmpl:22
+msgid "Remark"
+msgstr "Bemerkung"
+
+#: templates/mailworkflowtransition.tmpl:16
+msgid "Remarks"
+msgstr "Bemerkungen"
+
+#: data/System/KvpSkinTransitionsTemplate.txt:7
+msgid "Remarks for this state:"
+msgstr "Bemerkungen zu diesem Status:"
+
+#: data/System/KVPPluginCommonWords.txt:13
+msgid "Request approval"
+msgstr "Um Freigabe bitten"
+
+#: data/System/KVPPluginCommonWords.txt:17
+msgid "Request further revision"
+msgstr "Um weitere Überarbeitung bitten"
+
+#: data/System/KvpSkinTopExtendedTemplate.txt:27
+#: data/System/KvpSkinTopExtendedTemplate.txt:64
+msgid "Responsible"
+msgstr "Verantwortlich"
+
+#: templates/oopshistory.kvp.tmpl:18 templates/oopshistory.kvp.tmpl:5
+msgid "Revision"
+msgstr "Revision"
+
+#: data/System/KVPPluginCommonWords.txt:18
+msgid "Start discussion"
+msgstr "Diskussion starten"
+
+#: templates/viewtopicactionbuttons.kvp.tmpl:34
+msgid "Start new Discussion"
+msgstr "Diskussion starten"
+
+#: data/System/KvpSkinTransitionsTemplate.txt:6
+#: templates/oopshistory.kvp.tmpl:20 templates/oopshistory.kvp.tmpl:7
+msgid "State"
+msgstr "Status"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1303
+msgid ""
+"The Workflowstate =%1= does not match the old state =%2=...maybe someone "
+"edited the topic after you opened it? Topic cannot be saved!"
+msgstr ""
+"Der Workflowstatus =%1= gleicht nicht dem alten Status =%2=... eventuell hat "
+"jemand den Artikel bearbeitet, nachdem Sie ihn geöffnet haben? Artikel kann "
+"nicht gespichert werden!"
+
+#: templates/oopsworkflowmoved.tmpl:13
+msgid ""
+"The discussion you clicked is no longer available. You can go to the "
+"original topic by clicking OK."
+msgstr ""
+"Die Diskussion, die Sie aufgerufen haben, ist leider nicht mehr verfügbar. "
+"Sie gelangen zum Originaltopic durch klicken von OK."
+
+#: templates/oopsworkflowlink.tmpl:13
+msgid "The link you clicked is malformed."
+msgstr "Der Link, den Sie geklickt haben, ist fehlerhaft."
+
+#: templates/oopsworkflowmoved.tmpl:13
+msgid "The link you clicked is no longer available."
+msgstr "Der Link, den Sie geklickt haben ist leider nicht mehr verfügbar."
+
+#: templates/oopsworkflowchanged.tmpl:13
+msgid "The topic you clicked has changed state since this link was created."
+msgstr ""
+"Der Artikel, den Sie geklickt haben, hat den Status gewechselt, seitdem der "
+"Link kreiert wurde."
+
+#: templates/oopswrkflwsaveerr.tmpl:14
+msgid ""
+"The transition was not possible because the state of the topic (%1) did not "
+"match the state of the action (%2)! Maybe someone else already transitioned "
+"the topic?"
+msgstr ""
+"Die Transition war leider nicht möglich, da der Status vom Artikel (%1) "
+"nicht gleich dem Status der Aktion (%2) ist! Eventuell hat bereits jemand "
+"anderes eine Transition durchgeführt?"
+
+#: templates/mailworkflowtransition.tmpl:21
+msgid ""
+"This is an automatically generated message. Please do not reply to this "
+"email."
+msgstr ""
+"Dies ist eine automatisch generierte Nachricht. Bitte antworten Sie nicht "
+"auf diese E-Mail."
+
+#: templates/oopsworkflowchanged.tmpl:3 templates/oopsworkflowchanged.tmpl:7
+msgid "Topic changed"
+msgstr "Artikel wurde verändert"
+
+#: templates/oopshistory.kvp.tmpl:16 templates/oopshistory.kvp.tmpl:3
+msgid "Topic history"
+msgstr "Versionsgeschichte der Seite"
+
+#: templates/oopsworkflowmoved.tmpl:3 templates/oopsworkflowmoved.tmpl:7
+msgid "Topic no longer available"
+msgstr "Artikel nicht mehr verfügbar"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:937
+msgid "Topic to fork from does not exist:"
+msgstr "Die Quelle zum Abspalten existiert nicht:"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:941
+msgid "Tried to fork from a topic, which is not under any workflow:"
+msgstr ""
+"Sie haben versucht von einem Artikel abzuspalten, welcher gar nicht unter "
+"einem Workflow steht:"
+
+#: templates/oopshistory.kvp.tmpl:23 templates/oopshistory.kvp.tmpl:9
+msgid "Username"
+msgstr "Benutzername"
+
+#: templates/oopshistory.kvp.tmpl:21 templates/oopshistory.kvp.tmpl:8
+msgid "Version"
+msgstr "Version"
+
+#: data/System/KVPPluginCommonWords.txt:10
+msgid "Waiting for PO"
+msgstr "Warten auf PO"
+
+#: data/System/KVPPluginCommonWords.txt:9
+msgid "Waiting for QM"
+msgstr "Warten auf QM"
+
+#: templates/oopsworkflowerr.tmpl:12 templates/oopswrkflwsaveerr.tmpl:12
+msgid "While changing %1 an error occured in the workflow!"
+msgstr "Beim Statuswechsel von %1 ist ein Fehler im Workflow aufgetreten!"
+
+#: templates/oopsworkflowfork.tmpl:13
+msgid "While forking %1 an error occured in the workflow!"
+msgstr "Bei der Abspaltung von %1 ist ein Fehler im Workflow aufgetreten!"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1270
+msgid ""
+"You are not permitted to save this topic. You have been denied access by Q."
+"Wiki"
+msgstr ""
+"Sie sind nicht berechtig diesen Artikel zu speichern. Ihnen wurde der Zugang "
+"von Q.Wiki verwehrt."
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1128
+msgid ""
+"You are not permitted to upload to this topic. You have been denied access "
+"by Q.Wiki."
+msgstr ""
+"Sie sind nicht berechtig die Datei an dieses Topic anzuhänen. Ihnen wurde "
+"der Zugang von Q.Wiki verwehrt."
+
+#: templates/oopswfplease.tmpl:9
+msgid ""
+"You must ask %1 to close their edit and release their lock before you can "
+"change the state of the topic."
+msgstr ""
+"Sie müssen %1 bitten die Bearbeitung abzuschließen und die Sperre "
+"aufzuheben, um den Status dieses Artikels zu ändern."
+
+#: templates/oopshistory.kvp.tmpl:12
+msgid "earlier"
+msgstr "früher"
+
+#: templates/oopshistory.kvp.tmpl:12
+msgid "first"
+msgstr "erster"
+
+#: templates/oopshistory.kvp.tmpl:12
+msgid "last"
+msgstr "letzter"
+
+#: templates/oopshistory.kvp.tmpl:12
+msgid "later"
+msgstr "später"
+
+#: templates/oopshistory.kvp.tmpl:26
+msgid "restore"
+msgstr "wiederherstellen"
+
+#: data/System/KvpSkinTopExtendedTemplate.txt:62
+#: data/System/KvpSkinTopExtendedTemplate.txt:66
+#: data/System/KvpSkinTopExtendedTemplate.txt:68
+msgid "under discussion"
+msgstr "in Diskussion"
+
+#: templates/oopshistory.kvp.tmpl:26
+msgid "view"
+msgstr "ansehen"

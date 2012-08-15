@@ -1,6 +1,6 @@
 From: %WIKIWEBMASTERNAME% <%WIKIWEBMASTER%>
 To: %EMAILTO%
-Subject: %IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN%"}% hat einen neuen Status: %TARGET_STATE%
+Subject: %MAKETEXT{"[_1] has a new state: [_2]" args="%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN%"}%, %TARGET_STATE%"}%
 MIME-Version: 1.0
 Content-Type: multipart/alternative; boundary="=_=0i0k0i0w0tXuOi0E0A"
 
@@ -9,18 +9,18 @@ This is a multi-part message in MIME format.
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-%WIKINAME% hat den Artikel %IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN%"}% bearbeitet.
+%MAKETEXT{"[_1] edited the topic [_2]." args="%WIKINAME%, %IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN%"}%"}%
 
-%MAKETEXT{"%GETWORKFLOWROW{message}%"}%%IF{"$'WORKFLOWMETA{Remark}'" then="
+%MAKETEXT{%GETWORKFLOWROW{message}%}%%IF{"$'WORKFLOWMETA{Remark}'" then="
 
-%MAKETEXT{Remarks}%:
+%MAKETEXT{"Remarks"}%:
 $percentWORKFLOWMETA{Remark}$percent"}%
 
-Link zur Seite: %SCRIPTURL{"rest"}%/KVPPlugin/link?state=%TARGET_STATE%;webtopic=%WEB%.%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN%"}%
+%MAKETEXT{"Link to the page:"}% %SCRIPTURL{"rest"}%/KVPPlugin/link?state=%TARGET_STATE%;webtopic=%WEB%.%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN%"}%
 
-Dies ist eine automatisch generierte Benachrichtigung. Bitte antworten Sie nicht auf diese E-Mail.
+%MAKETEXT{"This is an automatically generated message. Please do not reply to this email."}%
 
-Bei Fragen wenden Sie sich bitte an:
+%MAKETEXT{"For questions, please refer to:"}%
 %WIKIWEBMASTERNAME%
 
 --=_=0i0k0i0w0tXuOi0E0A--
