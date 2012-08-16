@@ -22,4 +22,6 @@ These words are often mentioned in workflows and might slip into a %MAKE%NOP%TEX
 %MAKETEXT{"Approve contentual aspects of draft"}%
 %MAKETEXT{"Approve contentual aspects of discussion"}%
 %MAKETEXT{"Approve formal aspects of discussion"}%
-</ p>
+</p><p>Messages<br />
+%MAKETEXT{"This topic is not under any workflow."}%
+</p>

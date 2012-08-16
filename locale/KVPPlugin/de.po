@@ -37,23 +37,23 @@ msgstr "(Fehler im Workflow)"
 msgid "Action"
 msgstr "Aktion"
 
-#: data/System/KVPPluginCommonWords.txt:21
+#: data/System/KVPPluginCommonWords.txt:23
 msgid "Approve contentual aspects of discussion"
 msgstr "Diskussionsstand inhaltlich freigeben"
 
-#: data/System/KVPPluginCommonWords.txt:20
+#: data/System/KVPPluginCommonWords.txt:22
 msgid "Approve contentual aspects of draft"
 msgstr "Entwurfsstand inhaltlich freigeben"
 
-#: data/System/KVPPluginCommonWords.txt:22
+#: data/System/KVPPluginCommonWords.txt:24
 msgid "Approve formal aspects of discussion"
 msgstr "Diskussionsstand formal freigeben"
 
-#: data/System/KVPPluginCommonWords.txt:19
+#: data/System/KVPPluginCommonWords.txt:21
 msgid "Approve formal aspects of draft"
 msgstr "Entwurf formal freigeben"
 
-#: data/System/KVPPluginCommonWords.txt:6
+#: data/System/KVPPluginCommonWords.txt:7
 msgid "Approved Page"
 msgstr "Freigegebener Stand"
 
@@ -67,7 +67,7 @@ msgstr "Freigegeben durch"
 msgid "Area of application"
 msgstr "Geltungsbereich"
 
-#: lib/Foswiki/Plugins/KVPPlugin.pm:308 lib/Foswiki/Plugins/KVPPlugin.pm:320
+#: lib/Foswiki/Plugins/KVPPlugin.pm:309 lib/Foswiki/Plugins/KVPPlugin.pm:321
 msgid "Attachments"
 msgstr "Anhänge"
 
@@ -78,11 +78,11 @@ msgstr "Anhänge"
 msgid "Attention"
 msgstr "Achtung"
 
-#: lib/Foswiki/Plugins/KVPPlugin.pm:967
+#: lib/Foswiki/Plugins/KVPPlugin.pm:973
 msgid "Cannot execute transition =%1= on =%2=!"
 msgstr "Kann Transition =%1= nicht auf =%2= anwenden!"
 
-#: lib/Foswiki/Plugins/KVPPlugin.pm:444
+#: lib/Foswiki/Plugins/KVPPlugin.pm:445
 msgid "Change status"
 msgstr "Status ändern"
 
@@ -94,7 +94,7 @@ msgstr "Kommentar"
 msgid "Continue to the topic here:"
 msgstr "Zum Artikel gelangen Sie hier:"
 
-#: lib/Foswiki/Plugins/KVPPlugin.pm:1036
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1042
 msgid "Could not initialize workflow for"
 msgstr "Konnte Workflow nicht initialisieren für"
 
@@ -113,19 +113,19 @@ msgstr "Ersteller"
 msgid "Date"
 msgstr "Datum"
 
-#: data/System/KVPPluginCommonWords.txt:15
+#: data/System/KVPPluginCommonWords.txt:17
 msgid "Discard discussion"
 msgstr "Diskussion verwerfen"
 
-#: data/System/KVPPluginCommonWords.txt:14
+#: data/System/KVPPluginCommonWords.txt:16
 msgid "Discard draft"
 msgstr "Entwurf verwerfen"
 
-#: data/System/KVPPluginCommonWords.txt:16
+#: data/System/KVPPluginCommonWords.txt:18
 msgid "Discuss"
 msgstr "Diskutieren"
 
-#: data/System/KVPPluginCommonWords.txt:8
+#: data/System/KVPPluginCommonWords.txt:9
 msgid "Discussion"
 msgstr "Diskussion"
 
@@ -135,11 +135,11 @@ msgstr "Diskussion"
 msgid "Discussion about Improvements"
 msgstr "Diskussion über Verbesserungen"
 
-#: data/System/KVPPluginCommonWords.txt:7
+#: data/System/KVPPluginCommonWords.txt:8
 msgid "Draft"
 msgstr "Entwurf"
 
-#: lib/Foswiki/Plugins/KVPPlugin.pm:266 lib/Foswiki/Plugins/KVPPlugin.pm:277
+#: lib/Foswiki/Plugins/KVPPlugin.pm:266 lib/Foswiki/Plugins/KVPPlugin.pm:278
 msgid "Edit"
 msgstr "Bearbeiten"
 
@@ -160,7 +160,7 @@ msgstr "Bei Fragen wenden Sie sich bitte an:"
 msgid "Force the transition anyway"
 msgstr "Transition dennoch durchführen"
 
-#: lib/Foswiki/Plugins/KVPPlugin.pm:1321
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1327
 msgid ""
 "Found an invalid workflow (there must be none in a newly created topic)!"
 msgstr ""
@@ -176,6 +176,10 @@ msgid "In an emergency you can transition the topic anyway, by clicking "
 msgstr ""
 "In dringenden Fällen könnnen Sie die Transition dennoch durchführen, durch "
 "Klicken von "
+
+#: data/System/KVPPluginCommonWords.txt:6
+msgid "Info Page"
+msgstr "Infoseite"
 
 #: templates/oopsworkflowchanged.tmpl:14
 msgid "It used to be in %1 but is now in %2"
@@ -197,7 +201,7 @@ msgstr "Letzter Bearbeiter"
 msgid "Link to the page:"
 msgstr "Link zur Seite:"
 
-#: lib/Foswiki/Plugins/KVPPlugin.pm:1282
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1288
 msgid "Must find exactly one workflow in the topic, but found %1!"
 msgstr "Erwarte genau einen Workflow im Artikel, habe aber %1 gefunden!"
 
@@ -205,7 +209,7 @@ msgstr "Erwarte genau einen Workflow im Artikel, habe aber %1 gefunden!"
 msgid "Next step"
 msgstr "Nächster Schritt"
 
-#: lib/Foswiki/Plugins/KVPPlugin.pm:974
+#: lib/Foswiki/Plugins/KVPPlugin.pm:980
 msgid "No transition with =NEW= attribute to fork"
 msgstr "Keine Transition mit =NEW= Attribut zum Forken von"
 
@@ -215,7 +219,11 @@ msgstr "Keine Transition mit =NEW= Attribut zum Forken von"
 msgid "OK"
 msgstr "OK"
 
-#: data/System/KVPPluginCommonWords.txt:12
+#: data/System/KVPPluginCommonWords.txt:10
+msgid "Old Discussion"
+msgstr "alte Diskussion"
+
+#: data/System/KVPPluginCommonWords.txt:14
 msgid "Put under CIP"
 msgstr "In KVP überführen"
 
@@ -236,11 +244,11 @@ msgstr "Bemerkungen"
 msgid "Remarks for this state:"
 msgstr "Bemerkungen zu diesem Status:"
 
-#: data/System/KVPPluginCommonWords.txt:13
+#: data/System/KVPPluginCommonWords.txt:15
 msgid "Request approval"
 msgstr "Um Freigabe bitten"
 
-#: data/System/KVPPluginCommonWords.txt:17
+#: data/System/KVPPluginCommonWords.txt:19
 msgid "Request further revision"
 msgstr "Um weitere Überarbeitung bitten"
 
@@ -253,7 +261,7 @@ msgstr "Verantwortlich"
 msgid "Revision"
 msgstr "Revision"
 
-#: data/System/KVPPluginCommonWords.txt:18
+#: data/System/KVPPluginCommonWords.txt:20
 msgid "Start discussion"
 msgstr "Diskussion starten"
 
@@ -266,7 +274,7 @@ msgstr "Diskussion starten"
 msgid "State"
 msgstr "Status"
 
-#: lib/Foswiki/Plugins/KVPPlugin.pm:1303
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1309
 msgid ""
 "The Workflowstate =%1= does not match the old state =%2=...maybe someone "
 "edited the topic after you opened it? Topic cannot be saved!"
@@ -315,6 +323,10 @@ msgstr ""
 "Dies ist eine automatisch generierte Nachricht. Bitte antworten Sie nicht "
 "auf diese E-Mail."
 
+#: data/System/KVPPluginCommonWords.txt:26
+msgid "This topic is not under any workflow."
+msgstr "Dieser Artikel steht nicht unter einem Workflow."
+
 #: templates/oopsworkflowchanged.tmpl:3 templates/oopsworkflowchanged.tmpl:7
 msgid "Topic changed"
 msgstr "Artikel wurde verändert"
@@ -327,11 +339,11 @@ msgstr "Versionsgeschichte der Seite"
 msgid "Topic no longer available"
 msgstr "Artikel nicht mehr verfügbar"
 
-#: lib/Foswiki/Plugins/KVPPlugin.pm:937
+#: lib/Foswiki/Plugins/KVPPlugin.pm:943
 msgid "Topic to fork from does not exist:"
 msgstr "Die Quelle zum Abspalten existiert nicht:"
 
-#: lib/Foswiki/Plugins/KVPPlugin.pm:941
+#: lib/Foswiki/Plugins/KVPPlugin.pm:947
 msgid "Tried to fork from a topic, which is not under any workflow:"
 msgstr ""
 "Sie haben versucht von einem Artikel abzuspalten, welcher gar nicht unter "
@@ -345,11 +357,11 @@ msgstr "Benutzername"
 msgid "Version"
 msgstr "Version"
 
-#: data/System/KVPPluginCommonWords.txt:10
+#: data/System/KVPPluginCommonWords.txt:12
 msgid "Waiting for PO"
 msgstr "Warten auf PO"
 
-#: data/System/KVPPluginCommonWords.txt:9
+#: data/System/KVPPluginCommonWords.txt:11
 msgid "Waiting for QM"
 msgstr "Warten auf QM"
 
@@ -361,7 +373,7 @@ msgstr "Beim Statuswechsel von %1 ist ein Fehler im Workflow aufgetreten!"
 msgid "While forking %1 an error occured in the workflow!"
 msgstr "Bei der Abspaltung von %1 ist ein Fehler im Workflow aufgetreten!"
 
-#: lib/Foswiki/Plugins/KVPPlugin.pm:1270
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1276
 msgid ""
 "You are not permitted to save this topic. You have been denied access by Q."
 "Wiki"
@@ -369,7 +381,7 @@ msgstr ""
 "Sie sind nicht berechtig diesen Artikel zu speichern. Ihnen wurde der Zugang "
 "von Q.Wiki verwehrt."
 
-#: lib/Foswiki/Plugins/KVPPlugin.pm:1128
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1134
 msgid ""
 "You are not permitted to upload to this topic. You have been denied access "
 "by Q.Wiki."
