@@ -12,7 +12,7 @@ $Foswiki::cfg{Extensions}{KVPPlugin}{except} = '^(WikiGroups|WikiUsers|WebChange
 # **PERL**
 # Falls GETWORKFLOWROW für ein Topic ohne Workflow aufgerufen wird, werden diese Werte benutzt.
 # Die Voreinstellung ist auf den ModacSkin abgestimmt.
-$Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow} = {'lefttap' => 'Infoseite', 'righttap' => 'alte Diskussion', 'approved' => 1};
+$Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow} = {'lefttap' => 'Info Page', 'righttap' => 'Old Discussion', 'approved' => 1};
 
 # **BOOLEAN**
 # Detailierte Logs f&uuml;r Emails aktivieren.

@@ -3,9 +3,11 @@ These words are often mentioned in workflows and might slip into a %MAKE%NOP%TEX
 
 ---+++ Words
 <p>Process states<br />
+%MAKETEXT{"Info Page"}%
 %MAKETEXT{"Approved Page"}%
 %MAKETEXT{"Draft"}%
 %MAKETEXT{"Discussion"}%
+%MAKETEXT{"Old Discussion"}%
 %MAKETEXT{"Waiting for QM"}%
 %MAKETEXT{"Waiting for PO"}%
 </p><p>Transitions<br />
