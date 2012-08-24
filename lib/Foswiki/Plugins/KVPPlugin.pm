@@ -500,7 +500,7 @@ sub _WORKFLOWTRANSITION {
       if(selection === undefined) {
           menu = \$('#WORKFLOWbutton');
           if (menu === undefined) return;
-          selection = menu.text().trim();
+          selection = menu.text().replace(/^\\s+|\\s+\$/g, '');
       }
       var box = document.getElementById("WORKFLOWchkbox");
       if (box === undefined || box === null) return;
