@@ -1545,7 +1545,13 @@ sub indexTopicHandler {
   my $workflow = $meta->get('WORKFLOW');
   return unless $workflow;
   my $state = $workflow->{name};
+  # backward compatibility
   $doc->add_fields( process_state_s => $state) if $state;
+
+  # provide ALL the fields
+  for my $key (keys %$workflow) {
+  	$doc->add_fields("workflowmeta_". lc($key) ."_s" => $workflow->{$key});
+  }
 }
 
 1;
