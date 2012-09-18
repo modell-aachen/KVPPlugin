@@ -657,7 +657,7 @@ sub _changeState {
             }
 
                 # Get ForkingAction. This will determine, if discussion will be copied, overwritten or discarded
-                my $actionAttributes = $controlledTopic->getAttributes($action);
+                my $actionAttributes = $controlledTopic->getAttributes($action) || '';
                 $actionAttributes =~ /(?:\W|^)(FORK|DISCARD)(?:\W|$)/;
                 my $forkingAction = $1;
 
