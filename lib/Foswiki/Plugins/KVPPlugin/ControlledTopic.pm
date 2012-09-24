@@ -395,6 +395,7 @@ sub changeState {
         }
         
         # Dig up the bodies
+        $notify =~ s#^\s*|\s*$##g;
         my @groups = split( /\s*,\s*/, $notify );
         my @persons;
         my @emails;
