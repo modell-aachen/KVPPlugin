@@ -477,25 +477,4 @@ sub _cleanField {
     return $text;
 }
 
-sub stringify {
-    my $this = shift;
-
-    my $s = "---+ Preferences\n";
-    foreach ( keys %{ $this->{preferences} } ) {
-        $s .= "| $_ | $this->{preferences}->{$_} |\n";
-    }
-    $s .= "\n---+ States\n| *State*       | *Allow Edit* | *Message* |\n";
-    foreach ( values %{ $this->{states} } ) {
-        $s .= "| $_->{state} | $_->{allowedit} | $_->{message} |\n";
-    }
-
-    $s .=
-      "\n---+ Transitions\n| *State* | *Action* | *Next State* | *Allowed* |\n";
-    foreach ( @{ $this->{transitions} } ) {
-        $s .=
-          "| $_->{state} | $_->{action} | $_->{nextstate} |$_->{allowed} |\n";
-    }
-    return $s;
-}
-
 1;
