@@ -65,6 +65,7 @@ sub initPlugin {
     Foswiki::Func::registerTagHandler(
         'WORKFLOWORIGIN', \&_WORKFLOWORIGIN );
 
+    # init the displayed topic to set according contexts for skin
     my $controlledTopic = _initTOPIC( $web, $topic );
     if ($controlledTopic) {
         my $context = Foswiki::Func::getContext();
@@ -105,7 +106,8 @@ sub _WORKFLOWEDITPERM {
     # Does Foswiki permit editing?
     return Foswiki::Func::checkAccessPermission(
         'CHANGE', $Foswiki::Plugins::SESSION->{user},
-        undef, $topic, $web, undef) ? 1 : 0;
+        undef, $topic, $web, undef
+    ) ? 1 : 0;
 }
 
 # Tag handler for WORKFLOWCONTRIBUTORS
@@ -125,8 +127,10 @@ sub _WORKFLOWCONTRIBUTORS {
 # Checks if the User is in a list
 sub isInList {
     my ($allow) = @_;
-    if ( ref( $Foswiki::Plugins::SESSION->{user} )
-        && $Foswiki::Plugins::SESSION->{user}->can("isInList") )
+    if (
+            ref( $Foswiki::Plugins::SESSION->{user} )
+            && $Foswiki::Plugins::SESSION->{user}->can("isInList")
+        )
     {
         return $Foswiki::Plugins::SESSION->{user}->isInList($allow);
     }
@@ -164,10 +168,10 @@ sub _WORKFLOWSUFFIX {
 sub _WORKFLOWORIGIN {
     my ( $session, $attributes, $topic, $web ) = @_;
     my $suffix = _WORKFLOWSUFFIX();
-    if($topic =~ /(.*)$suffix/) {
-      return $1;
+    if ($topic =~ /(.*)$suffix/) {
+        return $1;
     } else {
-      return $topic;
+        return $topic;
     }
 }
 
@@ -175,7 +179,7 @@ sub _initTOPIC {
     my ( $web, $topic, $rev, $meta, $text, $forceNew ) = @_;
 
     # Skip system web for performance
-    if($web eq "System") {return undef;}
+    return undef if ($web eq "System");
 
     # Filter out topics inhibited in configure
     my $exceptions = $Foswiki::cfg{Extensions}{KVPPlugin}{except};
@@ -197,12 +201,10 @@ sub _initTOPIC {
     }
 
     if ( defined &Foswiki::Func::isValidTopicName ) {
-
         # Allow non-wikiwords
         return undef unless Foswiki::Func::isValidTopicName( $topic, 1 );
     }
     else {
-
         # (tm)wiki doesn't have isValidTopicName
         # best we can do
         return undef unless Foswiki::Func::isValidWikiWord($topic);
@@ -251,8 +253,8 @@ sub _WORKFLOWSTATEMESSAGE {
 
     ($web, $topic) = _getTopicName($attributes, $web, $topic);
     my $controlledTopic = _initTOPIC( $web, $topic );
-    return '' unless $controlledTopic;
 
+    return '' unless $controlledTopic;
     return $controlledTopic->getStateMessage();
 }
 
@@ -392,15 +394,16 @@ SCRIPT
 
 
     my $url = Foswiki::Func::getScriptUrl(
-        $pluginName, 'changeState', 'rest' );
+        $pluginName, 'changeState', 'rest'
+    );
     my $form =
         CGI::start_form( -method => 'POST', -action => $url )
       . join( '', @fields )
       . CGI::end_form();
 
     $form =~ s/\r?\n//g;    # to avoid breaking TML
-# XXX I don't know what this is supposed to break but since I can't use %BUTTON{"..."}% without handling the qouotes specially I will disable it for now. An alternative is to do something like %BUTTON(?...?)% ... s/\?/"/g...
-#    $form =~ s/"/'/g;    # to avoid breaking TML
+    # XXX I don't know what this is supposed to break but since I can't use %BUTTON{"..."}% without handling the qouotes specially I will disable it for now. An alternative is to do something like %BUTTON(?...?)% ... s/\?/"/g...
+    #    $form =~ s/"/'/g;    # to avoid breaking TML
     return $form;
 }
 
@@ -411,8 +414,8 @@ sub _WORKFLOWSTATE {
 
     ($web, $topic) = _getTopicName($attributes, $web, $topic);
     my $controlledTopic = _initTOPIC( $web, $topic );
-    return '' unless $controlledTopic;
 
+    return '' unless $controlledTopic;
     return $controlledTopic->getState();
 }
 
@@ -535,13 +538,15 @@ sub _changeState {
     my $breaklock = $query->param('breaklock');
     unless (Foswiki::Func::isTrue($breaklock)) {
         my ( $url, $loginName, $t ) = Foswiki::Func::checkTopicEditLock(
-            $web, $topic );
+            $web, $topic
+        );
         if ( $t ) {
             my $currUser = Foswiki::Func::getCanonicalUserID();
             my $locker = Foswiki::Func::getCanonicalUserID($loginName);
             if ($locker ne $currUser) {
                 $t = Foswiki::Time::formatDelta(
-                    $t, $Foswiki::Plugins::SESSION->i18n );
+                    $t, $Foswiki::Plugins::SESSION->i18n
+                );
                 $url = Foswiki::Func::getScriptUrl(
                     $web, $topic, 'oops',
                     template => 'oopswfplease',
@@ -586,129 +591,128 @@ sub _changeState {
                 $url = Foswiki::Func::getScriptUrl( $web, $topic, 'view' );
             }
 
-                # Get ForkingAction. This will determine, if discussion will be copied, overwritten or discarded
-                my $actionAttributes = $controlledTopic->getAttributes($action) || '';
-                $actionAttributes =~ /(?:\W|^)(FORK|DISCARD)(?:\W|$)/;
-                my $forkingAction = $1;
+            # Get ForkingAction. This will determine, if discussion will be copied, overwritten or discarded
+            my $actionAttributes = $controlledTopic->getAttributes($action) || '';
+            $actionAttributes =~ /(?:\W|^)(FORK|DISCARD)(?:\W|$)/;
+            my $forkingAction = $1;
 
-                # clear message, if workflow doesn't allow it (maybe the
-                # user entered a message and then switched state...)
-                if( $actionAttributes !~ /(?:\W|^)REMARK(?:\W|$)/ ) {
-                      $remark = '';
-                }
-                $controlledTopic->changeState($action, $remark);
+            # clear message, if workflow doesn't allow it (maybe the
+            # user entered a message and then switched state...)
+            if( $actionAttributes !~ /(?:\W|^)REMARK(?:\W|$)/ ) {
+                $remark = '';
+            }
+            $controlledTopic->changeState($action, $remark);
 
-                # check if deleting comments is allowed if requested
-                { #scope
-                    my ($allowRemove, $suggestRemove) = $controlledTopic->getTransitionAttributes();
-                    if( $removeComments eq '1' 
+            # check if deleting comments is allowed if requested
+            { #scope
+                my ($allowRemove, $suggestRemove) = $controlledTopic->getTransitionAttributes();
+                if(
+                        $removeComments eq '1' 
                         && not ($allowRemove =~ /,$action,/ || $suggestRemove =~ /,$action,/)
-                    ) {
-                        # this can happen by changing the popup-menue after
-                        # selecting the checkbox
-                        my $username = Foswiki::Func::getWikiUserName();
-                        $removeComments = '0';
-                    }
+                    )
+                {
+                    # this can happen by changing the popup-menue after
+                    # selecting the checkbox
+                    my $username = Foswiki::Func::getWikiUserName();
+                    $removeComments = '0';
                 }
-                # overwrite user-choice if workflow demands it
-                if($controlledTopic->isRemovingComments($state, $action)) {
-                    $removeComments = '1';
+            }
+            # overwrite user-choice if workflow demands it
+            if($controlledTopic->isRemovingComments($state, $action)) {
+                $removeComments = '1';
+            }
+            removeComments($controlledTopic) if ($removeComments eq '1');
+
+            # Flag that this is a state change to the beforeSaveHandler
+            local $isStateChange = 1;
+            #Alex: Zugehriges Topic finden
+            #Alex: Das Item kann hier raus, wenn das neue Trash Web laeuft
+            my $forkSuffix = _WORKFLOWSUFFIX();
+            my $appTopic = $topic;
+            $appTopic =~ s/$forkSuffix$//g;
+
+            my $appWeb = $web;
+            $appWeb =~ s/$forkSuffix$//g;
+            #Alex TrashTopic ausloten:
+            #Alex: Checken ob Topic schon einmal in den Muell verschoben wurde
+            my $trashTopic = $appWeb . $appTopic;
+            $trashTopic =~ s#/|\.##g; # remove subweb-deliminators
+            { # scope
+                my $numberedTrashTopic = $trashTopic;
+                my $i = 1;
+                while (Foswiki::Func::topicExists("Trash", $numberedTrashTopic)) {
+                    $numberedTrashTopic = $trashTopic."_$i";
+                    $i++;
                 }
-                removeComments($controlledTopic) if ($removeComments eq '1');
+                $trashTopic = $numberedTrashTopic;
+            }
 
-                # Flag that this is a state change to the beforeSaveHandler
-                local $isStateChange = 1;
-                #Alex: Zugehriges Topic finden
-                #Alex: Das Item kann hier raus, wenn das neue Trash Web laeuft
-                    my $forkSuffix = _WORKFLOWSUFFIX();
-                    my $appTopic = $topic;
-                    $appTopic =~ s/$forkSuffix$//g;
+            # Hier Action 
+            if ($forkingAction && $forkingAction eq "DISCARD") {
+                $controlledTopic->purgeConributors(); # XXX Wirklich?
+                my $origMeta = $controlledTopic->{meta};
 
-                    my $appWeb = $web;
-                    $appWeb =~ s/$forkSuffix$//g;
-                    #Alex TrashTopic ausloten:
-                    #Alex: Checken ob Topic schon einmal in den Muell verschoben wurde
-                    my $trashTopic = $appWeb . $appTopic;
-                    $trashTopic =~ s#/|\.##g; # remove subweb-deliminators
-                    { # scope
-                        my $numberedTrashTopic = $trashTopic;
-                        my $i = 1;
-                        while (Foswiki::Func::topicExists("Trash", $numberedTrashTopic)) {
-                                $numberedTrashTopic = $trashTopic."_$i";
-                                $i++;
-                        }
-                        $trashTopic = $numberedTrashTopic;
-                    }
+                # Move topic to trash
+                $controlledTopic->save(1);
+                Foswiki::Func::moveTopic( $web, $topic, "Trash", $trashTopic );
 
-                    # Hier Action 
-                    if ($forkingAction && $forkingAction eq "DISCARD") {
-                        $controlledTopic->purgeConributors(); # XXX Wirklich?
-                        my $origMeta = $controlledTopic->{meta};
+                # Only unlock / add to history if appWeb exists (does not when topic)
+                if(Foswiki::Func::topicExists( $appWeb, $appTopic )) {
+                    $url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
 
-                        # Move topic to trash
-                        $controlledTopic->save(1);
-                        Foswiki::Func::moveTopic( $web, $topic, "Trash", $trashTopic );
+                    #Alex: Alte Metadaten wiederherstellen
+                    my ($meta, $text) = Foswiki::Func::readTopic($appWeb, $appTopic);
 
-                        # Only unlock / add to history if appWeb exists (does not when topic)
-                        if(Foswiki::Func::topicExists( $appWeb, $appTopic )) {
-                            $url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
-
-                            #Alex: Alte Metadaten wiederherstellen
-                            my ($meta, $text) = Foswiki::Func::readTopic($appWeb, $appTopic);
-
-                            #gesperrte Seiten wieder entsperren
-                            if (defined $meta->get("PREFERENCE", "ALLOWTOPICCHANGE")){
-                            if ($meta->get("PREFERENCE", "ALLOWTOPICCHANGE")->{"value"} eq "nobody")
-                                {# XXX Hier muessen die permissions aus dem Workflow hin
-                                    $meta->remove("PREFERENCE", "ALLOWTOPICCHANGE"); 
-                                }
-                            }
-                            #Workflowhistory entfernen. Alex: Oder wollen wir die ggf. speichern?
-                            if (defined $meta->get("WORKFLOWHISTORY")){
-                                $meta->remove("WORKFLOWHISTORY"); 
-                            }
-
-                            #Alex: Keine neue Revision erzeugen, Autor nicht ueberschreiben
-                            Foswiki::Func::saveTopic( $appWeb, $appTopic, $meta, $text, { forcenewrevision => 0, minor => 1, dontlog => 1, ignorepermissions => 1 });
-                        } else {
-                            # if non-talk topic does not exist redirect to parent
-                            my $parent = $origMeta->getParent();
-                            my $parentWeb = $origMeta->web();
-                            $url = Foswiki::Func::getViewUrl($parentWeb, $parent);
+                    #gesperrte Seiten wieder entsperren
+                    if (defined $meta->get("PREFERENCE", "ALLOWTOPICCHANGE")){
+                        if ($meta->get("PREFERENCE", "ALLOWTOPICCHANGE")->{"value"} eq "nobody")
+                        {# XXX Hier muessen die permissions aus dem Workflow hin
+                            $meta->remove("PREFERENCE", "ALLOWTOPICCHANGE"); 
                         }
                     }
-		    # Check if discussion is beeing accepted
-                    elsif (!$oldIsApproved && $controlledTopic->getRow("approved")){
-                        # transfer ACLs from old document to new
-                        transferACL($appWeb, $appTopic, $controlledTopic);
-                        $controlledTopic->purgeConributors();
-                        $controlledTopic->nextRev();
-                        # Will save changes after moving original topic away
-
-                        $url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
-
-                        #Alex: Force new Revision, damit Aenderungen auf jeden Fall in der History sichtbar werden
-                        #try{
-                        # only move topic if it has a talk suffix
-                        if($appTopic eq $topic) {
-                            $controlledTopic->save(1);
-                        } else {
-                            #Zuerst kommt das alte Topic in den Muell, dann wird das neue verschoben
-
-                            Foswiki::Func::moveTopic( $appWeb, $appTopic, "Trash", $trashTopic);
-                            # Save now that I know i can move it afterwards
-                            $controlledTopic->save(1);
-                            Foswiki::Func::moveTopic( $web, $topic, $appWeb, $appTopic );
-                        }
-                        #Alex: Abfangroutine bei Fehlern muss hinzu
-                        #} catch Error::Simple with {
-                                #my $error = shift;
-                                #Foswiki::Func::moveTopic( "Trash", $trashTopic, $web, $appTopic);
-                        #}
+                    #Workflowhistory entfernen. Alex: Oder wollen wir die ggf. speichern?
+                    if (defined $meta->get("WORKFLOWHISTORY")){
+                        $meta->remove("WORKFLOWHISTORY"); 
                     }
-                    else{
-                        $controlledTopic->save(1);
-                    }
+
+                    #Alex: Keine neue Revision erzeugen, Autor nicht ueberschreiben
+                    Foswiki::Func::saveTopic( 
+                        $appWeb, $appTopic, $meta, $text,
+                        { forcenewrevision => 0, minor => 1, dontlog => 1, ignorepermissions => 1 }
+                    );
+                } else {
+                    # if non-talk topic does not exist redirect to parent
+                    my $parent = $origMeta->getParent();
+                    my $parentWeb = $origMeta->web();
+                    $url = Foswiki::Func::getViewUrl($parentWeb, $parent);
+                }
+            }
+            # Check if discussion is beeing accepted
+            elsif (!$oldIsApproved && $controlledTopic->getRow("approved")) {
+                # transfer ACLs from old document to new
+                transferACL($appWeb, $appTopic, $controlledTopic);
+                $controlledTopic->purgeConributors();
+                $controlledTopic->nextRev();
+                # Will save changes after moving original topic away
+
+                $url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
+
+                #Alex: Force new Revision, damit Aenderungen auf jeden Fall in der History sichtbar werden
+                # only move topic if it has a talk suffix
+                if($appTopic eq $topic) {
+                    $controlledTopic->save(1);
+                } else {
+                    #Zuerst kommt das alte Topic in den Muell, dann wird das neue verschoben
+
+                    Foswiki::Func::moveTopic( $appWeb, $appTopic, "Trash", $trashTopic);
+                    # Save now that I know i can move it afterwards
+                    $controlledTopic->save(1);
+                    Foswiki::Func::moveTopic( $web, $topic, $appWeb, $appTopic );
+                }
+            }
+            else{
+                $controlledTopic->save(1);
+            }
 
             Foswiki::Func::redirectCgiQuery( undef, $url );
             
@@ -740,15 +744,6 @@ sub transferACL {
     my ($srcWeb, $srcTopic, $dst, $removeComments) = @_;
 
     my ($srcMeta, $srcText) = Foswiki::Func::readTopic($srcWeb, $srcTopic);
-#    my ($dstMeta, $dstText) = Foswiki::Func::readTopic($dstWeb, $dstTopic);
-
-    #gesperrte Seiten wieder entsperren
-#    if (defined $meta->get("PREFERENCE", "ALLOWTOPICCHANGE")){
-#        if ($meta->get("PREFERENCE", "ALLOWTOPICCHANGE")->{"value"} eq "nobody")
-#            {
-#                 $meta->remove("PREFERENCE", "ALLOWTOPICCHANGE");
-#            }
-#    }
     my $acl = '';
     if ( $srcMeta ) {
         my $hash = $srcMeta->get("PREFERENCE", "ALLOWTOPICCHANGE");
@@ -762,10 +757,6 @@ sub transferACL {
     } else {
         $dst->{meta}->remove("PREFERENCE", "ALLOWTOPICCHANGE");
     }
-
-
-    #Alex: Keine neue Revision erzeugen, Autor nicht ueberschreiben
-#    Foswiki::Func::saveTopic( $dstWeb, $dstTopic, $dstMeta, $dstText, { forcenewrevision => 0, minor => 1, dontlog => 1, ignorepermissions => 1 });
 }
 
 # Removes all comments (from MetacommentPlugin)
@@ -908,7 +899,6 @@ sub _restFork {
             
                 next if (Foswiki::Func::topicExists($w, $t)); 
 
-
                 #Alex: Topic mit allen Dateien kopieren
                 my $handler = $session->{store}->getHandler( $forkWeb, $forkTopic );
                 $handler->copyTopic($session->{store}, $w, $t);
@@ -936,8 +926,10 @@ sub _restFork {
        
                 # mark as state change (althought it isn't) so it passes beforeSaveHandler
                 local $isStateChange = 1; 
-                Foswiki::Func::saveTopic($w, $t, $meta, $text,
-                    { forcenewrevision => 0, ignorepermissions => 1 });
+                Foswiki::Func::saveTopic(
+                    $w, $t, $meta, $text,
+                    { forcenewrevision => 0, ignorepermissions => 1 }
+                );
                 $isStateChange = 0;
 
                 my $history = $ttmeta->get('WORKFLOWHISTORY') || {};
@@ -1013,7 +1005,7 @@ sub beforeEditHandler {
 
     return unless $controlledTopic; # not controlled, so check not required
 
-        #Alex: Checken ob Edit erlaubt ist
+    #Alex: Checken ob Edit erlaubt ist
     unless ( $controlledTopic->canEdit() ) {
         throw Foswiki::OopsException(
             'accessdenied',
@@ -1065,73 +1057,80 @@ sub beforeSaveHandler {
 
     # Do the RemoveMeta, RemovePref, SetForm, SetField, SetPref if save came from a template
     if($query->param('templatetopic')) {
-      # Got to get those values now, or they might be removed
-      my $removeMeta = $meta->get( 'PREFERENCE', 'RemoveMeta' );
-      my $removePref = $meta->get( 'PREFERENCE', 'RemovePref' );
-      my $setForm = $meta->get( 'PREFERENCE', 'SetForm' );
-      my $setField = $meta->get( 'PREFERENCE', 'SetField' );
-      my $setMeta = $meta->get( 'PREFERENCE', 'SetPref' );
+        # Got to get those values now, or they might be removed
+        my $removeMeta = $meta->get( 'PREFERENCE', 'RemoveMeta' );
+        my $removePref = $meta->get( 'PREFERENCE', 'RemovePref' );
+        my $setForm = $meta->get( 'PREFERENCE', 'SetForm' );
+        my $setField = $meta->get( 'PREFERENCE', 'SetField' );
+        my $setMeta = $meta->get( 'PREFERENCE', 'SetPref' );
 
-      # First set stuff, as it might require values that are to be removed.
-      # SetForm:
-      if($setForm) {
-        $meta->remove('PREFERENCE', 'SetForm');
-        $setForm = Foswiki::Func::expandCommonVariables(
-            $setForm->{value}, $topic, $web, $meta);
-        $setForm =~ s#^\s*##g;
-        $setForm =~ s#\s*$##g;
-        $meta->put('FORM', { name => $setForm } );
-      }
-      # SetField:
-      if($setField) {
-        $meta->remove('PREFERENCE', 'SetField');
-        $setField = Foswiki::Func::expandCommonVariables(
-            $setField->{value}, $topic, $web, $meta);
-        while($setField =~ m/"\s*([^"]+?)\s*=\s*([^"]*?)\s*"/g) {
-          my $toSet = $1;
-          my $value = $2;
-          $value =~ s#\$quot#"#g;
-          $value =~ s#\$dollar#\$#g;
-          $meta->putKeyed('FIELD', { name => $toSet, title => $toSet, type => 'Set', value => $value } );
+        # First set stuff, as it might require values that are to be removed.
+        # SetForm:
+        if($setForm) {
+            $meta->remove('PREFERENCE', 'SetForm');
+            $setForm = Foswiki::Func::expandCommonVariables(
+                $setForm->{value}, $topic, $web, $meta);
+            $setForm =~ s#^\s*##g;
+            $setForm =~ s#\s*$##g;
+            $meta->put('FORM', { name => $setForm } );
         }
-      }
-      # SetPref:
-      if($setMeta) {
-        $meta->remove('PREFERENCE', 'SetPref');
-        $setMeta = Foswiki::Func::expandCommonVariables(
-            $setMeta->{value}, $topic, $web, $meta);
-        while($setMeta =~ m/"\s*([^"]+?)\s*=\s*([^"]*?)\s*"/g) {
-          my $toSet = $1;
-          my $value = $2;
-          $value =~ s#\$quot#"#g;
-          $value =~ s#\$dollar#\$#g;
-          $meta->putKeyed('PREFERENCE', { name => $toSet, title => $toSet, type => 'Set', value => $value } );
+        # SetField:
+        if($setField) {
+            $meta->remove('PREFERENCE', 'SetField');
+            $setField = Foswiki::Func::expandCommonVariables(
+                $setField->{value}, $topic, $web, $meta
+            );
+            while($setField =~ m/"\s*([^"]+?)\s*=\s*([^"]*?)\s*"/g) {
+              my $toSet = $1;
+              my $value = $2;
+              $value =~ s#\$quot#"#g;
+              $value =~ s#\$dollar#\$#g;
+              $meta->putKeyed('FIELD', { name => $toSet, title => $toSet, type => 'Set', value => $value } );
+            }
         }
-      }
-      # RemoveMeta:
-      if($removeMeta) {
-        $meta->remove('PREFERENCE', 'RemoveMeta');
-        my $removeList = Foswiki::Func::expandCommonVariables(
-            $removeMeta->{value}, $topic, $web, $meta);
-        my @toRemove = split(",", $removeList);
-        foreach my $item (@toRemove) {
-          $item =~ s#^\s*##;
-          $item =~ s#\s*$##;
-          $meta->remove($item);
+        # SetPref:
+        if($setMeta) {
+            $meta->remove('PREFERENCE', 'SetPref');
+            $setMeta = Foswiki::Func::expandCommonVariables(
+                $setMeta->{value}, $topic, $web, $meta
+            );
+            while($setMeta =~ m/"\s*([^"]+?)\s*=\s*([^"]*?)\s*"/g) {
+                my $toSet = $1;
+                my $value = $2;
+                $value =~ s#\$quot#"#g;
+                $value =~ s#\$dollar#\$#g;
+                $meta->putKeyed(
+                    'PREFERENCE',
+                    { name => $toSet, title => $toSet, type => 'Set', value => $value }
+                );
+            }
         }
-      }
-      # RemovePref:
-      if($removePref) {
-        $meta->remove('PREFERENCE', 'RemoveMeta');
-        my $removeList = Foswiki::Func::expandCommonVariables(
-            $removeMeta->{value}, $topic, $web, $meta);
-        my @toRemove = split(",", $removeList);
-        foreach my $item (@toRemove) {
-          $item =~ s#^\s*##;
-          $item =~ s#\s*$##;
-          $meta->remove('PREFERENCE', $item);
+        # RemoveMeta:
+        if($removeMeta) {
+            $meta->remove('PREFERENCE', 'RemoveMeta');
+            my $removeList = Foswiki::Func::expandCommonVariables(
+                $removeMeta->{value}, $topic, $web, $meta
+            );
+            my @toRemove = split(",", $removeList);
+            foreach my $item (@toRemove) {
+                $item =~ s#^\s*##;
+                $item =~ s#\s*$##;
+                $meta->remove($item);
+            }
         }
-      }
+        # RemovePref:
+        if($removePref) {
+            $meta->remove('PREFERENCE', 'RemoveMeta');
+            my $removeList = Foswiki::Func::expandCommonVariables(
+                $removeMeta->{value}, $topic, $web, $meta
+            );
+            my @toRemove = split(",", $removeList);
+            foreach my $item (@toRemove) {
+                $item =~ s#^\s*##;
+                $item =~ s#\s*$##;
+                $meta->remove('PREFERENCE', $item);
+            }
+        }
     }
 
     # $isStateChange is true if state has just been changed in this session.
@@ -1159,19 +1158,23 @@ sub beforeSaveHandler {
         # See if we are expecting to apply a new state from query
         # params
         my ($wfw, $wft) = Foswiki::Func::normalizeWebTopicName(
-            undef, $stateChangeInfo{WORKFLOWWORKFLOW} );
+            undef, $stateChangeInfo{WORKFLOWWORKFLOW}
+        );
+
+        # TODO Test if new
+        #  _initTOPIC($web, $topic, undef, $meta, $text, 1)
+        #  does the job. Unless the workflow can change...
 
         # Can't use initTOPIC, because the data comes from the save
         my $workflow = new Foswiki::Plugins::KVPPlugin::Workflow(
-            $wfw, $wft );
-        $controlledTopic =
-          new Foswiki::Plugins::KVPPlugin::ControlledTopic(
-              $workflow, $web, $topic, $meta, $text );
-
+            $wfw, $wft
+        );
+        $controlledTopic = new Foswiki::Plugins::KVPPlugin::ControlledTopic(
+            $workflow, $web, $topic, $meta, $text
+        );
     } else {
         # Otherwise we are *not* changing state so we can use initTOPIC
         $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, 1 );
-
     }
 
     return unless $controlledTopic;
@@ -1191,19 +1194,19 @@ sub beforeSaveHandler {
             web   => $_[2],
             topic => $_[1],
             params => $message
-             );
+        );
     } else {
         my $newMeta = new Foswiki::Meta($Foswiki::Plugins::SESSION, $web, $topic, $text);
         my @newStateName = $newMeta->find('WORKFLOW');
         if(scalar @newStateName > 1) { # If 0 this is a new topic, or not controlled, or created without workflow
-        my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"Must find exactly one workflow in the topic, but found [_1]!" args="'.scalar(@newStateName).'"}%', $topic, $web, $meta);
+            my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"Must find exactly one workflow in the topic, but found [_1]!" args="'.scalar(@newStateName).'"}%', $topic, $web, $meta);
             throw Foswiki::OopsException(
                     'workflowerr',
                      def   => 'topic_access',
                      web   => $_[2],
                      topic => $_[1],
                      params => $message
-                );
+            );
         }
         # TODO Check if metacommentstuff changed unless workflow does so
 
@@ -1217,7 +1220,7 @@ sub beforeSaveHandler {
             my $oldMeta = $controlledTopic->{meta};
             my $oldState = $oldMeta->get( 'WORKFLOW' );
             unless($newStateName[0]->{name} eq $oldState->{name}) {
-                     my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"The Workflowstate =[_1]= does not match the old state =[_2]=...maybe someone edited the topic after you opened it? Topic cannot be saved!" args="'."$newStateName[0]->{name},$oldState->{name}\"}%", $topic, $web, $meta);
+                my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"The Workflowstate =[_1]= does not match the old state =[_2]=...maybe someone edited the topic after you opened it? Topic cannot be saved!" args="'."$newStateName[0]->{name},$oldState->{name}\"}%", $topic, $web, $meta);
                 throw Foswiki::OopsException(
                     'workflowerr',
                      def   => 'topic_access',

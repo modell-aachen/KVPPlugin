@@ -31,20 +31,22 @@ sub new {
 
     if (defined &Foswiki::Sandbox::untaint) {
         $web = Foswiki::Sandbox::untaint(
-            $web, \&Foswiki::Sandbox::validateWebName );
+            $web, \&Foswiki::Sandbox::validateWebName
+        );
         $topic = Foswiki::Sandbox::untaint(
-            $topic, \&Foswiki::Sandbox::validateTopicName );
+            $topic, \&Foswiki::Sandbox::validateTopicName
+        );
     }
 
     return undef unless ($web && $topic);
 
     my ( $meta, $text ) = Foswiki::Func::readTopic( $web, $topic );
     unless (
-        Foswiki::Func::checkAccessPermission(
-            'VIEW', $Foswiki::Plugins::SESSION->{user},
-            $text, $topic, $web, $meta
+            Foswiki::Func::checkAccessPermission(
+                'VIEW', $Foswiki::Plugins::SESSION->{user},
+                $text, $topic, $web, $meta
+            )
         )
-      )
     {
         return undef;
     }
@@ -112,7 +114,7 @@ sub new {
                     $data{ $defaultfields[ $i++ ] } = $col;
                 }
 
-               $default{ $data{ $defaultCol } } = \%data;
+                $default{ $data{ $defaultCol } } = \%data;
             } else {
                 foreach my $col ( split( /\s*\|\s*/, $line ) ) {
                     $data{ $fields[ $i++ ] } = $col;
@@ -129,15 +131,15 @@ sub new {
 
                     # Insert default values
                     if ( $defaultCol ) {
-                      my $defaultKey = $data{ $defaultCol };
-                      if ($defaultKey) {
-                        my $defaultRow = $default{ $defaultKey };
-                        if( $defaultRow ) {
-                          foreach my $def (keys %$defaultRow){
-                            $data{ $def } = $defaultRow->{ $def } unless $data { $def };
-                          }
+                        my $defaultKey = $data{ $defaultCol };
+                        if ($defaultKey) {
+                            my $defaultRow = $default{ $defaultKey };
+                            if( $defaultRow ) {
+                                foreach my $def (keys %$defaultRow){
+                                    $data{ $def } = $defaultRow->{ $def } unless $data { $def };
+                                }
+                            }
                         }
-                      }
                     }
                 }
             }
@@ -159,11 +161,13 @@ sub getActions {
     my $currentState = $topic->getState();
     foreach my $row ( @{ $this->{transitions} } ) {
         my $attribute = $row->{attribute} || '';
-        if ( $row->{state} eq $currentState
-            && $attribute !~ /FORK|NEW|HIDDEN/
-            && _isAllowed($topic->expandMacros( $row->{allowed} ))
-            && _isTrue($topic->expandMacros( $row->{condition} ))
-            && $topic->expandMacros( $row->{nextstate} ) )
+        if (
+                $row->{state} eq $currentState
+                && $attribute !~ /FORK|NEW|HIDDEN/
+                && _isAllowed($topic->expandMacros( $row->{allowed} ))
+                && _isTrue($topic->expandMacros( $row->{condition} ))
+                && $topic->expandMacros( $row->{nextstate} )
+            )
         {
             push( @actions, $row->{action} );
         }
@@ -203,7 +207,9 @@ sub getAttributes {
     my ( $this, $currentState, $action ) = @_;
     foreach my $t( @{ $this->{transitions} } ) {
         if ( $t->{state} && $t->{state} eq $currentState
-                && $t->{action} eq $action ) {
+                && $t->{action} eq $action
+            )
+        {
             return $t->{attribute};
         }
     }
@@ -274,9 +280,11 @@ sub getNextState {
     foreach my $t ( @{ $this->{transitions} } ) {
         my $allowed = $topic->expandMacros( $t->{allowed} );
         my $nextState = $topic->expandMacros( $t->{nextstate} );
-        if (   $t->{state} eq $currentState
-            && $t->{action} eq $action
-            && _isAllowed($allowed) && $nextState )
+        if (
+                $t->{state} eq $currentState
+                && $t->{action} eq $action
+                && _isAllowed($allowed) && $nextState
+            )
         {
             return $nextState;
         }
@@ -292,9 +300,11 @@ sub getNextForm {
     my $currentState = $topic->getState();
     foreach my $t ( @{ $this->{transitions} } ) {
         my $allowed = $topic->expandMacros( $t->{allowed} );
-        if (   $t->{state} eq $currentState
-            && $t->{action} eq $action
-            && _isAllowed($allowed) )
+        if (
+                $t->{state} eq $currentState
+                && $t->{action} eq $action
+                && _isAllowed($allowed)
+            )
         {
             return $t->{form};
         }
@@ -310,9 +320,11 @@ sub getNotifyList {
     my $currentState = $topic->getState();
     foreach my $t ( @{ $this->{transitions} } ) {
         my $allowed = $topic->expandMacros( $t->{allowed} );
-        if (   $t->{state} eq $currentState
-            && $t->{action} eq $action
-            && _isAllowed( $allowed ) )
+        if (
+                $t->{state} eq $currentState
+                && $t->{action} eq $action
+                && _isAllowed( $allowed )
+            )
         {
             my $notifylist = $topic->expandMacros( $t->{notify} );
             return $notifylist;
@@ -379,8 +391,8 @@ sub getRow {
 
     my $state = $topic->getState();
     if (!$this->{states}{$state}) {
-      Foswiki::Func::writeWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
-      return '';
+        Foswiki::Func::writeWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
+        return '';
     }
     return $this->{states}->{$state}->{$row};
 # XXX to expand or not to expand...
@@ -400,14 +412,14 @@ sub _isAllowed {
 
     # Always allow members of the admin group to edit
     if ( defined &Foswiki::Func::isAnAdmin ) {
-
         # Latest interface, post user objects
         return 1 if ( Foswiki::Func::isAnAdmin() );
     }
-    elsif ( ref( $Foswiki::Plugins::SESSION->{user} )
-        && $Foswiki::Plugins::SESSION->{user}->can("isAdmin") )
+    elsif (
+            ref( $Foswiki::Plugins::SESSION->{user} )
+            && $Foswiki::Plugins::SESSION->{user}->can("isAdmin")
+        )
     {
-
         # User object
         return 1 if ( $Foswiki::Plugins::SESSION->{user}->isAdmin() );
     }
@@ -417,8 +429,10 @@ sub _isAllowed {
         return 1;
     }
 
-    if ( ref( $Foswiki::Plugins::SESSION->{user} )
-        && $Foswiki::Plugins::SESSION->{user}->can("isInList") )
+    if (
+            ref( $Foswiki::Plugins::SESSION->{user} )
+            && $Foswiki::Plugins::SESSION->{user}->can("isInList")
+        )
     {
         return $Foswiki::Plugins::SESSION->{user}->isInList($allow);
     }

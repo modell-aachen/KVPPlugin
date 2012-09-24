@@ -177,11 +177,14 @@ sub setState {
     my $allowComment = $this->{workflow}->getRow($this, 'allowcomment');
     if($allowComment) {
         $this->{meta}->putKeyed("PREFERENCE",
-                          { name => 'DISPLAYCOMMENTS', value => 'on' } );
+            { name => 'DISPLAYCOMMENTS', value => 'on' }
+        );
         if($allowComment =~ m/\bLOGGEDIN\b/) {
             my $wikiguest = $Foswiki::cfg{DefaultUserWikiName};
             $this->{meta}->putKeyed("PREFERENCE",
-                { name => 'DENYTOPICCOMMENT', title => 'DENYTOPICCOMMENT',
+                {
+                    name => 'DENYTOPICCOMMENT',
+                    title => 'DENYTOPICCOMMENT',
                     value => ($allowComment =~ m/\b$wikiguest\b/)?'nobody':$wikiguest
                 }
             );
@@ -194,7 +197,8 @@ sub setState {
         }
     } else {
         $this->{meta}->putKeyed("PREFERENCE",
-                          { name => 'DISPLAYCOMMENTS', value => 'off' } );
+            { name => 'DISPLAYCOMMENTS', value => 'off' }
+        );
     }
 }
 
@@ -234,8 +238,8 @@ sub isModifyable {
             && Foswiki::Func::checkAccessPermission(
                 'CHANGE', $Foswiki::Plugins::SESSION->{user},
                 $this->{text}, $this->{topic}, $this->{web},
-                $this->{meta})) ? 1 : 0;
-#             ) ? 1 : 0;
+                $this->{meta})
+        ) ? 1 : 0;
     }
     return $this->{isEditable};
 }
@@ -360,7 +364,6 @@ sub changeState {
     $fmt =~ s/\$date/$this->{state}->{"LASTTIME_$state"}/geo;
     $fmt =~ s/\$rev/$this->{state}->{"LASTVERSION_$state"}/geo;
     if ( defined &Foswiki::Func::decodeFormatTokens ) {
-
         # Compatibility note: also expands $percnt etc.
         $fmt = Foswiki::Func::decodeFormatTokens($fmt);
     }
@@ -374,10 +377,6 @@ sub changeState {
 
     $this->{history}->{value} .= $fmt;
     $this->{meta}->put( "WORKFLOWHISTORY", $this->{history} );
-    
-    #Alex: Rodeeeeo!
-    # Nicht mehr nach Spzifikation?
-    #    $this->addConributors( Foswiki::Func::getWikiUserName() );
     
     if ($form) {
         #$this->{meta}->put( "FORM", { name => $form } );
@@ -415,11 +414,6 @@ sub changeState {
                 #Alex: Debug
                 push( @persons, $group);
             }
-
-            # Alex notify und extranotify zusammenfhren und doppelte Werte verrrrnichten!!!
-            #foreach(@extrapersons) {
-            #    push(@persons,$_);
-            #}
         }
         
         # Should be enough to del_double mail adresses: @persons = del_double(@persons);
@@ -451,15 +445,20 @@ sub changeState {
         if ( scalar(@emails) ) {
             # Have a list of recipients
             my $text = Foswiki::Func::loadTemplate('mailworkflowtransition');
-            Foswiki::Func::setPreferencesValue( 'EMAILTO',
-                join( ', ', @emails ) );
-            Foswiki::Func::setPreferencesValue( 'TARGET_STATE',
-                $this->getState() );
+            Foswiki::Func::setPreferencesValue(
+                'EMAILTO',
+                join( ', ', @emails )
+            );
+            Foswiki::Func::setPreferencesValue(
+                'TARGET_STATE',
+                $this->getState()
+            );
             $text = $this->expandMacros($text);
             my $errors = Foswiki::Func::sendEmail( $text, 5 );
             if ($errors) {
                 Foswiki::Func::writeWarning(
-                    'Failed to send transition mails: ' . $errors );
+                    'Failed to send transition mails: ' . $errors
+                );
             }
         }
         Foswiki::Func::writeWarning("Topic: '$this->{web}.$this->{topic}' Transition: '$action' Notify column: '$notify' Mails: ".join(", ", @emails)) if ($Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails});
@@ -484,7 +483,7 @@ sub save {
     Foswiki::Func::saveTopic(
         $this->{web}, $this->{topic}, $this->{meta},
         $this->{text}, $options 
-       );
+    );
 }
 
 # Alex: Alle doppelten Werte aus einem Array lschen
