@@ -45,10 +45,6 @@ sub initPlugin {
     Foswiki::Func::registerTagHandler(
         'WORKFLOWSTATE', \&_WORKFLOWSTATE );
     Foswiki::Func::registerTagHandler(
-        'WORKFLOWEDITTOPIC', \&_WORKFLOWEDITTOPIC );
-    Foswiki::Func::registerTagHandler(
-        'WORKFLOWATTACHTOPIC', \&_WORKFLOWATTACHTOPIC );
-    Foswiki::Func::registerTagHandler(
         'WORKFLOWSTATEMESSAGE', \&_WORKFLOWSTATEMESSAGE );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWHISTORY', \&_WORKFLOWHISTORY );
@@ -245,41 +241,8 @@ sub _getTopicName {
 
     return Foswiki::Func::normalizeWebTopicName(
         $attributes->{web} || $web,
-        $attributes->{_DEFAULT} || $topic );
-}
-
-# Tag handler
-sub _WORKFLOWEDITTOPIC {
-    my ( $session, $attributes, $topic, $web ) = @_;
-
-    ($web, $topic) = _getTopicName($attributes, $web, $topic);
-    my $controlledTopic = _initTOPIC( $web, $topic );
-    
-    #Editieren zulassen, falls nicht kontrolliertes Topic
-    unless ($controlledTopic) {
-        return CGI::a(
-            {
-                href => Foswiki::Func::getScriptUrl(
-                    $web, $topic, 'edit',
-                    t => time() ),
-            },
-            '%MAKETEXT{"Edit"}%'
-        );
-    }
-
-    # replace edit tag
-    if ( $controlledTopic->canEdit() ) {
-        return CGI::a(
-            {
-                href => Foswiki::Func::getScriptUrl(
-                    $web, $topic, 'edit',
-                    t => time() ),
-            },
-            '%MAKETEXT{"Edit"}%' );
-    }
-    else {
-        return "";
-    }
+        $attributes->{_DEFAULT} || $topic
+    );
 }
 
 # Tag handler
@@ -291,39 +254,6 @@ sub _WORKFLOWSTATEMESSAGE {
     return '' unless $controlledTopic;
 
     return $controlledTopic->getStateMessage();
-}
-
-# Tag handler
-sub _WORKFLOWATTACHTOPIC {
-    my ( $session, $attributes, $topic, $web ) = @_;
-
-    ($web, $topic) = _getTopicName($attributes, $web, $topic);
-    my $controlledTopic = _initTOPIC( $web, $topic );
-    unless ($controlledTopic) {
-        return CGI::a(
-            {
-                href => Foswiki::Func::getScriptUrl(
-                    $web, $topic, 'attach', t => time()
-                )
-            },
-            '%MAKETEXT{"Attachments"}%'
-        );
-    }
-
-    # replace attach tag
-    if ( $controlledTopic->canAttach() ) {
-        return CGI::a(
-            {
-                href => Foswiki::Func::getScriptUrl(
-                    $web, $topic, 'attach', t => time()
-                )
-            },
-            '%MAKETEXT{"Attachments"}%'
-        );
-    }
-    else {
-        return "";
-    }
 }
 
 # Tag handler
