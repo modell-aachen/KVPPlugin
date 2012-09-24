@@ -314,39 +314,6 @@ sub getViewTemplate {
     return $this->expandMacros($template);
 }
 
-    
-
-# Expand miscellaneous preferences defined in the workflow and topic
-sub expandWorkflowPreferences {
-    my $this = shift;
-    my $url  = shift;
-    my $key;
-    foreach $key ( keys %{ $this->{workflow}->{preferences} } ) {
-        if ( $key =~ /^WORKFLOW/ ) {
-            $_[0] =~ s/%$key%/$this->{workflow}->{preferences}->{$key}/g;
-        }
-    }
-
-    # show last version tags and last time tags
-    while ( my ( $key, $val ) = each %{ $this->{state} } ) {
-        $val ||= '';
-        if ( $key =~ m/^LASTVERSION_/ ) {
-            my $foo = CGI::a( { href => "$url?rev=$val" }, "revision $val" );
-            $_[0] =~ s/%WORKFLOW$key%/$foo/g;
-
-            # WORKFLOWLASTREV_
-            $key =~ s/VERSION/REV/;
-            $_[0] =~ s/%WORKFLOW$key%/$val/g;
-        }
-        elsif ( $key =~ /^LASTTIME_/ ) {
-            $_[0] =~ s/%WORKFLOW$key%/$val/g;
-        }
-    }
-
-    # Clean down any states we have no info about
-    $_[0] =~ s/%WORKFLOWLAST(TIME|VERSION)_\w+%//g unless $this->debugging();
-}
-
 # if the form employed in the state arrived after after applying $action
 # is different to the form currently on the topic.
 sub newForm {

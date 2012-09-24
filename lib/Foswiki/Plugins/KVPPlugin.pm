@@ -774,25 +774,6 @@ sub removeComments {
      $controlledTopic->{meta}->remove("COMMENT");
 }
 
-# Mop up other WORKFLOW tags without individual handlers
-sub commonTagsHandler {
-    my ( $text, $topic, $web ) = @_;
-
-    my $controlledTopic = _initTOPIC( $web, $topic );
-
-    if ( $controlledTopic ) {
-
-        # show all tags defined by the preferences
-        my $url = Foswiki::Func::getScriptUrl( $web, $topic, 'view' );
-        $controlledTopic->expandWorkflowPreferences( $url, $_[0] );
-
-        return unless ( $controlledTopic->debugging() );
-    }
-
-    # Clean up unexpanded variables
-    $_[0] =~ s/%WORKFLOW[A-Z_]*%//g;
-}
-
 # Will redirect to article and warn if it has changed since link was created.
 sub _restLink {
     my ($session, $plugin, $verb, $response) = @_;
