@@ -455,6 +455,7 @@ unless ($state) {$action = $action || ''; Foswiki::Func::writeWarning("changeSta
         $notify = $this->expandMacros($notify);
 		
         # Dig up the bodies
+        $notify =~ s#^\s*|\s*$##g;
         my @groups = split( /\s*,\s*/, $notify );
         my @persons;
         my @emails;
