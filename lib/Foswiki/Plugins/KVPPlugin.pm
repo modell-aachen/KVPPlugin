@@ -45,8 +45,6 @@ sub initPlugin {
     Foswiki::Func::registerTagHandler(
         'WORKFLOWSTATE', \&_WORKFLOWSTATE );
     Foswiki::Func::registerTagHandler(
-        'WORKFLOWSTATEMESSAGE', \&_WORKFLOWSTATEMESSAGE );
-    Foswiki::Func::registerTagHandler(
         'WORKFLOWHISTORY', \&_WORKFLOWHISTORY );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWTRANSITION', \&_WORKFLOWTRANSITION );
@@ -245,17 +243,6 @@ sub _getTopicName {
         $attributes->{web} || $web,
         $attributes->{_DEFAULT} || $topic
     );
-}
-
-# Tag handler
-sub _WORKFLOWSTATEMESSAGE {
-    my ( $session, $attributes, $topic, $web ) = @_;
-
-    ($web, $topic) = _getTopicName($attributes, $web, $topic);
-    my $controlledTopic = _initTOPIC( $web, $topic );
-
-    return '' unless $controlledTopic;
-    return $controlledTopic->getStateMessage();
 }
 
 # Tag handler
