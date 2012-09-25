@@ -679,7 +679,7 @@ sub _changeState {
                 # transfer ACLs from old document to new
                 transferACL($appWeb, $appTopic, $controlledTopic);
                 $controlledTopic->purgeConributors();
-                $controlledTopic->nextRev();
+                $controlledTopic->nextRev() unless $actionAttributes =~ m#NOREV#;
                 # Will save changes after moving original topic away
 
                 $url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
