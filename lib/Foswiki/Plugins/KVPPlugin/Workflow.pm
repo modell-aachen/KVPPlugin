@@ -337,10 +337,15 @@ sub getFields {
 sub allowEdit {
     my ( $this, $topic ) = @_;
 
+    my $allowed;
     my $state = $topic->getState();
-    return 0 unless $this->{states}->{$state};
-    my $allowed =
-      $topic->expandMacros( $this->{states}->{$state}->{allowedit} );
+    unless( $this->{states}->{$state} ) {
+        Foswiki::Func::writeWarning("Error in Workflow: state '$state' does not exist!");
+        $allowed = 'nobody'; # This will empower admins
+    } else {
+        $allowed =
+          $topic->expandMacros( $this->{states}->{$state}->{allowedit} );
+    }
     return _isAllowed($allowed);
 }
 
@@ -349,9 +354,9 @@ sub getRow {
     my ( $this, $topic, $row ) = @_;
 
     my $state = $topic->getState();
-    if (!$this->{states}{$state}) {
-      Foswiki::Func::writeWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
-      return '';
+    unless( $this->{states}{$state} ) {
+        Foswiki::Func::writeWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
+        return '';
     }
     return $this->{states}->{$state}->{$row};
 # XXX to expand or not to expand...
