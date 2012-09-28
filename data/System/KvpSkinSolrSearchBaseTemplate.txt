@@ -1,0 +1,30 @@
+%{<verbatim class="tml">}%
+%TMPL:INCLUDE{"SolrSearchBase"}%
+%{</verbatim>}%
+
+%{<verbatim class="tml">}%
+%{Sprachanpassung, Anzeige Workflow}%
+%TMPL:DEF{"solr::format::list::topic"}%<!-- -->
+<div class='solrSearchHit solrTopicHit'>
+  <h3 style='background-image:url(%icon%)' title='%MAKETEXT{%type%}%'>
+    [[%web%.%topic%]]
+    <span class='foswikiGrayText'>
+      %WEBLINK{"%web%"
+        format="<a class='webLink' href='$url'>%MAKETEXT{"in [_1]" args="$title"}%</a>"
+      }%
+      %IF{"'%GETWORKFLOWROW{"approved" web="%web%" topic="%topic%"}%'!='1'" then="<em style='font-size: 0.9em;' title='%MAKETEXT{not approved}%'>($percentGETWORKFLOWROW{$quotstate$quot web=$quot%web%$quot topic=$quot%topic%$quot}$percent)</em>"}%
+    </span>
+  </h3>
+  <div class='solrHilite'>
+    <literal>%hilite%</literal>
+  </div>
+  <div class='solrRevision'>
+    %date%,
+    %IF{"istopic '%USERINFO{"%author%" format="$wikiusername"}%'"
+      then="%USERINFO{"%author%" format="[[$wikiusername][$wikiname]]"}%"
+      else="%USERINFO{"%author%" format="<nop>$wikiname"}%"
+    }%
+  </div>
+</div>
+<!-- -->%TMPL:END%
+%{</verbatim>}%
