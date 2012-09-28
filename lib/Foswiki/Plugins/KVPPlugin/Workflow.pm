@@ -259,17 +259,6 @@ sub getTransitionAttributes {
     return ($allow, $suggest, $comment);
 }
 
-# Signals if the user may change the mailing list.
-sub getChangeMail {
-    my ( $this, $topic ) = @_;
-
-    my $allowed = $this->getRow($topic, 'allowchangemail');
-
-    return 0 unless $allowed;
-
-    return _isAllowed($allowed);
-}
-
 # Get the next state defined for the given current state and action
 # (the first 2 columns of the transition table). The returned state
 # will be undef if the transition doesn't exist, or is not allowed.
