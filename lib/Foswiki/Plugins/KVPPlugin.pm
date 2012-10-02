@@ -189,9 +189,10 @@ sub _initTOPIC {
     return undef unless(Foswiki::Func::isValidWebName( $web ));
     
     my $controlledTopic;
+    my $controlledTopicCID = "$web.$topic.$rev";
 
     unless ($forceNew) {
-        $controlledTopic = $cache{"$web.$topic.$rev"};
+        $controlledTopic = $cache{$controlledTopicCID};
         if ($controlledTopic) {
             return if $controlledTopic eq '_undef';
             return $controlledTopic;
@@ -216,23 +217,26 @@ sub _initTOPIC {
         ( my $wfWeb, $workflowName ) =
           Foswiki::Func::normalizeWebTopicName( $web, $workflowName );
 
-        if ( Foswiki::Func::topicExists( $wfWeb, $workflowName ) ) {
-            my $workflow =
+        my $workflowCID = "$web.$workflowName.w";
+        my $workflow = $cache{$workflowCID};
+        if ( not $workflow && Foswiki::Func::topicExists( $wfWeb, $workflowName ) ) {
+            $workflow =
               new Foswiki::Plugins::KVPPlugin::Workflow( $wfWeb,
                 $workflowName );
+            $cache{$workflowCID} = $workflow;
+        }
 
-            if ($workflow) {
-                ( $meta, $text ) =
-                  Foswiki::Func::readTopic( $web, $topic, $rev )
-                  unless defined $meta;
-                $controlledTopic =
-                  new Foswiki::Plugins::KVPPlugin::ControlledTopic(
-                    $workflow, $web, $topic, $meta, $text );
-            }
+        if ($workflow) {
+            ( $meta, $text ) =
+              Foswiki::Func::readTopic( $web, $topic, $rev )
+              unless defined $meta;
+            $controlledTopic =
+              new Foswiki::Plugins::KVPPlugin::ControlledTopic(
+                $workflow, $web, $topic, $meta, $text );
         }
     }
 
-    $cache{"$web.$topic.$rev"} = $controlledTopic || '_undef';
+    $cache{$controlledTopicCID} = $controlledTopic || '_undef';
     return $controlledTopic;
 }
 
