@@ -12,7 +12,7 @@ $Foswiki::cfg{Extensions}{KVPPlugin}{except} = '^(WikiGroups|WikiUsers|WebChange
 # **PERL**
 # Falls GETWORKFLOWROW für ein Topic ohne Workflow aufgerufen wird, werden diese Werte benutzt.
 # Die Voreinstellung ist auf den ModacSkin abgestimmt.
-$Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow} = {'stategroup' => 'Infoseite', 'discussionlabel' => 'alte Diskussion', 'istdiskussion' => 0, 'message' => 'Artikel steht nich unter Workflow.'};
+$Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow} = {'stategroup' => 'Infopage', 'discussionlabel' => 'Old Discussion', 'istdiskussion' => 0, 'message' => 'Topic is not under any workflow.'};
 
 # **BOOLEAN**
 # Detailierte Logs f&uuml;r Emails aktivieren.
