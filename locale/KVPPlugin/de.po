@@ -210,8 +210,8 @@ msgid "Next step"
 msgstr "Nächster Schritt"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm:980
-msgid "No transition with =NEW= attribute to fork"
-msgstr "Keine Transition mit =NEW= Attribut zum Forken von"
+msgid "No transition with =FORK= attribute to fork"
+msgstr "Keine Transition mit =FORK= Attribut zum Forken von"
 
 #: templates/oopsworkflowchanged.tmpl:9 templates/oopsworkflowerr.tmpl:9
 #: templates/oopsworkflowfork.tmpl:10 templates/oopsworkflowmoved.tmpl:9

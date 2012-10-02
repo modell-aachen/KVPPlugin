@@ -870,7 +870,7 @@ sub _restFork {
                 $newForkTopic = Foswiki::Sandbox::untaintUnchecked( $newname );
                 $newForkAction = $defaultAction;
                 unless ( $newForkAction ) {
-                    $erroneous .= '%MAKETEXT{"No transition with =NEW= attribute to fork"}% '."$newForkTopic\n\n";
+                    $erroneous .= '%MAKETEXT{"No transition with =FORK= attribute to fork"}% '."$newForkTopic\n\n";
                     next;
                 }
             }
