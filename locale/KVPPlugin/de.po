@@ -79,8 +79,12 @@ msgid "Attention"
 msgstr "Achtung"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm:973
-msgid "Cannot execute transition =%1= on =%2=!"
-msgstr "Kann Transition =%1= nicht auf =%2= anwenden!"
+msgid "Cannot execute transition =%1= on =%2= (invalid on target-workflow)!"
+msgstr "Kann Transition =%1= nicht auf =%2= anwenden (ungültig im Zielworkflow)!"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:973
+msgid "Cannot execute transition =%1= on =%2= (invalid on source-workflow)!"
+msgstr "Kann Transition =%1= nicht auf =%2= anwenden (ungültig im Quellworkflow)!"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm:445
 msgid "Change status"

@@ -818,11 +818,11 @@ sub _restFork {
     my $lockdown = $query->param('lockdown');
 
     my $erroneous = '';
-    my ($w, $t);
 
     (my $forkWeb, $forkTopic) =
       Foswiki::Func::normalizeWebTopicName( undef, $forkTopic );
-      
+    my ($directToWeb, $directToTopic) = ($forkWeb, $forkTopic); # will be updated with forked topics
+
     my $controlledTopic;
 
     if ( Foswiki::Func::topicExists( $forkWeb, $forkTopic ) ) {
@@ -853,52 +853,60 @@ sub _restFork {
             @newnames = ($forkTopic.$forkSuffix);
         }
 
-        my (@topics, @actions) = ((), ());
+        my (@webs, @topics, @actions) = ((), (), ());
 
         # First find out topicnames and actions.
         # In case of an error return without having changed anything in the wiki.
         foreach my $newname (@newnames) {
+
             # Get name for new topic and action to execute
-            my ($newForkTopic, $newForkAction);
+            my ($newWeb, $newTopic, $newAction);
             if ( $newname =~ m/\s*\[(.*)\]\[(.*)\]\s*/ ) {
-                ($newForkTopic, $newForkAction) = ($1, $2);
-                unless ( $controlledTopic->haveNextState($newForkAction) ) {
-                    $erroneous .= '%MAKETEXT{"Cannot execute transition =[_1]= on =[_2]=!" args="'."$newForkAction, $newForkTopic\"}%\n\n";
+                ($newTopic, $newAction) = ($1, $2);
+                ($newWeb, $newTopic) = Foswiki::Func::normalizeWebTopicName( $forkWeb, $newTopic );
+                unless ( $controlledTopic->haveNextState($newAction) ) {
+                    $erroneous .= '%MAKETEXT{"Cannot execute transition =[_1]= on =[_2]= (invalid on source-workflow)!" args="'."$newAction, $forkWeb.$forkTopic\"}%\n\n";
+                    next;
+                }
+                # check if action allowed in targetworkflow
+                my $targetControlledTopic = _initTOPIC( $newWeb, $newTopic, undef, $ttmeta, $tttext, 1);
+                unless( $targetControlledTopic && $targetControlledTopic->haveNextState($newAction) ) {
+                    $erroneous .= '%MAKETEXT{"Cannot execute transition =[_1]= on =[_2]= (invalid on target-workflow)!" args="'."$newAction, $newWeb.$newTopic\"}%\n\n";
                     next;
                 }
             } else {
-                $newForkTopic = Foswiki::Sandbox::untaintUnchecked( $newname );
-                $newForkAction = $defaultAction;
-                unless ( $newForkAction ) {
-                    $erroneous .= '%MAKETEXT{"No transition with =FORK= attribute to fork"}% '."$newForkTopic\n\n";
+                $newTopic = Foswiki::Sandbox::untaintUnchecked( $newname );
+                ($newWeb, $newTopic) = Foswiki::Func::normalizeWebTopicName( $forkWeb, $newTopic );
+                $newAction = $defaultAction;
+                unless ( $newAction ) {
+                    $erroneous .= '%MAKETEXT{"No transition with =FORK= attribute to fork"}% '."$newTopic\n\n";
                     next;
                 }
             }
-            push( @topics, $newForkTopic );
-            push( @actions, $newForkAction );
+
+            push( @webs, $newWeb );
+            push( @topics, $newTopic );
+            push( @actions, $newAction );
         }
 
         # Now copy the topics and do the transitions.    
         unless ($erroneous) { 
             while (scalar @topics) {
-                my $newForkTopic = shift @topics;
-                my $newForkAction = shift @actions;
+                my $newTopic = shift @topics;
+                my $newAction = shift @actions;
+                my $newWeb = shift @webs;
 
-                # create the new topic
-                ($w, $t) =
-                    Foswiki::Func::normalizeWebTopicName( $forkWeb, $newForkTopic );
-            
-                next if (Foswiki::Func::topicExists($w, $t)); 
+                next if (Foswiki::Func::topicExists($newWeb, $newTopic)); 
 
                 #Alex: Topic mit allen Dateien kopieren
                 my $handler = $session->{store}->getHandler( $forkWeb, $forkTopic );
-                $handler->copyTopic($session->{store}, $w, $t);
+                $handler->copyTopic($session->{store}, $newWeb, $newTopic);
             
                 #Modac: Foswiki 1.0.9
-                #$session->{store}->copyTopic($who, $forkWeb, $forkTopic, $w, $t);
+                #$session->{store}->copyTopic($who, $forkWeb, $forkTopic, $newWeb, $newTopic);
             
                 my $text = $tttext;
-                my $meta = new Foswiki::Meta($session, $w, $t);
+                my $meta = new Foswiki::Meta($session, $newWeb, $newTopic);
                 foreach my $k ( keys %$ttmeta ) {
                     # Note that we don't carry over the history from the forked topic
                     next if ( $k =~ /^_/ || $k eq 'WORKFLOWHISTORY' );
@@ -918,29 +926,33 @@ sub _restFork {
                 # mark as state change (althought it isn't) so it passes beforeSaveHandler
                 local $isStateChange = 1; 
                 Foswiki::Func::saveTopic(
-                    $w, $t, $meta, $text,
+                    $newWeb, $newTopic, $meta, $text,
                     { forcenewrevision => 0, ignorepermissions => 1 }
                 );
                 $isStateChange = 0;
 
                 my $history = $ttmeta->get('WORKFLOWHISTORY') || {};
                 $history->{value} .= "<br>Forked to " .
-                    "[[$w.$t]]" . " by $who at $now";
+                    "[[$newWeb.$newTopic]]" . " by $who at $now";
                 $ttmeta->put( "WORKFLOWHISTORY", $history );
 
                 # Modell Aachen Settings:
                 # Ueberfuehren in Underrevision:    
-                my $newcontrolledTopic = _initTOPIC( $w, $t, undef, $meta, $text, 1);
+                my $newcontrolledTopic = _initTOPIC( $newWeb, $newTopic, undef, $meta, $text, 1);
      
                 unless ( $newcontrolledTopic ) {
-                    $erroneous .= '%MAKETEXT{"Could not initialize workflow for"}% '."$w.$t\n\n";
+                    $erroneous .= '%MAKETEXT{"Could not initialize workflow for"}% '."$newWeb.$newTopic\n\n";
                     next; # XXX this leaves the created topic behind
                 }
 
-                $newcontrolledTopic->changeState($newForkAction);
+                $newcontrolledTopic->changeState($newAction);
                 local $isStateChange = 1;
                 $newcontrolledTopic->save(1);
                 local $isStateChange = 0;
+
+                # Topic successfully forked
+                $directToWeb = $newWeb;
+                $directToTopic = $newTopic;
             }
 
             if ($lockdown) {
@@ -967,8 +979,8 @@ sub _restFork {
         return "Error";
     }
 
-    #Redirect zum neuen Disskusions Topic
-    return $response->redirect(Foswiki::Func::getViewUrl($w, $t));
+    #redirect to last successfully forked topic
+    return $response->redirect(Foswiki::Func::getViewUrl($directToWeb, $directToTopic));
 }
 
 # Used to trap an edit and check that it is permitted by the workflow
