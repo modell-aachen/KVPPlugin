@@ -6,7 +6,7 @@ jQuery(document).ready(function() {
       if(selection === undefined) {
           menu = jQuery('#WORKFLOWbutton');
           if (menu === undefined) return;
-          selection = menu.text().replace(/^\\s+|\\s+\$/g, '');
+          selection = menu.text().replace(/^\s+|\s+$/g, '');
       }
       if(remark != null) {
           if(WORKFLOWremarkOption.indexOf(','+selection+',') > -1) {
