@@ -308,9 +308,28 @@ sub _WORKFLOWTRANSITION {
     #
     # Build the button to change the current status
     #
-    my @actions         = $controlledTopic->getActions();
-    my $numberOfActions = scalar(@actions);
-    my $cs              = $controlledTopic->getState();
+    my @actions;
+    my $numberOfActions;
+    my $transwarn = '';
+    my $cs = $controlledTopic->getState();
+
+    # Get actions and warnings
+    { # scope
+        my ( $tmpActions, $tmpWarnings ) = $controlledTopic->getActions();
+        @actions         = @$tmpActions;
+        $numberOfActions = scalar(@actions);
+        my @warnings     = @$tmpWarnings;
+
+        # build javascript to associate warnings with actions
+        for( my $a = $numberOfActions-1; $a >= 0; $a-- ) {
+            my $warning = @warnings[$a];
+            next unless $warning;
+            $warning =~ s#'#\\'#g;
+            my $action = @actions[$a];
+            $action =~ s#'#\\'#g;
+            $transwarn .= "WORKFLOW.w['$action']='$warning';";
+        }
+    }
 
     unless ($numberOfActions) {
         return '';
@@ -321,7 +340,7 @@ sub _WORKFLOWTRANSITION {
 
     my @fields = (
         CGI::hidden( 'WORKFLOWSTATE', $cs ),
-        CGI::hidden( 'topic',         "$web.$topic" ),
+        CGI::hidden( 'topic', "$web.$topic" ),
 
         # Use a time field to help defeat the cache
         CGI::hidden( 't', time() )
@@ -335,9 +354,12 @@ sub _WORKFLOWTRANSITION {
     
     Foswiki::Func::addToZone('script', 'WORKFLOW::COMMENT', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI');
 <script type="text/javascript">
-WORKFLOWallowOption = new String("$allow");
-WORKFLOWsuggestOption = new String("$suggest");
-WORKFLOWremarkOption = new String("$remark");
+WORKFLOW = function(){};
+WORKFLOW.allowOption = new String("$allow");
+WORKFLOW.suggestOption = new String("$suggest");
+WORKFLOW.remarkOption = new String("$remark");
+WORKFLOW.w = function(){};
+$transwarn
 </script>
 <script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/transitions.js"></script>
 SCRIPT
@@ -348,7 +370,7 @@ SCRIPT
                 .$actions[0]."' />" );
         push(
             @fields,
-            "<noautolink>%BUTTON{\"%MAKETEXT{$actions[0]}%\" id=\"WORKFLOWbutton\" type=\"submit\" onclick=\"jQuery('#KVPTransitions').block()\"}%</noautolink>"
+            "<noautolink>%BUTTON{\"%MAKETEXT{$actions[0]}%\" id=\"WORKFLOWbutton\" type=\"submit\"}%</noautolink>"
         );
     }
     else {
@@ -365,7 +387,7 @@ SCRIPT
         );
         push(
             @fields,
-            '<noautolink>%BUTTON{"%MAKETEXT{"Change status"}%" type="submit" onclick="jQuery(\'#KVPTransitions\').block()"}%</noautolink>'
+            '<noautolink>%BUTTON{"%MAKETEXT{"Change status"}%" type="submit"}%</noautolink>'
         );
     }
 
@@ -388,7 +410,7 @@ SCRIPT
         $pluginName, 'changeState', 'rest'
     );
     my $form =
-        CGI::start_form( -method => 'POST', -action => $url )
+        CGI::start_form( -method => 'POST', -action => $url , -onsubmit =>"javascript:return WORKFLOW.confirm()" )
       . join( '', @fields )
       . CGI::end_form();
 

@@ -153,11 +153,12 @@ sub new {
     return $this;
 }
 
-# Get the possible actions associated with the given state
+# Get the possible actions with warnings associated with the given state
 # Will not deliver actions with NEW, FORK or HIDDEN
 sub getActions {
     my ( $this, $topic ) = @_;
     my @actions      = ();
+    my @warnings     = ();
     my $currentState = $topic->getState();
     foreach my $row ( @{ $this->{transitions} } ) {
         my $attribute = $row->{attribute} || '';
@@ -170,9 +171,10 @@ sub getActions {
             )
         {
             push( @actions, $row->{action} );
+            push( @warnings, $row->{warning} );
         }
     }
-    return @actions;
+    return (\@actions, \@warnings);
 }
 
 # Get the status an action will result in
