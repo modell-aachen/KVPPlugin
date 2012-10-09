@@ -177,18 +177,6 @@ sub getActions {
     return (\@actions, \@warnings);
 }
 
-# Get the status an action will result in
-sub getFFStatus {
-    my ( $this, $topic ) = @_;
-    my $currentState = $topic->getState();
-    foreach my $state( values %{ $this->{states} } ) {
-        if ( $state->{state} eq $currentState ) {
-            return $state->{lefttap};
-        }
-    }
-    return '';
-}
-
 # Get first allowed action for this state that has this attribute set in the 'Attribute' column
 sub getActionWithAttribute {
     my ( $this, $topic, $attribute ) = @_;
@@ -353,27 +341,10 @@ sub getChangeACL {
     return $topic->expandMacros($this->{states}{$state}->{allowedit});
 }
 
-# Get the allow view column defined for the state.
-sub getViewACL {
-    my ($this, $topic, $state ) = @_;
-
-    return undef unless ( $this->{states}{$state} );
-
-    return $topic->expandMacros($this->{states}{$state}->{allowview});
-}
-
 # Get the default state for this workflow
 sub getDefaultState {
     my $this = shift;
     return $this->{defaultState};
-}
-
-# Get the message associated with the given state
-sub getMessage {
-    my ( $this, $state ) = @_;
-
-    return '' unless $this->{states}->{$state};
-    return $this->{states}->{$state}->{message};
 }
 
 # Returns a hash with all the fields from the given state

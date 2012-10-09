@@ -202,12 +202,6 @@ sub setState {
     }
 }
 
-# Get the appropriate message for the current state
-sub getStateMessage {
-    my $this = shift;
-    return $this->{workflow}->getMessage( $this->getState() );
-}
-
 # Get the history string for the topic
 sub getHistoryText {
     my $this = shift;
