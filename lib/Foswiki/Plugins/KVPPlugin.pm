@@ -19,6 +19,9 @@ use Foswiki::Plugins::KVPPlugin::ControlledTopic ();
 use Foswiki::OopsException ();
 use Foswiki::Sandbox ();
 
+use constant FORCENEW => 1;
+use constant NOCACHE => 2;
+
 our $VERSION          = '$Rev: 7808 (2010-06-15) $';
 our $RELEASE          = '1.5.6';
 our $SHORTDESCRIPTION = 'Kontinuierliche Verbesserung im Wiki';
@@ -211,7 +214,7 @@ sub _initTOPIC {
 
     Foswiki::Func::pushTopicContext( $web, $topic );
     my $workflowName = Foswiki::Func::getPreferencesValue('WORKFLOW');
-    Foswiki::Func::popTopicContext( $web, $topic );
+    Foswiki::Func::popTopicContext();
 
     if ($workflowName) {
         ( my $wfWeb, $workflowName ) =
@@ -236,7 +239,9 @@ sub _initTOPIC {
         }
     }
 
-    $cache{$controlledTopicCID} = $controlledTopic || '_undef';
+    unless( $forceNew && $forceNew == NOCACHE ) {
+        $cache{$controlledTopicCID} = $controlledTopic || '_undef';
+    }
     return $controlledTopic;
 }
 
@@ -891,7 +896,7 @@ sub _restFork {
                     next;
                 }
                 # check if action allowed in targetworkflow
-                my $targetControlledTopic = _initTOPIC( $newWeb, $newTopic, undef, $ttmeta, $tttext, 1);
+                my $targetControlledTopic = _initTOPIC( $newWeb, $newTopic, undef, $ttmeta, $tttext, FORCENEW);
                 unless( $targetControlledTopic && $targetControlledTopic->haveNextState($newAction) ) {
                     $erroneous .= '%MAKETEXT{"Cannot execute transition =[_1]= on =[_2]= (invalid on target-workflow)!" args="'."$newAction, $newWeb.$newTopic\"}%\n\n";
                     next;
@@ -960,7 +965,7 @@ sub _restFork {
 
                 # Modell Aachen Settings:
                 # Ueberfuehren in Underrevision:    
-                my $newcontrolledTopic = _initTOPIC( $newWeb, $newTopic, undef, $meta, $text, 1);
+                my $newcontrolledTopic = _initTOPIC( $newWeb, $newTopic, undef, $meta, $text, FORCENEW);
      
                 unless ( $newcontrolledTopic ) {
                     $erroneous .= '%MAKETEXT{"Could not initialize workflow for"}% '."$newWeb.$newTopic\n\n";
@@ -1187,7 +1192,7 @@ sub beforeSaveHandler {
         );
 
         # TODO Test if new
-        #  _initTOPIC($web, $topic, undef, $meta, $text, 1)
+        #  _initTOPIC($web, $topic, undef, $meta, $text, FORCENEW)
         #  does the job. Unless the workflow can change...
 
         # Can't use initTOPIC, because the data comes from the save
@@ -1199,7 +1204,7 @@ sub beforeSaveHandler {
         );
     } else {
         # Otherwise we are *not* changing state so we can use initTOPIC
-        $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, 1 );
+        $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, FORCENEW );
     }
 
     return unless $controlledTopic;
