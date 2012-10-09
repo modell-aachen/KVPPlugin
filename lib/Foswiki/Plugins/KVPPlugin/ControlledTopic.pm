@@ -397,26 +397,10 @@ sub changeState {
         # Dig up the bodies
         $notify =~ s#^\s*|\s*$##g;
         my @groups = split( /\s*,\s*/, $notify );
-        my @persons;
         my @emails;
-        
-        # Alex: Get Users from Groups
-        foreach my $group (@groups) {
-            next unless $group;
-            if ( Foswiki::Func::isGroup($group)) {
-                my $it = Foswiki::Func::eachGroupMember($group);
-                while ($it->hasNext()) {
-                    my $user = $it->next();
-                    push( @persons, $user);
-                }
-            }
-            # Alex: Handler fr Nicht-Gruppen
-            else {
-                #Alex: Debug
-                push( @persons, $group);
-            }
-        }
-        
+
+        my @persons = @{ _listToWikiNames( \@groups ) };
+
         # Should be enough to del_double mail adresses: @persons = del_double(@persons);
 
         # Alex: Emailadressen auslesen
@@ -507,6 +491,28 @@ sub expandMacros {
         $this->{meta} );
     $c->{can_render_meta} = $memory;
     return $text;
+}
+
+sub _listToWikiNames {
+    my ( $groups ) = @_;
+    my @persons = ();
+    # Alex: Get Users from Groups
+    foreach my $group (@$groups) {
+        next unless $group;
+        if ( Foswiki::Func::isGroup($group)) {
+            my $it = Foswiki::Func::eachGroupMember($group);
+            while ($it->hasNext()) {
+                my $user = $it->next();
+                push( @persons, $user);
+            }
+        }
+        # Alex: Handler fr Nicht-Gruppen
+        else {
+            #Alex: Debug
+            push( @persons, $group);
+        }
+    }
+    return \@persons;
 }
 
 1;
