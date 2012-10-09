@@ -286,6 +286,11 @@ sub _WORKFLOWMETA {
     }
     $attr ||= 'name';
 
+    # handle assigned
+    if( $attr eq 'assigned' ) {
+        return join(',', @{ $controlledTopic->getAllAssigned() } );
+    }
+
     my $ret = $controlledTopic->getWorkflowMeta($attr);
     if(!defined $ret) {
         my $list = $attributes->{or};
@@ -1302,6 +1307,13 @@ sub indexTopicHandler {
   # provide ALL the fields
   for my $key (keys %$workflow) {
   	$doc->add_fields("workflowmeta_". lc($key) ."_s" => $workflow->{$key});
+  }
+
+  # index assigned people
+  my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, NOCACHE );
+  return unless $controlledTopic;
+  foreach my $user (@{ $controlledTopic->getAllAssigned() }) {
+	  $doc->add_fields( workflow_assigned_lst => $user );
   }
 }
 

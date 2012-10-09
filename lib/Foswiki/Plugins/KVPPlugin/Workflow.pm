@@ -283,6 +283,26 @@ sub getNextState {
     return undef;
 }
 
+# Get all people in assigned-column of all possible states
+sub getAllAssigned {
+    my ( $this, $state ) = @_;
+
+    my @assignees = ();
+    foreach my $t (@{ $this->{transitions} }) {
+        if( 
+                $t->{state} eq $state
+                && $t->{assigned}
+                && _isTrue( $t->{condition} )
+        ) {
+            my $assigned = $t->{assigned};
+            $assigned =~ s#^\s*|\s*$##g;
+            push(@assignees, split('\s*,\s*', $assigned));
+        }
+    }
+
+    return \@assignees;
+}
+
 # Get the form defined for the given current state and action
 # (the first 2 columns of the transition table). The returned form
 # will be undef if the transition doesn't exist, or is not allowed.

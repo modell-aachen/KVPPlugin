@@ -304,6 +304,21 @@ sub getChangeMail {
     return $this->{workflow}->getChangeMail($this);
 }
 
+# Get all people listed in "assigned"-columns of all possible transitions
+sub getAllAssigned {
+    my ($this) = @_;
+
+    my @people;
+    Foswiki::Func::pushTopicContext( $this->{web}, $this->{topic} );
+    my $groups = $this->{workflow}->getAllAssigned( $this->{state}->{name} );
+    Foswiki::Func::popTopicContext();
+
+    @people = @{ _listToWikiNames( $groups ) };
+    @people = del_double(@people);
+
+    return \@people;
+}
+
 # Will return the view template that should be used for current state
 # Will prefer entry in workflow table over stored value and
 # return undef if none was found.
