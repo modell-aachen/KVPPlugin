@@ -332,10 +332,10 @@ sub _WORKFLOWTRANSITION {
 
         # build javascript to associate warnings with actions
         for( my $a = $numberOfActions-1; $a >= 0; $a-- ) {
-            my $warning = @warnings[$a];
+            my $warning = $warnings[$a];
             next unless $warning;
             $warning =~ s#'#\\'#g;
-            my $action = @actions[$a];
+            my $action = $actions[$a];
             $action =~ s#'#\\'#g;
             $transwarn .= "WORKFLOW.w['$action']='$warning';";
         }
