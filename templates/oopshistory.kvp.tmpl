@@ -1,5 +1,7 @@
 %TMPL:INCLUDE{"oopshistory"}%
 
+%TMPL:DEF{"pagetitle"}%%MAKETEXT{"Revision history of "}%%IF{"'%META{"formfield" name="TopicTitle"}%'=''" then="$percntTOPIC$percnt" else="$percntMETA{$quotformfield$quot name=$quotTopicTitle$quot}$percnt$percentIF{$quot'%TOPIC%'!='%WORKFLOWORIGIN%'$quot then=$quot ($percentWORKFLOWSUFFIX$percent)$quot}$percent"}%%TMPL:END%
+
 %TMPL:DEF{"historytable_rcp_enabled"}%<table class="historySelectTable" border="0" cellspacing="0" cellpadding="5" summary="%MAKETEXT{"Topic history"}%">
 <tr>
 <th colspan="3">%MAKETEXT{"Revision"}%</th>
