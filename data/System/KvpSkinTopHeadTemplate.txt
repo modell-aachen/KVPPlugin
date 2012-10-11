@@ -1,4 +1,4 @@
-%TMPL:INCLUDE{"TopExtended"}%
+%TMPL:INCLUDE{"TopHead"}%
 
 %TMPL:DEF{"top_head_approved_de"}%
 <div class='patternTop'>

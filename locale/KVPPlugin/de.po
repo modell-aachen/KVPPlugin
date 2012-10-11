@@ -57,13 +57,13 @@ msgstr "Entwurf formal freigeben"
 msgid "Approved Page"
 msgstr "Freigegebener Stand"
 
-#: data/System/KvpSkinTopExtendedTemplate.txt:29
-#: data/System/KvpSkinTopExtendedTemplate.txt:66
+#: data/System/KvpSkinTopHeadTemplate.txt:29
+#: data/System/KvpSkinTopHeadTemplate.txt:66
 msgid "Approved by"
 msgstr "Freigegeben durch"
 
-#: data/System/KvpSkinTopExtendedTemplate.txt:21
-#: data/System/KvpSkinTopExtendedTemplate.txt:58
+#: data/System/KvpSkinTopHeadTemplate.txt:21
+#: data/System/KvpSkinTopHeadTemplate.txt:58
 msgid "Area of application"
 msgstr "Geltungsbereich"
 
@@ -108,8 +108,8 @@ msgstr ""
 "Der Workflow konnte für %1 nicht initialisiert werden! Eventuell wurde der "
 "Artikel gelöscht?"
 
-#: data/System/KvpSkinTopExtendedTemplate.txt:25
-#: data/System/KvpSkinTopExtendedTemplate.txt:62
+#: data/System/KvpSkinTopHeadTemplate.txt:25
+#: data/System/KvpSkinTopHeadTemplate.txt:62
 msgid "Creator"
 msgstr "Ersteller"
 
@@ -231,8 +231,8 @@ msgstr "alte Diskussion"
 msgid "Put under CIP"
 msgstr "In KVP überführen"
 
-#: data/System/KvpSkinTopExtendedTemplate.txt:31
-#: data/System/KvpSkinTopExtendedTemplate.txt:68
+#: data/System/KvpSkinTopHeadTemplate.txt:31
+#: data/System/KvpSkinTopHeadTemplate.txt:68
 msgid "Release date"
 msgstr "Freigabedatum"
 
@@ -256,8 +256,8 @@ msgstr "Um Freigabe bitten"
 msgid "Request further revision"
 msgstr "Um weitere Überarbeitung bitten"
 
-#: data/System/KvpSkinTopExtendedTemplate.txt:27
-#: data/System/KvpSkinTopExtendedTemplate.txt:64
+#: data/System/KvpSkinTopHeadTemplate.txt:27
+#: data/System/KvpSkinTopHeadTemplate.txt:64
 msgid "Responsible"
 msgstr "Verantwortlich"
 
@@ -421,9 +421,9 @@ msgstr "später"
 msgid "restore"
 msgstr "wiederherstellen"
 
-#: data/System/KvpSkinTopExtendedTemplate.txt:62
-#: data/System/KvpSkinTopExtendedTemplate.txt:66
-#: data/System/KvpSkinTopExtendedTemplate.txt:68
+#: data/System/KvpSkinTopHeadTemplate.txt:62
+#: data/System/KvpSkinTopHeadTemplate.txt:66
+#: data/System/KvpSkinTopHeadTemplate.txt:68
 msgid "under discussion"
 msgstr "in Diskussion"
 
