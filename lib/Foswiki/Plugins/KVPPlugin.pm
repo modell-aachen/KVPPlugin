@@ -1336,6 +1336,11 @@ sub beforeUploadHandler {
             params => $message
          );
     }
+    unless(Foswiki::Func::topicExists($web, $topic)) {
+        # This topic has probably been created just to attach a file.
+        # Mark it as a stub.
+        $meta->putKeyed('PREFERENCE', { name => 'WorkflowStub', title=>'WorkflowStub', type=>'Set', value=>'1' });
+    }
 }
 
 # The beforeSaveHandler inspects the request parameters to see if the
@@ -1475,7 +1480,7 @@ sub beforeSaveHandler {
         }
         # TODO Check if metacommentstuff changed unless workflow does so
 
-        if( Foswiki::Func::topicExists( $web, $topic ) ) {
+        if( Foswiki::Func::topicExists( $web, $topic ) && not $meta->getPreference('WorkflowStub') eq '1') {
             # topic already exists, check if Workflowstuff didn't change
             # but do not touch uncontrolled topics
             if(scalar @newStateName == 0) {
@@ -1502,7 +1507,11 @@ Foswiki::Func::writeWarning("Safe failed: States nicht gleich");#XXX Debug
 #                $meta->putKeyed('COMMENT', $comment);
 #            }
         } else {
-            # Make sure that newly created topics can't cheat with their state
+            # This topic is now no longer a stub.
+            $meta->remove('PREFERENCE', 'WorkflowStub');
+
+	    # XXX This check does not work properly
+	    # Make sure that newly created topics can't cheat with their state
             if(scalar @newStateName > 1) { # If 0 this is a new topic, or not controlled, 1 it's a copy
                 throw Foswiki::OopsException(
                         'workflowerr',
