@@ -1,6 +1,6 @@
 %TMPL:INCLUDE{"TopExtended"}%
 
-%TMPL:DEF{"top_erweitert_approved_de"}%
+%TMPL:DEF{"top_head_approved_de"}%
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
 	<tbody>
@@ -37,7 +37,7 @@
 <span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
 %TMPL:END%
 
-%TMPL:DEF{"top_erweitert_approved_en"}%
+%TMPL:DEF{"top_head_approved_en"}%
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
 	<tbody>
@@ -74,7 +74,7 @@
 <span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
 %TMPL:END%
 
-%TMPL:DEF{"top_erweitert_approved_auto"}%
+%TMPL:DEF{"top_head_approved_auto"}%
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
 	<tbody>
@@ -111,7 +111,7 @@
 <span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
 %TMPL:END%
 
-%TMPL:DEF{"top_erweitert_discussion_de"}%
+%TMPL:DEF{"top_head_discussion_de"}%
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
 	<tbody>
@@ -148,7 +148,7 @@
 <span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
 %TMPL:END%
 
-%TMPL:DEF{"top_erweitert_discussion_en"}%
+%TMPL:DEF{"top_head_discussion_en"}%
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
 	<tbody>
@@ -185,7 +185,7 @@
 <span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
 %TMPL:END%
 
-%TMPL:DEF{"top_erweitert_discussion_auto"}%
+%TMPL:DEF{"top_head_discussion_auto"}%
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
 	<tbody>
@@ -222,10 +222,10 @@
 <span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
 %TMPL:END%
 
-%TMPL:DEF{"top_erweitert_discussion"}%%IF{"defined CONTENT_LANGUAGE AND $CONTENT_LANGUAGE='de'" then="$percentTMPL:P{top_erweitert_discussion_de}$percent"}%%IF{"defined CONTENT_LANGUAGE AND $CONTENT_LANGUAGE='en'" then="$percentTMPL:P{top_erweitert_discussion_en}$percent"}%%IF{"not defined CONTENT_LANGUAGE OR ($CONTENT_LANGUAGE!='de' AND $CONTENT_LANGUAGE !='en')" then="$percentTMPL:P{top_erweitert_discussion_auto}$percent"}%%TMPL:END%
+%TMPL:DEF{"top_head_discussion"}%%IF{"defined CONTENT_LANGUAGE AND $CONTENT_LANGUAGE='de'" then="$percentTMPL:P{top_head_discussion_de}$percent"}%%IF{"defined CONTENT_LANGUAGE AND $CONTENT_LANGUAGE='en'" then="$percentTMPL:P{top_head_discussion_en}$percent"}%%IF{"not defined CONTENT_LANGUAGE OR ($CONTENT_LANGUAGE!='de' AND $CONTENT_LANGUAGE !='en')" then="$percentTMPL:P{top_head_discussion_auto}$percent"}%%TMPL:END%
 
-%TMPL:DEF{"top_erweitert_approved"}%%IF{"$CONTENT_LANGUAGE='de'" then="$percentTMPL:P{top_erweitert_approved_de}$percent"}%%IF{"$CONTENT_LANGUAGE='en'" then="$percentTMPL:P{top_erweitert_approved_en}$percent"}%%IF{"not defined CONTENT_LANGUAGE OR ($CONTENT_LANGUAGE!='de' AND $CONTENT_LANGUAGE !='en')" then="$percentTMPL:P{top_erweitert_approved_auto}$percent"}%%TMPL:END%
+%TMPL:DEF{"top_head_approved"}%%IF{"$CONTENT_LANGUAGE='de'" then="$percentTMPL:P{top_head_approved_de}$percent"}%%IF{"$CONTENT_LANGUAGE='en'" then="$percentTMPL:P{top_head_approved_en}$percent"}%%IF{"not defined CONTENT_LANGUAGE OR ($CONTENT_LANGUAGE!='de' AND $CONTENT_LANGUAGE !='en')" then="$percentTMPL:P{top_head_approved_auto}$percent"}%%TMPL:END%
 
-%TMPL:DEF{"top_erweitert"}%%TMPL:P{context="KVPControlled" then="top_erweitert_kvp" else="top_erweitert_standard"}%%TMPL:END%
+%TMPL:DEF{"top_head"}%%TMPL:P{context="KVPControlled" then="top_head_kvp" else="top_head_standard"}%%TMPL:END%
 
-%TMPL:DEF{"top_erweitert_kvp"}%%TMPL:P{context="KVPDiscussion" then="top_erweitert_discussion" else="top_erweitert_approved"}%%TMPL:END%
+%TMPL:DEF{"top_head_kvp"}%%TMPL:P{context="KVPDiscussion" then="top_head_discussion" else="top_head_approved"}%%TMPL:END%
