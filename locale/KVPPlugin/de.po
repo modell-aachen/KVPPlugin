@@ -18,7 +18,7 @@ msgstr ""
 
 #: templates/mailworkflowtransition.tmpl:12
 msgid "%1 edited the topic %2."
-msgstr "%1 hat den Artikel %2 bearbeitet."
+msgstr "%1 hat die Seite %2 bearbeitet."
 
 #: templates/mailworkflowtransition.tmpl:3
 msgid "%1 has a new state: %2"
@@ -96,7 +96,7 @@ msgstr "Kommentar"
 
 #: templates/oopsworkflowchanged.tmpl:15
 msgid "Continue to the topic here:"
-msgstr "Zum Artikel gelangen Sie hier:"
+msgstr "Zur Seite gelangen Sie hier:"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm:1042
 msgid "Could not initialize workflow for"
@@ -105,8 +105,8 @@ msgstr "Konnte Workflow nicht initialisieren für"
 #: templates/oopswrkflwsaveerr.tmpl:14
 msgid "Could not initialize workflow for %1! Maybe the topic was deleted?"
 msgstr ""
-"Der Workflow konnte für %1 nicht initialisiert werden! Eventuell wurde der "
-"Artikel gelöscht?"
+"Der Workflow konnte für %1 nicht initialisiert werden! Eventuell wurde die "
+"Seite gelöscht?"
 
 #: data/System/KvpSkinTopHeadTemplate.txt:25
 #: data/System/KvpSkinTopHeadTemplate.txt:62
@@ -168,7 +168,7 @@ msgstr "Transition dennoch durchführen"
 msgid ""
 "Found an invalid workflow (there must be none in a newly created topic)!"
 msgstr ""
-"Ungültigen Workflow gefunden (in einem neuen Artikel darf keiner vorhanden "
+"Ungültigen Workflow gefunden (in einer neuen Seite darf keiner vorhanden "
 "sein)!"
 
 #: data/System/KvpSkinTransitionsTemplate.txt:5
@@ -207,7 +207,7 @@ msgstr "Link zur Seite:"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm:1288
 msgid "Must find exactly one workflow in the topic, but found %1!"
-msgstr "Erwarte genau einen Workflow im Artikel, habe aber %1 gefunden!"
+msgstr "Erwarte genau einen Workflow in der Seite, habe aber %1 gefunden!"
 
 #: data/System/KvpSkinTransitionsTemplate.txt:7
 msgid "Next step"
@@ -284,7 +284,7 @@ msgid ""
 "edited the topic after you opened it? Topic cannot be saved!"
 msgstr ""
 "Der Workflowstatus =%1= gleicht nicht dem alten Status =%2=... eventuell hat "
-"jemand den Artikel bearbeitet, nachdem Sie ihn geöffnet haben? Artikel kann "
+"jemand die Seite bearbeitet, nachdem Sie ihn geöffnet haben? Seite kann "
 "nicht gespichert werden!"
 
 #: templates/oopsworkflowmoved.tmpl:13
@@ -293,7 +293,7 @@ msgid ""
 "original topic by clicking OK."
 msgstr ""
 "Die Diskussion, die Sie aufgerufen haben, ist leider nicht mehr verfügbar. "
-"Sie gelangen zum Originaltopic durch klicken von OK."
+"Sie gelangen zur Originalseite durch klicken von OK."
 
 #: templates/oopsworkflowlink.tmpl:13
 msgid "The link you clicked is malformed."
@@ -306,7 +306,7 @@ msgstr "Der Link, den Sie geklickt haben ist leider nicht mehr verfügbar."
 #: templates/oopsworkflowchanged.tmpl:13
 msgid "The topic you clicked has changed state since this link was created."
 msgstr ""
-"Der Artikel, den Sie geklickt haben, hat den Status gewechselt, seitdem der "
+"Die Seite, die Sie aufgerufen haben, hat den Status gewechselt seitdem der "
 "Link kreiert wurde."
 
 #: templates/oopswrkflwsaveerr.tmpl:14
@@ -315,7 +315,7 @@ msgid ""
 "match the state of the action (%2)! Maybe someone else already transitioned "
 "the topic?"
 msgstr ""
-"Die Transition war leider nicht möglich, da der Status vom Artikel (%1) "
+"Die Transition war leider nicht möglich, da der Status der Seite (%1) "
 "nicht gleich dem Status der Aktion (%2) ist! Eventuell hat bereits jemand "
 "anderes eine Transition durchgeführt?"
 
@@ -329,11 +329,11 @@ msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt:26
 msgid "This topic is not under any workflow."
-msgstr "Dieser Artikel steht nicht unter einem Workflow."
+msgstr "Diese Seite steht nicht unter einem Workflow."
 
 #: templates/oopsworkflowchanged.tmpl:3 templates/oopsworkflowchanged.tmpl:7
 msgid "Topic changed"
-msgstr "Artikel wurde verändert"
+msgstr "Seite wurde verändert"
 
 #: templates/oopshistory.kvp.tmpl:16 templates/oopshistory.kvp.tmpl:3
 msgid "Topic history"
@@ -341,7 +341,7 @@ msgstr "Versionsgeschichte der Seite"
 
 #: templates/oopsworkflowmoved.tmpl:3 templates/oopsworkflowmoved.tmpl:7
 msgid "Topic no longer available"
-msgstr "Artikel nicht mehr verfügbar"
+msgstr "Seite nicht mehr verfügbar"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm:943
 msgid "Topic to fork from does not exist:"
@@ -350,7 +350,7 @@ msgstr "Die Quelle zum Abspalten existiert nicht:"
 #: lib/Foswiki/Plugins/KVPPlugin.pm:947
 msgid "Tried to fork from a topic, which is not under any workflow:"
 msgstr ""
-"Sie haben versucht von einem Artikel abzuspalten, welcher gar nicht unter "
+"Sie haben versucht von eine Seite abzuspalten, welche gar nicht unter "
 "einem Workflow steht:"
 
 #: templates/oopshistory.kvp.tmpl:23 templates/oopshistory.kvp.tmpl:9
@@ -382,7 +382,7 @@ msgid ""
 "You are not permitted to save this topic. You have been denied access by Q."
 "Wiki"
 msgstr ""
-"Sie sind nicht berechtig diesen Artikel zu speichern. Ihnen wurde der Zugang "
+"Sie sind nicht berechtig diese Seite zu speichern. Ihnen wurde der Zugang "
 "von Q.Wiki verwehrt."
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm:1134
@@ -390,7 +390,7 @@ msgid ""
 "You are not permitted to upload to this topic. You have been denied access "
 "by Q.Wiki."
 msgstr ""
-"Sie sind nicht berechtig die Datei an dieses Topic anzuhänen. Ihnen wurde "
+"Sie sind nicht berechtig die Datei an diese Seite anzuhänen. Ihnen wurde "
 "der Zugang von Q.Wiki verwehrt."
 
 #: templates/oopswfplease.tmpl:9
@@ -399,7 +399,7 @@ msgid ""
 "change the state of the topic."
 msgstr ""
 "Sie müssen %1 bitten die Bearbeitung abzuschließen und die Sperre "
-"aufzuheben, um den Status dieses Artikels zu ändern."
+"aufzuheben, um den Status dieser Seite zu ändern."
 
 #: templates/oopshistory.kvp.tmpl:12
 msgid "earlier"
