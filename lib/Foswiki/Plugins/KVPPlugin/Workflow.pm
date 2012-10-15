@@ -148,7 +148,10 @@ sub new {
             undef $inTable;
         }
     }
-    die "Invalid state table in $web.$topic" unless $this->{defaultState};
+    unless($this->{defaultState}) {
+        Foswiki::Func::writeWarning("Invalid state table in $web.$topic");
+        return undef;
+    }
     
     return $this;
 }
