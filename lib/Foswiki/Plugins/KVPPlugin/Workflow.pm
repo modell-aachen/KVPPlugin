@@ -150,6 +150,7 @@ sub new {
     }
     unless($this->{defaultState}) {
         Foswiki::Func::writeWarning("Invalid state table in $web.$topic");
+        Foswiki::Plugins::KVPPlugin::_broadcast( '%MAKETEXT{"Invalid state table in [_1]" args="'.$web.'.'.$topic.'"}%' );
         return undef;
     }
     
@@ -367,6 +368,7 @@ sub allowEdit {
     my $state = $topic->getState();
     unless( $this->{states}->{$state} ) {
         Foswiki::Func::writeWarning("Error in Workflow: state '$state' does not exist!");
+        Foswiki::Plugins::KVPPlugin::_broadcast('%MAKETEXT{"Error in Workflow: state [_1] does not exist!" args="'.$state.'"}%');
         $allowed = 'nobody'; # This will empower admins
     } else {
         $allowed =

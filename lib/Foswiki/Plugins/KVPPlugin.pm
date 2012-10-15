@@ -92,6 +92,15 @@ sub initPlugin {
     return 1;
 }
 
+# Adds a message to %BROADCASTMESSAGE%
+sub _broadcast {
+    my ( $message ) = @_;
+    my $oldMessage = Foswiki::Func::getPreferencesValue( 'BROADCASTMESSAGE' ) || '';
+    unless ($oldMessage =~ m/$message/) {
+        Foswiki::Func::setPreferencesValue( 'BROADCASTMESSAGE', "$oldMessage<p>$message</p>" );
+    }
+}
+
 # Tag handler for WORKFLOWEDITPERM
 # Will return 1 if the user is allowed to edit this topic
 sub _WORKFLOWEDITPERM {
@@ -160,6 +169,7 @@ sub _WORKFLOWSUFFIX {
     my $forkSuffix = $Foswiki::cfg{Extensions}{KVPPlugin}{suffix};
     if (not $forkSuffix) {
         Foswiki::Func::writeWarning("No Suffix defined! Defaulting to Talk!");
+        _broadcast("No Suffix defined! Defaulting to Talk!");
         $forkSuffix = 'Talk';
     }
     return $forkSuffix;
