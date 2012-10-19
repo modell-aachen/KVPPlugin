@@ -164,6 +164,8 @@ sub setState {
 
     $this->{state}->{Remark} = $remark || '';
 
+    # Replace workflow-metadata
+    $this->{meta}->remove( 'WORKFLOW' ); # XXX sometime putKeyed doesn't replace
     $this->{meta}->putKeyed( "WORKFLOW", $this->{state} );
 
     ## set accesspermissions to the ones defined in the table
