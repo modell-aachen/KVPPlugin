@@ -406,11 +406,9 @@ sub changeState {
         }
         
         # Dig up the bodies
-        $notify =~ s#^\s*|\s*$##g;
-        my @groups = split( /\s*,\s*/, $notify );
         my @emails;
 
-        my @persons = @{ _listToWikiNames( \@groups ) };
+        my @persons = @{ _listToWikiNames( $notify ) };
 
         # Should be enough to del_double mail adresses: @persons = del_double(@persons);
 
@@ -505,10 +503,11 @@ sub expandMacros {
 }
 
 sub _listToWikiNames {
-    my ( $groups ) = @_;
+    my ( $string ) = @_;
+    $string =~ s#^\s*|\s*$##g;
     my @persons = ();
     # Alex: Get Users from Groups
-    foreach my $group (@$groups) {
+    foreach my $group ( split(/\s*,\s*/, $string) ) {
         next unless $group;
         if ( Foswiki::Func::isGroup($group)) {
             my $it = Foswiki::Func::eachGroupMember($group);
