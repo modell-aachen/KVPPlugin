@@ -306,10 +306,10 @@ sub getAllAssigned {
 
     my @people;
     Foswiki::Func::pushTopicContext( $this->{web}, $this->{topic} );
-    my $groups = $this->{workflow}->getAllAssigned( $this->{state}->{name} );
+    my $assigned = Foswiki::Func::expandCommonVariables( $this->{state}->{'ASSIGNED'} ) || '';
     Foswiki::Func::popTopicContext();
 
-    @people = @{ _listToWikiNames( $groups ) };
+    @people = @{ _listToWikiNames( $assigned ) };
     @people = del_double(@people);
 
     return \@people;
@@ -388,6 +388,12 @@ sub changeState {
 
     $this->{history}->{value} .= $fmt;
     $this->{meta}->put( "WORKFLOWHISTORY", $this->{history} );
+
+    # remember assigned people
+    { # scope
+        my $assigned = $this->{workflow}->getAssigned($oldstate, $action);
+        $this->{state}->{'ASSIGNED'} = $assigned if ( $assigned );
+    }
     
     if ($form) {
         #$this->{meta}->put( "FORM", { name => $form } );

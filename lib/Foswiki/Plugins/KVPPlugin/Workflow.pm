@@ -276,23 +276,21 @@ sub getNextState {
 }
 
 # Get all people in assigned-column of all possible states
-sub getAllAssigned {
-    my ( $this, $state ) = @_;
+sub getAssigned {
+    my ( $this, $state, $action ) = @_;
 
-    my @assignees = ();
     foreach my $t (@{ $this->{transitions} }) {
         if( 
                 $t->{state} eq $state
-                && $t->{assigned}
+                && $t->{action} eq $action
                 && _isTrue( $t->{condition} )
         ) {
-            my $assigned = $t->{assigned};
-            $assigned =~ s#^\s*|\s*$##g;
-            push(@assignees, split('\s*,\s*', $assigned));
+            return $t->{assigned} || '';
         }
     }
 
-    return \@assignees;
+    Foswiki::Func::writeWarning("Transition not found (for assigned): State: '$state' Action: '$action'");
+    return '';
 }
 
 # Get the form defined for the given current state and action
