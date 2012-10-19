@@ -22,6 +22,13 @@ These words are often mentioned in workflows and might slip into a %MAKE%NOP%TEX
 %MAKETEXT{"Approve contentual aspects of draft"}%
 %MAKETEXT{"Approve contentual aspects of discussion"}%
 %MAKETEXT{"Approve formal aspects of discussion"}%
+%MAKETEXT{"Give article the accept status"}%
 </p><p>Messages<br />
-%MAKETEXT{"This topic is not under any workflow."}%
+%MAKETEXT{"This document is not yet in CIP."}%
+%MAKETEXT{"This document is a draft."}%
+%NAKETEXT{"This document has been approved."}%
+%MAKETEXT{"This document is currently being revised."}%
+%MAKETEXT{"This document has been discarded."}%
+%MAKETEXT{"This document is waiting for approval by the QM-departement."}%
+%MAKETEXT{"This document is waiting for approval by the person in charge of the page."}%
 </p>
