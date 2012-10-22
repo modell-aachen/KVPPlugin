@@ -55,7 +55,8 @@ sub new {
             name        => "$web.$topic",
             preferences => {},
             states      => {},
-            transitions => []
+            transitions => [],
+            tasks       => []
         },
         $class
     );
@@ -66,10 +67,14 @@ sub new {
     my @defaultfields;
 
     # Yet another table parser
+    # Default table:
+    # | *State Type*  |
     # State table:
     # | *State*       | *Allow Edit* | *Message* |
     # Transition table:
     # | *State* | *Action* | *Next state* | *Allowed* |
+    # Task table:
+    # | *Task* | *Who* | *Description* | *Time* |
     foreach my $line ( split( /\n/, $text ) ) {
         if (
             $line =~ s/^\s*\|([\s*]*State[\s*]*\|
@@ -104,6 +109,13 @@ sub new {
             $inTable = 'DEFAULT';
             $defaultCol = 'statetype'; # XXX
             @defaultfields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
+        }
+        elsif (
+            $line =~ s/^\s*\|([\s*]*Task[\s*]*\|.*)\|\s*$/$1/ix
+        )
+        {
+            $inTable = 'TASK';
+            @fields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
         }
         elsif ( defined($inTable) && $line =~ s/^\s*\|\s*(.*?)\s*\|\s*$/$1/ ) {
 
@@ -141,6 +153,9 @@ sub new {
                             }
                         }
                     }
+                }
+                elsif ( $inTable eq 'TASK' ) {
+                    push( @{ $this->{tasks} }, \%data );
                 }
             }
         }
@@ -275,21 +290,40 @@ sub getNextState {
     return undef;
 }
 
-# Get all people in assigned-column of all possible states
-sub getAssigned {
-    my ( $this, $state, $action ) = @_;
+# Get a task by name
+sub getTask {
+    my ( $this, $task ) = @_;
 
-    foreach my $t (@{ $this->{transitions} }) {
+    foreach my $t (@{ $this->{tasks} }) {
         if( 
-                $t->{state} eq $state
-                && $t->{action} eq $action
-                && _isTrue( $t->{condition} )
+                $t->{task} eq $task
         ) {
-            return $t->{assigned} || '';
+            return $t;
         }
     }
 
-    Foswiki::Func::writeWarning("Transition not found (for assigned): State: '$state' Action: '$action'");
+    Foswiki::Func::writeWarning("Task not found: '$task'");
+    return undef;
+}
+
+# Get a task by state and action
+sub getTaskForAction {
+    my ( $this, $topic, $action ) = @_;
+
+    my $currentState = $topic->getState();
+    Foswiki::Func::writeWarning("Getting task for $action and state $currentState");
+    foreach my $t (@{ $this->{transitions} }) {
+        my $allowed = $topic->expandMacros( $t->{allowed} );
+        if(
+                $t->{state} eq $currentState
+                && $t->{action} eq $action
+                && _isAllowed($allowed)
+        ) {
+            return $t->{task} || '';
+        }
+    }
+
+    Foswiki::Func::writeWarning("No Task found for state '$currentState' and action '$action'");
     return '';
 }
 

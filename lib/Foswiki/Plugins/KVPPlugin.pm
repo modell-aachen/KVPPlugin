@@ -297,8 +297,10 @@ sub _WORKFLOWMETA {
     $attr ||= 'name';
 
     # handle assigned
-    if( $attr eq 'assigned' ) {
-        return join(',', @{ $controlledTopic->getAllAssigned() } );
+    if( $attr eq 'tasked' ) {
+        my $tasked = $controlledTopic->getTaskedPeople();
+        return '' unless $tasked;
+        return join(',', @$tasked );
     }
 
     my $ret = $controlledTopic->getWorkflowMeta($attr);
@@ -1312,26 +1314,28 @@ sub beforeSaveHandler {
 }
 
 sub indexTopicHandler {
-  my ($indexer, $doc, $web, $topic, $meta, $text) = @_;
+    my ($indexer, $doc, $web, $topic, $meta, $text) = @_;
 
-  # Modac : Mega Easy Implementation
-  my $workflow = $meta->get('WORKFLOW');
-  return unless $workflow;
-  my $state = $workflow->{name};
-  # backward compatibility
-  $doc->add_fields( process_state_s => $state) if $state;
+    # Modac : Mega Easy Implementation
+    my $workflow = $meta->get('WORKFLOW');
+    return unless $workflow;
+    my $state = $workflow->{name};
+    # backward compatibility
+    $doc->add_fields( process_state_s => $state) if $state;
 
-  # provide ALL the fields
-  for my $key (keys %$workflow) {
-  	$doc->add_fields("workflowmeta_". lc($key) ."_s" => $workflow->{$key});
-  }
+    # provide ALL the fields
+    for my $key (keys %$workflow) {
+        $doc->add_fields("workflowmeta_". lc($key) ."_s" => $workflow->{$key});
+    }
 
-  # index assigned people
-  my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, NOCACHE );
-  return unless $controlledTopic;
-  foreach my $user (@{ $controlledTopic->getAllAssigned() }) {
-	  $doc->add_fields( workflow_assigned_lst => $user );
-  }
+    # index tasks
+    my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, NOCACHE );
+    return unless $controlledTopic;
+    my $taskedPeople = $controlledTopic->getTaskedPeople();
+    return unless $taskedPeople;
+    foreach my $user ( @$taskedPeople ) {
+        $doc->add_fields( workflow_tasked_lst => $user );
+    }
 }
 
 1;

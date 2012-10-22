@@ -300,19 +300,11 @@ sub getChangeMail {
     return $this->{workflow}->getChangeMail($this);
 }
 
-# Get all people listed in "assigned"-columns of all possible transitions
-sub getAllAssigned {
+# Get task attached to topic
+sub getTask {
     my ($this) = @_;
 
-    my @people;
-    Foswiki::Func::pushTopicContext( $this->{web}, $this->{topic} );
-    my $assigned = Foswiki::Func::expandCommonVariables( $this->{state}->{'ASSIGNED'} ) || '';
-    Foswiki::Func::popTopicContext();
-
-    @people = @{ _listToWikiNames( $assigned ) };
-    @people = del_double(@people);
-
-    return \@people;
+    return $this->{workflow}->getTask($this->{state}->{name});
 }
 
 # Will return the view template that should be used for current state
@@ -343,6 +335,17 @@ sub newForm {
     return ( $form && ( !$oldForm || $oldForm ne $form ) ) ? $form : undef;
 }
 
+# Returns array of people assigned to currently attached task
+sub getTaskedPeople {
+    my ( $this ) = @_;
+
+    my $taskname = $this->{state}->{TASK};
+    return undef unless $taskname;
+    my $task = $this->{workflow}->getTask( $taskname );
+    return undef unless $task;
+    return _listToWikiNames( $this->expandMacros( $task->{who} ) );
+}
+
 # change the state of the topic. Does *not* save the updated topic, but
 # does notify the change to listeners.
 sub changeState {
@@ -366,6 +369,9 @@ sub changeState {
           ( $info->{date}, $info->{author}, $info->{version} );
     }
 
+    # remember task
+    $this->{state}->{'TASK'}= $this->{workflow}->getTaskForAction( $this, $action );
+    
     $this->setState($state, $version, $remark);
 
     my $fmt = Foswiki::Func::getPreferencesValue("WORKFLOWHISTORYFORMAT")
@@ -389,12 +395,6 @@ sub changeState {
     $this->{history}->{value} .= $fmt;
     $this->{meta}->put( "WORKFLOWHISTORY", $this->{history} );
 
-    # remember assigned people
-    { # scope
-        my $assigned = $this->{workflow}->getAssigned($oldstate, $action);
-        $this->{state}->{'ASSIGNED'} = $assigned if ( $assigned );
-    }
-    
     if ($form) {
         #$this->{meta}->put( "FORM", { name => $form } );
     }    # else leave the existing form in place
