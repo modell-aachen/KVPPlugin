@@ -42,7 +42,7 @@ sub new {
             state     => $meta->get('WORKFLOW'),
             history   => $meta->get('WORKFLOWHISTORY'),
             forkweb   => $web,
-            forktopic => $topic . $forkSuffix,
+            forktopic => $topic . $forkSuffix
         },
         $class
     );
