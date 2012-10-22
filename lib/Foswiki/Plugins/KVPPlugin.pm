@@ -327,6 +327,9 @@ sub _WORKFLOWTRANSITION {
     my $controlledTopic = _initTOPIC( $web, $topic );
     return '' unless $controlledTopic;
 
+    # Include JQuery.block
+    Foswiki::Plugins::JQueryPlugin::createPlugin( 'blockUI', $session );
+
     #
     # Build the button to change the current status
     #
