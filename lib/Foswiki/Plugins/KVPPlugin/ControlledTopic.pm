@@ -370,7 +370,23 @@ sub changeState {
     }
 
     # remember task
-    $this->{state}->{'TASK'}= $this->{workflow}->getTaskForAction( $this, $action );
+    { # Scope
+        my $taskname = $this->{workflow}->getTaskForAction( $this, $action );
+        $this->{state}->{'TASK'} = $taskname;
+        my $duedate = '';
+        if($taskname) {
+            my $task = $this->{workflow}->getTask($taskname);
+            if($task) {
+                my $duration = $task->{when};
+                if($duration) {
+                    $duration *= 24*60*60; # to epoch
+                    $duedate =
+                      Foswiki::Time::formatTime( time() + $duration, '$day.$mo.$year', 'servertime' );
+                }
+            }
+        }
+        $this->{state}->{"TASK_DUE"} = $duedate;
+    }
     
     $this->setState($state, $version, $remark);
 
