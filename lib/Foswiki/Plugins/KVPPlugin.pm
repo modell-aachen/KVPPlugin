@@ -285,7 +285,7 @@ sub _WORKFLOWMETA {
     my $remove = $attributes->{nousersweb};
 
     my $attr;
-    my $controlledTopic = _initTOPIC( $web, $topic, $rev );
+    my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev );
     return $alt unless $controlledTopic;
     
     if (!defined $attributes->{name}) {
