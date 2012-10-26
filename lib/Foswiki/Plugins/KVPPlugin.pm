@@ -347,7 +347,9 @@ sub _WORKFLOWTRANSITION {
 
         # build javascript to associate warnings with actions
         for( my $a = $numberOfActions-1; $a >= 0; $a-- ) {
-            my $warning = Foswiki::Func::expandCommonVariables("%MAKETEXT{$warnings[$a]}%");
+            my $warning = $warnings[$a];
+            next unless $warning;
+            $warning = Foswiki::Func::expandCommonVariables("%MAKETEXT{$warning}%");
             next unless $warning;
             $warning =~ s#'#\\'#g;
             my $action = $actions[$a];
