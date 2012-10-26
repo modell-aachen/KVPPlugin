@@ -1333,13 +1333,25 @@ sub indexTopicHandler {
         $doc->add_fields("workflowmeta_". lc($key) ."_s" => $workflow->{$key});
     }
 
-    # index tasks
     my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, NOCACHE );
-    return unless $controlledTopic;
-    my $taskedPeople = $controlledTopic->getTaskedPeople();
-    return unless $taskedPeople;
-    foreach my $user ( @$taskedPeople ) {
-        $doc->add_fields( workflow_tasked_lst => $user );
+
+    # mild sanity-test if state exists
+    if($controlledTopic && not $controlledTopic->getRow('state') eq $state) {
+        Foswiki::Func::writeWarning("Workflow error in $web.$topic");
+        $doc->add_fields( workflow_tasked_lst => 'KvpError' );
+    }
+
+    # index tasks
+    if($workflow->{TASK}) {
+        my $taskedPeople = undef;
+        $taskedPeople = $controlledTopic->getTaskedPeople() if $controlledTopic;
+        unless ($taskedPeople && scalar @$taskedPeople) {
+            $doc->add_fields( workflow_tasked_lst => 'KvpTaskedNobody' );
+            return;
+        }
+        foreach my $user ( @$taskedPeople ) {
+            $doc->add_fields( workflow_tasked_lst => $user );
+        }
     }
 }
 
