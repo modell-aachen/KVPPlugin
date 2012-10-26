@@ -85,7 +85,7 @@ sub getActions {
     return $this->{workflow}->getActions($this);
 }
 
-# Get attributes for the given actoin
+# Get attributes for the given action
 sub getAttributes {
     my ($this, $action) = @_;
     return $this->{workflow}->getAttributes($this->{state}->{name}, $action);
@@ -141,12 +141,6 @@ sub purgeConributors {
 sub nextRev {
     my ( $this ) = @_;
     $this->{state}->{Revision}++;
-}
-
-# Alex: Forkweb
-sub setForkWeb {
-    my ( $this, $forkweb ) = @_;
-    $this->{forkweb}->{value} = $forkweb;
 }
 
 # Set the current state in the topic
@@ -293,32 +287,11 @@ sub getRow {
     return $this->{workflow}->getRow($this, $row);
 }
 
-# Signals if the user may change the mailing list
-sub getChangeMail {
-    my ($this) = @_;
-
-    return $this->{workflow}->getChangeMail($this);
-}
-
 # Get task attached to topic
 sub getTask {
     my ($this) = @_;
 
     return $this->{workflow}->getTask($this->{state}->{name});
-}
-
-# Will return the view template that should be used for current state
-# Will prefer entry in workflow table over stored value and
-# return undef if none was found.
-sub getViewTemplate {
-    my ($this) = @_;
-
-    my $template = $this->{workflow}->getRow($this, 'viewtemplate');
-# erstmal nicht:    $template = $this->{meta}->get('WORKFLOWTEMPLATE') unless $template;
-    
-    return undef unless $template;
-
-    return $this->expandMacros($template);
 }
 
 # if the form employed in the state arrived after after applying $action

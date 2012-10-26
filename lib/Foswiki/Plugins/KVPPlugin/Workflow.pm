@@ -311,7 +311,6 @@ sub getTaskForAction {
     my ( $this, $topic, $action ) = @_;
 
     my $currentState = $topic->getState();
-    Foswiki::Func::writeWarning("Getting task for $action and state $currentState");
     foreach my $t (@{ $this->{transitions} }) {
         my $allowed = $topic->expandMacros( $t->{allowed} );
         if(
