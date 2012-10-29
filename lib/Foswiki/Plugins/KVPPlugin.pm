@@ -1355,6 +1355,10 @@ sub indexTopicHandler {
         }
         foreach my $user ( @$taskedPeople ) {
             $doc->add_fields( workflow_tasked_lst => $user );
+            if( $Foswiki::cfg{Extensions}{KVPPlugin}{MonitorTasked}
+                    && not Foswiki::Func::wikiToUserName( $user ) ) {
+                $doc->add_fields( workflow_tasked_lst => 'KvpUnknownUser' );
+            }
         }
     }
 }
