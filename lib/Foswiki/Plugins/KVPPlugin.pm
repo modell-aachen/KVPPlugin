@@ -1321,21 +1321,26 @@ sub beforeSaveHandler {
 sub indexTopicHandler {
     my ($indexer, $doc, $web, $topic, $meta, $text) = @_;
 
+    # only index controlled topics, or old metadata will end up in index.
+    # XXX would be cool if one could detect when a workflow failed to parse
+    my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, NOCACHE );
+    return unless $controlledTopic;
+
+    # might result in default-state
+    my $state = $controlledTopic->getState();
+    $doc->add_fields( process_state_s => $state) if $state;
+
     # Modac : Mega Easy Implementation
     my $workflow = $meta->get('WORKFLOW');
-    return unless $workflow;
-    my $state = $workflow->{name};
-    # backward compatibility
-    $doc->add_fields( process_state_s => $state) if $state;
+    return unless $workflow; # might happen when topics are created outside workflow and then move into a workflowed web
 
     # provide ALL the fields
     for my $key (keys %$workflow) {
         $doc->add_fields("workflowmeta_". lc($key) ."_s" => $workflow->{$key});
     }
 
-    my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, NOCACHE );
 
-    # mild sanity-test if state exists
+    # mild sanity-test if state exists (eg. Workflow-table changed and state got renamed)
     if($controlledTopic && not $controlledTopic->getRow('state') eq $state) {
         Foswiki::Func::writeWarning("Workflow error in $web.$topic");
         $doc->add_fields( workflow_tasked_lst => 'KvpError' );
@@ -1343,8 +1348,7 @@ sub indexTopicHandler {
 
     # index tasks
     if($workflow->{TASK}) {
-        my $taskedPeople = undef;
-        $taskedPeople = $controlledTopic->getTaskedPeople() if $controlledTopic;
+        my $taskedPeople = $controlledTopic->getTaskedPeople();
         unless ($taskedPeople && scalar @$taskedPeople) {
             $doc->add_fields( workflow_tasked_lst => 'KvpTaskedNobody' );
             return;
