@@ -424,8 +424,9 @@ msgstr "wiederherstellen"
 #: data/System/KvpSkinTopHeadTemplate.txt:62
 #: data/System/KvpSkinTopHeadTemplate.txt:66
 #: data/System/KvpSkinTopHeadTemplate.txt:68
-msgid "under discussion"
-msgstr "in Diskussion"
+
+msgid "under&#160;discussion"
+msgstr "in&#160;Diskussion"
 
 #: templates/oopshistory.kvp.tmpl:26
 msgid "view"
