@@ -1,9 +1,9 @@
-jQuery(document).ready(function() {
+jQuery(function($) {
     WORKFLOW.getSelection = function() {
-        var menu = jQuery('#WORKFLOWmenu');
+        var menu = $('#WORKFLOWmenu');
         var selection = menu.val();
         if(selection === undefined) {
-            menu = jQuery('#WORKFLOWbutton');
+            menu = $('#WORKFLOWbutton');
             if (menu === undefined) return undefined;
             selection = menu.text().replace(/^\s+|\s+$/g, '');
         }
@@ -13,7 +13,7 @@ jQuery(document).ready(function() {
     WORKFLOW.confirm = function() {
         var warning = WORKFLOW.w[WORKFLOW.getSelection()] || '';
         if(warning == '' || confirm(warning) === true) {
-            jQuery('#KVPTransitions').block();
+            $('#KVPTransitions').block();
             return true;
         } else {
             return false
@@ -21,7 +21,7 @@ jQuery(document).ready(function() {
     }
 
     WORKFLOW.showCheckBox = function() {
-        var menu = jQuery('#WORKFLOWmenu');
+        var menu = $('#WORKFLOWmenu');
         var remark = document.getElementById("KVPRemark");
         var selection = WORKFLOW.getSelection();
         if(selection === undefined) return;
@@ -44,6 +44,6 @@ jQuery(document).ready(function() {
             box.style.display = 'none';
         }
     }
-    jQuery('select').change(WORKFLOW.showCheckBox);
+    $('select').change(WORKFLOW.showCheckBox);
     WORKFLOW.showCheckBox();
 });
