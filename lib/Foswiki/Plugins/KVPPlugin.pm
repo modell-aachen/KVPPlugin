@@ -168,9 +168,9 @@ sub isInList {
 sub _WORKFLOWSUFFIX {
     my $forkSuffix = $Foswiki::cfg{Extensions}{KVPPlugin}{suffix};
     if (not $forkSuffix) {
-        Foswiki::Func::writeWarning("No Suffix defined! Defaulting to Talk!");
-        _broadcast("No Suffix defined! Defaulting to Talk!");
-        $forkSuffix = 'Talk';
+        $forkSuffix = 'TALK';
+        Foswiki::Func::writeWarning("No Suffix defined! Defaulting to $forkSuffix!");
+        _broadcast('%MAKETEXT{"No Suffix defined! Defaulting to [_1]!" args="'.$forkSuffix.'"}%');
     }
     return $forkSuffix;
 }

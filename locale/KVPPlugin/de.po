@@ -428,6 +428,9 @@ msgstr "wiederherstellen"
 msgid "under&#160;discussion"
 msgstr "in&#160;Diskussion"
 
+msgid "No Suffix defined! Defaulting to %1!"
+msgstr "Kein Suffix definiert! Nehme %1 als Suffix an!"
+
 #: templates/oopshistory.kvp.tmpl:26
 msgid "view"
 msgstr "ansehen"
