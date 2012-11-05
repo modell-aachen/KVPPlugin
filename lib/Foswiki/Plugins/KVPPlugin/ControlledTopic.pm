@@ -97,7 +97,7 @@ sub getWorkflowMeta {
 }
 
 # Alex: Get the extra Mailinglist (People involved in the Discussion)
-sub getConributors {
+sub getContributors {
     my ($this, $state) = @_;
 
     $state ||= $this->{state}->{name};
@@ -109,7 +109,7 @@ sub getConributors {
 }
 
 # Add another user to the Mailinglist
-sub addConributors {
+sub addContributors {
     my ( $this, $extraname, $state ) = @_;
 
     $extraname =~ s/^\s*//;
@@ -132,7 +132,7 @@ sub addConributors {
     $this->{meta}->putKeyed( 'WRKFLWCONTRIBUTORS', {name => $state, value => $contributorlist } );
 }
 
-sub purgeConributors {
+sub purgeContributors {
     my ( $this ) = @_;
     $this->{meta}->remove( 'WRKFLWCONTRIBUTORS' );
 }

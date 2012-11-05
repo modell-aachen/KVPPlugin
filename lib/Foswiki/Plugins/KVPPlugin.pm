@@ -130,7 +130,7 @@ sub _WORKFLOWCONTRIBUTORS {
     my $controlledTopic = _initTOPIC( $web, $topic, $rev );
 
     return '' unless $controlledTopic;
-    return $controlledTopic->getConributors($state);
+    return $controlledTopic->getContributors($state);
 }
 
 # XXX Copy/Paste from Workflow::_isAllowed
@@ -689,7 +689,7 @@ sub _changeState {
 
             # Hier Action 
             if ($forkingAction && $forkingAction eq "DISCARD") {
-                $controlledTopic->purgeConributors(); # XXX Wirklich?
+                $controlledTopic->purgeContributors(); # XXX Wirklich?
                 my $origMeta = $controlledTopic->{meta};
 
                 # Move topic to trash
@@ -731,7 +731,7 @@ sub _changeState {
             elsif (!$oldIsApproved && $controlledTopic->getRow("approved")) {
                 # transfer ACLs from old document to new
                 transferACL($appWeb, $appTopic, $controlledTopic);
-                $controlledTopic->purgeConributors();
+                $controlledTopic->purgeContributors();
                 $controlledTopic->nextRev() unless $actionAttributes =~ m#NOREV#;
                 # Will save changes after moving original topic away
 
@@ -1315,7 +1315,7 @@ sub beforeSaveHandler {
         }
     }
 
-    $controlledTopic->addConributors(Foswiki::Func::getWikiUserName());
+    $controlledTopic->addContributors(Foswiki::Func::getWikiUserName());
 }
 
 sub indexTopicHandler {
