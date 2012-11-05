@@ -781,7 +781,7 @@ sub _changeState {
 
 # Forces write permission
 sub transferACL {
-    my ($srcWeb, $srcTopic, $dst, $removeComments) = @_;
+    my ($srcWeb, $srcTopic, $dst) = @_;
 
     my ($srcMeta, $srcText) = Foswiki::Func::readTopic($srcWeb, $srcTopic);
     my $acl = '';
