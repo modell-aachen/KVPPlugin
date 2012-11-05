@@ -372,13 +372,9 @@ sub _WORKFLOWTRANSITION {
         # Use a time field to help defeat the cache
         CGI::hidden( 't', time() )
     );
-    
-    my $buttonClass =
-      Foswiki::Func::getPreferencesValue('WORKFLOWTRANSITIONCSSCLASS')
-          || 'foswikiChangeFormButton foswikiSubmit"';
 
     my ($allow, $suggest, $remark) = $controlledTopic->getTransitionAttributes();
-    
+
     Foswiki::Func::addToZone('script', 'WORKFLOW::COMMENT', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI');
 <script type="text/javascript">
 WORKFLOW = function(){};
@@ -489,10 +485,7 @@ sub _WORKFLOWFORK {
     my $label = $attributes->{label} || 'Fork';
     my $title = $attributes->{title};
     $title = ($title)?"title='$title'":'';
-    my $buttonClass =
-      Foswiki::Func::getPreferencesValue('WORKFLOWTRANSITIONCSSCLASS')
-      || 'foswikiChangeFormButton foswikiSubmit"';
-      
+
     my $url;
     if ( $newnames ) {
         $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'rest', topic=> "$web.$topic", lockdown=> $lockdown, newnames=> $newnames );
