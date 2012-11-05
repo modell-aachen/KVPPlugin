@@ -22,24 +22,24 @@ jQuery(function($) {
 
     WORKFLOW.showCheckBox = function() {
         var menu = $('#WORKFLOWmenu');
-        var remark = document.getElementById("KVPRemark");
+        var remark = $('#KVPRemark');
         var selection = WORKFLOW.getSelection();
         if(selection === undefined) return;
         if(remark != null) {
             if(WORKFLOW.remarkOption.indexOf(','+selection+',') > -1) {
-                remark.style.display = 'block';
+                remark.hide();
             } else {
-                remark.style.display = 'none';
+                remark.show();
             }
         }
-        var box = document.getElementById("WORKFLOWchkbox");
-        if (box === undefined || box === null) return;
+        var box = $('#WORKFLOWchkbox');
+        if (!box.length) return;
         if(WORKFLOW.allowOption.indexOf(','+selection+',') > -1) {
-            box.style.display = 'inline';
-            document.getElementById('WORKFLOWchkboxbox').checked = false;
+            box.show();
+            $('#WORKFLOWchkboxbox').removeAttr('checked');
         } else if (WORKFLOW.suggestOption.indexOf(','+selection+',') > -1) {
-            box.style.display = 'inline';
-            document.getElementById('WORKFLOWchkboxbox').checked = true;
+            box.show();
+            $('#WORKFLOWchkboxbox').attr('checked', 'checked');
         } else {
             box.style.display = 'none';
         }
