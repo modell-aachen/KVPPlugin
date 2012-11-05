@@ -8,7 +8,7 @@
 
 %MAKETEXT{"You must ask [_1] to close their edit and release their lock before you can change the state of the topic." args="%PARAM1%"}%
 
-<form action="%SCRIPTURLPATH{"rest"}%/WorkflowPlugin/changeState" method="post">
+<form action="%SCRIPTURLPATH{"rest"}%/KVPPlugin/changeState" method="post">
 %MAKETEXT{"In an emergency you can transition the topic anyway, by clicking "}%
 <input type="hidden" name="breaklock" value="on" />
 <input type="hidden" name="topic" value="%WEB%.%TOPIC%" />
