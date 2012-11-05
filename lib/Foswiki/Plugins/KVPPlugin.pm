@@ -96,7 +96,7 @@ sub initPlugin {
 sub _broadcast {
     my ( $message ) = @_;
     my $oldMessage = Foswiki::Func::getPreferencesValue( 'BROADCASTMESSAGE' ) || '';
-    unless ($oldMessage =~ m/$message/) {
+    unless ($oldMessage =~ m/\Q$message\E/) {
         Foswiki::Func::setPreferencesValue( 'BROADCASTMESSAGE', "$oldMessage<p>$message</p>" );
     }
 }
