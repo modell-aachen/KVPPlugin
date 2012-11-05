@@ -230,7 +230,7 @@ sub _initTOPIC {
         ( my $wfWeb, $workflowName ) =
           Foswiki::Func::normalizeWebTopicName( $web, $workflowName );
 
-        my $workflowCID = "$web.$workflowName.w";
+        my $workflowCID = "w:$web.$workflowName";
         my $workflow = $cache{$workflowCID};
         if ( not $workflow && Foswiki::Func::topicExists( $wfWeb, $workflowName ) ) {
             $workflow =
