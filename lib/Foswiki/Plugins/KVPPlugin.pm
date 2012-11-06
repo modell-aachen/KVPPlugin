@@ -1139,6 +1139,7 @@ sub beforeSaveHandler {
             }
         }
         # SetPref:
+        my $removePrefChanged = 0; # Remember if RemovePref has been changed
         if($setMeta) {
             $meta->remove('PREFERENCE', 'SetPref');
             $setMeta = Foswiki::Func::expandCommonVariables(
@@ -1153,6 +1154,7 @@ sub beforeSaveHandler {
                     'PREFERENCE',
                     { name => $toSet, title => $toSet, type => 'Set', value => $value }
                 );
+                $removePrefChanged = 1 if ($toSet eq "RemovePref");
             }
         }
         # RemoveMeta:
@@ -1170,9 +1172,9 @@ sub beforeSaveHandler {
         }
         # RemovePref:
         if($removePref) {
-            $meta->remove('PREFERENCE', 'RemoveMeta');
+            $meta->remove('PREFERENCE', 'RemovePref') unless $removePrefChanged;
             my $removeList = Foswiki::Func::expandCommonVariables(
-                $removeMeta->{value}, $topic, $web, $meta
+                $removePref->{value}, $topic, $web, $meta
             );
             my @toRemove = split(",", $removeList);
             foreach my $item (@toRemove) {
