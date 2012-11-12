@@ -1561,6 +1561,9 @@ sub indexTopicHandler {
   for my $key (keys %$workflow) {
   	$doc->add_fields("workflowmeta_". lc($key) ."_s" => $workflow->{$key});
   }
+  
+  my $suffix = _WORKFLOWSUFFIX();
+  $doc->add_fields( workflow_hasdiscussion_b => Foswiki::Func::topicExists($web, "$topic$suffix")?1:0 );
 }
 
 1;
