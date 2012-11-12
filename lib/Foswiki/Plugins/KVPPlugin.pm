@@ -1339,6 +1339,8 @@ sub indexTopicHandler {
         $doc->add_fields("workflowmeta_". lc($key) ."_s" => $workflow->{$key});
     }
 
+    my $suffix = _WORKFLOWSUFFIX();
+    $doc->add_fields( workflow_hasdiscussion_b => Foswiki::Func::topicExists($web, "$topic$suffix")?1:0 );
 
     # mild sanity-test if state exists (eg. Workflow-table changed and state got renamed)
     if($controlledTopic && not $controlledTopic->getRow('state') eq $state) {
