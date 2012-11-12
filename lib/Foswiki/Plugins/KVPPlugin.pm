@@ -74,8 +74,13 @@ sub initPlugin {
         if ($controlledTopic->canEdit()) {
             $context->{'KVPEdit'} = 1;
         }
-        unless ($controlledTopic->getRow( 'approved' )) {
-            $context->{'KVPDiscussion'} = 1;
+        if ($controlledTopic->getRow( 'approved' )) {
+            my $suffix = _WORKFLOWSUFFIX();
+            if (Foswiki::Func::topicExists($web, "$topic$suffix")) {
+                $context->{'KVPHasDiscussion'} = 1;
+            }
+        } else {
+            $context->{'KVPIsDiscussion'} = 1;
         }
     }
 

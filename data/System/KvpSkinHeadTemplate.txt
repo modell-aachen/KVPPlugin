@@ -228,4 +228,4 @@
 
 %TMPL:DEF{"top_head"}%%TMPL:P{context="KVPControlled" then="top_head_kvp" else="top_head_standard"}%%TMPL:END%
 
-%TMPL:DEF{"top_head_kvp"}%%TMPL:P{context="KVPDiscussion" then="top_head_discussion" else="top_head_approved"}%%TMPL:END%
+%TMPL:DEF{"top_head_kvp"}%%TMPL:P{context="KVPIsDiscussion" then="top_head_discussion" else="top_head_approved"}%%TMPL:END%
