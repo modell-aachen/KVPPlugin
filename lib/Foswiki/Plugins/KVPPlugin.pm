@@ -23,7 +23,7 @@ use constant FORCENEW => 1;
 use constant NOCACHE => 2;
 
 our $VERSION          = '$Rev: 7808 (2010-06-15) $';
-our $RELEASE          = '1.5.6';
+our $RELEASE          = '2.0.0';
 our $SHORTDESCRIPTION = 'Kontinuierliche Verbesserung im Wiki';
 our $NO_PREFS_IN_TOPIC = 1;
 our $pluginName       = 'KVPPlugin';
@@ -1069,7 +1069,6 @@ sub beforeEditHandler {
             ]
         );
     }
-
 }
 
 # This beforeUploadHandler will attempt to cancel an upload if the user is
