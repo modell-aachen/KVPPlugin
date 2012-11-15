@@ -1336,6 +1336,15 @@ sub indexTopicHandler {
         $doc->add_fields("workflowmeta_". lc($key) ."_s" => $workflow->{$key});
     }
 
+    # Contributors
+    my @cHashes = $controlledTopic->{meta}->find('WRKFLWCONTRIBUTORS');
+    foreach my $contis (@cHashes) {
+        my $field = 'workflow_contributors_'.lc($contis->{name}).'_lst';
+        foreach my $person (split(',', $contis->{value})) {
+            $doc->add_fields( $field => $person);
+        }
+    }
+
     my $suffix = _WORKFLOWSUFFIX();
     $doc->add_fields( workflow_hasdiscussion_b => Foswiki::Func::topicExists($web, "$topic$suffix")?1:0 );
 
