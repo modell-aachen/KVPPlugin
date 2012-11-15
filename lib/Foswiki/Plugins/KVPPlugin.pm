@@ -73,11 +73,18 @@ sub initPlugin {
         $context->{'KVPControlled'} = 1;
         if ($controlledTopic->canEdit()) {
             $context->{'KVPEdit'} = 1;
+        } else {
+            $context->{'modacRevokeChangePermission'} = 1;
         }
         if ($controlledTopic->getRow( 'approved' )) {
             my $suffix = _WORKFLOWSUFFIX();
             if (Foswiki::Func::topicExists($web, "$topic$suffix")) {
                 $context->{'KVPHasDiscussion'} = 1;
+                # XXX adding that message here is rather stupid
+                Foswiki::Func::addToZone('script', 'KVPPluginChangeWarning', <<'SCRIPT', 'JQUERYPLUGIN');
+<script type="text/javascript" src="%PUBURL%/%SYSTEMWEB%/KVPPlugin/changewarning.js"></script>
+<script type="text/javascript">KVPMessage='%MAKETEXT{"Attention, there is a discussion for this topic!\nDo you really want to continue?"}%'</script>
+SCRIPT
             }
         } else {
             $context->{'KVPIsDiscussion'} = 1;

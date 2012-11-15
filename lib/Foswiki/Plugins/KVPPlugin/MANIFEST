@@ -5,14 +5,12 @@ data/System/KvpSkinSolrSearchBaseTemplate.txt 0644 Adjustments for SolrSearch
 data/System/KvpSkinHeadTemplate.txt 0644 Template for header
 data/System/KvpSkinTransitionsTemplate.txt 0644 Template for transitionmenue
 pub/System/KVPPlugin/transitions.js 0644 Script for transition menue
+pub/System/KVPPlugin/changewarning.js 0644 Script for transition menue
 locale/KVPPlugin/de.po 0666 German translations
 lib/Foswiki/Plugins/KVPPlugin.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/ControlledTopic.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/Workflow.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/Config.spec 0755 Configuration
-templates/attachagain.kvp.tmpl 0666
-templates/attachnew.kvp.tmpl 0666
-templates/attachtables.kvp.tmpl 0666
 templates/mailworkflowtransition.tmpl 0666
 templates/oopswfplease.tmpl 0666
 templates/oopswrkflwsaveerr.tmpl 0666

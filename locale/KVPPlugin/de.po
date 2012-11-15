@@ -385,6 +385,9 @@ msgstr ""
 "Sie sind nicht berechtig diese Seite zu speichern. Ihnen wurde der Zugang "
 "von Q.Wiki verwehrt."
 
+msgid "Attention, there is a discussion for this topic!\\nDo you really want to continue?"
+msgstr "Achtung, zu dieser Seite gibt es einen Diskussionsstand!\\nWollen Sie wirklich fortfahren?"
+
 #: lib/Foswiki/Plugins/KVPPlugin.pm:1134
 msgid ""
 "You are not permitted to upload to this topic. You have been denied access "
