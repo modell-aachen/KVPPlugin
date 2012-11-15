@@ -1353,55 +1353,84 @@ sub beforeSaveHandler {
     my $query = Foswiki::Func::getCgiQuery();
     return if($query->url() =~ m#/bin/jsonrpc$#); # XXX always pass MetaCommentPlugin
 
-    # Do the SetPref, RemovePref, RemoveMeta if save came from a template
+    # Do the RemoveMeta, RemovePref, SetForm, SetField, SetPref if save came from a template
     if($query->param('templatetopic')) {
-      # RemoveMeta:
-      my $removeMeta = $meta->get( 'PREFERENCE', 'RemoveMeta' );
-      if($removeMeta) {
-        $meta->remove('PREFERENCE', 'RemoveMeta');
-        my $removeList = $removeMeta->{value};
-        my @toRemove = split(",", $removeList);
-        foreach my $item (@toRemove) {
-          $item =~ s#^\s*##;
-          $item =~ s#\s*$##;
-          $meta->remove($item);
+        # Got to get those values now, or they might be removed
+        my $removeMeta = $meta->get( 'PREFERENCE', 'RemoveMeta' );
+        my $removePref = $meta->get( 'PREFERENCE', 'RemovePref' );
+        my $setForm = $meta->get( 'PREFERENCE', 'SetForm' );
+        my $setField = $meta->get( 'PREFERENCE', 'SetField' );
+        my $setMeta = $meta->get( 'PREFERENCE', 'SetPref' );
+
+        # First set stuff, as it might require values that are to be removed.
+        # SetForm:
+        if($setForm) {
+            $meta->remove('PREFERENCE', 'SetForm');
+            $setForm = Foswiki::Func::expandCommonVariables(
+                $setForm->{value}, $topic, $web, $meta);
+            $setForm =~ s#^\s*##g;
+            $setForm =~ s#\s*$##g;
+            $meta->put('FORM', { name => $setForm } );
         }
-      }
-      # SetForm:
-      my $setForm = $meta->get( 'PREFERENCE', 'SetForm' );
-      if($setForm) {
-        $meta->remove('PREFERENCE', 'SetForm');
-        $setForm = $setForm->{value};
-        $setForm =~ s#^\s*##g;
-        $setForm =~ s#\s*$##g;
-        $meta->put('FORM', { name => $setForm } );
-      }
-      # SetField:
-      my $setField = $meta->get( 'PREFERENCE', 'SetField' );
-      if($setField) {
-        $meta->remove('PREFERENCE', 'SetField');
-        $setField = $setField->{value};
-        while($setField =~ m/"\s*([^"]+?)\s*=\s*([^"]*?)\s*"/g) {
-          my $toSet = $1;
-          my $value = $2;
-	  $value =~ s#\$quot#"#g;
-	  $value =~ s#\$dollar#\$#g;
-          $meta->putKeyed('FIELD', { name => $toSet, title => $toSet, type => 'Set', value => $value } );
+        # SetField:
+        if($setField) {
+            $meta->remove('PREFERENCE', 'SetField');
+            $setField = Foswiki::Func::expandCommonVariables(
+                $setField->{value}, $topic, $web, $meta
+            );
+            while($setField =~ m/"\s*([^"]+?)\s*=\s*([^"]*?)\s*"/g) {
+              my $toSet = $1;
+              my $value = $2;
+              $value =~ s#\$quot#"#g;
+              $value =~ s#\$dollar#\$#g;
+              $meta->putKeyed('FIELD', { name => $toSet, title => $toSet, type => 'Set', value => $value } );
+            }
         }
-      }
-      # SetPref:
-      my $setMeta = $meta->get( 'PREFERENCE', 'SetPref' );
-      if($setMeta) {
-        $meta->remove('PREFERENCE', 'SetPref');
-        $setMeta = $setMeta->{value};
-        while($setMeta =~ m/"\s*([^"]+?)\s*=\s*([^"]*?)\s*"/g) {
-          my $toSet = $1;
-          my $value = $2;
-	  $value =~ s#\$quot#"#g;
-	  $value =~ s#\$dollar#\$#g;
-          $meta->putKeyed('PREFERENCE', { name => $toSet, title => $toSet, type => 'Set', value => $value } );
+        # SetPref:
+        my $removePrefChanged = 0; # Remember if RemovePref has been changed
+        if($setMeta) {
+            $meta->remove('PREFERENCE', 'SetPref');
+            $setMeta = Foswiki::Func::expandCommonVariables(
+                $setMeta->{value}, $topic, $web, $meta
+            );
+            while($setMeta =~ m/"\s*([^"]+?)\s*=\s*([^"]*?)\s*"/g) {
+                my $toSet = $1;
+                my $value = $2;
+                $value =~ s#\$quot#"#g;
+                $value =~ s#\$dollar#\$#g;
+                $meta->putKeyed(
+                    'PREFERENCE',
+                    { name => $toSet, title => $toSet, type => 'Set', value => $value }
+                );
+                $removePrefChanged = 1 if ($toSet eq "RemovePref");
+            }
         }
-      }
+        # RemoveMeta:
+        if($removeMeta) {
+            $meta->remove('PREFERENCE', 'RemoveMeta');
+            my $removeList = Foswiki::Func::expandCommonVariables(
+                $removeMeta->{value}, $topic, $web, $meta
+            );
+            my @toRemove = split(",", $removeList);
+            foreach my $item (@toRemove) {
+                $item =~ s#^\s*##;
+                $item =~ s#\s*$##;
+                $meta->remove($item);
+            }
+        }
+        # RemovePref:
+        if($removePref) {
+            $meta->remove('PREFERENCE', 'RemovePref') unless $removePrefChanged;
+            my $removeList = Foswiki::Func::expandCommonVariables(
+                $removePref->{value}, $topic, $web, $meta
+            );
+            my @toRemove = split(",", $removeList);
+            foreach my $item (@toRemove) {
+                $item =~ s#^\s*##;
+                $item =~ s#\s*$##;
+                $meta->remove('PREFERENCE', $item);
+            }
+        }
     }
 
     # $isStateChange is true if state has just been changed in this session.
