@@ -958,9 +958,6 @@ sub _restFork {
                 my $handler = $session->{store}->getHandler( $forkWeb, $forkTopic );
                 $handler->copyTopic($session->{store}, $newWeb, $newTopic);
             
-                #Modac: Foswiki 1.0.9
-                #$session->{store}->copyTopic($who, $forkWeb, $forkTopic, $newWeb, $newTopic);
-            
                 my $text = $tttext;
                 my $meta = new Foswiki::Meta($session, $newWeb, $newTopic);
                 foreach my $k ( keys %$ttmeta ) {
@@ -979,14 +976,6 @@ sub _restFork {
                 };
                 $meta->put( "WORKFLOWHISTORY", $forkhistory );
        
-                # mark as state change (althought it isn't) so it passes beforeSaveHandler
-                local $isStateChange = 1; 
-                Foswiki::Func::saveTopic(
-                    $newWeb, $newTopic, $meta, $text,
-                    { forcenewrevision => 0, ignorepermissions => 1 }
-                );
-                $isStateChange = 0;
-
                 my $history = $ttmeta->get('WORKFLOWHISTORY') || {};
                 $history->{value} .= "<br>Forked to " .
                     "[[$newWeb.$newTopic]]" . " by $who at $now";
