@@ -379,11 +379,14 @@ msgstr "Bei der Abspaltung von %1 ist ein Fehler im Workflow aufgetreten!"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm:1276
 msgid ""
-"You are not permitted to save this topic. You have been denied access by Q."
-"Wiki"
+"You are not permitted to save this topic. You have been denied access by "
+"workflow restrictions."
 msgstr ""
 "Sie sind nicht berechtig diese Seite zu speichern. Ihnen wurde der Zugang "
-"von Q.Wiki verwehrt."
+"durch den Workflow verwehrt."
+
+msgid "You are not permitted to edit this topic. You have been denied access by workflow restrictions."
+msgstr "Sie sind nicht berechtig die Seite zu bearbeiten. Ihnen wurde der Zugang durch den Workflow verwehrt."
 
 msgid "Attention, there is a discussion for this topic!\\nDo you really want to continue?"
 msgstr "Achtung, zu dieser Seite gibt es einen Diskussionsstand!\\nWollen Sie wirklich fortfahren?"
@@ -391,10 +394,10 @@ msgstr "Achtung, zu dieser Seite gibt es einen Diskussionsstand!\\nWollen Sie wi
 #: lib/Foswiki/Plugins/KVPPlugin.pm:1134
 msgid ""
 "You are not permitted to upload to this topic. You have been denied access "
-"by Q.Wiki."
+"by workflow restrictions."
 msgstr ""
 "Sie sind nicht berechtig die Datei an diese Seite anzuhänen. Ihnen wurde "
-"der Zugang von Q.Wiki verwehrt."
+"der Zugang durch den Workflow verwehrt."
 
 #: templates/oopswfplease.tmpl:9
 msgid ""

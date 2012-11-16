@@ -1055,6 +1055,7 @@ sub beforeEditHandler {
 
     #Alex: Checken ob Edit erlaubt ist
     unless ( $controlledTopic->canEdit() ) {
+        my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not permitted to edit this topic. You have been denied access by workflow restrictions."}%');
         throw Foswiki::OopsException(
             'accessdenied',
             status => 403,
@@ -1063,7 +1064,7 @@ sub beforeEditHandler {
             topic  => $_[1],
             params => [
                 'Edit topic',
-'You are not permitted to edit this topic. You have been denied access by Q.Wiki'
+                $message
             ]
         );
     }
@@ -1081,7 +1082,7 @@ sub beforeUploadHandler {
     return unless $controlledTopic;
 
     unless ( $controlledTopic->canEdit() ) {
-        my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not permitted to upload to this topic. You have been denied access by Q.Wiki."}%');
+        my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not permitted to upload to this topic. You have been denied access by workflow restrictions."}%');
         throw Foswiki::OopsException(
             'workflowerr',
             def   => 'topic_access',
@@ -1241,7 +1242,7 @@ sub beforeSaveHandler {
     } elsif ( !$controlledTopic->canEdit() ) {
         # Not a state change, make sure the AllowEdit in the state table
         # permits this action
-        my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not permitted to save this topic. You have been denied access by Q.Wiki"}%', $topic, $web, $meta);
+        my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not permitted to save this topic. You have been denied access by workflow restrictions."}%', $topic, $web, $meta);
         throw Foswiki::OopsException(
             'workflowerr',
             def   => 'topic_access',
