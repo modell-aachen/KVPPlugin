@@ -119,8 +119,10 @@ sub _WORKFLOWEDITPERM {
     my ( $session, $params, $topic, $web ) = @_;
 
     my $rev = $params->{rev};
+    my $rWeb = $params->{web} || $web;
+    my $rTopic = $params->{topic} || $topic;
 
-    my $controlledTopic = _initTOPIC( $web, $topic, $rev );
+    my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev );
     if ($controlledTopic) {
         return $controlledTopic->canEdit() ? 1 : 0;
     }
@@ -128,7 +130,7 @@ sub _WORKFLOWEDITPERM {
     # Does Foswiki permit editing?
     return Foswiki::Func::checkAccessPermission(
         'CHANGE', $Foswiki::Plugins::SESSION->{user},
-        undef, $topic, $web, undef
+        undef, $rTopic, $rWeb, undef
     ) ? 1 : 0;
 }
 
@@ -138,8 +140,10 @@ sub _WORKFLOWCONTRIBUTORS {
     my ( $session, $params, $topic, $web ) = @_;
 
     my $rev = $params->{rev};
+    my $rWeb = $params->{web} || $web;
+    my $rTopic = $params->{topic} || $topic;
     my $state = $params->{state};
-    my $controlledTopic = _initTOPIC( $web, $topic, $rev );
+    my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev );
 
     return '' unless $controlledTopic;
     return $controlledTopic->getContributors($state);
@@ -190,8 +194,10 @@ sub _WORKFLOWSUFFIX {
 # Tag handler, returns the topicname without suffix
 sub _WORKFLOWORIGIN {
     my ( $session, $attributes, $topic, $web ) = @_;
+    my $rTopic = $attributes->{_DEFAULT} || $topic;
+
     my $suffix = _WORKFLOWSUFFIX();
-    if ($topic =~ /(.*)$suffix/) {
+    if ($rTopic =~ /(.*)$suffix/) {
         return $1;
     } else {
         return $topic;
