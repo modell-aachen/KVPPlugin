@@ -1,14 +1,13 @@
-%TMPL:INCLUDE{"viewtopicactionbuttons"}%
-
-
 %{ ------------------------------------ TALK --------------------------------------------------------------- }%
 
 %{ Talk Suffix definieren }%
 %TMPL:DEF{"talktopic"}%%WORKFLOWSUFFIX%%TMPL:END%
 %TMPL:DEF{talktopiccreatetemplate}%?topicparent=%WEB%.%TOPIC%;onlynewtopic=1%IF{"defined TALKTOPICTEMPLATE" then=";templatetopic=%TALKTOPICTEMPLATE%"}%%IF{"defined TALKTOPICFORMTEMPLATE" then=";formtemplate=%TALKTOPICFORMTEMPLATE%"}%%TMPL:END%
 
+%TMPL:DEF{"modacButtonsLEFT"}%<li>%TMPL:P{"topictabaction"}%</li><li>%TMPL:P{"talktopicactionbutton"}%</li>%TMPL:END%
+
 %{ Talk Buttons definieren }%
-%TMPL:DEF{"topictabaction"}%%TMPL:P{context="KVPIsDiscussion" else="approvedtopicactionbuttonactive" then="approvedtopicactionbuttoninactive"}%</li><li>%TMPL:P{talktopicactionbutton}%%TMPL:END%
+%TMPL:DEF{"topictabaction"}%%TMPL:P{context="KVPIsDiscussion" else="approvedtopicactionbuttonactive" then="approvedtopicactionbuttoninactive"}%%TMPL:END%
 
 %{ Link zum freigegebenen Stand je nach aktivem Bearbeitungsstand ausgeben }%
 %TMPL:DEF{approvedtopicactionbuttoninactive}%%IF{"$TOPIC = '%WORKFLOWORIGIN%' OR NOT istopic '%WEB%.%WORKFLOWORIGIN%'" then="<a><strike>%MAKETEXT{%GETWORKFLOWROW{lefttab}%}%</strike></a>" else="<a href='$percentSCRIPTURLPATH{$quotview$quot}$percent/$percentWEB$percent/$percentWORKFLOWORIGIN$percent' rel='nofollow' title='$percentMAKETEXT{$percentGETWORKFLOWROW{lefttab}$percent}$percent' >$percentMAKETEXT{$percentGETWORKFLOWROW{lefttab}$percent}$percent</a>"}%%TMPL:END%
@@ -21,12 +20,12 @@
 %TMPL:DEF{"talktopicactionviewactive"}%<div class="modacActionButtonACTIVE"><a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%' rel='nofollow' title='%MAKETEXT{"Discussion about Improvements"}%' >%MAKETEXT{%GETWORKFLOWROW{"righttab"}%}%</a></div>%TMPL:END%
 
 %{ Anzeige im freigegebenen Stand }%
-%TMPL:DEF{"talktopicactionviewinactive"}%%IF{"context KVPHasDiscussion" then="$percntTMPL:P{talktopicactionviewinactivebearbeiten}$percnt" else="$percntTMPL:P{talktopicactionviewinactiveneu}$percnt"}%%TMPL:END%
+%TMPL:DEF{"talktopicactionviewinactive"}%%IF{"context KVPHasDiscussion" then="$percntTMPL:P{talktopicactionviewinactivelink}$percnt" else="$percntTMPL:P{talktopicactionviewinactivenew}$percnt"}%%TMPL:END%
 
 %{ Diskussionsstand bearbeiten }%
-%TMPL:DEF{"talktopicactionviewinactivebearbeiten"}%<a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%%TMPL:P{talktopic}%' rel='nofollow' title='%MAKETEXT{"Discussion about Improvements"}%' >%MAKETEXT{%GETWORKFLOWROW{"righttab"}%}%</a>%TMPL:END%
+%TMPL:DEF{"talktopicactionviewinactivelink"}%<a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%%TMPL:P{talktopic}%' rel='nofollow' title='%MAKETEXT{"Discussion about Improvements"}%' >%MAKETEXT{%GETWORKFLOWROW{"righttab"}%}%</a>%TMPL:END%
 
 %{ Diskussionsstand neu erstellen }%
-%TMPL:DEF{"talktopicactionviewinactiveneu"}%%WORKFLOWFORK{label="%MAKETEXT{"Start new Discussion"}%" lockdown="off" title="%MAKETEXT{"Discussion about Improvements"}%"}%%TMPL:END%
+%TMPL:DEF{"talktopicactionviewinactivenew"}%%WORKFLOWFORK{label="%MAKETEXT{"Start new Discussion"}%" lockdown="off" title="%MAKETEXT{"Discussion about Improvements"}%"}%%TMPL:END%
 
 %{ ------------------------------------ /TALK --------------------------------------------------------------- }%
