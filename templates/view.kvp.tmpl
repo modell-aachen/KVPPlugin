@@ -1,4 +1,7 @@
 %TMPL:INCLUDE{"view"}%
 %TMPL:INCLUDE{"transitions"}%
 
-%TMPL:DEF{"topicaction"}%%TMPL:PREV%%TMPL:P{context="KVPIsDiscussion" then="kvptransitions"}%%TMPL:END%
+%{"Overload this definition, if you want to influence when the menu is beeing shown."}%
+%TMPL:DEF{"kvpaction"}%%TMPL:P{context="KVPIsDiscussion" then="kvptransitions"}%%TMPL:END%
+
+%TMPL:DEF{"topicaction"}%%TMPL:PREV%%TMPL:P{"kvpaction"}%%TMPL:END%
