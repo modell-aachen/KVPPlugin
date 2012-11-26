@@ -41,7 +41,7 @@ jQuery(function($) {
             box.show();
             $('#WORKFLOWchkboxbox').attr('checked', 'checked');
         } else {
-            box.style.display = 'none';
+            box.hide();
         }
     }
     $('select').change(WORKFLOW.showCheckBox);
