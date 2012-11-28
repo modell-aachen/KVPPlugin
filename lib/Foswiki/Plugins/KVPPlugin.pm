@@ -1592,11 +1592,14 @@ sub indexTopicHandler {
   }
   
   # Contributors
-  my @cHashes = $controlledTopic->{meta}->find('WRKFLWCONTRIBUTORS');
-  foreach my $contis (@cHashes) {
-      my $field = 'workflow_contributors_'.lc($contis->{name}).'_lst';
-      foreach my $person (split(',', $contis->{value})) {
-          $doc->add_fields( $field => $person);
+  my $controlledTopic = _initTOPIC( $web, $topic );
+  if($controlledTopic) {
+      my @cHashes = $controlledTopic->{meta}->find('WRKFLWCONTRIBUTORS');
+      foreach my $contis (@cHashes) {
+          my $field = 'workflow_contributors_'.lc($contis->{name}).'_lst';
+          foreach my $person (split(',', $contis->{value})) {
+              $doc->add_fields( $field => $person);
+          }
       }
   }
 
