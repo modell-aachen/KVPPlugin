@@ -1152,6 +1152,9 @@ sub beforeSaveHandler {
         my $setField = $meta->get( 'PREFERENCE', 'SetField' );
         my $setMeta = $meta->get( 'PREFERENCE', 'SetPref' );
 
+        # We don't ever want to copy over the workflow state from a template
+        $meta->remove('WORKFLOW');
+
         # First set stuff, as it might require values that are to be removed.
         # SetForm:
         if($setForm) {
