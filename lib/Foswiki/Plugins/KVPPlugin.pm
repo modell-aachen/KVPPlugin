@@ -307,7 +307,11 @@ sub _WORKFLOWMETA {
     my $attr;
     my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev );
     return $alt unless $controlledTopic;
-    
+
+    unless ($controlledTopic->getRow('approved')) {
+        return $attributes->{exceptdiscussion} if $attributes->{exceptdiscussion};
+    }
+
     if (!defined $attributes->{name}) {
         # Old interpretation, for compatibility
         $attr = $attributes->{_DEFAULT};
