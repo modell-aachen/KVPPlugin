@@ -1248,6 +1248,8 @@ sub _restFork {
     my $url;
 
     unless ($newcontrolledTopic) {
+        my $cachedTopic = $cache{"$w.$t"} || 'undef';
+        Foswiki::Func::writeWarning("Error while forking $w.$t: _initTOPIC returned undef, cache is $cachedTopic!");
         $url = Foswiki::Func::getScriptUrl(
             $w, $t, 'oops',
             template => "oopssaveerr",
