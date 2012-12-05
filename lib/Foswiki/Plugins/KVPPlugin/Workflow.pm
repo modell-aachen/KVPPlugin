@@ -156,6 +156,10 @@ sub getFFStatus {
 sub getActionWithAttribute {
     my ( $this, $topic, $attribute ) = @_;
     my $currentState = $topic->getState();
+    if ( $attribute eq 'FORK' ) {
+        my $suffix = Foswiki::Plugins::KVPPlugin->_WORKFLOWSUFFIX();
+        return '' if ( $topic->{topic} =~ m/$suffix$/ ); # forking this would create a ...TalkTalk
+    }
     foreach my $row ( @{ $this->{transitions} } ) {
         if ( $row->{state} && $row->{state} eq $currentState && $row->{attribute} && $row->{attribute} =~ /(?:^|\W)$attribute(?:\W|$)/ ) {
             my $allowed = $topic->expandMacros( $row->{allowed} );
