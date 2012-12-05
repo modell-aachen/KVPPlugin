@@ -295,6 +295,31 @@ sub _WORKFLOWHISTORY {
     return $controlledTopic->getHistoryText();
 }
 
+# When approved article is beeing renamed, rename talks as well.
+sub afterRenameHandler {
+    my ( $oldWeb, $oldTopic, $oldAttachment,
+         $newWeb, $newTopic, $newAttachment ) = @_;
+
+    return unless $oldTopic; # don't handle webs
+    return if $oldAttachment; # nor attachments
+
+    my $suffix = _WORKFLOWSUFFIX();
+    return unless $suffix;
+
+    my $oldDiscussion = "$oldTopic$suffix";
+    return unless Foswiki::Func::topicExists($oldWeb, $oldDiscussion);
+
+    my $newDiscussion = "$newTopic$suffix";
+    # XXX what to do if there is already a discussion?!?
+    if (Foswiki::Func::topicExists($newWeb, $newDiscussion)) {
+        Foswiki::Func::writeWarning("Throwing existing discussion away ($newWeb.$newDiscussion) after renaming $oldWeb.$oldTopic to $newWeb.$newDiscussion!");
+        my $trash = _getTrashTopic($newWeb, $newDiscussion);
+        Foswiki::Func::moveTopic($newWeb, $newDiscussion, "Trash", $trash);
+    }
+
+    Foswiki::Func::moveTopic($oldWeb, $oldDiscussion, $newWeb, $newDiscussion);
+}
+
 sub _WORKFLOWMETA {
     my ( $session, $attributes, $topic, $web ) = @_;
 
@@ -539,6 +564,22 @@ sub _GETWORKFLOWROW {
     return $configure->{$param} || '';
 }
 
+# Will find a topic in trashweb to move $web.$topic to by adding a numbered suffix.
+sub _getTrashTopic {
+    my ($web, $topic) = @_;
+
+    my $trashTopic = $web . $topic;
+    $trashTopic =~ s#/|\.##g; # remove subweb-deliminators
+
+    my $numberedTrashTopic = $trashTopic;
+    my $i = 1;
+    while (Foswiki::Func::topicExists("Trash", $numberedTrashTopic)) {
+        $numberedTrashTopic = $trashTopic."_$i";
+        $i++;
+    }
+    $trashTopic = $numberedTrashTopic;
+}
+
 # Handle actions. REST handler, on changeState action.
 sub _changeState {
     my ($session) = @_;
@@ -691,18 +732,8 @@ sub _changeState {
             my $appWeb = $web;
             $appWeb =~ s/$forkSuffix$//g;
             #Alex TrashTopic ausloten:
-            #Alex: Checken ob Topic schon einmal in den Muell verschoben wurde
-            my $trashTopic = $appWeb . $appTopic;
-            $trashTopic =~ s#/|\.##g; # remove subweb-deliminators
-            { # scope
-                my $numberedTrashTopic = $trashTopic;
-                my $i = 1;
-                while (Foswiki::Func::topicExists("Trash", $numberedTrashTopic)) {
-                    $numberedTrashTopic = $trashTopic."_$i";
-                    $i++;
-                }
-                $trashTopic = $numberedTrashTopic;
-            }
+            #Alex: Checken ob Topic schon einmal in den Muell versichoben wurde
+            my $trashTopic = _getTrashTopic($appWeb, $appTopic);
 
             # Hier Action 
             if ($forkingAction && $forkingAction eq "DISCARD") {
