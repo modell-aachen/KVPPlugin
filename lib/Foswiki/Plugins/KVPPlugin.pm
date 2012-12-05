@@ -76,6 +76,11 @@ sub initPlugin {
         } else {
             $context->{'modacRevokeChangePermission'} = 1;
         }
+        if ($controlledTopic->canMove()) {
+            $context->{'KVPMove'} = 1;
+        } else {
+            $context->{'modacRevokeMovePermission'} = 1;
+        }
         if ($controlledTopic->getRow( 'approved' )) {
             my $suffix = _WORKFLOWSUFFIX();
             if (Foswiki::Func::topicExists($web, "$topic$suffix")) {
@@ -722,7 +727,7 @@ sub _changeState {
             }
             removeComments($controlledTopic) if ($removeComments eq '1');
 
-            # Flag that this is a state change to the beforeSaveHandler
+            # Flag that this is a state change to the beforeSaveHandler (beforeRenameHandler)
             local $isStateChange = 1;
             #Alex: Zugehriges Topic finden
             my $appTopic = _getOrigin( $topic );
@@ -1056,6 +1061,73 @@ sub _restFork {
 
     #redirect to last successfully forked topic
     return $response->redirect(Foswiki::Func::getViewUrl($directToWeb, $directToTopic));
+}
+
+# XXX requires changes in lib/Foswiki/Meta.pm
+# Will check if the workflow permits the user to move topics and rename attachments.
+sub beforeRenameHandler {
+    my( $oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment ) = @_;
+
+    return if $isStateChange;
+
+    # Handle attachment renames.
+    # Only allow it if user has write-permissions to the topic
+    if( $newAttachment ) {
+        # check old topic
+        my $controlledTopic = _initTOPIC( $oldWeb, $oldTopic );
+
+        if( $controlledTopic && not $controlledTopic->canEdit() ) {
+            throw Foswiki::OopsException( # XXX Wrong template
+                'workflowerr',
+                def   => 'topic_access',
+                web   => $oldWeb,
+                topic => $oldTopic,
+                params => "You may not modify $oldWeb.$oldTopic." # XXX maketext
+            );
+        }
+
+        # check new topic
+        return if( $oldWeb eq $newWeb && $oldTopic eq $newTopic );
+        my $newControlledTopic = _initTOPIC( $newWeb, $newTopic );
+        if( $newControlledTopic && not $newControlledTopic->canEdit() ) {
+            throw Foswiki::OopsException( # XXX Wrong template
+                'workflowerr',
+                def   => 'topic_access',
+                web   => $oldWeb,
+                topic => $oldTopic,
+                params => "You may not modify $newWeb.$newTopic." # XXX maketext
+            );
+        }
+        return;
+    }
+
+    # Do not handle webs (attachments have already been handled)
+    return unless $newTopic;
+
+    # Not an attachment, nor a web, must be a topic.
+    my $controlledTopic = _initTOPIC( $oldWeb, $oldTopic );
+    if( $controlledTopic && !$controlledTopic->canMove() ){
+        die("You may not move $oldWeb.$oldTopic.");
+        throw Foswiki::OopsException( # not supported by bin/rename
+            'workflowerr',
+            def   => 'topic_access',
+            web   => $oldWeb,
+            topic => $oldTopic,
+            params => "You may not move $oldWeb.$oldTopic." # XXX maketext
+        );
+    }
+    my ($meta, $text) = Foswiki::Func::readTopic($oldWeb, $oldTopic);
+    my $newControlledTopic = _initTOPIC( $newWeb, $newTopic, undef, $meta, $text, 1);
+    if( $newControlledTopic && !$newControlledTopic->canEdit() ){
+        die("You may not move to $newWeb.$newTopic.");
+        throw Foswiki::OopsException( # not supported by bin/rename
+            'workflowerr',
+            def   => 'topic_access',
+            web   => $oldWeb,
+            topic => $oldTopic,
+            params => "You may not move to $newWeb.$newTopic." # XXX maketext
+        );
+    }
 }
 
 # Used to trap an edit and check that it is permitted by the workflow

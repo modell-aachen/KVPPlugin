@@ -396,10 +396,8 @@ sub getFields {
     return $this->{states}->{$state};
 }
 
-# Determine if the current user is allowed to edit a topic that is in
-# the given state.
-sub allowEdit {
-    my ( $this, $topic ) = @_;
+sub _topicAllows {
+    my ( $this, $topic, $what ) = @_;
 
     my $allowed;
     my $state = $topic->getState();
@@ -408,10 +406,31 @@ sub allowEdit {
         Foswiki::Plugins::KVPPlugin::_broadcast('%MAKETEXT{"Error in Workflow: state [_1] does not exist!" args="'.$state.'"}%');
         $allowed = 'nobody'; # This will empower admins
     } else {
-        $allowed =
-          $topic->expandMacros( $this->{states}->{$state}->{allowedit} );
+        $allowed = $topic->expandMacros( $this->{states}->{$state}->{$what} );
     }
     return _isAllowed($allowed);
+}
+
+# Determine if the current user is allowed to move a topic that is in
+# the given state.
+sub allowMove {
+    my ( $this, $topic ) = @_;
+
+    # Default to Allow Edit if there is no Allow Move.
+    my $default = $this->{defaultState};
+    if ( defined $this->{states}->{$default}->{'allowmove'} ) {
+        return $this->_topicAllows( $topic, 'allowmove' );
+    } else {
+        return $this->_topicAllows( $topic, 'allowedit' );
+    }
+}
+
+# Determine if the current user is allowed to edit a topic that is in
+# the given state.
+sub allowEdit {
+    my ( $this, $topic ) = @_;
+
+    return $this->_topicAllows( $topic, 'allowedit' );
 }
 
 # Get to contents of the given row (in workflow states) and topic for the current state.

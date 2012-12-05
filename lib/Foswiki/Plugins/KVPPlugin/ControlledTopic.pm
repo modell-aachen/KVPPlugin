@@ -269,6 +269,25 @@ sub isForkable {
     return $this->{isAllowingFork};
 }
 
+# Return true if this topic is movable
+sub canMove {
+    my $this = shift;
+
+    # See if the workflow allows a move
+    unless (defined $this->{isMovable}) {
+        $this->{isMovable} = (
+            # Does the workflow permit moving?
+            $this->{workflow}->allowMove($this)
+            # Does Foswiki permit moving?
+            && Foswiki::Func::checkAccessPermission(
+                'RENAME', $Foswiki::Plugins::SESSION->{user},
+                $this->{text}, $this->{topic}, $this->{web},
+                $this->{meta})
+        ) ? 1 : 0;
+    }
+    return $this->{isMovable};
+}
+
 # Return true if this topic is editable
 sub canEdit {
     my $this = shift;
