@@ -10,54 +10,86 @@ prefer.
 
 %TOC%
 
+---++ TODOs...
+   * configure
+   * Default Table
+   * LOGGEDIN
+   * &Uuml;bersicht Customizing: Mails, transitionsmenue
+
 ---++ Verwendung
----+++ Aufbau des Workflows
-Der Workflow wird in in einem Topic definiert. Dort muss es zwei Tabellen in dieser Reihenfolge geben:
-   [[%TOPIC%#Der_State_Table][state&nbsp;table]]: Diese Tabelle beschreibt die Stati in denen sich ein Artikel befinden kann. Hat ein Artikel keinen Status wird implizit der erste Status der Tabelle angenommen.
-   [[%TOPIC%#Der_Transitions_Table][transitions&nbsp;table]]: Diese Tabelle beschreibt die &Uuml;berg&auml;nge von einem Status in den n&auml;chsten.
+---+++ Definition eines Workflows
+Der Workflow wird in in einem Topic definiert. Dort muss es drei Tabellen geben:
+   [[%TOPIC%#Die_Defaults_Tabelle][defaults]]: Diese Tabelle beschreibt einige Standardeinstellungen, die viele Stati gemeinsam haben. Die =State Type= Spalte gibt an, welche Zeile dieser Tabelle dem Status angef&uuml;gt wird.%BR%Einzele Spalten k&ouml;nnen in der States-Tabelle &uuml;berschrieben werden %RED%TODO%ENDCOLOR%%BR%Diese Tabelle ist optional.
+   [[%TOPIC%#Die_State_Tabelle][state&nbsp;table]]: Diese Tabelle beschreibt die Stati in denen sich ein Artikel befinden kann. Hat ein Artikel keinen Status wird implizit der erste Status der Tabelle angenommen.
+   [[%TOPIC%#Der_Transitions_Tabelle][transitions&nbsp;table]]: Diese Tabelle beschreibt die &Uuml;berg&auml;nge von einem Status in den n&auml;chsten.
 
----+++ Der State Table
+---+++ Die State Tabelle
 Die Tabelle hat folgenden Aufbau:
-<verbatim>
-| *State* | *Allow Edit* | *Allow Comment* | *Message* | *State Group* | *Whatever...* |
-| Ohne Freigabe | Main.PeterMustermann, Main.MartildeMusterfrau | nobody | Alle vor Scharfschaltung des Workflows bestehenden Artikel sind in diesem Status. | nicht Freigegeben | ... |
-| Neu angelegt | Main.PeterMustermann | LesenGroup | Neu ersteller Artikel. | nicht Freigegeben | ... |
-| Freigegeben | nobody | LesenGroup | Freigegebener Artikel. | Freigegeben | ... |
-| Diskussion | LesenGroup | LesenGroup | Artikel wird diskutiert | nicht Freigegeben | ... |
-</verbatim>
+<pre>
+%INCLUDE{"%TOPIC%" section="BeispielTable"}%
+</pre>
+%TWISTY{showimgleft="%ICONURLPATH{"toggleopen"}%" hideimgleft="%ICONURLPATH{"toggleclose"}%" link="Als Foswiki-Tabelle anzeigen" start="hide"}%
+%STARTSECTION{"BeispielTable" type="section"}%
+| *State* | *Allow Edit* | *Allow Move* | *Allow Comment* | *Message de* | *Display Name de* | *Display Name en* | *State Type* | *Whatever...* |
+| NOTINCIP | KeyuserGroup,ErstellerGroup | KeyuserGroup, ErstellerGroup | nobody | Dieser Artikel ist nicht im KVP | Nicht im KVP | Not in CIP | draft | Alle vor Scharfschaltung des Workflows bestehenden Seiten sind in diesem Status. |
+| DRAFT | KeyuserGroup, ErstellerGroup | KeyuserGroup, ErstellerGroup | KeyuserGroup,ErstellerGroup | Diese Seite wurde neu erstellt. | Entwurf | Draft | draft | Dieser Status wird durch die =NEW= Transition erreicht. |
+| APPROVED | nobody | KeyuserGroup | | Dieser Artikel ist freigegeben. | Freigegeben | Approved | approved | |
+| Diskussion | LesenGroup | LesenGroup | LesenGroup | Dieser Artikel wird diskutiert. | Diskussionsstand | Under discussion | discussion | Dieser Status wird durch einen =Fork= erzeugt. |
+%ENDSECTION{"BeispielTable"}%
+%ENDTWISTY%
    State: (eindeutiger) Name f&uuml;r den Status
-   Allow&nbsp;Edit: Liste mit Usern/Gruppen welche den Artikel editieren d&uuml;rfen.
-   Allow&nbsp;Comment: Liste mit Usern/Gruppen welche Kommentare schreiben d&uuml;rfen. Ist diese Liste leer, werden keine Kommentare angezeigt.
-   Message: Der hier hinterlege Text wird im &Uuml;bergansmenue angezeigt.
-   State&nbsp;Group: Entscheidet ob ein Artikel freigegeben ist (TODO: Configure). Wird in das Formfield &uuml;bertragen, falls es vorhanden ist (TODO)
-   Allow&nbsp;Change&nbsp;Mail: Liste mit Usern/Gruppen welche die Mailing-Liste bearbeiten d&uuml;rfen (andere d&uuml;rfen nur sich selber entfernen/hinzuf&uuml;gen).
-   Whatever: Es k&ouml;nnen beliebige Spalten hinzugef&uuml;gt werden und dann mit GETROW{"spaltenname"} abgefragt werden.
+   Allow&nbsp;Edit: Liste mit Usern/Gruppen welche den Artikel editieren d&uuml;rfen. Der Workflow kann lediglich die Rechte weiter einschr&auml;nken, d.h. ein Nutzer muss auch =TOPICCHANGE= Recht haben.
+   Allow&nbsp;Move: Liste mit Usern/Gruppen welche den Artikel verschieben/l&ouml;schen d&uuml;rfen. Auch hier kann der Workflow lediglich einschr&auml;nken, d.h. der Nutzer muss =WEBRENAME= Recht haben. ([[%TOPIC%#HinweisStates][Hinweis!]])
+   Allow&nbsp;Comment: Liste mit Usern/Gruppen welche Kommentare schreiben d&uuml;rfen. Ist diese Liste leer, werden keine Kommentare angezeigt. Diese Rechte werden auf Topic-Ebene gesetzt, das bedeutet das eine &Auml;nderung im Workflow erst nach einer Transition auf einer Seite wirksam wird.
+   Message: Der hier hinterlege Text wird im &Uuml;bergansmenue und Emails angezeigt.%BR%Zur Lokalisierung sollten Spalten mit Sprachsuffix - z.B. =Message de= f&uuml; eine deutsche Message - definiert werden.
+   Display&nbsp;Name: _Lesbarer_ Name f&uuml;r den Status, wird z.B. in den Solr facets benutzt.%BR%Zur Lokalisierung sollten Spalten mit Sprachsuffix - z.B. =Display Name de= f&uuml;r einen deutschen Statusnamen - definiert werden.
+   State&nbsp;Type: Einige Stati haben viele Einstellungen gemein und k&ouml;nnen hier zusammengefasst werden. Alle Spalten aus der =Defaults= Tabelle mit dem gleichen =State Type= werden in dem Status &uuml;bernommen.
+   Approved: Entscheidet ob ein Artikel freigegeben ist (versteckt sich normalerweise im =State Type=).
+   Left&nbsp;Tab: Beschriftung des linken (freigegebenen-) tabs in den ActionButtons (versteckt sich normalerweise im =State Type=).
+   Right&nbsp;Tab: Beschriftung des rechten (Diskussions-) tabs in den ActionButtons (versteckt sich normalerweise im =State Type=).
+   Whatever: Es k&ouml;nnen beliebige Spalten hinzugef&uuml;gt werden und dann mit =%%NOP%GETWORKFLOWROW{"spaltenname"}%= abgefragt werden.%BR%Auch hier ist eine Lokalisierung durch Sprachsuffix (z.B. =Whatever de=) m&ouml;glich.
 
----+++ Der Transitions Table
+%X%%ICON{"bomb"}%%X%<a name="HinweisStates">Hinweis:</a> F&uuml;r =Allow Move= sind zur Zeit noch &Auml;nderungen im Core n&ouml;tig!
+
+---+++ Die Transitions Tabelle
 Diese Tabelle muss unterhalb des State Table stehen, sie hat folgenden Aufbau:
-<verbatim>
-| *State* | *Action* | *Next State* | *Allowed* | *Attribute* |
-| Ohne Freigabe | Neu erstellen | Neu angelegt | SchreibenGroup | NEW |
-| Ohne Freigabe | Frei geben | Freigegeben | Mail.PeterMustermann | ALLOWDELETECOMMENTS |
-| Freigegeben | Diskutieren | Diskussion | LesenGroup | FORK |
-| Diskussion | Annehmen | Freigegeben | Main.PeterMustermann | SUGGESTDELETECOMMENTS, ACCEPT |
-| Diskussion | Verwerfen | Ohne Freigabe | LesenGroup | DISCARD |
-</verbatim>
+<pre>
+%INCLUDE{"%TOPIC%" section="BeispielTransitions"}%
+</pre>
+%TWISTY{showimgleft="%ICONURLPATH{"toggleopen"}%" hideimgleft="%ICONURLPATH{"toggleclose"}%" link="Als Foswiki-Tabelle anzeigen" start="hide"}%
+%STARTSECTION{"BeispielTransitions" type="section"}%
+| *State* | *Action* | *Next State* | *Allowed* | *Action de* | *Attribute* |
+| Ohne Freigabe | Create | Neu angelegt | SchreibenGroup | Erstellen | NEW |
+| Ohne Freigabe | Approve | Freigegeben | Mail.PeterMustermann | Freigeben | ALLOWDELETECOMMENTS |
+| Freigegeben | Discuss | Diskussion | LesenGroup | Diskutieren | FORK |
+| Diskussion | Approve | Freigegeben | Main.PeterMustermann | Freigeben | SUGGESTDELETECOMMENTS |
+| Diskussion | Discard | Ohne Freigabe | LesenGroup | Verwerfen | DISCARD, SUGGESTDELETECOMMENTS |
+%ENDSECTION{"BeispielTransitions"}%
+%ENDTWISTY%
    State: In diesem Status muss der Artikel sein, damit die Aktion durchgef&uuml;hrt werden kann
-   Action: (eindeutiger) Name f&uuml;r die Aktion
+   Action: Name f&uuml;r die Aktion
    Next&nbsp;State: In diesen Status wird der Artikel durch die Aktion &uuml;berf&uuml;hrt.
    Allowed: Liste mit Usern/Gruppen, welche diese Aktion durchf&uuml;hren k&ouml;nnen
    Attribute: Liste mit [[%TOPIC%#Attribute][Attributen]] f&uuml;r diese Aktion.
+
 ---++++ Attribute
 Jede Aktion kann mehrere Attribute haben.
 | *Attribut* | *Beschreibung* | *Kommentar* |
-| NEW | Diese Aktion wird durchgef&uuml;hrt wenn ein neuer Artikel angelegt wird. | Stehen mehrere Aktionen zur Verf&uuml;gung wird die erste gew&auml;hlt. Als Ausgangsstate muss der erste Status aus dem "State table" angegeben sein. Hat ein User keine Aktion mit NEW, dann kann er keine neuen Artikel anlegen. Diese Aktion ist im Workflowmenue nicht zu sehen. |
-| FORK | Diese Aktion wird ausgef&uuml;hrt wenn ein Artikel ge"forkt" wird (eine Diskussion er&ouml;ffnet wird). | Stehen mehrere Aktionen zur Verf&uuml;gung wird die erste gew&auml;hlt. Hat ein User keine Aktion mit FORK, dann kann er keine Diskussion er&ouml;ffnen. Diese Aktion ist im Workflowmenue nicht zu sehen. |
-| ACCEPT | Wenn diese Aktion durchgef&uuml;hrt wird, dann wird die Diskussion auf den "Normalen" Artikel (ohne Talk-Suffix) verschoben. | Der original Artikel wird ersetzt. |
-| DISCARD | Wenn diese Aktion durchgef&uuml;hrt wird, dann wird der Artikel gel&ouml;scht (ins Trash Web verschoben). | Funktioniert auch mit "normalen" Artikeln ("nicht Diskussionen"), jedoch bleiben die Diskussionen bestehen. |
-| DELETECOMMENTS | Durch diese Aktion werden alle Kommentare gel&ouml;scht. | |
-| ALLOWDELETECOMMENTS | Bei dieser Aktion hat der Durchf&uuml;hrende die M&ouml;glichkeit alle Kommentare zu l&ouml;schen. | Vorauswahl: Kommentare nicht l&ouml;schen. |
-| SUGGESTDELETECOMMENTS | Wie ALLOWDELETECOMMENTS, aber andere Vorauswahl. | Vorauswahl: Kommentare l&ouml;schen. |
+| =NEW= | Diese Aktion wird automatisch durchgef&uuml;hrt wenn ein neuer Artikel angelegt wird. | Stehen mehrere =NEW= Aktionen zur Verf&uuml;gung wird die erste gew&auml;hlt.<br /> Als Ausgangsstate muss der _erste Status_ aus dem "State table" angegeben sein.<br />Hat ein User keine Aktion mit =NEW= und ist in =configure= die Option =NoNewRequired= auf =0= gesetzt, dann kann er keine neuen Artikel anlegen.<br /> Diese Aktion ist im Transitionsmenue nicht zu sehen. |
+| =FORK= | Diese Aktion wird ausgef&uuml;hrt wenn ein Artikel ge"forkt" wird (eine Diskussion er&ouml;ffnet wird). | Stehen mehrere =FORK= Aktionen zur Verf&uuml;gung wird die erste gew&auml;hlt. Hat ein User keine Aktion mit =FORK=, dann kann er keine Diskussion er&ouml;ffnen. Diese Aktion ist im Transitionsmenue nicht zu sehen. |
+| =DISCARD= | Wenn diese Aktion durchgef&uuml;hrt wird, dann wird der Artikel gel&ouml;scht (ins Trash Web verschoben). | Funktioniert auch mit "normalen" Artikeln ("nicht Diskussionen"), jedoch bleiben die Diskussionen bestehen. |
+| =FORCEDELETECOMMENTS= | Durch diese Aktion werden alle Kommentare gel&ouml;scht. | |
+| =ALLOWDELETECOMMENTS= | Bei dieser Aktion hat der Durchf&uuml;hrende die M&ouml;glichkeit alle Kommentare zu l&ouml;schen. | Vorauswahl: Kommentare nicht l&ouml;schen. |
+| =SUGGESTDELETECOMMENTS= | Wie =ALLOWDELETECOMMENTS=, aber andere Vorauswahl. | Vorauswahl: Kommentare l&ouml;schen. |
+| =REMARK= | Wenn diese Aktion ausgef&uuml;hrt wird, besteht die M&ouml;glichkeit in einem Textfeld eine Bemerkung zur Transition anzugeben. Diese wird im n&auml;chsten Status angezeigt und auch in der Transitionsmail angegeben. |
+| =NOREV= | Bei dieser Aktion wird die KVP-Version niemals hochgez&auml;hlt, auch bei Freigabe nicht. | |
+| =NEXTREV= | Bei dieser Aktion wird die KVP-Version hochgez&auml;hlt, au&szlig;er bei einem =DISCARD=.%BR%Implizit gesetzt, wenn von einem Status mit _Approved = 0_ auf _Approved = 1_ gewechselt wird (=ACCEPT=) | Siehe =NOREV=. |
+| =HIDDEN= | Durch dieses Attribut erscheint die Transition nicht mehr im Transitionsmenue | Kann durch eigenen =rest= -Aufruf durchgef&uuml;hrt werden.<br />Diese Aktion ist im Transitionsmenue nicht zu sehen. |
+| =SETPREF= | Hiermit k&ouml;nnen Einstellungen im Topic gesetzt werden.%BR%Format: =SETPREF(Einstellung="Wert")= - die Klammern und Anf&uuml;hrungszeichen sind zwingend erforderlich.  | Beispiel: <verbatim>| *State* | *Action* | ... | *Attribute* |
+| INTRANSLATION | Finish translation | ... | SETPREF(CONTENT_LANGUAGE="en") |</verbatim> |
+| =SETFIELD= | Hiermit k&ouml;nnen Werte in Formfeldern gesetzt werden.%BR%Format: =SETFIELD(Feldname="Wert")= - die Klammern und Anf&uuml;hrungszeichen sind zwingend erforderlich. | Beispiel: <verbatim>| *State* | *Action* | ... | *Attribute * |
+| DRAFT | Approve | ... | SETFIELD(Prozesseigner="%USERNAME%") |</verbatim> |
+| _SETFORM_ | Dieses Feature lie&szlig;e sich in ca. einem halben MT implementieren. | |
 
 ---+++ Einschalten des Workflows in Topics
 Der Workflow wird auf Topic/Web Ebene angeschaltet mit
@@ -69,12 +101,56 @@ Soll er in einem Topic deaktiviert werden, so geschieht dies mit
 &nbsp;&nbsp;&nbsp;* Set WORKFLOW =
 </pre>
 
+---+++ =WORKFLOWMETA=
+Mit diesemn Makro kann man Metadaten &uuml;ber den Workflow abfragen.%BR%
+---++++ Parameter
+| *Parameter* | *Defaultwert* | *Effekt* | *Beispiel* |
+| =_default= | name | Der Name des Workflowdatums, das Sie abfragen wollen (siehe [[#Workflowmetadaten][Workflowmetadaten]]) | %%NOP%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN"}% |
+| =topic= | _aktuelles Topic_ | Das Topic, dessen Metadaten abgefragt werden. | %%NOP%WORKFLOWMETA{"Revision" topic="WebHome"}% | 
+| =web= | _aktuelles Web_ | Das Web von dem Topic. | %%NOP%WORKFLOWMETA{"Revision" topic="WebHome" web="Prozesse"}% |
+| =ref= | _letzte Revision_ | Die (foswiki) Revision von dem Topic. | Revision 4 wurde freigegeben von: %%NOP%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" ref="4"}% |
+| =alt= | _nichts_ | Dieser String wird ausgegeben, wenn es das Datum nicht gibt (weil z.B. ein bestimmter Status nicht durchlaufen wurde).%BR%%I% =or= ist meistens besser geeignet. | %%NOP%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" alt="Dieses Dokument wurde noch nicht freigegeben."}% |
+| =or= | _nichts_ | Hier k&ouml;nnen mehrere Metadaten in einer Kommasepparierten Liste angegeben werden.%BR%Sollte das =_default= Datum nicht existieren, werden nacheinander alle hier angegebenen Daten ausprobiert, bis eines einen Wert liefert. | %%NOP%WORKFLOWMETA{"LASTPROCESSOR_DISKUSSION" or="LASTPROCESSOR_ENTWURF, LASTPROCESSOR_FREIGEGEBEN"}% |
+| =nousersweb= | 0 | Auf 1, oder 0 setzten (bzw. perl-true/perl-false).%BR%Ist diese Option aktiviert, wird das Usersweb ausgeblenden. | %%NOP%WORKFLOWMETA%{"LASTPROCESSOR_FREIGEGEBEN"}% &rarr; Main.AdminUser%BR%%%NOP%WORKFLOWMETA%{"LASTPROCESSOR_FREIGEGEBEN" nousersweb="1"}% &rarr; AdminUser |
+
+---++++ Workflowmetadaten
+| *Name* | *Beschreibung* | *Beispiel* |
+| =name= | Der Statusname. | %%NOP%WORKFLOWMETA% &rarr; =FREIGEGEBEN= |
+| =LASTPROCESSOR_=...%BR% =ENTERING_=... | Gibt an, wer die Seite in den Status gebracht hat. | %%NOP%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN"}% &rarr; Main.AdminUser |
+| =LEAVING_=... | Gibt an, wer den Status verlassen hat.| %%NOP%WORKFLOWMETA{"LEAVING_FREIGEGEBEN"}% &rarr; Main.AdminUser |
+| =Revision= | Die KVP-Version.%BR%Wird bei jeder Freigabe hochgez&auml;hlt. | %%NOP%WORKFLOWMETA{"Revision"}% &rarr; 4 |
+| =LASTTIME_=... | Gibt an, wann die seite zuletzt in diesen Status gebracht wurde. | %%NOP%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN"}% &rarr; 15.1.2000 |
+%I% Anstatt der Punkte ... ist der jeweilige Statusname anzugeben. 
+
+---+++ =WORKFLOWFORK=
+Erzeugt einen Link zum _Forken_ des Artikels. Dieses Makro ist haupts&auml;chlich f&uuml;r Skins.
+
+Kann der Nutzer nicht _Forken_ (es gibt also keine verf&uuml;gbare Transition mit Attribut =FORK=) liefert das Makro einen Leerstring.
+
+Es ist ein JavaScript hinterlegt, welches sicherstellt, dass der Link nur einmal geklickt werden kann.
+
+Existiert der Zielartikel bereits, wird der Nutzer dorthin geleitet, ohne das eine Transition stattfindet (wesentlich langsamer als normaler Link!).
+
+   Beispiel&nbsp;1: %%NOP%WORKFLOWFORK{label="%%NOP%MAKETEXT{"Start new Discussion"}%" title="%%NOP%MAKETEXT{"Discussion about Improvements"}%"}%
+   Beispiel&nbsp;2: %%NOP%WORKFLOWFORK{label="%%NOP%IF{"istopic '%%NOP%TOPIC%%%NOP%WORKFLOWSUFFIX%'" then="To Discussion" else="Create Discussion"}%"}%
+   Beispiel&nbsp;3: %%NOP%IF{"istopic '%%NOP%TOPIC%%%NOP%WORKFLOWSUFFIX%'" then="[%NOP%[%%NOP%TOPIC%%%NOP%WORKFLOWSUFFIX%][To Discussion]]" else="$percentWORKFLOWFORK{label=$quotCreate Discussion$quot}$percent"}%
+---++++ Parameter
+| *Parameter* | *Defaultwert* | *Effekt* | *Beispiel* |
+| =newnames= | Topicname + Suffix | Name des neu zu erstellenden Topics (vgl. %RED%TODO%ENDCOLOR%) | %%NOP%WORKFLOWFORK{newnames="%TOPIC%Copy"}% |
+| =lockdown= | =off= | Ist diese Option gesetzt (=1= oder =on=) wird beim forken das Recht =SETALLOWTOPICCHANGE= des Quellartikels auf =nobody= gesetzt. | %%NOP%WORKFLOWFORK{label="Im Fork arbeiten" lockdown="on"}% |
+| =label= | FORK | Text des Links | %%NOP%WORKFLOWFORK{label="Zum Arbeitsstand"}% |
+| =title= | _leer (kein Popup)_ | Popup f&uuml;r den Link| %%NOP%WORKFLOWFORK{label="Zum Arbeitsstand" title="Arbeitsstand anlegen, oder dorthin wechseln"}% |
+
 ---+++ Weitere Makros
 | *Makro* | *Parameter* | *Beschreibung* | *Beispiel* | *Hauptanwendungsgebiete* |
-| %WORKFLOW%NOP%ORIGIN | - | Gibt den Namen des Artikels ohne Talk-Suffix aus (den Originalartikel zu einer Diskussion). | Zum Freigegebenenstand geht es %WORKFLOW%NOP%ORIGIN%][hier]] | Skin, Mails |
-| %WORKFLOW%NOP%CONTRIBUTORS% | - | Liste aller User, die eine Diskussion seit dem letzten ACCEPT bearbeitet haben. | | Notify-Listen |
-| %WORKFLOW%NOP%EDITPERM% | - | Liefert 1, falls der aktuelle User einen Artikel bearbeiten darf. | %%NOP%IF{"%WORKFLOW%NOP%ORIGIN% = '1'" then="Editieren sie jetzt!"}% | Skin |
-| %WORKFLOW%NOP%GETROW% | Name der Spalte ohne Leerzeichen und komplett klein geschrieben | Liefert die angegebene Spalte aus dem State-Table für den aktuellen status. | Editieren darf: %WORKFLOW%NOP%GETROW{'allowedit'}% | Skin |
+| =%%NOP%WORKFLOWORIGIN%= | <dl><dt> =_default= </dt><dd>Name des Topics, dessen Ursprung gesucht wird.%BR%Bei keiner Angabe: _aktueller Artikel_</dd></dl> | Gibt den Namen des Artikels ohne Talk-Suffix aus (den Originalartikel zu einer Diskussion). | Zum Freigegebenenstand geht es ![[%%NOP%WORKFLOWORIGIN%][hier]] | Skin, Mails |
+| =%%NOP%WORKFLOWCONTRIBUTORS%= | <dl><dt> =state= </dt><dd>Status, von dem die Bearbeiter abgefragt werden.</dd><dt> =web=, =topic=, =ref= </dt><dd>wie oben.</dd></dl> | Liste aller User, die eine Seite in dem angegebenen Status seit der letzten Freigabe &uuml;bearbeitet haben.%BR%%I% In Solr unter $workflow_contributors_..._lst indiziert.%BR%%I% Bei einer Freigabe werden alle CONTRIBUTORS-Listen gel&ouml;scht! | %%NOP%WORKFLOWCONTRIBUTORS{state="DISKUSSION"}%%BR%Bearbeitete Diskussionen:%%NOP%SOLRSEARCH{"workflow_contributors_diskussionsstand_lst: %%NOP%WIKIUSERNAME%" format=" $web.$topic"}% | Notify-Listen, pers&ouml;nliche Seiten. |
+| =%%NOP%WORKFLOWEDITPERM%= | <dl><dt> =web=, =topic= </dt><dd> wie oben </dd></dl> | Liefert 1, falls der aktuelle User einen Artikel bearbeiten darf. | %%NOP%IF{"%%NOP%WORKFLOWEDITPERM% = '1'" then="Editieren sie jetzt!"}% | Skin |
+| =%%NOP%GETWORKFLOWROW%= | <dl><dt> =_default= </dt><dd>Name der Spalte ohne Leerzeichen und komplett klein geschrieben</dd><dt>localized</dt><dd>Nutze Spalte mit diesem Sprachsuffix. Wird hier =content= angegeben, wird die =CONTENT_LANGUAGE= des Artikels als Suffix genutzt. </dd><dt> =web=, =topic=, =ref= </dt><dd>wie oben</dd> | Liefert die angegebene Spalte aus dem State-Table f&uuml;r den aktuellen status. | Editieren darf: %%NOP%GETWORKFLOWROW{'allowedit'}%%BR%Anzeigen der Message in der =CONENT_LANGUAGE=: =%%NOP%GETWORKFLOWROW{"message" localized="content"}%= %BR%Anzeige der Message in der Browsersprache: =%%NOP%GETWORKFLOWROW{"message" localized="%%NOP%LANGUAGE%"}%=. | Skin |
+| =%%NOP%WORKFLOWSTATE%= | <dl><dt> =_default= </dt><dd> Name des Topics, bei keiner Angabe: _aktueller Artikel_.</dd></dl> | Liefert den Status des Artikels, oder Leerstring wenn Artikel nicht unter Workflow.<br />%I% Gleich mit %%NOP%WORKFLOWMETA{web="%%NOP%WEB%" topic="%%NOP%TOPIC%"}% | %%NOP%WORKFLOWSTATE{"SomeWeb.SomeTopic"}% | Skin/Workflowmenue/aktive Tabellen |
+| =%%NOP%WORKFLOWHISTORY%= | <dl><dt> =_default= </dt><dd> Name des Topics, bei keiner Angabe: _aktueller Artikel_.</dd></dl> | Zeigt die (Transitions-)History des Artikels | %%NOP%WORKFLOWHISTORY% | Skin/Transitionsmenue |
+| =%%NOP%WORKFLOWTRANSITION%= | <dl><dt> =_default= </dt><dd> Name des Topics, bei keiner Angabe: _aktueller Artikel_.</dd></dl> | Liefert das Transitionsmenue f&uuml;r das Topic.<br />Leerstring, falls nicht kontrolliert. | %%NOP%WORKFLOWTRANSITION% | Skin |
+| =%%NOP%WORKFLOWSUFFIX%= | _keine_ | Gitb den in =configure= eingestellten Suffix aus. | %%NOP%WORKFLOWSUFFIX% &rarr; TALK | |
 
 %$INSTALL_INSTRUCTIONS%
 
