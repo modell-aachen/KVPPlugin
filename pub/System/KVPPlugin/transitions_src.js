@@ -27,9 +27,9 @@ jQuery(function($) {
         if(selection === undefined) return;
         if(remark != null) {
             if(WORKFLOW.remarkOption.indexOf(','+selection+',') > -1) {
-                remark.hide();
-            } else {
                 remark.show();
+            } else {
+                remark.hide();
             }
         }
         var box = $('#WORKFLOWchkbox');
