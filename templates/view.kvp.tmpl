@@ -1,6 +1,11 @@
 %TMPL:INCLUDE{"view"}%
 %TMPL:INCLUDE{"transitions"}%
 
+%IF{"context KVPHasDiscussion" then="$percentADDTOZONE{\"script\" id=\"KVPPluginChangeWarning\" requires=\"JQUERYPLUGIN\" text=\"<script type='text/javascript' src='%PUBURL%/%SYSTEMWEB%/KVPPlugin/changewarning.js'></script>
+<script type='text/javascript'>KVPMessage='$percentTMPL:P{KVPDiscussionWarning}$percent'</script>\"}$percent"}%
+
+%TMPL:DEF{"KVPDiscussionWarning"}%%MAKETEXT{"Attention, there is a discussion for this topic!\nDo you really want to continue?"}%%TMPL:END%
+
 %{"Overload this definition, if you want to influence when the menu is beeing shown."}%
 %TMPL:DEF{"kvpaction"}%%TMPL:P{context="KVPIsDiscussion" then="kvptransitions"}%%TMPL:END%
 
