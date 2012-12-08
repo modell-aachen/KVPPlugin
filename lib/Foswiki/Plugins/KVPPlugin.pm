@@ -186,17 +186,22 @@ sub _WORKFLOWSUFFIX {
     return $forkSuffix;
 }
 
-# Tag handler, returns the topicname without suffix
-sub _WORKFLOWORIGIN {
-    my ( $session, $attributes, $topic, $web ) = @_;
-    my $rTopic = $attributes->{_DEFAULT} || $topic;
+sub _getOrigin {
+    my ( $topic ) = @_;
 
     my $suffix = _WORKFLOWSUFFIX();
-    if ($rTopic =~ /(.*)$suffix/) {
+    if ($topic =~ /(.*)$suffix/) {
         return $1;
     } else {
         return $topic;
     }
+}
+
+# Tag handler, returns the topicname without suffix
+sub _WORKFLOWORIGIN {
+    my ( $session, $attributes, $topic, $web ) = @_;
+
+    return _getOrigin( $attributes->{_DEFAULT} || $topic );
 }
 
 sub _initTOPIC {
@@ -882,12 +887,10 @@ sub _restLink {
         }
     } else {
         # Try looking for origin
-        my $suffix = _WORKFLOWSUFFIX();
-        my $found = $topic =~ m/(.*)$suffix/;
-        $topic = $1;
-        if ( $found && Foswiki::Func::topicExists( $web, $topic ) ) {
+        my $origin = _getOrigin($topic);
+        if ( $origin ne $topic && Foswiki::Func::topicExists( $web, $origin ) ) {
             $url = Foswiki::Func::getScriptUrl(
-                $web, $topic, 'oops',
+                $web, $origin, 'oops',
                 template => "oopsworkflowmoved",
                 found    => "1"
             );
