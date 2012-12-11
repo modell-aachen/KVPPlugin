@@ -55,6 +55,61 @@ sub tear_down {
     $this->SUPER::tear_down();
 }
 
+# Test if...
+# ...the NEW transition is executed when creating a topic
+# ...lack of a NEW transition inhibits creating topic for non-admins
+# ...admins can still create topics, even if there is no NEW transition
+# ...non-admins can create topics without NEW transition if allowed in configure
+sub test_attributeNEW {
+    my ( $this ) = @_;
+
+    use constant TOPIC => 'TestTopicNEW';
+
+    our $users;
+
+    my $user = Helper::becomeAnAdmin($this);
+
+    # with NEW transition
+    Foswiki::Func::saveTopic( Helper::KVPWEB, TOPIC, undef, 'This should be a draft' );
+    my $state = Foswiki::Func::expandCommonVariables("%WORKFLOWMETA%", TOPIC, Helper::KVPWEB );
+    $this->assert_equals( 'ENTWURF', $state, 'Newly created topic did not do the NEW transition.' );
+
+    # without NEW transition
+    Foswiki::Func::saveTopic( Helper::NONEW, TOPIC, undef, 'This should be a new article' );
+    $state = Foswiki::Func::expandCommonVariables("%WORKFLOWMETA%", TOPIC, Helper::NONEW );
+    $this->assert_equals( 'NEU', $state, 'Newly created topic is not in first state.' );
+
+    # check if nonadmins are beeing inhibited if there is no NEW transition
+    my $query = Unit::Request->new( { action=>'view' } );
+    $this->createNewFoswikiSession( $users->{test1}, $query );
+    try {
+        Foswiki::Func::saveTopic( Helper::NONEW, TOPIC."NotAllowed", undef, 'This shouldn\'t be possible' );
+        $this->assert( 0, "Nonadmin could create an article although there was no NEW transition" );
+    } catch Foswiki::OopsException with {
+        my $e = shift;
+        $this->assert( $e->{template} eq 'workflowerr' && $e->{def} eq 'topic_creation', "Wrong Exception on denied save." );
+    }
+    catch Error::Simple with {
+        $this->assert( 0, shift->stringify() || '' );
+    };
+    # check if nonadmins are allowed if there is no NEW transition and force is disabled in configure
+    try {
+        $Foswiki::cfg{Plugins}{KVPPlugin}{NoNewRequired} = 1;
+        $query = Unit::Request->new( { action=>'view' } );
+        $this->createNewFoswikiSession( $users->{test1}, $query );
+        Foswiki::Func::saveTopic( Helper::NONEW, TOPIC."NewNotForced" );
+    } catch Foswiki::OopsException with {
+        my $e = shift;
+        $this->assert( 0, "Nonadmin could not create an article although NEW transition wasn't forced" );
+    } catch Error::Simple with {
+        $this->assert( 0, shift->stringify() || '' );
+    } finally {
+        $Foswiki::cfg{Plugins}{KVPPlugin}{NoNewRequired} = 0;
+    };
+
+    return;
+}
+
 1;
 __END__
 Foswiki - The Free and Open Source Wiki, http://foswiki.org/
