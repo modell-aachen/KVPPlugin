@@ -1300,7 +1300,8 @@ sub beforeSaveHandler {
         }
         # TODO Check if metacommentstuff changed unless workflow does so
 
-        if( Foswiki::Func::topicExists( $web, $topic ) && not $meta->getPreference('WorkflowStub') eq '1') {
+        if( Foswiki::Func::topicExists( $web, $topic ) 
+                && not $meta->getPreference('WorkflowStub') ) {
             # topic already exists, check if Workflowstuff didn't change
             # but do not touch uncontrolled topics
             if(scalar @newStateName == 0) {
