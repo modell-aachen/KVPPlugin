@@ -47,6 +47,12 @@ sub new {
         $class
     );
 
+    # Ensure that controlled topics have a valid state
+    unless($this->{state}) {
+        $this->{state} = { name => $this->{workflow}->getDefaultState() };
+        $this->{history} = {value=> ''};
+    }
+
     # If old Format is present use that. Else default Revision to 0
     unless(defined $this->{state}->{Revision}) {
         my $wrev = $meta->get('WORKFLOWREV');
@@ -76,7 +82,7 @@ sub debugging {
 # Get the current state of the workflow in this topic
 sub getState {
     my $this = shift;
-    return $this->{state}->{name} || $this->{workflow}->getDefaultState();
+    return $this->{state}->{name};
 }
 
 # Get the available actions from the current state
