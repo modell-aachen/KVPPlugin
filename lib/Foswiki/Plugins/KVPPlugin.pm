@@ -803,6 +803,26 @@ sub _changeMList {
     return undef; 
 }
 
+# Will find a topic in trashweb to move $web.$topic to by adding a numbered suffix.
+sub _trashTopic {
+    my ($web, $topic) = @_;
+
+    my $trashWeb = $Foswiki::cfg{TrashWebName};
+
+    my $trashTopic = $web . $topic;
+    $trashTopic =~ s#/|\.##g; # remove subweb-deliminators
+
+    my $numberedTrashTopic = $trashTopic;
+    my $i = 1;
+    while (Foswiki::Func::topicExists($trashWeb, $numberedTrashTopic)) {
+        $numberedTrashTopic = $trashTopic."_$i";
+        $i++;
+    }
+
+    Foswiki::Func::moveTopic( $web, $topic, $trashWeb, $numberedTrashTopic );
+    return ( $trashWeb, $trashTopic );
+}
+
 # Handle actions. REST handler, on changeState action.
 sub _changeState {
     my ($session) = @_;
@@ -926,26 +946,12 @@ sub _changeState {
                 # Flag that this is a state change to the beforeSaveHandler
                 local $isStateChange = 1;
                 #Alex: Zugehöriges Topic finden
-                #Alex: Das Item kann hier raus, wenn das neue Trash Web läuft
                     my $forkSuffix = _WORKFLOWSUFFIX();
 	            my $appTopic = $topic;
 	            $appTopic =~ s/$forkSuffix$//g;
 	            
 	            my $appWeb = $web;
 	            $appWeb =~ s/$forkSuffix$//g;
-	            #Alex TrashTopic ausloten:             	           	
-	            #Alex: Checken ob Topic schon einmal in den Müll verschoben wurde
-                    my $trashTopic = $appWeb . $appTopic;
-		    $trashTopic =~ s#/|\.##g; # remove subweb-deliminators
-                    { # scope
-                        my $numberedTrashTopic = $trashTopic;
-	           	my $i = 1;
-	            	while (Foswiki::Func::topicExists("Trash", $numberedTrashTopic)) {
-                                $numberedTrashTopic = $trashTopic."_$i";
-	            		$i++;
-	            	}
-                        $trashTopic = $numberedTrashTopic;
-                    }
 	            
 	            # Hier Action 
 #	            if ("VERWORFEN" eq $controlledTopic->getState()){	
@@ -957,7 +963,7 @@ sub _changeState {
                          if ( $controlledTopic->canEdit() ) {
                              $controlledTopic->save(1);
                              
-                             Foswiki::Func::moveTopic( $web, $topic, "Trash", $trashTopic );
+                             _trashTopic( $web, $topic );
                          } else {
                              # XXX Changing change permissions to current user so I can move the topic and finally change them back.
                              # This is a bad design flaw but at the moment I don't see any way around it
@@ -965,13 +971,13 @@ sub _changeState {
                              
                              $controlledTopic->save(1);
 	            	 	            	 
-                             Foswiki::Func::moveTopic( $web, $topic, "Trash", $trashTopic );
+                             my ( $trashWeb, $trashTopic ) =_trashTopic( $web, $topic );
                              
                              # restore old acl
-                             my ($newMeta, $text) = Foswiki::Func::readTopic( "Trash", $trashTopic );
+                             my ($newMeta, $text) = Foswiki::Func::readTopic( $trashWeb, $trashTopic );
                              # XXX XXX It won't save into Trash if ClassificationPlugin is enabled (can't read metadata)
                              # Have to rely on Foswikis protection of Trash in that case
-                             Foswiki::Func::saveTopic( "Trash", $trashTopic, $origMeta, $text, { forcenewrevision => 0, minor =>1, dontlog => 1, ignorepermissions => 1 }) unless ($Foswiki::cfg{Plugins}{ClassificationPlugin}{Enabled} && $Foswiki::cfg{Plugins}{ClassificationPlugin}{Enabled} eq '1');
+                             Foswiki::Func::saveTopic( $trashWeb, $trashTopic, $origMeta, $text, { forcenewrevision => 0, minor =>1, dontlog => 1, ignorepermissions => 1 }) unless ($Foswiki::cfg{Plugins}{ClassificationPlugin}{Enabled} && $Foswiki::cfg{Plugins}{ClassificationPlugin}{Enabled} eq '1');
                          }
 
                          # Only unlock / add to history if appWeb exists (does not when topic)
@@ -1020,7 +1026,7 @@ sub _changeState {
                         } else {
 	            		#Zuerst kommt das alte Topic in den Müll, dann wird das neue verschoben
 
-		            	Foswiki::Func::moveTopic( $appWeb, $appTopic, "Trash", $trashTopic);
+		            	_trashTopic( $appWeb, $appTopic );
 				# Save now that I know i can move it afterwards
 	            	        $controlledTopic->save(1);
 		            	Foswiki::Func::moveTopic( $web, $topic, $appWeb, $appTopic );
