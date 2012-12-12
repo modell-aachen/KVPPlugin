@@ -56,6 +56,46 @@ sub tear_down {
 }
 
 # Test if...
+# ...a fork will apply the default suffix
+# ...changing the default suffix creates a discussion with the new suffix
+# ...the context 'KVPHasDiscussion' is set correctly
+#
+# Note: The default suffix must not be set to the default value (TALK) in configure.
+sub test_suffixTests {
+    my ( $this ) = @_;
+
+    my $defaultSuffix = $Foswiki::cfg{Extensions}{KVPPlugin}{suffix};
+    $this->assert_equals( 'TALK', $defaultSuffix, "Suffix has been changed form TALK to $defaultSuffix!" );
+
+    my $user = Helper::becomeAnAdmin($this);
+
+    my $web = Helper::KVPWEB;
+    my $query = Unit::Request->new( { action=>'view', topic=>"$web.SuffixTest" } );
+
+    # Fork with default-Suffix
+    Helper::createWithState( $this, Helper::KVPWEB, 'SuffixTest', 'FREIGEGEBEN' );
+    $this->createNewFoswikiSession( $user, $query );
+    $this->assert( !Foswiki::Func::expandCommonVariables("%IF{\"context KVPHasDiscussion\" then=\"1\" else=\"0\"}%"), "test-topic SuffixTest already has a discussion!" );
+    Helper::createDiscussion( $this, Helper::KVPWEB, 'SuffixTest' );
+    $this->assert(Foswiki::Func::topicExists( Helper::KVPWEB, 'SuffixTestTALK' ), "Could not find discussion with default suffix!");
+    $this->createNewFoswikiSession( $user, $query );
+    $this->assert( Foswiki::Func::expandCommonVariables("%IF{\"context KVPHasDiscussion\" then=\"1\" else=\"0\"}%"), "Discussion with defaultsuffix does not set context!" );
+
+    try {
+        # Now fork with different suffix
+        $Foswiki::cfg{Extensions}{KVPPlugin}{suffix} = 'AndNowForSomethingCompletelyDifferent';
+        $this->createNewFoswikiSession( $user, $query );
+        $this->assert( !Foswiki::Func::expandCommonVariables("%IF{\"context KVPHasDiscussion\" then=\"1\" else=\"0\"}%"), "Context still reports discussion with default-suffix altough suffix changed!" );
+        Helper::createDiscussion( $this, Helper::KVPWEB, 'SuffixTest' );
+        $this->assert(Foswiki::Func::topicExists( Helper::KVPWEB, 'SuffixTestAndNowForSomethingCompletelyDifferent' ), "Could not find discussion with changed suffix!");
+        $this->createNewFoswikiSession( $user, $query );
+        $this->assert( Foswiki::Func::expandCommonVariables("%IF{\"context KVPHasDiscussion\" then=\"1\" else=\"0\"}%"), "Context still does not report discussion with changed suffix!" );
+    } finally {
+        $Foswiki::cfg{Extensions}{KVPPlugin}{suffix} = $defaultSuffix;
+    };
+}
+
+# Test if...
 # ...the NEW transition is executed when creating a topic
 # ...lack of a NEW transition inhibits creating topic for non-admins
 # ...admins can still create topics, even if there is no NEW transition
