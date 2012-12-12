@@ -300,6 +300,8 @@ sub afterRenameHandler {
     my ( $oldWeb, $oldTopic, $oldAttachment,
          $newWeb, $newTopic, $newAttachment ) = @_;
 
+    return if $isStateChange;
+
     return unless $oldTopic; # don't handle webs
     return if $oldAttachment; # nor attachments
 
@@ -313,8 +315,7 @@ sub afterRenameHandler {
     # XXX what to do if there is already a discussion?!?
     if (Foswiki::Func::topicExists($newWeb, $newDiscussion)) {
         Foswiki::Func::writeWarning("Throwing existing discussion away ($newWeb.$newDiscussion) after renaming $oldWeb.$oldTopic to $newWeb.$newDiscussion!");
-        my $trash = _getTrashTopic($newWeb, $newDiscussion);
-        Foswiki::Func::moveTopic($newWeb, $newDiscussion, "Trash", $trash);
+        _trashTopic($newWeb, $newDiscussion);
     }
 
     Foswiki::Func::moveTopic($oldWeb, $oldDiscussion, $newWeb, $newDiscussion);
@@ -565,19 +566,22 @@ sub _GETWORKFLOWROW {
 }
 
 # Will find a topic in trashweb to move $web.$topic to by adding a numbered suffix.
-sub _getTrashTopic {
+sub _trashTopic {
     my ($web, $topic) = @_;
+
+    my $trashWeb = $Foswiki::cfg{TrashWebName};
 
     my $trashTopic = $web . $topic;
     $trashTopic =~ s#/|\.##g; # remove subweb-deliminators
 
     my $numberedTrashTopic = $trashTopic;
     my $i = 1;
-    while (Foswiki::Func::topicExists("Trash", $numberedTrashTopic)) {
+    while (Foswiki::Func::topicExists($trashWeb, $numberedTrashTopic)) {
         $numberedTrashTopic = $trashTopic."_$i";
         $i++;
     }
-    $trashTopic = $numberedTrashTopic;
+
+    Foswiki::Func::moveTopic( $web, $topic, $trashWeb, $numberedTrashTopic );
 }
 
 # Handle actions. REST handler, on changeState action.
@@ -724,14 +728,9 @@ sub _changeState {
             # Flag that this is a state change to the beforeSaveHandler
             local $isStateChange = 1;
             #Alex: Zugehriges Topic finden
-            #Alex: Das Item kann hier raus, wenn das neue Trash Web laeuft
             my $forkSuffix = _WORKFLOWSUFFIX();
             my $appTopic = $topic;
             $appTopic =~ s/$forkSuffix$//g;
-
-            #Alex TrashTopic ausloten:
-            #Alex: Checken ob Topic schon einmal in den Muell versichoben wurde
-            my $trashTopic = _getTrashTopic($web, $appTopic);
 
             # Hier Action 
             if ($forkingAction && $forkingAction eq "DISCARD") {
@@ -740,7 +739,7 @@ sub _changeState {
 
                 # Move topic to trash
                 $controlledTopic->save(1);
-                Foswiki::Func::moveTopic( $web, $topic, "Trash", $trashTopic );
+                _trashTopic($web, $topic);
 
                 # Only unlock / add to history if web exists (does not when topic)
                 if(Foswiki::Func::topicExists( $web, $appTopic )) {
@@ -789,8 +788,7 @@ sub _changeState {
                     $controlledTopic->save(1);
                 } else {
                     #Zuerst kommt das alte Topic in den Muell, dann wird das neue verschoben
-
-                    Foswiki::Func::moveTopic( $web, $appTopic, "Trash", $trashTopic);
+                    _trashTopic($web, $appTopic);
                     # Save now that I know i can move it afterwards
                     $controlledTopic->save(1);
                     Foswiki::Func::moveTopic( $web, $topic, $web, $appTopic );
