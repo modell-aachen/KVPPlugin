@@ -4,7 +4,7 @@
 <div class="modacKVPtable" id="KVPTransitions">
 | *%MAKETEXT{"Improvement Process"}%* ||
 | %MAKETEXT{"State"}% | %MAKETEXT{%GETWORKFLOWROW{message}%}% |
-%IF{"$'WORKFLOWMETA{Remark}'" then="| %MAKETEXT{"Remarks for this state:"}% | <pre>$percentWORKFLOWMETA{Remark}$percent</pre> |$n"}%%IF{"istopic '%WORKFLOWORIGIN%' and not $WORKFLOWORIGIN = '%TOPIC%'" then="| $percentMAKETEXT{$quotDifference to approved version$quot}$percent | $percentBUTTON{$quot$percentMAKETEXT{$quotCompare with approved version$quot}$percent$quot target=$quot$percentSCRIPTURL{compare}$percent/%WEB%/%TOPIC%?external=$percentWORKFLOWORIGIN$percent$quot}$percent |$n"}%| %MAKETEXT{"Next step"}% | %WORKFLOWTRANSITION% |
+%IF{"$'WORKFLOWMETA{Remark}'" then="| %MAKETEXT{"Remarks for this state:"}% | <pre>$percentWORKFLOWMETA{Remark}$percent</pre> |$n"}%%IF{"istopic '%WORKFLOWORIGIN%' and not $WORKFLOWORIGIN = '%TOPIC%'" then="| %MAKETEXT{"Difference to approved version"}% | $percentBUTTON{$quot%MAKETEXT{"Compare with approved version"}%$quot target=$quot$percentSCRIPTURL{compare}$percent/%WEB%/%TOPIC%?external=$percentWORKFLOWORIGIN$percent$quot}$percent |$n"}%| %MAKETEXT{"Next step"}% | %WORKFLOWTRANSITION% |
 | %MAKETEXT{"Last editing person"}% | %REVINFO{format="$username"}% |
 </div>
 %TMPL:END%
