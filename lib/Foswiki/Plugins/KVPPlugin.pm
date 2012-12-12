@@ -729,11 +729,9 @@ sub _changeState {
             my $appTopic = $topic;
             $appTopic =~ s/$forkSuffix$//g;
 
-            my $appWeb = $web;
-            $appWeb =~ s/$forkSuffix$//g;
             #Alex TrashTopic ausloten:
             #Alex: Checken ob Topic schon einmal in den Muell versichoben wurde
-            my $trashTopic = _getTrashTopic($appWeb, $appTopic);
+            my $trashTopic = _getTrashTopic($web, $appTopic);
 
             # Hier Action 
             if ($forkingAction && $forkingAction eq "DISCARD") {
@@ -744,12 +742,12 @@ sub _changeState {
                 $controlledTopic->save(1);
                 Foswiki::Func::moveTopic( $web, $topic, "Trash", $trashTopic );
 
-                # Only unlock / add to history if appWeb exists (does not when topic)
-                if(Foswiki::Func::topicExists( $appWeb, $appTopic )) {
-                    $url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
+                # Only unlock / add to history if web exists (does not when topic)
+                if(Foswiki::Func::topicExists( $web, $appTopic )) {
+                    $url = Foswiki::Func::getScriptUrl( $web, $appTopic, 'view' );
 
                     #Alex: Alte Metadaten wiederherstellen
-                    my ($meta, $text) = Foswiki::Func::readTopic($appWeb, $appTopic);
+                    my ($meta, $text) = Foswiki::Func::readTopic($web, $appTopic);
 
                     #gesperrte Seiten wieder entsperren
                     if (defined $meta->get("PREFERENCE", "ALLOWTOPICCHANGE")){
@@ -765,7 +763,7 @@ sub _changeState {
 
                     #Alex: Keine neue Revision erzeugen, Autor nicht ueberschreiben
                     Foswiki::Func::saveTopic( 
-                        $appWeb, $appTopic, $meta, $text,
+                        $web, $appTopic, $meta, $text,
                         { forcenewrevision => 0, minor => 1, dontlog => 1, ignorepermissions => 1 }
                     );
                 } else {
@@ -778,12 +776,12 @@ sub _changeState {
             # Check if discussion is beeing accepted
             elsif (!$oldIsApproved && $controlledTopic->getRow("approved")) {
                 # transfer ACLs from old document to new
-                transferACL($appWeb, $appTopic, $controlledTopic);
+                transferACL($web, $appTopic, $controlledTopic);
                 $controlledTopic->purgeContributors();
                 $controlledTopic->nextRev() unless $actionAttributes =~ m#NOREV#;
                 # Will save changes after moving original topic away
 
-                $url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
+                $url = Foswiki::Func::getScriptUrl( $web, $appTopic, 'view' );
 
                 #Alex: Force new Revision, damit Aenderungen auf jeden Fall in der History sichtbar werden
                 # only move topic if it has a talk suffix
@@ -792,10 +790,10 @@ sub _changeState {
                 } else {
                     #Zuerst kommt das alte Topic in den Muell, dann wird das neue verschoben
 
-                    Foswiki::Func::moveTopic( $appWeb, $appTopic, "Trash", $trashTopic);
+                    Foswiki::Func::moveTopic( $web, $appTopic, "Trash", $trashTopic);
                     # Save now that I know i can move it afterwards
                     $controlledTopic->save(1);
-                    Foswiki::Func::moveTopic( $web, $topic, $appWeb, $appTopic );
+                    Foswiki::Func::moveTopic( $web, $topic, $web, $appTopic );
                 }
             }
             else{
