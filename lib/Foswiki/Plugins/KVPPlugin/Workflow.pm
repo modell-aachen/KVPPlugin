@@ -440,20 +440,9 @@ sub _isAllowed {
     return 1 unless ($allow);
 
     # Always allow members of the admin group to edit
-    if ( defined &Foswiki::Func::isAnAdmin ) {
-        # Latest interface, post user objects
-        return 1 if ( Foswiki::Func::isAnAdmin() );
-    }
-    elsif (
-            ref( $Foswiki::Plugins::SESSION->{user} )
-            && $Foswiki::Plugins::SESSION->{user}->can("isAdmin")
-        )
-    {
-        # User object
-        return 1 if ( $Foswiki::Plugins::SESSION->{user}->isAdmin() );
-    }
+    return 1 if ( Foswiki::Func::isAnAdmin() );
 
-    return 0 if ( defined($allow) && $allow =~ /^\s*nobody\s*$/ );
+    return 0 if ( $allow =~ /^\s*nobody\s*$/ );
     if($allow =~ /\bLOGGEDIN\b/ && not Foswiki::Func::isGuest()) {
         return 1;
     }
