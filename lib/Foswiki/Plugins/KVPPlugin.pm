@@ -20,7 +20,7 @@ use Foswiki::OopsException ();
 use Foswiki::Sandbox ();
 
 our $VERSION          = '$Rev: 7808 (2010-06-15) $';
-our $RELEASE          = '1.5.28';
+our $RELEASE          = '1.5.29';
 our $SHORTDESCRIPTION = 'Kontinuierliche Verbesserung im Wiki';
 our $NO_PREFS_IN_TOPIC = 1;
 our $pluginName       = 'KVPPlugin';
