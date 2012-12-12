@@ -96,6 +96,73 @@ sub test_suffixTests {
 }
 
 # Test if...
+# ...moving an approved topic moves it's discussion with it
+# ...moving an approved topic where an old discussion is in the way introduces a numbered suffix
+#
+# Note: The default suffix must be set to the default value (TALK) in configure.
+sub test_moveWithDiscussion {
+    my ( $this ) = @_;
+
+    my $user = Helper::becomeAnAdmin($this);
+
+    my $defaultSuffix = $Foswiki::cfg{Extensions}{KVPPlugin}{suffix};
+    $this->assert_equals( 'TALK', $defaultSuffix, "Suffix has been changed form TALK to $defaultSuffix!" );
+    my $testtext = 'Test: MoveWithDiscussion';
+    my $testtext2 = 'This is in my way!';
+    my $web = Helper::KVPWEB;
+
+    Helper::createWithState( $this, $web, 'MoveTest', 'FREIGEGEBEN', $testtext );
+
+    # Move without discussion
+    Foswiki::Func::moveTopic( $web, 'MoveTest', $web, 'MovedTest' );
+    $this->assert( Foswiki::Func::topicExists( $web, 'MovedTest' ), "Topic wasn't moved, even without discussion!" );
+    $this->assert( !Foswiki::Func::topicExists( $web, 'MoveTest' ), "Unmoved topic still exists, even without discussion!" );
+
+    # Move with discussion
+    my $discussion = Helper::createDiscussion( $this, $web, 'MovedTest' );
+    Foswiki::Func::moveTopic( $web, 'MovedTest', $web, 'MovedAgainTest' );
+    $this->assert( Foswiki::Func::topicExists( $web, 'MovedAgainTest' ), "Original topic wasn't moved!" );
+    $this->assert( !Foswiki::Func::topicExists( $web, 'MovedTest' ), "Original topic still exists!" );
+    $this->assert( Foswiki::Func::topicExists( $web, 'MovedAgainTestTALK' ), "Discussion wasn't moved with original topic!" );
+    $this->assert( !Foswiki::Func::topicExists( $web, 'MovedTestTALK' ), "Unmoved discussion still exists!" );
+
+    my ($meta, $text);
+    try {
+        # Lets move yet again when an old discussion is in the way
+        $Foswiki::cfg{Extensions}{KVPPlugin}{suffix} = 'Hello';
+        Foswiki::Func::saveTopic( $web, "MovedYetAgainTestTALK", undef, $testtext2.' 1' );
+        $Foswiki::cfg{Extensions}{KVPPlugin}{suffix} = $defaultSuffix;
+        Foswiki::Func::moveTopic( $web, 'MovedAgainTest', $web, 'MovedYetAgainTest' );
+        $this->assert( Foswiki::Func::topicExists( $web, 'MovedYetAgainTest' ) );
+        $this->assert( !Foswiki::Func::topicExists( $web, 'MovedAgainTest' ) );
+        $this->assert( !Foswiki::Func::topicExists( $web, 'MovedAgainTestTALK' ) );
+        ($meta, $text) = Foswiki::Func::readTopic( $web, 'MovedYetAgainTestTALK' );
+        $this->assert( $text =~ m/\Q$testtext\E/ );
+        ($meta, $text) = Foswiki::Func::readTopic( Helper::TRASH, "${web}MovedYetAgainTestTALK" );
+        $this->assert( $text =~ m/\Q$testtext2\E 1/ );
+
+        # Do it again and see if nubers rise correctly
+        Foswiki::Func::moveTopic( $web, 'MovedYetAgainTest', $web, 'MovedAgainTest' );
+        $this->assert( !Foswiki::Func::topicExists( $web, 'MovedYetAgainTest' ) );
+        $this->assert( !Foswiki::Func::topicExists( $web, 'MovedYetAgainTestTALK' ) );
+        $Foswiki::cfg{Extensions}{KVPPlugin}{suffix} = 'Hello';
+        Foswiki::Func::saveTopic( $web, "MovedYetAgainTestTALK", undef, $testtext2.' 2' );
+    } finally {
+        $Foswiki::cfg{Extensions}{KVPPlugin}{suffix} = $defaultSuffix;
+    };
+    Foswiki::Func::moveTopic( $web, 'MovedAgainTest', $web, 'MovedYetAgainTest' );
+    $this->assert( Foswiki::Func::topicExists( $web, 'MovedYetAgainTest' ) );
+    $this->assert( !Foswiki::Func::topicExists( $web, 'MovedAgainTest' ) );
+    $this->assert( !Foswiki::Func::topicExists( $web, 'MovedAgainTestTALK' ) );
+    ($meta, $text) = Foswiki::Func::readTopic( $web, 'MovedYetAgainTestTALK' );
+    $this->assert( $text =~ m/\Q$testtext\E/ );
+    ($meta, $text) = Foswiki::Func::readTopic( Helper::TRASH, "${web}MovedYetAgainTestTALK" ); # this should be the old one
+    $this->assert( $text =~ m/\Q$testtext2\E 1/ );
+    ($meta, $text) = Foswiki::Func::readTopic( Helper::TRASH, "${web}MovedYetAgainTestTALK_1" ); # and this is the new one
+    $this->assert( $text =~ m/\Q$testtext2\E 2/ );
+}
+
+# Test if...
 # ...the NEW transition is executed when creating a topic
 # ...lack of a NEW transition inhibits creating topic for non-admins
 # ...admins can still create topics, even if there is no NEW transition
