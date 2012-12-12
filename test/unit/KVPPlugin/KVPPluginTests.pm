@@ -220,6 +220,29 @@ sub test_moveWithDiscussion {
 }
 
 # Test if...
+# ...in a standard workflow all states and transitions can be reached/executed correctly.
+sub test_basicTransitions {
+    my ( $this ) = @_;
+
+    Helper::becomeAnAdmin($this);
+
+    Helper::createWithState( $this, Helper::NONEW, 'CreatedDraft', 'ENTWURF' );
+    Helper::createWithState( $this, Helper::NONEW, 'CreatedApproved', 'FREIGEGEBEN' );
+
+    Helper::createWithState( $this, Helper::KVPWEB, 'CreatedDraft', 'ENTWURF' );
+    Helper::createWithState( $this, Helper::KVPWEB, 'CreatedApproved', 'FREIGEGEBEN' );
+    Helper::createDiscussion( $this, Helper::KVPWEB, 'CreatedApproved' );
+    Helper::bringToState( $this, Helper::KVPWEB, 'CreatedApprovedTALK', 'FORMALE_PRUEFUNG' );
+    Helper::transition( $this, 'FORMALE_PRUEFUNG', 'Request further revision', Helper::KVPWEB, 'CreatedApprovedTALK' );
+    Helper::transition( $this, 'DISKUSSIONSSTAND', 'Request approval', Helper::KVPWEB, 'CreatedApprovedTALK' );
+    Helper::transition( $this, 'INHALTLICHE_PRUEFUNG', 'Request further revision', Helper::KVPWEB, 'CreatedApprovedTALK' );
+    Helper::ensureState( $this, Helper::KVPWEB, 'CreatedApprovedTALK', 'DISKUSSIONSSTAND' );
+    Helper::bringToState( $this, Helper::KVPWEB, 'CreatedApprovedTALK', 'FREIGEGEBEN' );
+    Helper::createDiscussion( $this, Helper::KVPWEB, 'CreatedApproved' );
+    Helper::transition( $this, 'DISKUSSIONSSTAND', 'Discard discussion', Helper::KVPWEB, 'CreatedApprovedTALK' );
+}
+
+# Test if...
 # ...the NEW transition is executed when creating a topic
 # ...lack of a NEW transition inhibits creating topic for non-admins
 # ...admins can still create topics, even if there is no NEW transition
