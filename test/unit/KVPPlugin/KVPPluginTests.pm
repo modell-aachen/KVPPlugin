@@ -121,6 +121,38 @@ sub test_loggedin {
 }
 
 # Test if...
+# ...a new topic starts at workflow version 0
+# ...first approval leads to version 1
+# ...creating and approving a discussion leads to version 2
+sub test_revision {
+    my ( $this ) = @_;
+
+    my $user = Helper::becomeAnAdmin($this);
+    my $web = Helper::KVPWEB;
+    my $topic = 'RevisionTest';
+    my $talk = $topic.'TALK';
+    my $queryTopic = Unit::Request->new( { action=>'view', topic=>"$web.$topic" } );
+    my $queryDiscussion = Unit::Request->new( { action=>'view', topic=>"$web.$talk" } );
+
+    # Check if initial topic creation is ok
+    Helper::createWithState( $this, $web, $topic, 'ENTWURF' );
+    $this->createNewFoswikiSession( $user, $queryTopic );
+    $this->assert_equals( 0, Foswiki::Func::expandCommonVariables('%WORKFLOWMETA{"Revision"}%') );
+    Helper::transition( $this, 'ENTWURF', 'Request approval', $web, $topic );
+    $this->assert_equals( 0, Foswiki::Func::expandCommonVariables('%WORKFLOWMETA{"Revision"}%') );
+    Helper::bringToState( $this, $web, $topic, 'FREIGEGEBEN' );
+    $this->assert_equals( 1, Foswiki::Func::expandCommonVariables('%WORKFLOWMETA{"Revision"}%') );
+
+    # Now lets see if discussion behaves nicely
+    Helper::createDiscussion( $this, $web, $topic );
+    $this->createNewFoswikiSession( $user, $queryDiscussion );
+    $this->assert_equals( 1, Foswiki::Func::expandCommonVariables('%WORKFLOWMETA{"Revision"}%') );
+    Helper::bringToState( $this, $web, $talk, 'FREIGEGEBEN' );
+    $this->createNewFoswikiSession( $user, $queryTopic );
+    $this->assert_equals( 2, Foswiki::Func::expandCommonVariables('%WORKFLOWMETA{"Revision"}%') );
+}
+
+# Test if...
 # ...moving an approved topic moves it's discussion with it
 # ...moving an approved topic where an old discussion is in the way introduces a numbered suffix
 #
