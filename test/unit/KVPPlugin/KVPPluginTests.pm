@@ -325,6 +325,51 @@ sub test_attributeNEW {
     return;
 }
 
+# Test if...
+# ...discarding a discussion throws it into trash
+# ...trashed discussions get correct name/numbered suffix
+sub test_discard {
+    my ( $this ) = @_;
+
+    my $topic = 'TestMüllDiscussion'; # just for kicks, throw in an umlaut
+    my $talk = 'TestMüllDiscussionTALK';
+    my $trash = Helper::TRASH;
+    my $web = Helper::KVPWEB;
+
+    my $user = Helper::becomeAnAdmin($this);
+
+    Helper::createWithState( $this, $web, $topic, 'FREIGEGEBEN', "This is version A" );
+
+    # run 1
+    Helper::createDiscussion( $this, $web, $topic );
+    my ( $meta, $text ) = Foswiki::Func::readTopic( $web, $talk );
+    Foswiki::Func::saveTopic( $web, $talk, $meta, $text.'1' );
+    Helper::transition( $this, 'DISKUSSIONSSTAND', 'Discard discussion', $web, $talk );
+    $this->assert( !Foswiki::Func::topicExists( $web, $talk ), "First discussion was not trashed when discarded." );
+
+    # run 2
+    Helper::createDiscussion( $this, $web, $topic );
+    ( $meta, $text ) = Foswiki::Func::readTopic( $web, $talk );
+    Foswiki::Func::saveTopic( $web, $talk, $meta, $text.'2' );
+    Helper::transition( $this, 'DISKUSSIONSSTAND', 'Discard discussion', $web, $talk );
+    $this->assert( !Foswiki::Func::topicExists( $web, $talk ), "Second discussion was not trashed when discarded." );
+
+    # run 3
+    Helper::createDiscussion( $this, $web, $topic );
+    ( $meta, $text ) = Foswiki::Func::readTopic( $web, $talk );
+    Foswiki::Func::saveTopic( $web, $talk, $meta, $text.'3' );
+    Helper::transition( $this, 'DISKUSSIONSSTAND', 'Discard discussion', $web, $talk );
+    $this->assert( !Foswiki::Func::topicExists( $web, $talk ), "Third discussion was not trashed when discarded." );
+
+    # check results...
+    ( $meta, $text ) = Foswiki::Func::readTopic( $trash, "$web$talk" );
+    $this->assert_equals( 'This is version A1', $text, "First discussion was not trashed correctly!" );
+    ( $meta, $text ) = Foswiki::Func::readTopic( $trash, "$web${talk}_1" );
+    $this->assert_equals( 'This is version A2', $text, "Second discussion was not trashed correctly!" );
+    ( $meta, $text ) = Foswiki::Func::readTopic( $trash, "$web${talk}_2" );
+    $this->assert_equals( 'This is version A3', $text, "Third discussion was not trashed correctly!" );
+}
+
 1;
 __END__
 Foswiki - The Free and Open Source Wiki, http://foswiki.org/
