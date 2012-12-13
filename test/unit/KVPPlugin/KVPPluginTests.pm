@@ -153,6 +153,34 @@ sub test_revision {
 }
 
 # Test if...
+# ...attaching to a non-existing topic creates a stub with preference 'WorkflowStub'
+# ...saving a topic with preference 'WorkflowStub' creates a proper topic
+sub test_attachToNewTopic {
+    my ( $this ) = @_;
+
+    my $user = Helper::becomeAnAdmin($this);
+
+    my $topic = 'AttachToNewTopicTest';
+    my $web = Helper::KVPWEB;
+    my $attachment = 'attachment.txt';
+
+    # Attach to create stub
+    Foswiki::Func::saveAttachment( $web, $topic, $attachment, { file=>$attachments[0]->{stream} } );
+
+    # check stub
+    my ( $meta, $text ) = Foswiki::Func::readTopic( $web, $topic );
+    $this->assert_equals( '1', $meta->getPreference( 'WorkflowStub' ) );
+
+    # now create proper topic and check if transitioned ok and no longer stub
+    Foswiki::Func::saveTopic( $web, $topic, undef, "This is a newly created Topic" );
+    ( $meta, $text ) = Foswiki::Func::readTopic( $web, $topic );
+    $this->assert( !$meta->getPreference( 'WorkflowStub' ) );
+    $this->assert( $meta->hasAttachment( $attachment ) );
+    Helper::ensureState( $this, $web, $topic, 'ENTWURF' );
+    $this->assert( Foswiki::Func::readAttachment( $web, $topic, $attachment ) eq $attachments[0]->{text} );
+}
+
+# Test if...
 # ...moving an approved topic moves it's discussion with it
 # ...moving an approved topic where an old discussion is in the way introduces a numbered suffix
 #
