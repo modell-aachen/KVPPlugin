@@ -96,6 +96,31 @@ sub test_suffixTests {
 }
 
 # Test if...
+# ...a logged in user can edit a topic where LOGGEDIN is in "allow edit"
+# ...a logged in user can transition a topic where LOGGEDIN may transition
+# ...a logged in user can not edit a topic where neither LOGGEDIN nor his WikiName is in "allow edit"
+sub test_loggedin {
+    my ( $this ) = @_;
+
+    our $users;
+
+    my $user = $this->createNewFoswikiSession( $users->{test1} );
+    Helper::createWithState( $this, Helper::KVPWEB, 'LoggedInTest', 'ENTWURF' );
+    Foswiki::Func::saveTopic( Helper::KVPWEB, 'LoggedInTest', undef, "$users->{test1} edited this." );
+    Helper::transition( $this, 'ENTWURF', 'Request approval', Helper::KVPWEB, 'LoggedInTest' );
+    try {
+        Foswiki::Func::saveTopic( Helper::KVPWEB, 'LoggedInTest', undef, "$users->{test1} edited this again." );
+        $this->assert(0, "$users->{test1} is not supposed to be able to edit this topic!" );
+    } catch Foswiki::OopsException with {
+        my $e = shift;
+        $this->assert( $e->{template} eq 'workflowerr' && $e->{def} eq 'topic_access', "Wrong Exception on denied save." );
+    } catch Error::Simple with {
+        $this->assert( 0, shift->stringify() || '' );
+    };
+    $this->assert( !Helper::transition( $this, 'INHALTLICHE_PRUEFUNG_ENTWURF', 'Approve contentual aspects of draft', Helper::KVPWEB, 'LoggedInTest', 1 ), "$users->{test1} is not supposed to be able to transition this topic!" );
+}
+
+# Test if...
 # ...moving an approved topic moves it's discussion with it
 # ...moving an approved topic where an old discussion is in the way introduces a numbered suffix
 #
