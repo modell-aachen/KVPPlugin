@@ -181,6 +181,36 @@ sub test_attachToNewTopic {
 }
 
 # Test if...
+# ...forking and accepting discussions preserves
+# ...accepting a discussion replaces the attachment in the approved version
+sub test_forkAndAcceptWithAttachment {
+    my ( $this ) = @_;
+
+    my $user = Helper::becomeAnAdmin($this);
+
+    my $topic = 'ForkAndAcceptWithAttachmentTest';
+    my $discussion = "${topic}TALK";
+    my $web = Helper::KVPWEB;
+    my $attachment = 'attachment.txt';
+
+    # Create approved topic with attachment
+    Helper::createWithState( $this, $web, $topic, 'ENTWURF' );
+    Foswiki::Func::saveAttachment( $web, $topic, $attachment, { file=>$attachments[0]->{stream} } );
+    Helper::bringToState( $this, $web, $topic, 'FREIGEGEBEN' );
+
+    # Create discussion and see if attachment is present
+    Helper::createDiscussion( $this, $web, $topic );
+    my $read = Foswiki::Func::readAttachment( $web, $discussion, $attachment );
+    $this->assert($read eq $attachments[0]->{text} );
+
+    # Attach a different file, approve topic and see if attachment in original topic is updated
+    Foswiki::Func::saveAttachment( $web, $topic, $attachment, { file=>$attachments[1]->{stream} } );
+    Helper::bringToState( $this, $web, $topic, 'FREIGEGEBEN' );
+    $read = Foswiki::Func::readAttachment( $web, $topic, $attachment );
+    $this->assert($read eq $attachments[1]->{text} );
+}
+
+# Test if...
 # ...moving an approved topic moves it's discussion with it
 # ...moving an approved topic where an old discussion is in the way introduces a numbered suffix
 #
