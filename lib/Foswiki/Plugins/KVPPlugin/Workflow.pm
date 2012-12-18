@@ -424,7 +424,7 @@ sub _isAllowed {
 # Checking Condition in Transition Table
 sub _isTrue {
     my ($condition) = @_;
-    return 1 unless ($condition);
+    return 1 unless (defined $condition && $condition ne '');
 
     if ( Foswiki::Func::isTrue($condition) ) {
         return 1;
