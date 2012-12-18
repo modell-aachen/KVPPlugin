@@ -211,6 +211,61 @@ sub test_forkAndAcceptWithAttachment {
 }
 
 # Test if...
+# ...condition column is evaluated when selecting the NEW transition
+sub test_condition {
+    my ( $this ) = @_;
+
+    my $user = Helper::becomeAnAdmin($this);
+
+    my $subweb = Helper::NONEW."/CondTest";
+    { # scope
+        my $webPref = $Foswiki::cfg{WebPrefsTopicName};
+        my $workflowname = 'DocumentApprovalWorkflow';
+        my $subwebObject = $this->populateNewWeb( $subweb, "_default" );
+        $subwebObject->finish();
+        Foswiki::Func::saveTopic( $subweb, $workflowname, undef, <<'WORKFLOW' );
+---++ Defaults
+%EDITTABLE{format="| text, 20 | text, 20 | text, 20 | text, 2 |"}%
+| *State Type* | *Left Tab* | *Right Tab* | *Approved* |
+| approved | Approved Page | Discussion | 1 |
+| discussion | Approved Page | Discussion | 0 |
+| draft | Approved Page | Draft | 0 |
+
+---++ States
+%EDITTABLE{format="| text, 20 | text, 30 | text, 30 | text, 50 | text, 30 | text, 15 |"}%
+| *State* | *Allow Edit* | *Allow Move* | *Message* | *Allow Comment* | *State Type* |
+| NEU | LOGGEDIN | Main.KeyUserGroup, %WORKFLOWMETA{LASTPROCESSOR_NEU}% | This document is not yet in CIP. | LOGGEDIN | draft |
+| DOKUMENT | LOGGEDIN | Main.KeyUserGroup, %WORKFLOWMETA{LASTPROCESSOR_NEU}% | This document is a draft. | LOGGEDIN | draft |
+| TEMPLATE | LOGGEDIN | Main.KeyUserGroup, %WORKFLOWMETA{LASTPROCESSOR_NEU}% | This document is a template. | LOGGEDIN | draft |
+ 
+---++ Transitions
+%EDITTABLE{format="| text, 20 | text, 40 | text, 20 | text, 30 | text, 30 | text, 15 | text, 15 |"}%
+| *State* | *Action* | *Next State* | *Allowed* | *Notify* | *Condition* | *Attribute* |
+| NEU | Create | DOKUMENT | LOGGEDIN, Main.KeyUserGroup | | %IF{"$TOPIC=~'.*Dokument$'" then="1" else="0"}% | NEW |
+| NEU | Create template | TEMPLATE | Main.KeyUserGroup | | %IF{"$TOPIC=~'.*Template$'" then="1" else="0"}% | NEW |
+
+   * Set NOWYSIWYG=1
+   * Set WORKFLOW=
+   * Set ALLOWTOPICCHANGE=Main.AdminUser
+WORKFLOW
+        my ( $meta, $text ) = Foswiki::Func::readTopic( Helper::KVPWEB, $webPref );
+        $text =~ s#(WORKFLOW\h*=\h*).*#$1$subweb.$workflowname#g;
+        Foswiki::Func::saveTopic( $subweb, $webPref, undef, $text );
+    }
+
+    # reload WebPreferences
+    my $query = Unit::Request->new( { action=>'view', topic=>"$subweb" } );
+    $this->createNewFoswikiSession( $user, $query );
+
+    # Check if correct NEW-transition is beeing selected
+    Foswiki::Func::saveTopic( $subweb, 'ConditionTestDokument', undef, "This should be a DOKUMENT" );
+    Foswiki::Func::saveTopic( $subweb, 'ConditionTestTemplate', undef, "This should be a TEMPLATE" );
+    $this->createNewFoswikiSession( $user, $query );
+    $this->assert_equals( 'DOKUMENT', Foswiki::Func::expandCommonVariables("%WORKFLOWMETA{topic=\"$subweb.ConditionTestDokument\"}%") );
+    $this->assert_equals( 'TEMPLATE', Foswiki::Func::expandCommonVariables("%WORKFLOWMETA{topic=\"$subweb.ConditionTestTemplate\"}%") );
+}
+
+# Test if...
 # ...moving an approved topic moves it's discussion with it
 # ...moving an approved topic where an old discussion is in the way introduces a numbered suffix
 #
