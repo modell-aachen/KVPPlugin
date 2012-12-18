@@ -13,7 +13,18 @@ jQuery(function($) {
     WORKFLOW.confirm = function() {
         var warning = WORKFLOW.w[WORKFLOW.getSelection()] || '';
         if(warning == '' || confirm(warning) === true) {
-            $('#KVPTransitions').block();
+            // get block-message
+            var message = foswiki.getMetaTag('TEXT_BLOCKUI_KVP');
+            if(message === undefined || message === "") {
+                message = foswiki.getMetaTag('TEXT_BLOCKUI');
+            }
+            // block
+            if (message === undefined || message === "") {
+                $('#KVPTransitions').block();
+            } else {
+                $('#KVPTransitions').block( {message: '<h1>'+message+'</h1>', css: {width: 'auto', height: 'auto', backgroundColor: 'black'}} );
+            }
+
             return true;
         } else {
             return false

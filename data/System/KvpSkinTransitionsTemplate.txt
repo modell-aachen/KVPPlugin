@@ -1,6 +1,9 @@
+%TMPL:INCLUDE{"metatext"}%
 %{ Modell Aachen KVP Prozess }%
 
+%{"If you want to customize the transition-blockUI, you should add a TMPL:P{"TransitionMsg" MESSAGE="your message"} to kvptransitions. Please escape quotations (") with &quot; }%
 %TMPL:DEF{"kvptransitions"}%
+%TMPL:P{"TEXT_BLOCKUI"}%
 <div class="modacKVPtable" id="KVPTransitions">
 | *%MAKETEXT{"Improvement Process"}%* ||
 | %MAKETEXT{"State"}% | %MAKETEXT{%GETWORKFLOWROW{message}%}% |
@@ -8,3 +11,5 @@
 | %MAKETEXT{"Last editing person"}% | %REVINFO{format="$username"}% |
 </div>
 %TMPL:END%
+
+%TMPL:DEF{"TransitionMsg"}%%ADDTOZONE{"head" id="TEXT_BLOCKUI_KVP" text="<meta name=$quotTEXT_BLOCKUI_KVP$quot content=$quot%MESSAGE%$quot />"}%%TMPL:END%
