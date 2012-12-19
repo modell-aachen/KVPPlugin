@@ -494,3 +494,6 @@ msgstr "in&#160;Diskussion"
 #: templates/oopshistory.kvp.tmpl:27
 msgid "view"
 msgstr "ansehen"
+
+msgid "You may not create this topic under this workflow!"
+msgstr "Die dürfen diese Seite unter diesem Workflow nicht anlegen!"
