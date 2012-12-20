@@ -6,6 +6,7 @@ data/System/KvpSkinHeadTemplate.txt 0644 Template for header
 data/System/KvpSkinTransitionsTemplate.txt 0644 Template for transitionmenue
 pub/System/KVPPlugin/transitions.js 0644 Script for transition menue
 pub/System/KVPPlugin/changewarning.js 0644 Script for transition menue
+pub/System/KVPPlugin/blockLink.js 0644 Script for blocking links
 locale/KVPPlugin/de.po 0666 German translations
 lib/Foswiki/Plugins/KVPPlugin.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/ControlledTopic.pm 0666

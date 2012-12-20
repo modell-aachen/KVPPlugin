@@ -542,8 +542,13 @@ sub _WORKFLOWFORK {
     } else {
         $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'rest', topic=> "$web.$topic", lockdown=> $lockdown );
     }
-    
-    return "<a href='$url' $title>$label</a>";
+
+    # Add script to prevent double-clicking link
+    my $js = Foswiki::Func::getPubUrlPath()."/$Foswiki::cfg{SystemWebName}/KVPPlugin/blockLink.js";
+    Foswiki::Func::addToZone('script', 'WORKFLOW::DISABLE', "<script type=\"text/javascript\" src=\"$js\"></script>", 'JQUERYPLUGIN::FOSWIKI');
+    Foswiki::Plugins::JQueryPlugin::createPlugin( 'blockUI', $session );
+
+    return "<a class=\"kvpForkLink\" href='$url' $title>$label</a>";
 }
 
 # Tag handler
