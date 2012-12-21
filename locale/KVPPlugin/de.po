@@ -57,15 +57,15 @@ msgstr "Entwurf formal freigeben"
 msgid "Approved Page"
 msgstr "Freigegebener Stand"
 
-#: data/System/KvpSkinHeadTemplate.txt:103
-#: data/System/KvpSkinHeadTemplate.txt:177
-#: data/System/KvpSkinHeadTemplate.txt:214
+#: data/System/KvpSkinTopHeadTemplate.txt:103
+#: data/System/KvpSkinTopHeadTemplate.txt:177
+#: data/System/KvpSkinTopHeadTemplate.txt:214
 msgid "Approved by"
 msgstr "Freigegeben durch"
 
-#: data/System/KvpSkinHeadTemplate.txt:169
-#: data/System/KvpSkinHeadTemplate.txt:206
-#: data/System/KvpSkinHeadTemplate.txt:95
+#: data/System/KvpSkinTopHeadTemplate.txt:169
+#: data/System/KvpSkinTopHeadTemplate.txt:206
+#: data/System/KvpSkinTopHeadTemplate.txt:95
 msgid "Area of application"
 msgstr "Geltungsbereich"
 
@@ -124,9 +124,9 @@ msgstr ""
 "Der Workflow konnte für %1 nicht initialisiert werden! Eventuell wurde die "
 "Seite gelöscht?"
 
-#: data/System/KvpSkinHeadTemplate.txt:173
-#: data/System/KvpSkinHeadTemplate.txt:210
-#: data/System/KvpSkinHeadTemplate.txt:99
+#: data/System/KvpSkinTopHeadTemplate.txt:173
+#: data/System/KvpSkinTopHeadTemplate.txt:210
+#: data/System/KvpSkinTopHeadTemplate.txt:99
 msgid "Creator"
 msgstr "Ersteller"
 
@@ -256,9 +256,9 @@ msgstr "alte Diskussion"
 msgid "Put under CIP"
 msgstr "In KVP überführen"
 
-#: data/System/KvpSkinHeadTemplate.txt:105
-#: data/System/KvpSkinHeadTemplate.txt:179
-#: data/System/KvpSkinHeadTemplate.txt:216
+#: data/System/KvpSkinTopHeadTemplate.txt:105
+#: data/System/KvpSkinTopHeadTemplate.txt:179
+#: data/System/KvpSkinTopHeadTemplate.txt:216
 msgid "Release date"
 msgstr "Freigabedatum"
 
@@ -278,9 +278,9 @@ msgstr "Um Freigabe bitten"
 msgid "Request further revision"
 msgstr "Um weitere Überarbeitung bitten"
 
-#: data/System/KvpSkinHeadTemplate.txt:101
-#: data/System/KvpSkinHeadTemplate.txt:175
-#: data/System/KvpSkinHeadTemplate.txt:212
+#: data/System/KvpSkinTopHeadTemplate.txt:101
+#: data/System/KvpSkinTopHeadTemplate.txt:175
+#: data/System/KvpSkinTopHeadTemplate.txt:212
 msgid "Responsible"
 msgstr "Verantwortlich"
 
@@ -485,9 +485,9 @@ msgstr "später"
 msgid "restore"
 msgstr "wiederherstellen"
 
-#: data/System/KvpSkinHeadTemplate.txt:210
-#: data/System/KvpSkinHeadTemplate.txt:214
-#: data/System/KvpSkinHeadTemplate.txt:216
+#: data/System/KvpSkinTopHeadTemplate.txt:210
+#: data/System/KvpSkinTopHeadTemplate.txt:214
+#: data/System/KvpSkinTopHeadTemplate.txt:216
 msgid "under&#160;discussion"
 msgstr "in&#160;Diskussion"
 

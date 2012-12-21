@@ -2,7 +2,7 @@
 data/System/KVPPlugin.txt 0644 Documentation
 data/System/KVPPluginCommonWords.txt 0644
 data/System/KvpSkinSolrSearchBaseTemplate.txt 0644 Adjustments for SolrSearch
-data/System/KvpSkinHeadTemplate.txt 0644 Template for header
+data/System/KvpSkinTopHeadTemplate.txt 0644 Template for header
 data/System/KvpSkinTransitionsTemplate.txt 0644 Template for transitionmenue
 pub/System/KVPPlugin/transitions.js 0644 Script for transition menue
 pub/System/KVPPlugin/changewarning.js 0644 Script for transition menue
