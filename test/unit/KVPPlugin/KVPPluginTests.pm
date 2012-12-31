@@ -333,6 +333,26 @@ sub test_moveWithDiscussion {
 }
 
 # Test if...
+# ...%WORKFLOWORIGIN% is calculated correctly.
+sub test_origin {
+    my ( $this ) = @_;
+
+    Helper::becomeAnAdmin($this);
+
+    Helper::createWithState( $this, Helper::KVPWEB, 'OriginTestEntwurf', 'ENTWURF' );
+    $this->assert_equals( 'OriginTestEntwurf', Foswiki::Func::expandCommonVariables('%WORKFLOWORIGIN%') );
+    Helper::createWithState( $this, Helper::KVPWEB, 'OriginTestApproved', 'FREIGEGEBEN' );
+    $this->assert_equals( 'OriginTestApproved', Foswiki::Func::expandCommonVariables('%WORKFLOWORIGIN%') );
+    Helper::createDiscussion( $this, Helper::KVPWEB, 'OriginTestApproved' );
+    $this->assert_equals( 'OriginTestApproved', Foswiki::Func::expandCommonVariables('%WORKFLOWORIGIN%') );
+    Helper::createWithState( $this, Helper::KVPWEB, 'OriginTestTALKedabout', 'FREIGEGEBEN' );
+    $this->assert_equals( 'OriginTestTALKedabout', Foswiki::Func::expandCommonVariables('%WORKFLOWORIGIN%') );
+    Helper::createDiscussion( $this, Helper::KVPWEB, 'OriginTestTALKedabout' );
+    $this->assert( Foswiki::Func::topicExists( Helper::KVPWEB, 'OriginTestTALKedaboutTALK' ) );
+    $this->assert_equals( 'OriginTestTALKedabout', Foswiki::Func::expandCommonVariables('%WORKFLOWORIGIN%') );
+}
+
+# Test if...
 # ...in a standard workflow all states and transitions can be reached/executed correctly.
 sub test_basicTransitions {
     my ( $this ) = @_;
