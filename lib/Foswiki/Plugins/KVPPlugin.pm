@@ -733,9 +733,7 @@ sub _changeState {
             # Flag that this is a state change to the beforeSaveHandler
             local $isStateChange = 1;
             #Alex: Zugehriges Topic finden
-            my $forkSuffix = _WORKFLOWSUFFIX();
-            my $appTopic = $topic;
-            $appTopic =~ s/$forkSuffix$//g;
+            my $appTopic = _getOrigin( $topic );
 
             # Hier Action 
             if ($forkingAction && $forkingAction eq "DISCARD") {
