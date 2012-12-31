@@ -243,6 +243,34 @@ sub test_basicTransitions {
 }
 
 # Test if...
+# ...an admin may edit/attach to topics where is not in "allow edit" column
+sub test_adminMayEditApproved {
+    my ( $this ) = @_;
+
+    my $topic = 'ApprovedTopic';
+    my $attachment = 'attachment.txt';
+    my $user = Helper::becomeAnAdmin($this);
+
+    Helper::createWithState( $this, Helper::KVPWEB, 'ApprovedTopic', 'FREIGEGEBEN', "My name is $user, you may delete this topic." );
+
+    my ( $meta, $text ) = Foswiki::Func::readTopic( Helper::KVPWEB, $topic );
+    $text .= '\nThis topic has been edited.\n';
+    try {
+        Foswiki::Func::saveTopic( Helper::KVPWEB, $topic, $meta, $text );
+        Foswiki::Func::saveAttachment( Helper::KVPWEB, $topic, $attachment, { file=>$attachments[0]->{stream} } );
+    } catch Foswiki::OopsException with {
+        my $oops = shift;
+        $this->assert(0, "Admin $user could not edit approved topic: ".$oops->stringify());
+    };
+
+    # check result
+    ( $meta, $text ) = Foswiki::Func::readTopic( Helper::KVPWEB, $topic );
+    $this->assert( $text =~ m/edited/ );
+    $this->assert( $meta->hasAttachment( $attachment ) );
+    $this->assert( Foswiki::Func::readAttachment( Helper::KVPWEB, $topic, $attachment ) eq $attachments[0]->{text} );
+}
+
+# Test if...
 # ...the NEW transition is executed when creating a topic
 # ...lack of a NEW transition inhibits creating topic for non-admins
 # ...admins can still create topics, even if there is no NEW transition
