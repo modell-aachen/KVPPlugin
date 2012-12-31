@@ -190,7 +190,7 @@ sub _getOrigin {
     my ( $topic ) = @_;
 
     my $suffix = _WORKFLOWSUFFIX();
-    if ($topic =~ /(.*)$suffix/) {
+    if ($topic =~ /(.*)$suffix$/) {
         return $1;
     } else {
         return $topic;
