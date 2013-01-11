@@ -483,7 +483,7 @@ SCRIPT
         $pluginName, 'changeState', 'rest'
     );
     my $form =
-        CGI::start_form( -method => 'POST', -action => $url , -onsubmit =>"javascript:return WORKFLOW.confirm()" )
+        CGI::start_form( -method => 'POST', -action => $url , -class => 'KVPTransitionForm' )
       . join( '', @fields )
       . CGI::end_form();
 

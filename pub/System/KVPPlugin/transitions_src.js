@@ -56,5 +56,8 @@ jQuery(function($) {
         }
     }
     $('select').change(WORKFLOW.showCheckBox);
+    $('.KVPTransitionForm').submit(function(ev) {
+        return WORKFLOW.confirm();
+    });
     WORKFLOW.showCheckBox();
 });
