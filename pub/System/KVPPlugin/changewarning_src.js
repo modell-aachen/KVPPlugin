@@ -1,6 +1,6 @@
 jQuery(function($) {
     function confirmation(e) {
-        if(!confirm(KVPMessage)) {
+        if(!confirm(foswiki.getMetaTag('TEXT_KVPDiscussionMessage'))) {
             e.stopPropagation();
             e.preventDefault();
         }
