@@ -23,7 +23,7 @@ use constant FORCENEW => 1;
 use constant NOCACHE => 2;
 
 our $VERSION          = '$Rev: 7808 (2010-06-15) $';
-our $RELEASE          = '2.0.5';
+our $RELEASE          = '2.0.6';
 our $SHORTDESCRIPTION = 'Kontinuierliche Verbesserung im Wiki';
 our $NO_PREFS_IN_TOPIC = 1;
 our $pluginName       = 'KVPPlugin';
