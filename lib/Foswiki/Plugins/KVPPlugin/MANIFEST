@@ -12,6 +12,7 @@ lib/Foswiki/Plugins/KVPPlugin.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/ControlledTopic.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/Workflow.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/Config.spec 0755 Configuration
+lib/Foswiki/Plugins/SafeWikiPlugin/Signatures/KVPPlugin.pm 0666 Signatures
 templates/mailworkflowtransition.tmpl 0666
 templates/oopswfplease.tmpl 0666
 templates/oopswrkflwsaveerr.tmpl 0666
