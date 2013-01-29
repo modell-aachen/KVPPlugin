@@ -230,15 +230,7 @@ sub _initTOPIC {
         }
     }
 
-    if ( defined &Foswiki::Func::isValidTopicName ) {
-        # Allow non-wikiwords
-        return undef unless Foswiki::Func::isValidTopicName( $topic, 1 );
-    }
-    else {
-        # (tm)wiki doesn't have isValidTopicName
-        # best we can do
-        return undef unless Foswiki::Func::isValidWikiWord($topic);
-    }
+    return undef unless Foswiki::Func::isValidTopicName( $topic, 1 );
 
     my $workflowName;
     $workflowName = $meta->getPreference('WORKFLOW') if $meta;
