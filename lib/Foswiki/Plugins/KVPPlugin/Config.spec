@@ -15,6 +15,10 @@ $Foswiki::cfg{Extensions}{KVPPlugin}{except} = '^(WikiGroups|WikiUsers|WebChange
 $Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow} = {'lefttab' => 'Info Page', 'righttab' => 'Old Discussion', 'approved' => 1, 'message' => 'This topic is not under any workflow.'};
 
 # **BOOLEAN**
+# Ist diese Option deaktiviert, *muss* eine NEW-Transition durchgef&uuml;hrt werden, wenn eine neue Seite angelegt wird.
+$Foswiki::cfg{Extensions}{KVPPlugin}{NoNewRequired} = 0;
+
+# **BOOLEAN**
 # Detailierte Logs f&uuml;r Emails aktivieren.
 $Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails} = 0;
 
