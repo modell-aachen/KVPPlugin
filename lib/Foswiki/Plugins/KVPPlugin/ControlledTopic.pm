@@ -340,6 +340,7 @@ sub changeState {
     #Alex: Es muss garantiert sein, dass die Form nicht leer ist (also " ")
     my $form = $this->{workflow}->getNextForm( $this, $action );
     my $notify = $this->{workflow}->getNotifyList( $this, $action );
+    my $attributes = $this->{workflow}->getAttributes( $this->getState(), $action );
 
     my ( $revdate, $revuser, $version ) = $this->{meta}->getRevisionInfo();
     if (ref($revdate) eq 'HASH') {
@@ -393,6 +394,24 @@ sub changeState {
     if ($form) {
         #$this->{meta}->put( "FORM", { name => $form } );
     }    # else leave the existing form in place
+
+    # Set preferences / fields from transition-table
+    if ($attributes) {
+        my $s = $this->getState();
+        while ( $attributes =~ m/SETPREF\(\s*(\w+)\s*=\s*"([^"]*)"\s*\)/g ) {
+            my $name = $1;
+            my $value = Foswiki::Func::decodeFormatTokens( $2 || '' );
+            $value = Foswiki::Func::expandCommonVariables( $value, $this->{topic}, $this->{web}, $this->{meta} );
+            $this->{meta}->putKeyed( 'PREFERENCE', { name=>$name, value=>$value, type=>'Set' } );
+            Foswiki::Func::setPreferencesValue( $name, $value ); # in case its important for the mail
+        }
+        while ( $attributes =~ m/SETFIELD\(\s*(\w+)\s*=\s*"([^"]*)"\s*\)/g ) {
+            my $name = $1;
+            my $value = Foswiki::Func::decodeFormatTokens( $2 || '' );
+            $value = Foswiki::Func::expandCommonVariables( $value, $this->{topic}, $this->{web}, $this->{meta} );
+            $this->{meta}->putKeyed( 'FIELD', { name=>$name, title=>$name, value=>$value } );
+        }
+    }
 
     # Send mails
     if ($notify) {
