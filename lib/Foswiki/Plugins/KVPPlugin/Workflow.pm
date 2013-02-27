@@ -256,7 +256,7 @@ sub getTransitionAttributes {
     my $comment = ',';
 
     return ($allow, $suggest, $comment) unless $state; # This happens when topic has no META:WORKFLOW...
-    
+
     foreach my $t ( @{ $this->{transitions} } ) {
         if ($t->{attribute} && $t->{state} eq $state) {
             if( $t->{attribute} =~ /(?:\W|^)ALLOWDELETECOMMENTS(?:\W|$)/ ) {
@@ -270,7 +270,7 @@ sub getTransitionAttributes {
             }
         }
     }
-    
+
     return ($allow, $suggest, $comment);
 }
 

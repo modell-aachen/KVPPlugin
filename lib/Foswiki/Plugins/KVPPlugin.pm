@@ -705,7 +705,6 @@ sub _changeState {
             if( $actionAttributes !~ /(?:\W|^)REMARK(?:\W|$)/ ) {
                 $remark = '';
             }
-            $controlledTopic->changeState($action, $remark);
 
             # check if deleting comments is allowed if requested
             { #scope
@@ -717,7 +716,6 @@ sub _changeState {
                 {
                     # this can happen by changing the popup-menue after
                     # selecting the checkbox
-                    my $username = Foswiki::Func::getWikiUserName();
                     $removeComments = '0';
                 }
             }
@@ -726,6 +724,9 @@ sub _changeState {
                 $removeComments = '1';
             }
             removeComments($controlledTopic) if ($removeComments eq '1');
+
+            # Do the actual transition
+            $controlledTopic->changeState($action, $remark);
 
             # Flag that this is a state change to the beforeSaveHandler (beforeRenameHandler)
             local $isStateChange = 1;
