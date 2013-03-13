@@ -11,6 +11,7 @@ pub/System/KVPPlugin/changewarning.js.gz 0644 Script for transition menue
 pub/System/KVPPlugin/blockLink.js 0644 Script for blocking links
 pub/System/KVPPlugin/blockLink.js.gz 0644 Script for blocking links
 locale/KVPPlugin/de.po 0666 German translations
+locale/KVPPlugin/fr.po 0666 French translations
 lib/Foswiki/Plugins/KVPPlugin.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/ControlledTopic.pm 0666
 lib/Foswiki/Plugins/KVPPlugin/Workflow.pm 0666
