@@ -13,6 +13,8 @@ use strict;
 use Error ':try';
 use Assert;
 
+use HTML::Entities ();
+
 use Foswiki::Func ();
 use Foswiki::Plugins::KVPPlugin::Workflow ();
 use Foswiki::Plugins::KVPPlugin::ControlledTopic ();
@@ -522,8 +524,8 @@ SCRIPT
 
     if ( $numberOfActions == 1 ) {
         push( @fields,
-              "<input type='hidden' name='WORKFLOWACTION' value='"
-                .$actions[0]."' />" );
+              "<input type='hidden' name='WORKFLOWACTION' value=\""
+                .HTML::Entities::encode_entities($actions[0], '<>&"')."\" />" );
         push(
             @fields,
 #            CGI::submit(
