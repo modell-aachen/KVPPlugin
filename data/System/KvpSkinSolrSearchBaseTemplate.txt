@@ -11,7 +11,8 @@
     <span class='foswikiGrayText'>
       %WEBLINK{"%web%"
         format="<a class='webLink' href='$url'>%MAKETEXT{"in [_1]" args="$title"}%</a>"
-      }%%IF{"'%GETWORKFLOWROW{"approved" web="%web%" topic="%topic%"}%'!='1'" then="<em style='font-size: 0.9em;' title='%MAKETEXT{not approved}%'>($percentGETWORKFLOWROW{$quotstate$quot web=$quot%web%$quot topic=$quot%topic%$quot}$percent)</em>"}%
+      }%%{
+      }%%IF{"'%approved%'='false'" then="<em style='font-size: 0.9em;' title='%MAKETEXT{not approved}%'>(%MAKETEXT{%state%}%)</em>"}%
     </span>%{
     }%%IF{"'%content_language%'='de'" then="<img class='modacFlag' src='%PUBURLPATH%/%SYSTEMWEB%/FamFamFamFlagIcons/de.png' alt='de.png' title='%MAKETEXT{"German"}%' />"}%%{
     }%%IF{"'%content_language%'='en'" then="<img class='modacFlag' src='%PUBURLPATH%/%SYSTEMWEB%/FamFamFamFlagIcons/gb.png' alt='gb.png' title='%MAKETEXT{"English"}%' />"}%%{
@@ -29,4 +30,12 @@
   </div>
 </div>
 <!-- -->%TMPL:END%
+%{</verbatim>}%
+
+%{<verbatim class="tml">}%
+%TMPL:DEF{"modacExtraFormat"}%
+%TMPL:PREV%
+state=\"$process_state_s\"
+approved=\"$workflow_isapproved_b\"
+%TMPL:END%
 %{</verbatim>}%

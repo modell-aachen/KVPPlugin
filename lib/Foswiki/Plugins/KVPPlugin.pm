@@ -1438,11 +1438,19 @@ sub indexTopicHandler {
     # only index controlled topics, or old metadata will end up in index.
     # XXX would be cool if one could detect when a workflow failed to parse
     my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, NOCACHE );
-    return unless $controlledTopic;
+
+    if( $controlledTopic ) {
+        $doc->add_fields( workflow_controlled_b => 1 );
+    } else {
+        $doc->add_fields( workflow_controlled_b => 0 );
+        return;
+    }
 
     # might result in default-state
     my $state = $controlledTopic->getState();
     $doc->add_fields( process_state_s => $state) if $state;
+
+    $doc->add_fields( workflow_isapproved_b => ($controlledTopic->getRow( 'approved' ))?1:0 );
 
     # Modac : Mega Easy Implementation
     my $workflow = $meta->get('WORKFLOW');
