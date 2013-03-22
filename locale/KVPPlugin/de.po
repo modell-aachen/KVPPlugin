@@ -500,3 +500,27 @@ msgstr "Die dürfen diese Seite unter diesem Workflow nicht anlegen!"
 
 msgid "No action was specified!"
 msgstr "Die Aktion wurde nicht angegeben!"
+
+msgid "approved"
+msgstr "Freigegeben"
+
+msgid "under discussion"
+msgstr "in Diskussion"
+
+msgid "draft"
+msgstr "Entwurf"
+
+msgid "discarded"
+msgstr "Verworfen"
+
+msgid "formal revision"
+msgstr "formale Prüfung"
+
+msgid "formal revision (draft)"
+msgstr "formale Prüfung (Entwurf)"
+
+msgid "contentual revision"
+msgstr "inhaltliche Prüfung"
+
+msgid "contentual revision (draft)"
+msgstr "formale Prüfung (Entwurf)"

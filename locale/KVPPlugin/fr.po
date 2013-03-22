@@ -474,3 +474,26 @@ msgstr "en&#160;cours&#160;de&#160;discussion"
 msgid "view"
 msgstr "visualiser"
 
+msgid "approved"
+msgstr "approuvé"
+
+msgid "under discussion"
+msgstr "en cours de discussion"
+
+msgid "draft"
+msgstr "Avant-projet"
+
+msgid "discarded"
+msgstr "écarté"
+
+msgid "formal revision"
+msgstr "version formelle"
+
+msgid "formal revision (draft)"
+msgstr "version formelle (avant-projet)"
+
+msgid "contentual revision"
+msgstr "version contentuelle"
+
+msgid "contentual revision (draft)"
+msgstr "version contentuelle (avant-projet)"
