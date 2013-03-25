@@ -1,0 +1,10 @@
+%TMPL:INCLUDE{"view"}%
+
+%TMPL:DEF{"modacButtonsRIGHT"}%<li><div class="modacActionButtonACTIVE">[[%WEB%.%TOPIC%][Makros anzeigen]]</div></li>%TMPL:PREV%%TMPL:END%
+
+%{Escape percents, exept for twisties and edittable}%
+%{<verbatim>}%
+%TMPL:DEF{"content"}%%TMPL:P{"simpleheader"}%
+%SUBST{topic="%BASETOPIC%"  pattern="%(?=[A-Z])(?!EDITTABLE|TWISTY|ENDTWISTY)" format="&#37;" expand="off"}% %IF{"$raw='on'" then='%TMPL:P{"sig_textareabuttons"}%'}%
+%TMPL:END%
+%{</verbatim>}%

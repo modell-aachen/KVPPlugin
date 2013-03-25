@@ -5,6 +5,8 @@ data/System/KvpSkinSolrSearchBaseTemplate.txt 0644 Adjustments for SolrSearch
 data/System/KvpSkinSolrSearchViewTemplate.txt 0644 Adjustments for SolrSearch
 data/System/KvpSkinTopHeadTemplate.txt 0644 Template for header
 data/System/KvpSkinTransitionsTemplate.txt 0644 Template for transitionmenue
+data/System/KvpSkinWorkflowViewTemplate.txt 0644 ViewTemplate to allow showing macros
+data/System/KvpSkinWorkflowViewMacrosTemplate.txt 0644 ViewTemplate for showing macros
 pub/System/KVPPlugin/transitions.js 0644 Script for transition menue
 pub/System/KVPPlugin/transitions.js.gz 0644 Script for transition menue
 pub/System/KVPPlugin/changewarning.js 0644 Script for transition menue
