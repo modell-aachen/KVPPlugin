@@ -238,10 +238,12 @@ sub _initTOPIC {
     return undef unless Foswiki::Func::isValidTopicName( $topic, 1 );
 
     my $workflowName;
-    $workflowName = $meta->getPreference('WORKFLOW') if $meta;
-    Foswiki::Func::pushTopicContext( $web, $topic );
-    $workflowName = Foswiki::Func::getPreferencesValue('WORKFLOW');
-    Foswiki::Func::popTopicContext();
+    $workflowName = $meta->getPreference('WORKFLOW') if ( $meta );
+    unless( defined $workflowName ) {
+        Foswiki::Func::pushTopicContext( $web, $topic );
+        $workflowName = Foswiki::Func::getPreferencesValue('WORKFLOW');
+        Foswiki::Func::popTopicContext();
+    }
 
     if ($workflowName) {
         ( my $wfWeb, $workflowName ) =
