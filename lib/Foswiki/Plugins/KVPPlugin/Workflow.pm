@@ -402,7 +402,7 @@ sub _topicAllows {
     my $allowed;
     my $state = $topic->getState();
     unless( $this->{states}->{$state} ) {
-        Foswiki::Func::writeWarning("Error in Workflow: state '$state' does not exist!");
+        Foswiki::Func::writeWarning("Error in Workflow for $topic->{web}.$topic->{topic}: state '$state' does not exist!");
         Foswiki::Plugins::KVPPlugin::_broadcast('%MAKETEXT{"Error in Workflow: state [_1] does not exist!" args="'.$state.'"}%');
         $allowed = 'nobody'; # This will empower admins
     } else {
