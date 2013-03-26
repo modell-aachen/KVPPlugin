@@ -1225,6 +1225,8 @@ sub beforeSaveHandler {
 
         # We don't ever want to copy over the workflow state from a template
         $meta->remove('WORKFLOW');
+        $meta->remove('WORKFLOWHISTORY');
+        $meta->remove('WRKFLWCONTRIBUTORS');
 
         # First set stuff, as it might require values that are to be removed.
         # SetForm:
