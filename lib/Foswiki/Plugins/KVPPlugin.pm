@@ -990,12 +990,15 @@ sub _restFork {
                 my $newAction = shift @actions;
                 my $newWeb = shift @webs;
 
+                $directToWeb = $newWeb;
+                $directToTopic = $newTopic;
+
                 next if (Foswiki::Func::topicExists($newWeb, $newTopic)); 
 
                 #Alex: Topic mit allen Dateien kopieren
                 my $handler = $session->{store}->getHandler( $forkWeb, $forkTopic );
                 $handler->copyTopic($session->{store}, $newWeb, $newTopic);
-            
+
                 my $text = $tttext;
                 my $meta = new Foswiki::Meta($session, $newWeb, $newTopic);
                 foreach my $k ( keys %$ttmeta ) {
@@ -1008,12 +1011,12 @@ sub _restFork {
                     }
                     $meta->putAll( $k, @data );
                 }
-        
+
                 my $forkhistory = {
                     value => "<br>Forked from [[$forkWeb.$forkTopic]] by $who at $now",
                 };
                 $meta->put( "WORKFLOWHISTORY", $forkhistory );
-       
+
                 my $history = $ttmeta->get('WORKFLOWHISTORY') || {};
                 $history->{value} .= "<br>Forked to " .
                     "[[$newWeb.$newTopic]]" . " by $who at $now";
@@ -1022,7 +1025,7 @@ sub _restFork {
                 # Modell Aachen Settings:
                 # Ueberfuehren in Underrevision:    
                 my $newcontrolledTopic = _initTOPIC( $newWeb, $newTopic, undef, $meta, $text, FORCENEW);
-     
+
                 unless ( $newcontrolledTopic ) {
                     $erroneous .= '%MAKETEXT{"Could not initialize workflow for"}% '."$newWeb.$newTopic\n\n";
                     next; # XXX this leaves the created topic behind
@@ -1034,8 +1037,6 @@ sub _restFork {
                 local $isStateChange = 0;
 
                 # Topic successfully forked
-                $directToWeb = $newWeb;
-                $directToTopic = $newTopic;
             }
 
             if ($lockdown) {
