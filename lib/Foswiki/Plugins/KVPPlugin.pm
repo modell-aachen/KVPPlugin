@@ -1301,54 +1301,11 @@ sub beforeSaveHandler {
     # In this case we don't need the access check.
     return if ($isStateChange);
 
-    # Otherwise we need to check if the packet of state change information
-    # is present.
-    my $changingState = 1;
-    my %stateChangeInfo;
-    foreach my $p ('WORKFLOWPENDINGACTION', 'WORKFLOWCURRENTSTATE',
-                     'WORKFLOWPENDINGSTATE', 'WORKFLOWWORKFLOW') {
-        $stateChangeInfo{$p} = $query->param($p);
-        if (defined $stateChangeInfo{$p}) {
-            $query->delete($p);
-        } else {
-            # All params must be present to change state
-            $changingState = 0;
-            last;
-        }
-    }
-
-    my $controlledTopic;
-    if ($changingState) {
-        # See if we are expecting to apply a new state from query
-        # params
-        my ($wfw, $wft) = Foswiki::Func::normalizeWebTopicName(
-            undef, $stateChangeInfo{WORKFLOWWORKFLOW}
-        );
-
-        # TODO Test if new
-        #  _initTOPIC($web, $topic, undef, $meta, $text, FORCENEW)
-        #  does the job. Unless the workflow can change...
-
-        # Can't use initTOPIC, because the data comes from the save
-        my $workflow = new Foswiki::Plugins::KVPPlugin::Workflow(
-            $wfw, $wft
-        );
-        $controlledTopic = new Foswiki::Plugins::KVPPlugin::ControlledTopic(
-            $workflow, $web, $topic, $meta, $text
-        );
-    } else {
-        # Otherwise we are *not* changing state so we can use initTOPIC
-        $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, FORCENEW );
-    }
+    my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, FORCENEW );
 
     return unless $controlledTopic;
 
-    if ($changingState) {
-        # The beforeSaveHandler has no way to abort the save,
-        # so we have to do a state change without a topic save.
-        $controlledTopic->changeState($stateChangeInfo{WORKFLOWPENDINGACTION});
-        #
-    } elsif ( !$controlledTopic->canEdit() ) {
+    if ( !$controlledTopic->canEdit() ) {
         # Not a state change, make sure the AllowEdit in the state table
         # permits this action
         my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not permitted to save this topic. You have been denied access by workflow restrictions."}%', $topic, $web, $meta);
