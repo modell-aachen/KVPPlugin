@@ -1303,11 +1303,10 @@ sub beforeSaveHandler {
     # In this case we don't need the access check.
     return if ($isStateChange);
 
+    my $oldControlledTopic = _initTOPIC( $web, $topic, undef, undef, undef, NOCACHE );
     my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, FORCENEW );
 
-    return unless $controlledTopic;
-
-    if ( !$controlledTopic->canEdit() ) {
+    if ( $oldControlledTopic && !$controlledTopic->canEdit() ) {
         # Not a state change, make sure the AllowEdit in the state table
         # permits this action
         my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not permitted to save this topic. You have been denied access by workflow restrictions."}%', $topic, $web, $meta);
@@ -1319,6 +1318,8 @@ sub beforeSaveHandler {
             params => $message
         );
     } else {
+        return unless $controlledTopic;
+
         my $newMeta = new Foswiki::Meta($Foswiki::Plugins::SESSION, $web, $topic, $text);
         my @newStateName = $newMeta->find('WORKFLOW');
         if(scalar @newStateName > 1) { # If 0 this is a new topic, or not controlled, or created without workflow
