@@ -1,0 +1,47 @@
+%{"Keep this INCLUDE, when customizing:"}%
+%{TMPL:INCLUDE{"WorkflowMail"}%
+
+%{"Set the sender:"}%
+%TMPL:DEF{"From"}%%WIKIWEBMASTERNAME% <%WIKIWEBMASTER%>%TMPL:END%
+
+%{"Set subject:"}%
+%TMPL:DEF{"Subject"}%%MAKETEXT{"[_1] has a new state: [_2]" args="%TMPL:P{"TOPIC"}%, %TARGET_STATE%"}%%TMPL:END%
+
+%{"Body of the mail:"}%
+%TMPL:DEF{"mailContents"}%
+%MAKETEXT{"[_1] edited the topic [_2]." args="%WIKINAME%, %TMPL:P{"TOPIC"}%"}%
+
+%TMPL:P{"Message"}%%TMPL:P{"Remarks"}%
+
+%MAKETEXT{"Link to the page:"}% %TMPL:P{"LinkToPage"}%
+
+%MAKETEXT{"This is an automatically generated message. Please do not reply to this email."}%
+
+%MAKETEXT{"For questions, please refer to:"}%
+%WIKIWEBMASTERNAME%
+
+
+%{"--- Additional definitions. You rarely need to modify them. ---"}%
+%{"Set receipient:"}%
+%TMPL:DEF{"To"}%%EMAILTO%%TMPL:END%
+
+%{"Charset of the mail"}%
+%TMPL:DEF{"charset"}%utf-8%TMPL:END%
+
+%{"Provides the remarks for the transition, of present"}%
+%TMPL:DEF{"Remarks"}%%IF{"$'WORKFLOWMETA{Remark}'" then="
+
+%MAKETEXT{"Remarks"}%:
+$percentWORKFLOWMETA{Remark}$percent"}%%TMPL:END%
+
+%{"Provides the state-message"}%
+%TMPL:DEF{"Message"}%%MAKETEXT{%GETWORKFLOWROW{message}%}%%TMPL:END%
+
+%{"Set Content-Type (to ether text/plain or text/html)"}%
+%TMPL:DEF{"Type"}%text/plain%TMPL:END%
+
+%{"Provides a link to transitioned topic, use this instead of %TOPIC%"}%
+%TMPL:DEF{"LinkToPage"}%%SCRIPTURL{"rest"}%/KVPPlugin/link?state=%TARGET_STATE%;webtopic=%WEB%.%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN%"}%%TMPL:END%
+
+%{"Provides the name of the transitioned topic:"}%
+%TMPL:DEF{"TOPIC"}%%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN%"}%%TMPL:END%

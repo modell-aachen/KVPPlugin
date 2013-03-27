@@ -1,26 +1,15 @@
-From: %WIKIWEBMASTERNAME% <%WIKIWEBMASTER%>
-To: %EMAILTO%
-Subject: %MAKETEXT{"[_1] has a new state: [_2]" args="%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN%"}%, %TARGET_STATE%"}%
+%TMPL:INCLUDE{"WorkflowMail"}%
+From: %TMPL:P{"From"}%
+To: %TMPL:P{"To"}%
+Subject: %TMPL:P{"Subject"}%
 MIME-Version: 1.0
 Content-Type: multipart/alternative; boundary="=_=0i0k0i0w0tXuOi0E0A"
 
 This is a multi-part message in MIME format.
 --=_=0i0k0i0w0tXuOi0E0A
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: %TMPL:P{"Type"}%; %TMPL:P{"Charset"}%; format=flowed
 Content-Transfer-Encoding: 8bit
 
-%MAKETEXT{"[_1] edited the topic [_2]." args="%WIKINAME%, %IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN%"}%"}%
-
-%MAKETEXT{%GETWORKFLOWROW{message}%}%%IF{"$'WORKFLOWMETA{Remark}'" then="
-
-%MAKETEXT{"Remarks"}%:
-$percentWORKFLOWMETA{Remark}$percent"}%
-
-%MAKETEXT{"Link to the page:"}% %SCRIPTURL{"rest"}%/KVPPlugin/link?state=%TARGET_STATE%;webtopic=%WEB%.%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN%"}%
-
-%MAKETEXT{"This is an automatically generated message. Please do not reply to this email."}%
-
-%MAKETEXT{"For questions, please refer to:"}%
-%WIKIWEBMASTERNAME%
+%TMPL:P{"mailContents"}%
 
 --=_=0i0k0i0w0tXuOi0E0A--
