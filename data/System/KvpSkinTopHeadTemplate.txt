@@ -30,7 +30,7 @@
 			<td style='text-align: center;'>
 				Freigabedatum:<strong><br>%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
-				<span class="Seitenzahl" %{please keep this span, it tells prince where to put the page number}% /></td>
+				%TMPL:P{"modacPageNr"}%</td>
 		</tr>
 	</tbody>
 </table>
@@ -67,7 +67,7 @@
 			<td style='text-align: center;'>
 				Release date:<strong><br>%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
-				<span class="Seitenzahl" %{please keep this span, it tells prince where to put the page number}% /></td>
+				%TMPL:P{"modacPageNr"}%</td>
 		</tr>
 	</tbody>
 </table>
@@ -104,7 +104,7 @@
 			<td style='text-align: center;'>
 				%MAKETEXT{"Release date"}%:<strong><br>%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
-				<span class="Seitenzahl" %{please keep this span, it tells prince where to put the page number}% /></td>
+				%TMPL:P{"modacPageNr"}%</td>
 		</tr>
 	</tbody>
 </table>
@@ -141,7 +141,7 @@
 			<td style='text-align: center;'>
 				Freigabedatum:<strong><br><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
-				<span class="Seitenzahl" %{please keep this span, it tells princepdf where to put the page number}% /></td>
+				%TMPL:P{"modacPageNr"}%</td>
 		</tr>
 	</tbody>
 </table>
@@ -178,7 +178,7 @@
 			<td style='text-align: center;'>
 				%MAKETEXT{"Release date"}%:<strong><br><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
-				<span class="Seitenzahl" %{please keep this span, it tells princepdf where to put the page number}% /></td>
+				%TMPL:P{"modacPageNr"}%</td>
 		</tr>
 	</tbody>
 </table>
@@ -215,7 +215,7 @@
 			<td style='text-align: center;'>
 				%MAKETEXT{"Release date"}%:<strong><br><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
-				<span class="Seitenzahl" %{please keep this span, it tells princepdf where to put the page number}% /></td>
+				%TMPL:P{"modacPageNr"}%</td>
 		</tr>
 	</tbody>
 </table>
