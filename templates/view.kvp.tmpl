@@ -1,12 +1,10 @@
 %TMPL:INCLUDE{"view"}%
 %TMPL:INCLUDE{"transitions"}%
 
-%IF{"context KVPHasDiscussion" then="$percentADDTOZONE{\"script\" id=\"KVPPluginChangeWarning\" requires=\"JQUERYPLUGIN\" text=\"<script type='text/javascript' src='%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/changewarning.js'></script>\"}$percent
-$percentADDTOZONE{\"head\" id=\"KVPPluginChangeWarningText\" text=\"<meta name=$dollarquotTEXT_KVPDiscussionMessage$dollarquot content=$dollarquot$percentTMPL:P{KVPDiscussionWarning}$percent$dollarquot />\"}$percent"}%
-
 %TMPL:DEF{"KVPDiscussionWarning"}%%MAKETEXT{"Attention, there is a discussion for this topic!\nDo you really want to continue?"}%%TMPL:END%
 
 %{"Overload this definition, if you want to influence when the menu is beeing shown."}%
 %TMPL:DEF{"kvpaction"}%%TMPL:P{context="KVPIsDiscussion" then="kvptransitions"}%%TMPL:END%
 
-%TMPL:DEF{"topicaction"}%%TMPL:PREV%%TMPL:P{"kvpaction"}%%TMPL:END%
+%TMPL:DEF{"topicaction"}%%TMPL:PREV%%IF{"context KVPHasDiscussion" then="$percentADDTOZONE{\"script\" id=\"KVPPluginChangeWarning\" requires=\"JQUERYPLUGIN\" text=\"<script type='text/javascript' src='%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/changewarning.js'></script>\"}$percent
+$percentADDTOZONE{\"head\" id=\"KVPPluginChangeWarningText\" text=\"<meta name=$dollarquotTEXT_KVPDiscussionMessage$dollarquot content=$dollarquot$percentTMPL:P{KVPDiscussionWarning}$percent$dollarquot />\"}$percent"}%%TMPL:P{"kvpaction"}%%TMPL:END%
