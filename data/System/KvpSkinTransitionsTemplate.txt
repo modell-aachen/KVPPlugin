@@ -1,6 +1,12 @@
 %TMPL:INCLUDE{"metatext"}%
 %{ Modell Aachen KVP Prozess }%
 
+%{"This warning will be shown if a user edits a topic to which there is a discussion"}%
+%TMPL:DEF{"KVPDiscussionWarning"}%%MAKETEXT{"Attention, there is a discussion for this topic!\nDo you really want to continue?"}%%TMPL:END%
+
+%{"Overload this definition, if you want to influence when the menu is beeing shown."}%
+%TMPL:DEF{"kvpaction"}%%TMPL:P{context="KVPIsDiscussion" then="kvptransitions"}%%TMPL:END%
+
 %{"If you want to customize the transition-blockUI, you should add a TMPL:P{"TransitionMsg" MESSAGE="your message"} to kvptransitions. Please escape quotations (") with &quot; }%
 %TMPL:DEF{"kvptransitions"}%
 %TMPL:P{"TEXT_BLOCKUI"}%
@@ -11,5 +17,3 @@
 | %MAKETEXT{"Last editing person"}% | %REVINFO{format="$username"}% |
 </div>
 %TMPL:END%
-
-%TMPL:DEF{"TransitionMsg"}%%ADDTOZONE{"head" id="TEXT_BLOCKUI_KVP" text="<meta name=$quotTEXT_BLOCKUI_KVP$quot content=$quot%MESSAGE%$quot />"}%%TMPL:END%
