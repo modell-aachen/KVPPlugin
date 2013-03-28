@@ -168,13 +168,6 @@ sub setState {
     $this->{meta}->remove( 'WORKFLOW' ); # XXX sometime putKeyed doesn't replace
     $this->{meta}->putKeyed( "WORKFLOW", $this->{state} );
 
-    ## set accesspermissions to the ones defined in the table
-    #my $writeAcls = $this->{workflow}->getChangeACL($this, $state);
-    #$this->{meta}->putKeyed("PREFERENCE",
-    #                      { name => 'ALLOWTOPICCHANGE', value => $writeAcls }) if ($writeAcls);
-    #my $viewAcls = $this->{workflow}->getViewACL($this, $state);
-    #$this->{meta}->putKeyed("PREFERENCE",
-    #                      { name => 'ALLOWTOPICVIEW', value => $viewAcls }) if ($viewAcls);
     # manage comments
     my $allowComment = $this->{workflow}->getRow($this, 'allowcomment');
     if($allowComment) {
