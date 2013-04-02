@@ -52,6 +52,7 @@ jQuery(function($) {
             box.show();
             $('#WORKFLOWchkboxbox').attr('checked', 'checked');
         } else {
+            $('#WORKFLOWchkboxbox').removeAttr('checked');
             box.hide();
         }
     }
