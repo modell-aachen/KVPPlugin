@@ -524,3 +524,6 @@ msgstr "inhaltliche Prüfung"
 
 msgid "contentual revision (draft)"
 msgstr "formale Prüfung (Entwurf)"
+
+msgid "Invalid destination to fork to: %1"
+msgstr "Ungültiges Ziel zum Abspalten: %1"

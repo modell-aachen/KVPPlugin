@@ -958,6 +958,12 @@ sub _restFork {
             if ( $newname =~ m/\s*\[(.*)\]\[(.*)\]\s*/ ) {
                 ($newTopic, $newAction) = ($1, $2);
                 ($newWeb, $newTopic) = Foswiki::Func::normalizeWebTopicName( $forkWeb, $newTopic );
+                unless (
+                        Foswiki::Func::isValidTopicName( $newTopic, 1 ) &&
+                        Foswiki::Func::isValidWebName( $newWeb ) ) {
+                    $erroneous .= '%MAKETEXT{"Invalid destination to fork to: [_1]" args="'."'$newWeb.$newTopic'\"}%\n\n";
+                    next;
+                }
                 unless ( $controlledTopic->haveNextState($newAction) ) {
                     $erroneous .= '%MAKETEXT{"Cannot execute transition =[_1]= on =[_2]= (invalid on source-workflow)!" args="'."$newAction, $forkWeb.$forkTopic\"}%\n\n";
                     next;
@@ -971,6 +977,13 @@ sub _restFork {
             } else {
                 $newTopic = Foswiki::Sandbox::untaintUnchecked( $newname );
                 ($newWeb, $newTopic) = Foswiki::Func::normalizeWebTopicName( $forkWeb, $newTopic );
+                unless (
+                        Foswiki::Func::isValidTopicName( $newTopic, 1 ) &&
+                        Foswiki::Func::isValidWebName( $newWeb ) ) {
+                    $erroneous .= '%MAKETEXT{"Invalid destination to fork to: [_1]" args="'."'$newWeb.$newTopic'\"}%\n\n";
+                    next;
+                }
+
                 $newAction = $defaultAction;
                 unless ( $newAction ) {
                     $erroneous .= '%MAKETEXT{"No transition with =FORK= attribute to fork"}% '."$newTopic\n\n";
