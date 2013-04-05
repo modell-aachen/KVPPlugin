@@ -537,9 +537,9 @@ sub _WORKFLOWFORK {
 
     my $url;
     if ( $newnames ) {
-        $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'rest', topic=> "$web.$topic", lockdown=> $lockdown, newnames=> $newnames );
+        $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'restauth', topic=> "$web.$topic", lockdown=> $lockdown, newnames=> $newnames );
     } else {
-        $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'rest', topic=> "$web.$topic", lockdown=> $lockdown );
+        $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'restauth', topic=> "$web.$topic", lockdown=> $lockdown );
     }
 
     # Add script to prevent double-clicking link
