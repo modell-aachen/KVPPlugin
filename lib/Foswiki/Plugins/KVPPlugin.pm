@@ -459,7 +459,7 @@ SCRIPT
         );
         push(
             @fields,
-            '<noautolink>%BUTTON{"%MAKETEXT{"Change status"}%" type="submit"}%</noautolink>'
+            '<noautolink>%BUTTON{"%MAKETEXT{"Change status"}%" type="submit" class="KVPChangeStatus"}%</noautolink>'
         );
     }
 
