@@ -10,7 +10,7 @@
   %MAKETEXT{"formal revision"}%=FORMALE_PRUEFUNG,
   %MAKETEXT{"formal revision (draft)"}%=FORMALE_PRUEFUNG_ENTWURF,
   %MAKETEXT{"contentual revision"}%=INHALTLICHE_PRUEFUNG,
-  %MAKETEXT{"contentual revision (draft)"}%=INHALTLICHE_RPRUEFUNG_ENTWURF
+  %MAKETEXT{"contentual revision (draft)"}%=INHALTLICHE_PRUEFUNG_ENTWURF
 %TMPL:END%
 %{</verbatim>}%
 
