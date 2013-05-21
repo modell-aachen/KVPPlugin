@@ -1319,7 +1319,7 @@ sub beforeSaveHandler {
     my $oldControlledTopic = _initTOPIC( $web, $topic, undef, undef, undef, NOCACHE );
     my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, FORCENEW );
 
-    if ( $oldControlledTopic && !$controlledTopic->canEdit() ) {
+    if ( $oldControlledTopic && !$oldControlledTopic->canEdit() ) {
         # Not a state change, make sure the AllowEdit in the state table
         # permits this action
         my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not permitted to save this topic. You have been denied access by workflow restrictions."}%', $topic, $web, $meta);
