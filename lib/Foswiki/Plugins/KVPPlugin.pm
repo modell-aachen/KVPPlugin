@@ -238,7 +238,13 @@ sub _initTOPIC {
     return undef unless Foswiki::Func::isValidTopicName( $topic, 1 );
 
     my $workflowName;
-    $workflowName = $meta->getPreference('WORKFLOW') if ( $meta );
+    if ( $meta ) {
+        # $meta->getPreference('WORKFLOW') does not necessarily do what I want,
+        # eg. on a newly created topic it will return an empty string.
+        # Unfortunately this won't cover a "   * Set WORKFLOW = ..."
+        my $pref = $meta->get('PREFERENCE', 'WORKFLOW');
+        $workflowName = $pref->{value} if $pref;
+    }
     unless( defined $workflowName ) {
         Foswiki::Func::pushTopicContext( $web, $topic );
         $workflowName = Foswiki::Func::getPreferencesValue('WORKFLOW');
