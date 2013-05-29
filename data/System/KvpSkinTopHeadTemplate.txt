@@ -10,7 +10,7 @@
 			<td width='35%' style='text-align: center;'>
 				%{Nummer: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
-				Rev. <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+				VersionVersion:#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
 				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
 		</tr>
@@ -47,7 +47,7 @@
 			<td width='35%' style='text-align: center;'>
 				%{Number:<strong> ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
-				Rev. <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+				VersionVersion:#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
 				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
 		</tr>
@@ -84,7 +84,7 @@
 			<td width='35%' style='text-align: center;'>
 				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
-				Rev. <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+				%MAKETEXT{"Version"}%&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
 				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
 		</tr>
@@ -121,7 +121,7 @@
 			<td width='35%' style='text-align: center;'>
 				%{Nummer: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
-				Rev. <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+				VersionVersion:#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
 				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
 		</tr>
@@ -158,7 +158,7 @@
 			<td width='35%' style='text-align: center;'>
 				%{Number: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
-				Rev. <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+				VersionVersion:#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
 				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
 		</tr>
@@ -195,7 +195,7 @@
 			<td width='35%' style='text-align: center;'>
 				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
-				Rev. <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+				%MAKETEXT{"Version"}%&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
 				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
 		</tr>
