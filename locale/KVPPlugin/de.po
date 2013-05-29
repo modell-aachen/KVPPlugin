@@ -392,7 +392,7 @@ msgstr "Seite wurde verändert"
 
 #: templates/oopshistory.kvp.tmpl:18 templates/oopshistory.kvp.tmpl:5
 msgid "Topic history"
-msgstr "Versionsgeschichte der Seite"
+msgstr "Historie der Seite"
 
 #: templates/oopsworkflowmoved.tmpl:3 templates/oopsworkflowmoved.tmpl:7
 msgid "Topic no longer available"
