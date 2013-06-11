@@ -85,14 +85,14 @@ msgstr ""
 "wirklich fortfahren?"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm:963
-msgid "Cannot execute transition =%1= on =%2= (invalid on source-workflow)!"
+msgid "Cannot execute transition =%1= on =%2= (invalid on source-workflow)."
 msgstr ""
-"Kann Transition =%1= nicht auf =%2= anwenden (ungültig im Quellworkflow)!"
+"Kann Transition =%1= nicht auf =%2= anwenden (ungültig im Quellworkflow)."
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm:969
-msgid "Cannot execute transition =%1= on =%2= (invalid on target-workflow)!"
+msgid "Cannot execute transition =%1= on =%2= (invalid on target-workflow)."
 msgstr ""
-"Kann Transition =%1= nicht auf =%2= anwenden (ungültig im Zielworkflow)!"
+"Kann Transition =%1= nicht auf =%2= anwenden (ungültig im Zielworkflow)."
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm:462
 msgid "Change status"
@@ -119,9 +119,9 @@ msgid "Could not initialize workflow for"
 msgstr "Konnte Workflow nicht initialisieren für"
 
 #: templates/oopswrkflwsaveerr.tmpl:14
-msgid "Could not initialize workflow for %1! Maybe the topic was deleted?"
+msgid "Could not initialize workflow for %1. Maybe the topic was deleted?"
 msgstr ""
-"Der Workflow konnte für %1 nicht initialisiert werden! Eventuell wurde die "
+"Der Workflow konnte für %1 nicht initialisiert werden. Eventuell wurde die "
 "Seite gelöscht?"
 
 #: data/System/KvpSkinTopHeadTemplate.txt:173
@@ -187,10 +187,10 @@ msgstr "Transition dennoch durchführen"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm:1337
 msgid ""
-"Found an invalid workflow (there must be none in a newly created topic)!"
+"Found an invalid workflow (there must be none in a newly created topic)."
 msgstr ""
 "Ungültigen Workflow gefunden (in einer neuen Seite darf keiner vorhanden "
-"sein)!"
+"sein)."
 
 #: data/System/KVPPluginCommonWords.txt:23
 msgid "Give article the accept status"
@@ -227,8 +227,8 @@ msgid "Link to the page:"
 msgstr "Link zur Seite:"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm:1296
-msgid "Must find exactly one workflow in the topic, but found %1!"
-msgstr "Erwarte genau einen Workflow in der Seite, habe aber %1 gefunden!"
+msgid "Must find exactly one workflow in the topic, but found %1."
+msgstr "Erwarte genau einen Workflow in der Seite, habe aber %1 gefunden."
 
 #: data/System/KvpSkinTransitionsTemplate.txt:7
 msgid "Next step"
@@ -307,12 +307,14 @@ msgstr "Status"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm:1317
 msgid ""
-"The Workflowstate =%1= does not match the old state =%2=...maybe someone "
-"edited the topic after you opened it? Topic cannot be saved!"
+"The workflow state did not match the current state.\n\nA common reason is an"
+" old article in the browser cache. Please edit the article again via the wiki"
+" frontend.\n\n(stored state: %1, new state: %2)"
 msgstr ""
-"Der Workflowstatus =%1= gleicht nicht dem alten Status =%2=... eventuell hat "
-"jemand die Seite bearbeitet, nachdem Sie ihn geöffnet haben? Seite kann "
-"nicht gespichert werden!"
+"Der Workflowstatus stimmt nicht dem aktuellen Status überein.\a\aEine "
+"häufige Ursache ist eine alte Seite im Browsercache. Bitte öffnen Sie die "
+" Seite noch einmal über die Wiki-Oberfläche zur Bearbeitung.\n\n"
+"(hinterleger Status: %1, neuer Status: %2)"
 
 #: templates/oopsworkflowmoved.tmpl:13
 msgid ""
@@ -339,11 +341,11 @@ msgstr ""
 #: templates/oopswrkflwsaveerr.tmpl:14
 msgid ""
 "The transition was not possible because the state of the topic (%1) did not "
-"match the state of the action (%2)! Maybe someone else already transitioned "
+"match the state of the action (%2). Maybe someone else already transitioned "
 "the topic?"
 msgstr ""
 "Die Transition war leider nicht möglich, da der Status der Seite (%1) nicht "
-"gleich dem Status der Aktion (%2) ist! Eventuell hat bereits jemand anderes "
+"gleich dem Status der Aktion (%2) ist. Eventuell hat bereits jemand anderes "
 "eine Transition durchgeführt?"
 
 #: data/System/KVPPluginCommonWords.txt:29
@@ -425,12 +427,12 @@ msgid "Waiting for QM"
 msgstr "Warten auf QM"
 
 #: templates/oopsworkflowerr.tmpl:12 templates/oopswrkflwsaveerr.tmpl:12
-msgid "While changing %1 an error occured in the workflow!"
-msgstr "Beim Statuswechsel von %1 ist ein Fehler im Workflow aufgetreten!"
+msgid "While changing %1 an error occured in the workflow."
+msgstr "Beim Statuswechsel von %1 ist ein Fehler im Workflow aufgetreten."
 
 #: templates/oopsworkflowfork.tmpl:13
-msgid "While forking %1 an error occured in the workflow!"
-msgstr "Bei der Abspaltung von %1 ist ein Fehler im Workflow aufgetreten!"
+msgid "While forking %1 an error occured in the workflow."
+msgstr "Bei der Abspaltung von %1 ist ein Fehler im Workflow aufgetreten."
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm:1097
 msgid ""
@@ -498,11 +500,11 @@ msgstr "in&#160;Diskussion"
 msgid "view"
 msgstr "ansehen"
 
-msgid "You may not create this topic under this workflow!"
-msgstr "Sie dürfen diese Seite unter diesem Workflow nicht anlegen!"
+msgid "You may not create this topic under this workflow."
+msgstr "Sie dürfen diese Seite unter diesem Workflow nicht anlegen."
 
-msgid "No action was specified!"
-msgstr "Die Aktion wurde nicht angegeben!"
+msgid "No action was specified."
+msgstr "Die Aktion wurde nicht angegeben."
 
 msgid "approved"
 msgstr "Freigegeben"

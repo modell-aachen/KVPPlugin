@@ -9,8 +9,8 @@
 %TMPL:DEF{"topicactionbuttons"}% [[%IF{"'%URLPARAM{cstate}%'" then="%WEB%.%TOPIC%" else="%WIKILOGOURL%"}%][%MAKETEXT{"OK"}%]] %TMPL:END%
 
 %TMPL:DEF{"message"}%
-%MAKETEXT{"While changing [_1] an error occured in the workflow!" args="<nop>%WEB%.<nop>%TOPIC%"}%
+%MAKETEXT{"While changing [_1] an error occured in the workflow." args="<nop>%WEB%.<nop>%TOPIC%"}%
 
-%IF{"not '%URLPARAM{state}%'" then="%MAKETEXT{"Could not initialize workflow for [_1]! Maybe the topic was deleted?" args="<nop>%WEB%.<nop>%TOPIC%"}%"}%%IF{"'%URLPARAM{state}%' and '%URLPARAM{state}%' != '%URLPARAM{cstate}%'" then="%MAKETEXT{"The transition was not possible because the state of the topic ([_1]) did not match the state of the action ([_2])! Maybe someone else already transitioned the topic?" args="%URLPARAM{cstate}%,%URLPARAM{state}%"}%"}%%IF{"'%URLPARAM{action}%'" else=" %MAKETEXT{"No action was specified!"}%"}%
+%IF{"not '%URLPARAM{state}%'" then="%MAKETEXT{"Could not initialize workflow for [_1]. Maybe the topic was deleted?" args="<nop>%WEB%.<nop>%TOPIC%"}%"}%%IF{"'%URLPARAM{state}%' and '%URLPARAM{state}%' != '%URLPARAM{cstate}%'" then="%MAKETEXT{"The transition was not possible because the state of the topic ([_1]) did not match the state of the action ([_2]). Maybe someone else already transitioned the topic?" args="%URLPARAM{cstate}%,%URLPARAM{state}%"}%"}%%IF{"'%URLPARAM{action}%'" else=" %MAKETEXT{"No action was specified."}%"}%
 
 %TMPL:END%

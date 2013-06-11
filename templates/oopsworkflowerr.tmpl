@@ -9,8 +9,8 @@
 %TMPL:DEF{"topicactionbuttons"}% [[%IF{"istopic '%WEB%.%TOPIC%'" then="%WEB%.%TOPIC%" else="%WIKIHOMEURL%"}%][%MAKETEXT{"OK"}%]] %TMPL:END%
 
 %TMPL:DEF{"message"}%
-%MAKETEXT{"While changing [_1] an error occured in the workflow!" args="<nop>%WEB%.<nop>%TOPIC%"}%
+%MAKETEXT{"While changing [_1] an error occured in the workflow." args="<nop>%WEB%.<nop>%TOPIC%"}%
 
-=%PARAM1%=
+%PARAM1%
 
 %TMPL:END%

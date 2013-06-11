@@ -979,13 +979,13 @@ sub _restFork {
                     next;
                 }
                 unless ( $controlledTopic->haveNextState($newAction) ) {
-                    $erroneous .= '%MAKETEXT{"Cannot execute transition =[_1]= on =[_2]= (invalid on source-workflow)!" args="'."$newAction, $forkWeb.$forkTopic\"}%\n\n";
+                    $erroneous .= '%MAKETEXT{"Cannot execute transition =[_1]= on =[_2]= (invalid on source-workflow)." args="'."$newAction, $forkWeb.$forkTopic\"}%\n\n";
                     next;
                 }
                 # check if action allowed in targetworkflow
                 my $targetControlledTopic = _initTOPIC( $newWeb, $newTopic, undef, $ttmeta, $tttext, FORCENEW);
                 unless( $targetControlledTopic && $targetControlledTopic->haveNextState($newAction) ) {
-                    $erroneous .= '%MAKETEXT{"Cannot execute transition =[_1]= on =[_2]= (invalid on target-workflow)!" args="'."$newAction, $newWeb.$newTopic\"}%\n\n";
+                    $erroneous .= '%MAKETEXT{"Cannot execute transition =[_1]= on =[_2]= (invalid on target-workflow)." args="'."$newAction, $newWeb.$newTopic\"}%\n\n";
                     next;
                 }
             } else {
@@ -1351,7 +1351,7 @@ sub beforeSaveHandler {
         my $newMeta = new Foswiki::Meta($Foswiki::Plugins::SESSION, $web, $topic, $text);
         my @newStateName = $newMeta->find('WORKFLOW');
         if(scalar @newStateName > 1) { # If 0 this is a new topic, or not controlled, or created without workflow
-            my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"Must find exactly one workflow in the topic, but found [_1]!" args="'.scalar(@newStateName).'"}%', $topic, $web, $meta);
+            my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"Must find exactly one workflow in the topic, but found [_1]." args="'.scalar(@newStateName).'"}%', $topic, $web, $meta);
             throw Foswiki::OopsException(
                     'workflowerr',
                      def   => 'topic_access',
@@ -1373,7 +1373,7 @@ sub beforeSaveHandler {
             my $oldMeta = $controlledTopic->{meta};
             my $oldState = $oldMeta->get( 'WORKFLOW' );
             unless($newStateName[0]->{name} eq $oldState->{name}) {
-                my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"The Workflowstate =[_1]= does not match the old state =[_2]=...maybe someone edited the topic after you opened it? Topic cannot be saved!" args="'."$newStateName[0]->{name},$oldState->{name}\"}%", $topic, $web, $meta);
+                my $message = Foswiki::Func::expandCommonVariables("%MAKETEXT{\"The workflow state did not match the current state.\n\nA common reason is an old article in the browser cache. Please edit the article again via the wiki frontend.\n\n(stored state: [_1], new state: [_2])\" args=\"".($oldState->{name} || 'none').','.($newStateName[0]->{name} || 'none').'"}%', $topic, $web, $meta);
                 throw Foswiki::OopsException(
                     'workflowerr',
                      def   => 'topic_access',
@@ -1393,7 +1393,7 @@ sub beforeSaveHandler {
             # XXX This check does not work properly
             # Make sure that newly created topics can't cheat with their state
             if(scalar @newStateName > 1) { # If 0 this is a new topic, or not controlled, if it's a copy it may be 1.
-                my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"Found an invalid workflow (there must be none in a newly created topic)!"}%');
+                my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"Found an invalid workflow (there must be none in a newly created topic)."}%');
                 throw Foswiki::OopsException(
                         'workflowerr',
                         def   => 'topic_access',
@@ -1407,8 +1407,8 @@ sub beforeSaveHandler {
                 my $newAction = $controlledTopic->getActionWithAttribute('NEW');
                 if($newAction) {
                     $controlledTopic->changeState($newAction);
-                } elsif ( not ( Foswiki::Func::isAnAdmin() || $Foswiki::cfg{Extensions}{KVPPlugin}{NoNewRequired} ) ) {
-                    my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You may not create this topic under this workflow!"}%');
+                } elsif ( not ( Foswiki::Func::isAnAdmin() || $Foswiki::cfg{Plugins}{KVPPlugin}{NoNewRequired} ) ) {
+                    my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You may not create this topic under this workflow."}%');
                     throw Foswiki::OopsException(
                         'workflowerr',
                         def => 'topic_creation',
