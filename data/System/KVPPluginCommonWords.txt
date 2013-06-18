@@ -27,7 +27,7 @@ These words are often mentioned in workflows and might slip into a %MAKE%NOP%TEX
 %NAKETEXT{"This document has been approved."}%
 %MAKETEXT{"This document is currently being revised."}%
 %MAKETEXT{"This document has been discarded."}%
-%MAKETEXT{"This document is waiting for approval by the QM-departement."}%
+%MAKETEXT{"This document is waiting for approval by the QM-department."}%
 %MAKETEXT{"This document is waiting for approval by the person in charge of the page."}%
 </p>
 <p>Configure<br />

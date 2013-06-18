@@ -345,7 +345,7 @@ msgid "This document is not yet in CIP."
 msgstr "Ce document n'est pas encore dans la CPE."
 
 #: data/System/KVPPluginCommonWords.txt:30
-msgid "This document is waiting for approval by the QM-departement."
+msgid "This document is waiting for approval by the QM-department."
 msgstr "Ce document est en attente d'approbation par le service QM."
 
 #: data/System/KVPPluginCommonWords.txt:31

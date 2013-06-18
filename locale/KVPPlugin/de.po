@@ -363,7 +363,7 @@ msgid "This document is not yet in CIP."
 msgstr "Dieses Dokument ist noch nicht im KVP."
 
 #: data/System/KVPPluginCommonWords.txt:30
-msgid "This document is waiting for approval by the QM-departement."
+msgid "This document is waiting for approval by the QM-department."
 msgstr "Dieses Dokument wartet auf Freigabe durch die QM-Abteilung."
 
 #: data/System/KVPPluginCommonWords.txt:31
