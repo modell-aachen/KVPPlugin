@@ -1,5 +1,4 @@
-%{"Keep this INCLUDE, when customizing:"}%
-%{TMPL:INCLUDE{"WorkflowMail"}%
+%TMPL:INCLUDE{"WorkflowMail"}%
 
 %{"Set the sender:"}%
 %TMPL:DEF{"From"}%%WIKIWEBMASTERNAME% <%WIKIWEBMASTER%>%TMPL:END%
@@ -19,7 +18,7 @@
 
 %MAKETEXT{"For questions, please refer to:"}%
 %WIKIWEBMASTERNAME%
-
+%TMPL:END%
 
 %{"--- Additional definitions. You rarely need to modify them. ---"}%
 %{"Set receipient:"}%
