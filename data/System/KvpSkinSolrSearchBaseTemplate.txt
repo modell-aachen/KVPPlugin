@@ -12,7 +12,7 @@
       %WEBLINK{"%web%"
         format="<a class='webLink' href='$url'>%MAKETEXT{"in [_1]" args="$title"}%</a>"
       }%%{
-      }%%IF{"'%approved%'='false'" then="<em style='font-size: 0.9em;' title='%MAKETEXT{not approved}%'>(%MAKETEXT{%state%}%)</em>"}%
+      }%%IF{"'%approved%'='false'" then="&nbsp;<em style='font-size: 0.9em;' title='%MAKETEXT{not approved}%'>(%MAKETEXT{%state%}%)</em>"}%
     </span>%{
     }%%IF{"'%content_language%'='de'" then="<img class='modacFlag' src='%PUBURLPATH%/%SYSTEMWEB%/FamFamFamFlagIcons/de.png' alt='de.png' title='%MAKETEXT{"German"}%' />"}%%{
     }%%IF{"'%content_language%'='en'" then="<img class='modacFlag' src='%PUBURLPATH%/%SYSTEMWEB%/FamFamFamFlagIcons/gb.png' alt='gb.png' title='%MAKETEXT{"English"}%' />"}%%{
