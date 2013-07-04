@@ -1398,7 +1398,7 @@ sub beforeSaveHandler {
                 my $newAction = $controlledTopic->getActionWithAttribute('NEW');
                 if($newAction) {
                     $controlledTopic->changeState($newAction);
-                } elsif ( not ( Foswiki::Func::isAnAdmin() || $Foswiki::cfg{Plugins}{KVPPlugin}{NoNewRequired} ) ) {
+                } elsif ( not ( Foswiki::Func::isAnAdmin() || $Foswiki::cfg{Extensions}{KVPPlugin}{NoNewRequired} ) ) {
                     my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You may not create this topic under this workflow!"}%');
                     throw Foswiki::OopsException(
                         'workflowerr',
