@@ -99,6 +99,9 @@ sub initPlugin {
     # if (Foswiki::Func::getContext()->{SolrPluginEnabled}) {
     if ($Foswiki::cfg{Plugins}{SolrPlugin}{Enabled}) {
       require Foswiki::Plugins::SolrPlugin;
+      Foswiki::Plugins::SolrPlugin::registerIndexAttachmentHandler(
+        \&indexAttachmentHandler
+      );
       Foswiki::Plugins::SolrPlugin::registerIndexTopicHandler(
         \&indexTopicHandler
       );
@@ -1423,33 +1426,34 @@ sub beforeSaveHandler {
     $controlledTopic->addContributors(Foswiki::Func::getWikiUserName());
 }
 
-sub indexTopicHandler {
-    my ($indexer, $doc, $web, $topic, $meta, $text) = @_;
+sub _getIndexHash {
+    my ($web, $topic, $meta, $text) = @_;
+
+    my %indexFields = ();
 
     # only index controlled topics, or old metadata will end up in index.
-    # XXX would be cool if one could detect when a workflow failed to parse
     my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, NOCACHE );
 
     if( $controlledTopic ) {
-        $doc->add_fields( workflow_controlled_b => 1 );
+        $indexFields{ workflow_controlled_b } = 1;
     } else {
-        $doc->add_fields( workflow_controlled_b => 0 );
-        return;
+        $indexFields{ workflow_controlled_b } = 0;
+        return %indexFields;
     }
 
     # might result in default-state
     my $state = $controlledTopic->getState();
-    $doc->add_fields( process_state_s => $state) if $state;
+    $indexFields{ process_state_s } = $state if $state;
 
-    $doc->add_fields( workflow_isapproved_b => ($controlledTopic->getRow( 'approved' ))?1:0 );
+    $indexFields{ workflow_isapproved_b } = ($controlledTopic->getRow( 'approved' ))?1:0;
 
     # Modac : Mega Easy Implementation
     my $workflow = $meta->get('WORKFLOW');
-    return unless $workflow; # might happen when topics are created outside workflow and then move into a workflowed web
+    return %indexFields unless ( $workflow ); # might happen when topics are created outside workflow and then move into a workflowed web
 
     # provide ALL the fields
     for my $key (keys %$workflow) {
-        $doc->add_fields("workflowmeta_". lc($key) ."_s" => $workflow->{$key});
+        $indexFields{ "workflowmeta_". lc($key) ."_s" } = $workflow->{$key};
     }
 
     # Contributors
@@ -1457,34 +1461,61 @@ sub indexTopicHandler {
     foreach my $contis (@cHashes) {
         my $field = 'workflow_contributors_'.lc($contis->{name}).'_lst';
         foreach my $person (split(',', $contis->{value})) {
-            $doc->add_fields( $field => $person);
+            $indexFields{ $field } = $person;
         }
     }
 
     my $suffix = _WORKFLOWSUFFIX();
-    $doc->add_fields( workflow_hasdiscussion_b => Foswiki::Func::topicExists($web, "$topic$suffix")?1:0 );
+    $indexFields{ workflow_hasdiscussion_b } = Foswiki::Func::topicExists($web, "$topic$suffix")?1:0;
 
     # mild sanity-test if state exists (eg. Workflow-table changed and state got renamed)
     if($controlledTopic && not $controlledTopic->getRow('state') eq $state) {
         Foswiki::Func::writeWarning("Workflow error in $web.$topic");
-        $doc->add_fields( workflow_tasked_lst => 'KvpError' );
+        $indexFields{ workflow_tasked_lst } = 'KvpError';
     }
 
     # index tasks
     if($workflow->{TASK}) {
         my $taskedPeople = $controlledTopic->getTaskedPeople();
         unless ($taskedPeople && scalar @$taskedPeople) {
-            $doc->add_fields( workflow_tasked_lst => 'KvpTaskedNobody' );
-            return;
-        }
-        foreach my $user ( @$taskedPeople ) {
-            $doc->add_fields( workflow_tasked_lst => $user );
-            if( $Foswiki::cfg{Extensions}{KVPPlugin}{MonitorTasked}
-                    && not Foswiki::Func::wikiToUserName( $user ) ) {
-                $doc->add_fields( workflow_tasked_lst => 'KvpUnknownUser' );
+            $indexFields{ workflow_tasked_lst } = 'KvpTaskedNobody';
+        } else {
+            foreach my $user ( @$taskedPeople ) {
+                $indexFields{ workflow_tasked_lst } = $user;
+                if( $Foswiki::cfg{Extensions}{KVPPlugin}{MonitorTasked}
+                        && not Foswiki::Func::wikiToUserName( $user ) ) {
+                    $indexFields{ workflow_tasked_lst } = 'KvpUnknownUser';
+                }
             }
         }
     }
+
+    return %indexFields;
+}
+
+sub indexTopicHandler {
+    my ($indexer, $doc, $web, $topic, $meta, $text) = @_;
+
+    our $indexCacheWebTopic = $web.$topic;
+    our %indexFields = _getIndexHash( $web, $topic, $meta, $text );
+
+    $doc->add_fields( %indexFields );
+}
+
+sub indexAttachmentHandler {
+    my ($indexer, $doc, $web, $topic, $attachment) = @_;
+
+    our $indexCacheWebTopic;
+    our %indexFields;
+
+    unless ( $indexCacheWebTopic && $indexCacheWebTopic eq $web.$topic ) {
+        Foswiki::Func::writeWarning("Cache missed for attachment: $web.$topic");
+        my ($meta, $text) = Foswiki::Func::readTopic( $web, $topic );
+        $indexCacheWebTopic = $web.$topic;
+        %indexFields = _getIndexHash( $web, $topic, $meta, $text );
+    }
+
+    $doc->add_fields( %indexFields );
 }
 
 1;
