@@ -527,3 +527,6 @@ msgstr "formale Prüfung (Entwurf)"
 
 msgid "Invalid destination to fork to: %1"
 msgstr "Ungültiges Ziel zum Abspalten: %1"
+
+msgid "old revision"
+msgstr "alte Revision"
