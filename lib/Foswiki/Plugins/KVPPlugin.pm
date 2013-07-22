@@ -659,6 +659,7 @@ sub _changeState {
                 $t = Foswiki::Time::formatDelta(
                     $t, $Foswiki::Plugins::SESSION->i18n
                 );
+                $remark =~ s#"#&quot;#;
                 $url = Foswiki::Func::getScriptUrl(
                     $web, $topic, 'oops',
                     template => 'oopswfplease',
@@ -666,6 +667,8 @@ sub _changeState {
                     param2   => $t,
                     param3   => $state,
                     param4   => $action,
+                    param5   => $remark,
+                    param6   => $removeComments
                    );
                 Foswiki::Func::redirectCgiQuery( undef, $url );
                 return undef;
