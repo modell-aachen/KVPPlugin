@@ -222,9 +222,8 @@
 <span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
 %TMPL:END%
 
-%TMPL:DEF{"top_head_discussion"}%%IF{"defined CONTENT_LANGUAGE AND $CONTENT_LANGUAGE='de'" then="$percentTMPL:P{top_head_discussion_de}$percent"}%%IF{"defined CONTENT_LANGUAGE AND $CONTENT_LANGUAGE='en'" then="$percentTMPL:P{top_head_discussion_en}$percent"}%%IF{"not defined CONTENT_LANGUAGE OR ($CONTENT_LANGUAGE!='de' AND $CONTENT_LANGUAGE !='en')" then="$percentTMPL:P{top_head_discussion_auto}$percent"}%%TMPL:END%
-
-%TMPL:DEF{"top_head_approved"}%%IF{"$CONTENT_LANGUAGE='de'" then="$percentTMPL:P{top_head_approved_de}$percent"}%%IF{"$CONTENT_LANGUAGE='en'" then="$percentTMPL:P{top_head_approved_en}$percent"}%%IF{"not defined CONTENT_LANGUAGE OR ($CONTENT_LANGUAGE!='de' AND $CONTENT_LANGUAGE !='en')" then="$percentTMPL:P{top_head_approved_auto}$percent"}%%TMPL:END%
+%TMPL:DEF{"top_head_approved"}%%SWITCHTMPL{"%CONTENT_LANGUAGE%" prefix="top_head_approved_" defaultTo="auto"}%%TMPL:END%
+%TMPL:DEF{"top_head_discussion"}%%SWITCHTMPL{"%CONTENT_LANGUAGE%" prefix="top_head_discussion_" defaultTo="auto"}%%TMPL:END%
 
 %TMPL:DEF{"top_head"}%%TMPL:P{context="KVPControlled" then="top_head_kvp" else="top_head_standard"}%%TMPL:END%
 
