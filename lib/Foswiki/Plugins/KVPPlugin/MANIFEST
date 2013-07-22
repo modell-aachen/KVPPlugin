@@ -3,6 +3,7 @@ data/System/KVPPlugin.txt 0644 Documentation
 data/System/KVPPluginCommonWords.txt 0644
 data/System/KvpSkinSolrSearchBaseTemplate.txt 0644 Adjustments for SolrSearch
 data/System/KvpSkinSolrSearchViewTemplate.txt 0644 Adjustments for SolrSearch
+data/System/ExampleSkinTopHeadTemplate.txt 0644 Example template for header
 data/System/KvpSkinTopHeadTemplate.txt 0644 Template for header
 data/System/KvpSkinTransitionsTemplate.txt 0644 Template for transitionmenue
 data/System/KvpSkinWorkflowMailTemplate.txt 0644 Customization template for mails

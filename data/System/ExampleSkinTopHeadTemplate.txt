@@ -1,5 +1,8 @@
 %TMPL:INCLUDE{"TopHead"}%
 
+%{ This is an example for customizing the header. }%
+
+%{ Header for approved German version: }%
 %TMPL:DEF{"top_head_approved_de"}%
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
@@ -37,6 +40,7 @@
 <span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
 %TMPL:END%
 
+%{ Header for approved English version: }%
 %TMPL:DEF{"top_head_approved_en"}%
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
@@ -74,6 +78,7 @@
 <span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
 %TMPL:END%
 
+%{ Header for approved version if no CONTENT_LANGUAGE is set: }%
 %TMPL:DEF{"top_head_approved_auto"}%
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
@@ -111,6 +116,7 @@
 <span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
 %TMPL:END%
 
+%{ Header for German discussion: }%
 %TMPL:DEF{"top_head_discussion_de"}%
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
@@ -148,6 +154,7 @@
 <span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
 %TMPL:END%
 
+%{ Header for English discussion: }%
 %TMPL:DEF{"top_head_discussion_en"}%
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
@@ -185,6 +192,7 @@
 <span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
 %TMPL:END%
 
+%{ Header for discussion when no CONTENT_LANGUAGE is set: }%
 %TMPL:DEF{"top_head_discussion_auto"}%
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
@@ -222,15 +230,80 @@
 <span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
 %TMPL:END%
 
-%{<verbatim class="tml" />}%
-%TMPL:DEF{"top_head_approved"}%%SWITCHTMPL{"%CONTENT_LANGUAGE%" prefix="top_head_approved_" defaultTo="auto"}%%TMPL:END%
-%TMPL:DEF{"top_head_discussion"}%%SWITCHTMPL{"%CONTENT_LANGUAGE%" prefix="top_head_discussion_" defaultTo="auto"}%%TMPL:END%
-%{</verbatim>}%
+%{ Header for German topics under no workflow: }%
+%TMPL:DEF{"top_head_standard_de"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%QUERY{"Dokumententyp"}% </font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{Nummer:<strong><br>#QUERY{"Nummer"}#</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Rev.:<strong><br> %REVINFO{format="$rev"}%</strong></td>
+			<td rowspan='2' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				Geltungsbereich&#58; <strong><br>%QUERY{"Geltungsbereich"}%</strong></td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
 
-%{<verbatim class="tml" />}%
-%TMPL:DEF{"top_head"}%%TMPL:P{context="KVPControlled" then="top_head_kvp" else="top_head_standard"}%%TMPL:END%
-%{</verbatim>}%
+%{ Header for English topics under no workflow: }%
+%TMPL:DEF{"top_head_standard_en"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%QUERY{"Dokumententyp"}% </font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{Number:<strong><br>#QUERY{"Nummer"}#</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Rev.:<strong><br> %REVINFO{format="$rev"}%</strong></td>
+			<td rowspan='2' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				Area of application&#58; <strong><br>%QUERY{"Geltungsbereich"}%</strong></td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
 
-%{<verbatim class="tml" />}%
-%TMPL:DEF{"top_head_kvp"}%%TMPL:P{context="KVPIsDiscussion" then="top_head_discussion" else="top_head_approved"}%%TMPL:END%
-%{</verbatim>}%
+%{ Header for topics under no workflow where no CONTENT_LANGUAGE is set: }%
+%TMPL:DEF{"top_head_standard_auto"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%QUERY{"Dokumententyp"}% </font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{#MAKETEXT{"Number"}#:<strong><br>#QUERY{"Nummer"}#</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Rev.:<strong><br> %REVINFO{format="$rev"}%</strong></td>
+			<td rowspan='2' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				%MAKETEXT{"Area of application"}%&#58; <strong><br>%QUERY{"Geltungsbereich"}%</strong></td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
