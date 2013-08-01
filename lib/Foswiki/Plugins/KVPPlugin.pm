@@ -807,6 +807,7 @@ sub _changeState {
                 }
             }
             else{
+                $controlledTopic->nextRev() if $actionAttributes =~ m#NEXTREV#;
                 $controlledTopic->save(1);
             }
 
