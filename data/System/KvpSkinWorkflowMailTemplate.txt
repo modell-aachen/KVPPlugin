@@ -25,7 +25,7 @@
 %TMPL:DEF{"To"}%%EMAILTO%%TMPL:END%
 
 %{"Charset of the mail"}%
-%TMPL:DEF{"charset"}%utf-8%TMPL:END%
+%TMPL:DEF{"Charset"}%charset="utf-8";%TMPL:END%
 
 %{"Provides the remarks for the transition, of present"}%
 %TMPL:DEF{"Remarks"}%%IF{"$'WORKFLOWMETA{Remark}'" then="
