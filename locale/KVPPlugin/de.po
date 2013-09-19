@@ -104,7 +104,7 @@ msgstr "Kommentar"
 
 #: data/System/KvpSkinTransitionsTemplate.txt:7
 msgid "Compare with approved version"
-msgstr "Mit zuletzt freigegebener Version vergleichen"
+msgstr "Vergleich mit freigegebenen Stand"
 
 #: templates/compare.kvp.tmpl:3
 msgid "Comparison"
