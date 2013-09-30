@@ -12,7 +12,7 @@ $Foswiki::cfg{Extensions}{KVPPlugin}{except} = '^(WikiGroups|WikiUsers|WebChange
 # **PERL**
 # Falls GETWORKFLOWROW für ein Topic ohne Workflow aufgerufen wird, werden diese Werte benutzt.
 # Die Voreinstellung ist auf den ModacSkin abgestimmt.
-$Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow} = {'lefttab' => 'Info Page', 'righttab' => 'Old Discussion', 'approved' => 1, 'message' => 'This topic is not under any workflow.'};
+$Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow} = {'uncontrolled' => '1', 'lefttab' => 'Info Page', 'righttab' => 'Old Discussion', 'approved' => 1, 'message' => 'This topic is not under any workflow.'};
 
 # **BOOLEAN**
 # Ist diese Option deaktiviert, *muss* eine NEW-Transition durchgef&uuml;hrt werden, wenn eine neue Seite angelegt wird.
