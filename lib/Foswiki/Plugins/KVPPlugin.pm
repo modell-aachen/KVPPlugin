@@ -29,6 +29,8 @@ our $NO_PREFS_IN_TOPIC = 1;
 our $pluginName       = 'KVPPlugin';
 our %cache;
 our $isStateChange;
+# Although the origin is quick to calculate it is called often enough to be worth being cached
+our $originCache;
 
 sub initPlugin {
     my ( $topic, $web ) = @_;
@@ -90,6 +92,7 @@ sub initPlugin {
             $context->{'KVPIsDiscussion'} = 1;
         }
     }
+    our $originCache = _getOrigin( $topic );
 
     # Copy/Paste/Modify from MetaCommentPlugin
     # SMELL: this is not reliable as it depends on plugin order
@@ -206,6 +209,7 @@ sub _getOrigin {
 sub _WORKFLOWORIGIN {
     my ( $session, $attributes, $topic, $web ) = @_;
 
+    return $originCache unless $attributes->{_DEFAULT};
     return _getOrigin( $attributes->{_DEFAULT} || $topic );
 }
 
@@ -742,7 +746,7 @@ sub _changeState {
             # Flag that this is a state change to the beforeSaveHandler (beforeRenameHandler)
             local $isStateChange = 1;
             #Alex: Zugehriges Topic finden
-            my $appTopic = _getOrigin( $topic );
+            my $appTopic = $originCache;
 
             # Hier Action 
             if ($forkingAction && $forkingAction eq "DISCARD") {
@@ -896,7 +900,7 @@ sub _restLink {
         }
     } else {
         # Try looking for origin
-        my $origin = _getOrigin($topic);
+        my $origin = $originCache;
         if ( $origin ne $topic && Foswiki::Func::topicExists( $web, $origin ) ) {
             $url = Foswiki::Func::getScriptUrl(
                 $web, $origin, 'oops',
