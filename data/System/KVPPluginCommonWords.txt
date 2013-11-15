@@ -1,0 +1,37 @@
+---++ This Document lists some common words
+These words are often mentioned in workflows and might slip into a %MAKE%NOP%TEXT% statement. They are listed here to be included in the language file.
+
+---+++ Words
+<p>Process states<br />
+%MAKETEXT{"Approved Page"}%
+%MAKETEXT{"Draft"}%
+%MAKETEXT{"Discussion"}%
+%MAKETEXT{"Waiting for QM"}%
+%MAKETEXT{"Waiting for PO"}%
+</p><p>Transitions<br />
+%MAKETEXT{"Put under CIP"}%
+%MAKETEXT{"Request approval"}%
+%MAKETEXT{"Discard draft"}%
+%MAKETEXT{"Discard discussion"}%
+%MAKETEXT{"Discuss"}%
+%MAKETEXT{"Request further revision"}%
+%MAKETEXT{"Start discussion"}%
+%MAKETEXT{"Approve formal aspects of draft"}%
+%MAKETEXT{"Approve contentual aspects of draft"}%
+%MAKETEXT{"Approve contentual aspects of discussion"}%
+%MAKETEXT{"Approve formal aspects of discussion"}%
+%MAKETEXT{"Give article the accept status"}%
+</p><p>Messages<br />
+%MAKETEXT{"This document is not yet in CIP."}%
+%MAKETEXT{"This document is a draft."}%
+%NAKETEXT{"This document has been approved."}%
+%MAKETEXT{"This document is currently being revised."}%
+%MAKETEXT{"This document has been discarded."}%
+%MAKETEXT{"This document is waiting for approval by the QM-department."}%
+%MAKETEXT{"This document is waiting for approval by the person in charge of the page."}%
+</p>
+<p>Configure<br />
+%MAKETEXT{"This topic is not under any workflow."}%
+%MAKETEXT{"Old Discussion"}%
+%MAKETEXT{"Info Page"}%
+</p>

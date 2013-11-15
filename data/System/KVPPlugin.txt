@@ -1,0 +1,96 @@
+---+!! !KVPPlugin
+<!--
+One line description, required for extensions repository catalog.
+BuildContrib will fill in the SHORTDESCRIPTION with the value of
+$SHORTDESCRIPTION from the .pm module, or you can redefine it here if you
+prefer.
+   * Set SHORTDESCRIPTION = %$SHORTDESCRIPTION%
+-->
+%SHORTDESCRIPTION%
+
+%TOC%
+
+---++ Verwendung
+---+++ Aufbau des Workflows
+Der Workflow wird in in einem Topic definiert. Dort muss es zwei Tabellen in dieser Reihenfolge geben:
+   [[%TOPIC%#Der_State_Table][state&nbsp;table]]: Diese Tabelle beschreibt die Stati in denen sich ein Artikel befinden kann. Hat ein Artikel keinen Status wird implizit der erste Status der Tabelle angenommen.
+   [[%TOPIC%#Der_Transitions_Table][transitions&nbsp;table]]: Diese Tabelle beschreibt die &Uuml;berg&auml;nge von einem Status in den n&auml;chsten.
+
+---+++ Der State Table
+Die Tabelle hat folgenden Aufbau:
+<verbatim>
+| *State* | *Allow Edit* | *Allow Comment* | *Message* | *State Group* | *Whatever...* |
+| Ohne Freigabe | Main.PeterMustermann, Main.MartildeMusterfrau | nobody | Alle vor Scharfschaltung des Workflows bestehenden Artikel sind in diesem Status. | nicht Freigegeben | ... |
+| Neu angelegt | Main.PeterMustermann | LesenGroup | Neu ersteller Artikel. | nicht Freigegeben | ... |
+| Freigegeben | nobody | LesenGroup | Freigegebener Artikel. | Freigegeben | ... |
+| Diskussion | LesenGroup | LesenGroup | Artikel wird diskutiert | nicht Freigegeben | ... |
+</verbatim>
+   State: (eindeutiger) Name f&uuml;r den Status
+   Allow&nbsp;Edit: Liste mit Usern/Gruppen welche den Artikel editieren d&uuml;rfen.
+   Allow&nbsp;Comment: Liste mit Usern/Gruppen welche Kommentare schreiben d&uuml;rfen. Ist diese Liste leer, werden keine Kommentare angezeigt.
+   Message: Der hier hinterlege Text wird im &Uuml;bergansmenue angezeigt.
+   State&nbsp;Group: Entscheidet ob ein Artikel freigegeben ist (TODO: Configure). Wird in das Formfield &uuml;bertragen, falls es vorhanden ist (TODO)
+   Allow&nbsp;Change&nbsp;Mail: Liste mit Usern/Gruppen welche die Mailing-Liste bearbeiten d&uuml;rfen (andere d&uuml;rfen nur sich selber entfernen/hinzuf&uuml;gen).
+   Whatever: Es k&ouml;nnen beliebige Spalten hinzugef&uuml;gt werden und dann mit GETROW{"spaltenname"} abgefragt werden.
+
+---+++ Der Transitions Table
+Diese Tabelle muss unterhalb des State Table stehen, sie hat folgenden Aufbau:
+<verbatim>
+| *State* | *Action* | *Next State* | *Allowed* | *Attribute* |
+| Ohne Freigabe | Neu erstellen | Neu angelegt | SchreibenGroup | NEW |
+| Ohne Freigabe | Frei geben | Freigegeben | Mail.PeterMustermann | ALLOWDELETECOMMENTS |
+| Freigegeben | Diskutieren | Diskussion | LesenGroup | FORK |
+| Diskussion | Annehmen | Freigegeben | Main.PeterMustermann | SUGGESTDELETECOMMENTS, ACCEPT |
+| Diskussion | Verwerfen | Ohne Freigabe | LesenGroup | DISCARD |
+</verbatim>
+   State: In diesem Status muss der Artikel sein, damit die Aktion durchgef&uuml;hrt werden kann
+   Action: (eindeutiger) Name f&uuml;r die Aktion
+   Next&nbsp;State: In diesen Status wird der Artikel durch die Aktion &uuml;berf&uuml;hrt.
+   Allowed: Liste mit Usern/Gruppen, welche diese Aktion durchf&uuml;hren k&ouml;nnen
+   Attribute: Liste mit [[%TOPIC%#Attribute][Attributen]] f&uuml;r diese Aktion.
+---++++ Attribute
+Jede Aktion kann mehrere Attribute haben.
+| *Attribut* | *Beschreibung* | *Kommentar* |
+| NEW | Diese Aktion wird durchgef&uuml;hrt wenn ein neuer Artikel angelegt wird. | Stehen mehrere Aktionen zur Verf&uuml;gung wird die erste gew&auml;hlt. Als Ausgangsstate muss der erste Status aus dem "State table" angegeben sein. Hat ein User keine Aktion mit NEW, dann kann er keine neuen Artikel anlegen. Diese Aktion ist im Workflowmenue nicht zu sehen. |
+| FORK | Diese Aktion wird ausgef&uuml;hrt wenn ein Artikel ge"forkt" wird (eine Diskussion er&ouml;ffnet wird). | Stehen mehrere Aktionen zur Verf&uuml;gung wird die erste gew&auml;hlt. Hat ein User keine Aktion mit FORK, dann kann er keine Diskussion er&ouml;ffnen. Diese Aktion ist im Workflowmenue nicht zu sehen. |
+| ACCEPT | Wenn diese Aktion durchgef&uuml;hrt wird, dann wird die Diskussion auf den "Normalen" Artikel (ohne Talk-Suffix) verschoben. | Der original Artikel wird ersetzt. |
+| DISCARD | Wenn diese Aktion durchgef&uuml;hrt wird, dann wird der Artikel gel&ouml;scht (ins Trash Web verschoben). | Funktioniert auch mit "normalen" Artikeln ("nicht Diskussionen"), jedoch bleiben die Diskussionen bestehen. |
+| DELETECOMMENTS | Durch diese Aktion werden alle Kommentare gel&ouml;scht. | |
+| ALLOWDELETECOMMENTS | Bei dieser Aktion hat der Durchf&uuml;hrende die M&ouml;glichkeit alle Kommentare zu l&ouml;schen. | Vorauswahl: Kommentare nicht l&ouml;schen. |
+| SUGGESTDELETECOMMENTS | Wie ALLOWDELETECOMMENTS, aber andere Vorauswahl. | Vorauswahl: Kommentare l&ouml;schen. |
+
+---+++ Einschalten des Workflows in Topics
+Der Workflow wird auf Topic/Web Ebene angeschaltet mit
+<pre>
+&nbsp;&nbsp;&nbsp;* Set WORKFLOW = WorkflowTopic
+</pre>
+Soll er in einem Topic deaktiviert werden, so geschieht dies mit
+<pre>
+&nbsp;&nbsp;&nbsp;* Set WORKFLOW =
+</pre>
+
+---+++ Weitere Makros
+| *Makro* | *Parameter* | *Beschreibung* | *Beispiel* | *Hauptanwendungsgebiete* |
+| %WORKFLOW%NOP%ORIGIN | - | Gibt den Namen des Artikels ohne Talk-Suffix aus (den Originalartikel zu einer Diskussion). | Zum Freigegebenenstand geht es %WORKFLOW%NOP%ORIGIN%][hier]] | Skin, Mails |
+| %WORKFLOW%NOP%CONTRIBUTORS% | - | Liste aller User, die eine Diskussion seit dem letzten ACCEPT bearbeitet haben. | | Notify-Listen |
+| %WORKFLOW%NOP%EDITPERM% | - | Liefert 1, falls der aktuelle User einen Artikel bearbeiten darf. | %%NOP%IF{"%WORKFLOW%NOP%ORIGIN% = '1'" then="Editieren sie jetzt!"}% | Skin |
+| %WORKFLOW%NOP%GETROW% | Name der Spalte ohne Leerzeichen und komplett klein geschrieben | Liefert die angegebene Spalte aus dem State-Table für den aktuellen status. | Editieren darf: %WORKFLOW%NOP%GETROW{'allowedit'}% | Skin |
+
+%$INSTALL_INSTRUCTIONS%
+
+---++ Info
+
+Many thanks to the following sponsors for supporting this work:
+   * Acknowledge any sponsors here
+
+|  Author(s): | |
+|  Copyright: | &copy; |
+|  License: | [[http://www.gnu.org/licenses/gpl.html][GPL (Gnu General Public License)]] |
+|  Release: | %$RELEASE% |
+|  Version: | %$VERSION% |
+|  Change History: | <!-- versions below in reverse order -->&nbsp; |
+|  Dependencies: | %$DEPENDENCIES% |
+|  Home page: | handbuch.open-quality.com/bin/view/Extensions/KVPPlugin |
+|  Support: | handbuch.open-quality.com/bin/view/Support/KVPPlugin |
+
+<!-- Do _not_ attempt to edit this topic; it is auto-generated. -->

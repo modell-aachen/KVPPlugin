@@ -1,0 +1,7 @@
+%TMPL:INCLUDE{"view"}%
+%TMPL:INCLUDE{"Transitions"}%
+
+%TMPL:DEF{"topicaction"}%%TMPL:PREV%%IF{"context KVPHasDiscussion" then="$percentADDTOZONE{\"script\" id=\"KVPPluginChangeWarning\" requires=\"JQUERYPLUGIN\" text=\"<script type='text/javascript' src='%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/changewarning.js'></script>\"}$percent
+$percentADDTOZONE{\"head\" id=\"KVPPluginChangeWarningText\" text=\"<meta name=$dollarquotTEXT_KVPDiscussionMessage$dollarquot content=$dollarquot$percentTMPL:P{KVPDiscussionWarning}$percent$dollarquot />\"}$percent"}%%TMPL:P{"kvpaction"}%%TMPL:END%
+
+%TMPL:DEF{"TransitionMsg"}%%ADDTOZONE{"head" id="TEXT_BLOCKUI_KVP" text="<meta name=$quotTEXT_BLOCKUI_KVP$quot content=$quot%MESSAGE%$quot />"}%%TMPL:END%

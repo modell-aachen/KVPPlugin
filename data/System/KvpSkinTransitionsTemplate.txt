@@ -1,0 +1,19 @@
+%TMPL:INCLUDE{"metatext"}%
+%{ Modell Aachen KVP Prozess }%
+
+%{"This warning will be shown if a user edits a topic to which there is a discussion"}%
+%TMPL:DEF{"KVPDiscussionWarning"}%%MAKETEXT{"Attention, there is a discussion for this topic!\nDo you really want to continue?"}%%TMPL:END%
+
+%{"Overload this definition, if you want to influence when the menu is beeing shown."}%
+%TMPL:DEF{"kvpaction"}%%TMPL:P{context="KVPIsDiscussion" then="kvptransitions"}%%TMPL:END%
+
+%{"If you want to customize the transition-blockUI, you should add a TMPL:P{"TransitionMsg" MESSAGE="your message"} to kvptransitions. Please escape quotations (") with &quot; }%
+%TMPL:DEF{"kvptransitions"}%
+%TMPL:P{"TEXT_BLOCKUI"}%
+<div class="modacKVPtable" id="KVPTransitions">
+| *%MAKETEXT{"Improvement Process"}%* ||
+| %MAKETEXT{"State"}% | %MAKETEXT{%GETWORKFLOWROW{message}%}% |
+%IF{"$'WORKFLOWMETA{Remark}'" then="| %MAKETEXT{"Remarks for this state:"}% | <pre>$percentWORKFLOWMETA{Remark}$percent</pre> |$n"}%%IF{"istopic '%WORKFLOWORIGIN%' and not $WORKFLOWORIGIN = '%TOPIC%'" then="| %MAKETEXT{"Difference to approved version"}% | $percentBUTTON{$quot%MAKETEXT{"Compare with approved version"}%$quot href=$quot$percentSCRIPTURL{compare}$percent/%WEB%/%TOPIC%?external=$percentWORKFLOWORIGIN$percent$quot}$percent |$n"}%| %MAKETEXT{"Next step"}% | %WORKFLOWTRANSITION% |
+| %MAKETEXT{"Last editing person"}% | %REVINFO{format="$username"}% |
+</div>
+%TMPL:END%

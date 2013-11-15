@@ -1,0 +1,16 @@
+%TMPL:INCLUDE{"oops"}%
+
+%TMPL:DEF{"titleaction"}%%MAKETEXT{"(workflow error)"}% %TMPL:END%
+
+%TMPL:DEF{"webaction"}% *%MAKETEXT{"Attention"}%* %TMPL:END%
+
+%TMPL:DEF{"heading"}%%MAKETEXT{"Error in workflow"}%%TMPL:END%
+
+%TMPL:DEF{"topicactionbuttons"}% [[%IF{"istopic '%WEB%.%TOPIC%'" then="%WEB%.%TOPIC%" else="%WIKIHOMEURL%"}%][%MAKETEXT{"OK"}%]] %TMPL:END%
+
+%TMPL:DEF{"message"}%
+%MAKETEXT{"While changing [_1] an error occured in the workflow!" args="<nop>%WEB%.<nop>%TOPIC%"}%
+
+=%PARAM1%=
+
+%TMPL:END%

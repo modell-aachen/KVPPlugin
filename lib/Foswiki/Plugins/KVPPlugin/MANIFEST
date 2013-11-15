@@ -1,0 +1,35 @@
+# Release manifest for KVPPlugin
+data/System/KVPPlugin.txt 0644 Documentation
+data/System/KVPPluginCommonWords.txt 0644
+data/System/KvpSkinSolrSearchBaseTemplate.txt 0644 Adjustments for SolrSearch
+data/System/KvpSkinSolrSearchViewTemplate.txt 0644 Adjustments for SolrSearch
+data/System/ExampleSkinTopHeadTemplate.txt 0644 Example template for header
+data/System/KvpSkinTopHeadTemplate.txt 0644 Template for header
+data/System/KvpSkinTransitionsTemplate.txt 0644 Template for transitionmenue
+data/System/KvpSkinWorkflowMailTemplate.txt 0644 Customization template for mails
+data/System/KvpSkinWorkflowViewTemplate.txt 0644 ViewTemplate to allow showing macros
+data/System/KvpSkinWorkflowViewMacrosTemplate.txt 0644 ViewTemplate for showing macros
+pub/System/KVPPlugin/transitions.js 0644 Script for transition menue
+pub/System/KVPPlugin/transitions.js.gz 0644 Script for transition menue
+pub/System/KVPPlugin/changewarning.js 0644 Script for transition menue
+pub/System/KVPPlugin/changewarning.js.gz 0644 Script for transition menue
+pub/System/KVPPlugin/blockLink.js 0644 Script for blocking links
+pub/System/KVPPlugin/blockLink.js.gz 0644 Script for blocking links
+locale/KVPPlugin/de.po 0666 German translations
+locale/KVPPlugin/fr.po 0666 French translations
+lib/Foswiki/Plugins/KVPPlugin.pm 0666
+lib/Foswiki/Plugins/KVPPlugin/ControlledTopic.pm 0666
+lib/Foswiki/Plugins/KVPPlugin/Workflow.pm 0666
+lib/Foswiki/Plugins/KVPPlugin/Config.spec 0755 Configuration
+lib/Foswiki/Plugins/SafeWikiPlugin/Signatures/KVPPlugin.pm 0666 Signatures
+templates/mailworkflowtransition.tmpl 0666
+templates/oopswfplease.tmpl 0666
+templates/oopswrkflwsaveerr.tmpl 0666
+templates/oopsworkflowchanged.tmpl 0666
+templates/oopsworkflowmoved.tmpl 0666
+templates/oopsworkflowerr.tmpl 0666
+templates/oopsworkflowlink.tmpl 0666
+templates/oopsworkflowfork.tmpl 0666
+templates/oopshistory.kvp.tmpl 0666
+templates/viewtopicactionbuttons.kvp.tmpl 0666
+templates/view.kvp.tmpl 0666

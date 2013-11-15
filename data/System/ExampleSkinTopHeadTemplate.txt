@@ -1,0 +1,309 @@
+%TMPL:INCLUDE{"TopHead"}%
+
+%{ This is an example for customizing the header. }%
+
+%{ Header for approved German version: }%
+%TMPL:DEF{"top_head_approved_de"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%QUERY{"Dokumententyp"}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{Nummer: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Rev. <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+			<td rowspan='3' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				Geltungsbereich&#58; <strong>%QUERY{"Geltungsbereich"}%</strong></td>
+		</tr>
+		<tr height: 24px;>
+			<td style='text-align: center;'>
+				Ersteller:<strong><br>%WORKFLOWMETA{"LASTPROCESSOR_INHALTLICHE_PRUEFUNG" or="LASTPROCESSOR_INHALTLICHE_PRUEFUNG_ENTWURF" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				Verantwortlich:<strong><br>%QUERY{"Seitenverantwortlicher"}%</strong></td>
+			<td style='text-align: center;'>
+				Freigegeben durch:<strong><br>%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				Freigabedatum:<strong><br>%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				%TMPL:P{"modacPageNr"}%</td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
+
+%{ Header for approved English version: }%
+%TMPL:DEF{"top_head_approved_en"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%QUERY{"Dokumententyp"}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{Number:<strong> ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Rev. <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+			<td rowspan='3' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				Area of application&#58; <strong>%QUERY{"Geltungsbereich"}%</strong></td>
+		</tr>
+		<tr height: 24px;>
+			<td style='text-align: center;'>
+				Creator:<strong><br>%WORKFLOWMETA{"LASTPROCESSOR_INHALTLICHE_PRUEFUNG" or="LASTPROCESSOR_INHALTLICHE_PRUEFUNG_ENTWURF" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				Responsible:<strong><br>%QUERY{"Seitenverantwortlicher"}%</strong></td>
+			<td style='text-align: center;'>
+				Approved by:<strong><br>%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				Release date:<strong><br>%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				%TMPL:P{"modacPageNr"}%</td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
+
+%{ Header for approved version if no CONTENT_LANGUAGE is set: }%
+%TMPL:DEF{"top_head_approved_auto"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%QUERY{"Dokumententyp"}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Rev. <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+			<td rowspan='3' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				%MAKETEXT{"Area of application"}%&#58; <strong>%QUERY{"Geltungsbereich"}%</strong></td>
+		</tr>
+		<tr height: 24px;>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Creator"}%:<strong><br>%WORKFLOWMETA{"LASTPROCESSOR_INHALTLICHE_PRUEFUNG" or="LASTPROCESSOR_INHALTLICHE_PRUEFUNG_ENTWURF" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Responsible"}%:<strong><br>%QUERY{"Seitenverantwortlicher"}%</strong></td>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Approved by"}%:<strong><br>%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Release date"}%:<strong><br>%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				%TMPL:P{"modacPageNr"}%</td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
+
+%{ Header for German discussion: }%
+%TMPL:DEF{"top_head_discussion_de"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%QUERY{"Dokumententyp"}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{Nummer: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Rev. <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+			<td rowspan='3' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				Geltungsbereich&#58; <strong>%QUERY{"Geltungsbereich"}%</strong></td>
+		</tr>
+		<tr height: 24px;>
+			<td style='text-align: center;'>
+				Ersteller:<strong><br><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				Verantwortlich:<strong><br>%QUERY{"Seitenverantwortlicher"}%</strong></td>
+			<td style='text-align: center;'>
+				Freigegeben durch:<strong><br><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				Freigabedatum:<strong><br><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				%TMPL:P{"modacPageNr"}%</td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
+
+%{ Header for English discussion: }%
+%TMPL:DEF{"top_head_discussion_en"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%QUERY{"Dokumententyp"}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{Number: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Rev. <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+			<td rowspan='3' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				Area of application&#58; <strong>%QUERY{"Geltungsbereich"}%</strong></td>
+		</tr>
+		<tr height: 24px;>
+			<td style='text-align: center;'>
+				Creator:<strong><br><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				Responsible:<strong><br>%QUERY{"Seitenverantwortlicher"}%</strong></td>
+			<td style='text-align: center;'>
+				Approved by:<strong><br><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				Release date:<strong><br><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				%TMPL:P{"modacPageNr"}%</td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
+
+%{ Header for discussion when no CONTENT_LANGUAGE is set: }%
+%TMPL:DEF{"top_head_discussion_auto"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%QUERY{"Dokumententyp"}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Rev. <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+			<td rowspan='3' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				%MAKETEXT{"Area of application"}%&#58; <strong>%QUERY{"Geltungsbereich"}%</strong></td>
+		</tr>
+		<tr height: 24px;>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Creator"}%:<strong><br><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Responsible"}%:<strong><br>%QUERY{"Seitenverantwortlicher"}%</strong></td>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Approved by"}%:<strong><br><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Release date"}%:<strong><br><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				%TMPL:P{"modacPageNr"}%</td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
+
+%{ Header for German topics under no workflow: }%
+%TMPL:DEF{"top_head_standard_de"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%QUERY{"Dokumententyp"}% </font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{Nummer:<strong><br>#QUERY{"Nummer"}#</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Rev.:<strong><br> %REVINFO{format="$rev"}%</strong></td>
+			<td rowspan='2' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				Geltungsbereich&#58; <strong><br>%QUERY{"Geltungsbereich"}%</strong></td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
+
+%{ Header for English topics under no workflow: }%
+%TMPL:DEF{"top_head_standard_en"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%QUERY{"Dokumententyp"}% </font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{Number:<strong><br>#QUERY{"Nummer"}#</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Rev.:<strong><br> %REVINFO{format="$rev"}%</strong></td>
+			<td rowspan='2' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				Area of application&#58; <strong><br>%QUERY{"Geltungsbereich"}%</strong></td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
+
+%{ Header for topics under no workflow where no CONTENT_LANGUAGE is set: }%
+%TMPL:DEF{"top_head_standard_auto"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%QUERY{"Dokumententyp"}% </font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{#MAKETEXT{"Number"}#:<strong><br>#QUERY{"Nummer"}#</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Rev.:<strong><br> %REVINFO{format="$rev"}%</strong></td>
+			<td rowspan='2' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				%MAKETEXT{"Area of application"}%&#58; <strong><br>%QUERY{"Geltungsbereich"}%</strong></td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%

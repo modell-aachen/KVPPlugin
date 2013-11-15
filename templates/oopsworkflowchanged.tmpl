@@ -1,0 +1,17 @@
+%TMPL:INCLUDE{"oops"}%
+
+%TMPL:DEF{"titleaction"}%%MAKETEXT{"Topic changed"}% %TMPL:END%
+
+%TMPL:DEF{"webaction"}% *%MAKETEXT{"Attention"}%* %TMPL:END%
+
+%TMPL:DEF{"heading"}%%MAKETEXT{"Topic changed"}%%TMPL:END%
+
+%TMPL:DEF{"topicactionbuttons"}% [[%WEB%.%TOPIC%][%MAKETEXT{"OK"}%]] %TMPL:END%
+
+%TMPL:DEF{"message"}%
+
+%MAKETEXT{"The topic you clicked has changed state since this link was created."}%%BR%
+%MAKETEXT{"It used to be in [_1] but is now in [_2]" args="%PARAM2%,%PARAM3%"}%%BR%
+%MAKETEXT{"Continue to the topic here:"}% [[%WEB%.%TOPIC%]]
+
+%TMPL:END%

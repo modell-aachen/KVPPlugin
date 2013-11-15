@@ -1,0 +1,29 @@
+%TMPL:INCLUDE{"oopshistory"}%
+
+%TMPL:DEF{"pagetitle"}%%MAKETEXT{"Revision history of "}%%IF{"'%META{"formfield" name="TopicTitle"}%'=''" then="$percntTOPIC$percnt" else="$percntMETA{$quotformfield$quot name=$quotTopicTitle$quot}$percnt$percentIF{$quot'%TOPIC%'!='%WORKFLOWORIGIN%'$quot then=$quot ($percentWORKFLOWSUFFIX$percent)$quot}$percent"}%%TMPL:END%
+
+%TMPL:DEF{"historytable_rcp_enabled"}%<table class="historySelectTable" border="0" cellspacing="0" cellpadding="5" summary="%MAKETEXT{"Topic history"}%">
+<tr>
+<th colspan="3">%MAKETEXT{"Revision"}%</th>
+<th>%MAKETEXT{"Date"}%</th>
+<th>%MAKETEXT{"State"}%</th>
+<th>%MAKETEXT{"Version"}%</th>
+<th>%MAKETEXT{"Username"}%</th>
+<th>%MAKETEXT{"Comment"}%</th>
+</tr>
+%HISTORY{"<tr style=\"vertical-align:top;\"><td align="right"><a href=\"%SCRIPTURL{view}%/%WEB%/%TOPIC%?rev=$rev\">$rev</a></td><td style=\"background-color:#fffaf2; text-align:center;\"><input type=\"radio\" name=\"rev2\" value=\"$rev\" style=\"border:none; background-color:#fffaf2;\" /></td><td style=\"background-color:#f2f7fc; text-align:center;\"><input type=\"radio\" name=\"rev1\" value=\"$rev\" style=\"border:none; background-color:#f2f7fc;\" /></td><td style="white-space: nowrap;">$date</td><td style=\"text-align:center;\">$percentWORKFLOWMETA{rev=$quot$rev$quot}$percent</td><td style=\"text-align:center;\">$percentWORKFLOWMETA{"Revision" rev=$quot$rev$quot}$percent</td><td><nop>$wikiname</td><td>%REVCOMMENT[$rev]%&nbsp;</td></tr>" rev1="%URLPARAM{"rev1"}%" rev2="%URLPARAM{"rev2"}%" nrev="%URLPARAM{"nrev"}%" header="" footer="<tr><td colspan=\"6\">$next{'%MAKETEXT{"last"}%' url='%SCRIPTURL{oops}%/%WEB%/%TOPIC%?template=oopshistory&nrev=$nrev'} $next{'%MAKETEXT{"later"}%' url='%SCRIPTURL{oops}%/%WEB%/%TOPIC%?template=oopshistory&rev1=$rev1&nrev=$nrev'} $previous{'%MAKETEXT{"earlier"}%' url='%SCRIPTURL{oops}%/%WEB%/%TOPIC%?template=oopshistory&rev1=$rev1&nrev=$nrev'} $previous{'%MAKETEXT{"first"}%' url='%SCRIPTURL{oops}%/%WEB%/%TOPIC%?template=oopshistory&rev1=1&nrev=$nrev'}</td></tr>"}%
+</table>%TMPL:END%
+
+
+%TMPL:DEF{"historytable_rcp_disabled"}%<table class="historySelectTable" border="0" cellspacing="0" cellpadding="5" summary="%MAKETEXT{"Topic history"}%">
+<tr>
+<th colspan="3">%MAKETEXT{"Revision"}%</th>
+<th>%MAKETEXT{"Date"}%</th>
+<th>%MAKETEXT{"State"}%</th>
+<th>%MAKETEXT{"Version"}%</th>
+<th>%MAKETEXT{"Username"}%</th>
+<th>%MAKETEXT{"Action"}%</th>
+</tr>
+%HISTORY{"<tr style=\"vertical-align:top;\"><td align="right"><a href=\"%SCRIPTURL{view}%/%WEB%/%TOPIC%?rev=$rev\">$rev</a></td><td style=\"background-color:#fffaf2; text-align:center;\"><input type=\"radio\" name=\"rev2\" value=\"$rev\" style=\"border:none; background-color:#fffaf2;\" /></td><td style=\"background-color:#f2f7fc; text-align:center;\"><input type=\"radio\" name=\"rev1\" value=\"$rev\" style=\"border:none; background-color:#f2f7fc;\" /></td><td style="white-space: nowrap;">$date</td><td style=\"text-align:center;\">$percentWORKFLOWMETA{rev=$quot$rev$quot}$percent</td><td style=\"text-align:center;\">$percentIF{$quotcontext KVPControlled$quot then=$quot$percentWORKFLOWMETA{"Revision" rev=$quot$rev$quot}$percent$quot else=$quot$rev$quot}$percent</td><td>[[$wikiusername][$wikiname]]</td><td><a href=\"%SCRIPTURL{view}%/%WEB%/%TOPIC%?rev=$rev\">%MAKETEXT{"view"}%</a>$percentIF{$quot%WORKFLOWEDITPERM% and $percentWORKFLOWEDITPERM{rev="$rev"}$percent and ((context KVPControlled and '$percentGETWORKFLOWROW{$quotapproved$quot}$percent'='$percentGETWORKFLOWROW{$quotapproved$quot rev=$quot$rev$quot}$percent') or not context KVPControlled)$quot then=$quot,&nbsp;<a href='%SCRIPTURL{edit}%/%WEB%/%TOPIC%?rev=$rev;nowysiwyg=1\'>%MAKETEXT{"restore"}%</a>$quot}$percent</td></tr>" rev1="%URLPARAM{"rev1"}%" rev2="%URLPARAM{"rev2"}%" nrev="%URLPARAM{"nrev"}%" header="" footer=""}%
+</table>%TMPL:END%
+
