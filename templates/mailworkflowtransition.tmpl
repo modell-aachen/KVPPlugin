@@ -1,0 +1,23 @@
+From: %WIKIWEBMASTERNAME% <%WIKIWEBMASTER%>
+To: %EMAILTO%
+Subject: %IF{"$'GETWORKFLOWROW{istdiskussion}' = 1" then="%TOPIC%" else="%WORKFLOWORIGIN%"}% hat einen neuen Status: %TARGET_STATE%
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="=_=0i0k0i0w0tXuOi0E0A"
+
+This is a multi-part message in MIME format.
+--=_=0i0k0i0w0tXuOi0E0A
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+%WIKINAME% hat den Artikel %IF{"$'GETWORKFLOWROW{istdiskussion}' = 1" then="%TOPIC%" else="%WORKFLOWORIGIN%"}% bearbeitet.
+
+%MAKETEXT{%GETWORKFLOWROW{message}%}%
+
+Link zur Seite: %SCRIPTURL{"view"}%/%WEB%/%IF{"$'GETWORKFLOWROW{istdiskussion}' = 1" then="%TOPIC%" else="%WORKFLOWORIGIN%"}%
+
+Dies ist eine automatisch generierte Benachrichtigung. Bitte antworten Sie nicht auf diese E-Mail.
+
+Bei Fragen wenden Sie sich bitte an:
+%WIKIWEBMASTERNAME%
+
+--=_=0i0k0i0w0tXuOi0E0A--
