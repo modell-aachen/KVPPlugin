@@ -530,3 +530,6 @@ msgstr "Ungültiges Ziel zum Abspalten: %1"
 
 msgid "old revision"
 msgstr "alte Revision"
+
+msgid "Show macros"
+msgstr "Macros anzeigen"

@@ -1,6 +1,6 @@
 %TMPL:INCLUDE{"view"}%
 
-%TMPL:DEF{"modacButtonsRIGHT"}%<li><div class="modacActionButtonACTIVE">[[%WEB%.%TOPIC%][Makros anzeigen]]</div></li>%TMPL:PREV%%TMPL:END%
+%TMPL:DEF{"modacButtonsRIGHT"}%<li><div class="modacActionButtonACTIVE">[[%WEB%.%TOPIC%][%MAKETEXT{"Show macros"}%]]</div></li>%TMPL:PREV%%TMPL:END%
 
 %{Escape percents, exept for twisties and edittable}%
 %{<verbatim>}%
