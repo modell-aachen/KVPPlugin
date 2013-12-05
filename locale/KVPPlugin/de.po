@@ -354,6 +354,9 @@ msgstr "Dieses Dokument wurde verworfen."
 msgid "This document is a draft."
 msgstr "Dieses Dokument ist ein Entwurf."
 
+msgid "This document has been approved."
+msgstr "Dieses Dokument ist freigegeben."
+
 #: data/System/KVPPluginCommonWords.txt:28
 msgid "This document is currently being revised."
 msgstr "Dieses Dokument wird überarbeitet."
