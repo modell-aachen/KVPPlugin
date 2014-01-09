@@ -1047,11 +1047,6 @@ sub _restFork {
                 };
                 $meta->put( "WORKFLOWHISTORY", $forkhistory );
 
-                my $history = $ttmeta->get('WORKFLOWHISTORY') || {};
-                $history->{value} .= "<br>Forked to " .
-                    "[[$newWeb.$newTopic]]" . " by $who at $now";
-                $ttmeta->put( "WORKFLOWHISTORY", $history );
-
                 # Modell Aachen Settings:
                 # Ueberfuehren in Underrevision:    
                 my $newcontrolledTopic = _initTOPIC( $newWeb, $newTopic, undef, $meta, $text, FORCENEW);
@@ -1069,12 +1064,10 @@ sub _restFork {
                 # Topic successfully forked
             }
 
-            if ($lockdown) {
-                $ttmeta->putKeyed("PREFERENCE",
-                    { name => 'ALLOWTOPICCHANGE', value => 'nobody' });
-            }
-
-            # Modac: Save old Topic
+        }
+        if ($lockdown) {
+            $ttmeta->putKeyed("PREFERENCE",
+                { name => 'ALLOWTOPICCHANGE', value => 'nobody' });
             local $isStateChange = 1;
             Foswiki::Func::saveTopic( $forkWeb, $forkTopic, $ttmeta, $tttext,
                     { forcenewrevision => 1, ignorepermissions => 1 });
