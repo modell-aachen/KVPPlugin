@@ -170,6 +170,7 @@ sub setState {
 
     # manage comments
     my $allowComment = $this->{workflow}->getRow($this, 'allowcomment');
+    $allowComment = $this->expandMacros( $allowComment );
     if($allowComment) {
         $this->{meta}->putKeyed("PREFERENCE",
             { name => 'DISPLAYCOMMENTS', value => 'on' }
