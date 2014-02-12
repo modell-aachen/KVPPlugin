@@ -536,3 +536,6 @@ msgstr "alte Revision"
 
 msgid "Show macros"
 msgstr "Macros anzeigen"
+
+msgid "Last author"
+msgstr "Letzter Autor"
