@@ -5,5 +5,5 @@ jQuery(function($) {
     };
     window.kvpDiscussionConfirmation = confirmation;
     $('a.modacChanging').click(confirmation);
-    $('form.modacChanging').submit(function() {return confirm(KVPMessage);});
+    $('form.modacChanging').submit(confirmation);
 });
