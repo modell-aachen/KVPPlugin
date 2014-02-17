@@ -1,6 +1,7 @@
 jQuery(function($) {
     var confirmation = function(e) {
-        return confirm(foswiki.getMetaTag('TEXT_KVPDiscussionMessage').replace(/\\\\?n/g, "\n"));
+        var msg = foswiki.getMetaTag('TEXT_KVPDiscussionMessage').replace(/\\\\?n/g, "\n");
+        if(msg) return confirm(foswiki.getMetaTag('TEXT_KVPDiscussionMessage').replace(/\\\\?n/g, "\n"));
     };
     window.kvpDiscussionConfirmation = confirmation;
     $('a.modacChanging').click(confirmation);
