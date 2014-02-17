@@ -3,54 +3,13 @@
 %{</verbatim>}%
 
 %{<verbatim class="tml">}%
-%{Sprachanpassung, Anzeige Workflow}%
-%TMPL:DEF{"solr::format::list::topic"}%<!-- -->
-<div class='solrSearchHit solrTopicHit'>
-  <h3 style='background-image:url(%icon%)' title='%MAKETEXT{%type%}%'>
-    [[%web%.%topic%]]
-    <span class='foswikiGrayText'>
-      %WEBLINK{"%web%"
-        format="<a class='webLink' href='$url'>%MAKETEXT{"in [_1]" args="$title"}%</a>"
-      }%%{
-      }%%IF{"'%approved%'='false'" then="&nbsp;<em style='font-size: 0.9em;' title='%MAKETEXT{not approved}%'>(%MAKETEXT{%state%}%)</em>"}%
-    </span>%{
-    }%%IF{"'%content_language%'='de'" then="<img class='modacFlag' src='%PUBURLPATH%/%SYSTEMWEB%/FamFamFamFlagIcons/de.png' alt='de.png' title='%MAKETEXT{"German"}%' />"}%%{
-    }%%IF{"'%content_language%'='en'" then="<img class='modacFlag' src='%PUBURLPATH%/%SYSTEMWEB%/FamFamFamFlagIcons/gb.png' alt='gb.png' title='%MAKETEXT{"English"}%' />"}%%{
-    }%%IF{"'%content_language%'='fr'" then="<img class='modacFlag' src='%PUBURLPATH%/%SYSTEMWEB%/FamFamFamFlagIcons/fr.png' alt='fr.png' title='%MAKETEXT{"French"}%" />"}%
-  </h3>
-  <div class='solrHilite'>
-    <literal>%hilite%</literal>
-  </div>
-  <div class='solrRevision'>
-    %date%,
-    %IF{"istopic '%USERINFO{"%author%" format="$wikiusername"}%'"
-      then="%USERINFO{"%author%" format="[[$wikiusername][$wikiname]]"}%"
-      else="%USERINFO{"%author%" format="<nop>$wikiname"}%"
-    }%
-  </div>
-</div>
-<!-- -->%TMPL:END%
+%TMPL:DEF{"topic_title"}%%TMPL:P{"kvp_status"}% %TMPL:PREV%%TMPL:END%
+%TMPL:DEF{"image_title"}%%TMPL:P{"kvp_status"}% %TMPL:PREV%%TMPL:END%
+%TMPL:DEF{"misc_title"}%%TMPL:P{"kvp_status"}% %TMPL:PREV%%TMPL:END%
 %{</verbatim>}%
 
 %{<verbatim class="tml">}%
-%{Anzeige Workflow}%
-%TMPL:DEF{"solr::format::list::attachment"}%<!-- -->
-<div class='solrSearchHit solrAttachmentHit'>
-  <h3 style='background-image:url(%icon%)' title='%MAKETEXT{%type%}%'>
-    [[%url%][%name%]]
-    <span class='foswikiGrayText'>%MAKETEXT{"in [_1]" args="[[%web%.%topic%]]"}%%{
-      }%%IF{"'%approved%'='false'" then="&nbsp;<em style='font-size: 0.9em;' title='%MAKETEXT{not approved}%'>(%MAKETEXT{%state%}%)</em>"}%%{
-      }%</span>
-    %IF{"'%comment%'!=''" then="<div class='foswikiGrayText'>%comment%</div>" else="<!-- -->"}%
-  </h3>
-  <div class='solrHilite'>
-    <literal>%hilite%</literal>
-  </div>
-  <div class='solrRevision'>
-    %date%, %USERINFO{"%author%" format="[[$wikiusername][$wikiname]]"}%
-  </div>
-</div>
-<!-- -->%TMPL:END%
+%TMPL:DEF{"kvp_status"}% {{if typeof(workflow_isapproved_b) === 'undefined' || workflow_isapproved_b}}{{else}}<em style='font-size: 0.9em;' title='${jsi18n.get('solrkvp', 'not approved')}'>(${jsi18n.get('solrkvp', (typeof(process_state_s) ==='undefined')?'state not defined':process_state_s)})</em>{{/if}}%TMPL:END%
 %{</verbatim>}%
 
 %{<verbatim class="tml">}%
@@ -60,3 +19,5 @@ state=\"$process_state_s\"
 approved=\"$workflow_isapproved_b\"
 %TMPL:END%
 %{</verbatim>}%
+
+%TMPL:DEF{"solr::fields::append"}%%TMPL:PREV%,workflow_isapproved_b,process_state_s%TMPL:END%
