@@ -1,0 +1,10 @@
+%TMPL:INCLUDE{"foswiki"}%
+
+%TMPL:DEF{"script"}%%TMPL:PREV%%TMPL:P{"KVP::changewarning"}%%TMPL:END%
+
+%TMPL:DEF{"KVP::changewarning"}%%IF{"context KVPHasDiscussion" then="$percentADDTOZONE{\"script\" id=\"KVPPluginChangeWarning\" requires=\"JQUERYPLUGIN\" text=\"<script type='text/javascript' src='%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/changewarning.js'></script>\"}$percent
+$percentADDTOZONE{\"head\" id=\"KVPPluginChangeWarningText\" text=\"<meta name=$dollarquotTEXT_KVPDiscussionMessage$dollarquot content=$dollarquot$percentTMPL:P{KVPDiscussionWarning}$percent$dollarquot />\"}$percent"}%%TMPL:END%
+
+%{"This warning will be shown if a user edits a topic to which there is a discussion"}%
+%TMPL:DEF{"KVPDiscussionWarning"}%%MAKETEXT{"Attention, there is a discussion for this topic!\nDo you really want to continue?"}%%TMPL:END%
+
