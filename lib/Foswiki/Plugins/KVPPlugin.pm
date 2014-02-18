@@ -1240,6 +1240,7 @@ sub beforeSaveHandler {
 
     my $query = Foswiki::Func::getCgiQuery();
     return if($query->url() =~ m#/bin/jsonrpc$#); # XXX always pass MetaCommentPlugin
+    return if($query->url() =~ m#/bin/rename$#); # XXX beforeSaveHandler will be called AFTER moving it, so here its to late
 
     # Do the RemoveMeta, RemovePref, SetForm, SetField, SetPref if save came from a template
     if($query->param('templatetopic')) {
