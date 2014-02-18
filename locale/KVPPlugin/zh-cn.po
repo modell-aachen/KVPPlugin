@@ -1,0 +1,531 @@
+# KVPPlugin translation for Traditional Chinese
+msgid   ""
+msgstr  "Project-Id-Version: Foswiki $Id\n"
+        "Report-Msgid-Bugs-To: osthold@modell-aachen.de\n"
+        "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+        "PO-Revision-Date: 2010-11-09 08:01+0200\n"
+        "Language-Team: Modell Aachen\n"
+        "Language: zh_CN\n"
+        "MIME-Version: 1.0\n"
+        "Content-Type: text/plain; charset=UTF-8\n"
+        "Content-Transfer-Encoding: 8bit\n"
+        "Plural-Forms: nplurals=1; plural=0;\n"
+        "X-Generator: Pootle 2.0.5\n"
+        "X-Poedit-Country: Taiwan\n"
+        "X-Poedit-SourceCharset: utf-8\n"
+
+#: data/System/KvpSkinWorkflowMailTemplate.txt:11
+msgid   "%1 edited the topic %2."
+msgstr  "1%编辑2%主题"
+
+#: data/System/KvpSkinWorkflowMailTemplate.txt:7
+msgid   "%1 has a new state: %2"
+msgstr  "1%状态变为2%"
+
+#: templates/oopswfplease.tmpl:7
+msgid   "%1 is editing %2, and their lock is still active for another %3"
+msgstr  "%1正编辑%2, 他们正锁定3%"
+
+#: templates/oopsworkflowerr.tmpl:3 templates/oopsworkflowfork.tmpl:3
+#: templates/oopswrkflwsaveerr.tmpl:3
+msgid   "(workflow error)"
+msgstr  "(工作流错误)"
+
+#: templates/oopshistory.kvp.tmpl:25
+msgid   "Action"
+msgstr  "功能"
+
+#: data/System/KVPPluginCommonWords.txt:21
+msgid   "Approve contentual aspects of discussion"
+msgstr  "核准讨论内容"
+
+#: data/System/KVPPluginCommonWords.txt:20
+msgid   "Approve contentual aspects of draft"
+msgstr  "核准草案内容"
+
+#: data/System/KVPPluginCommonWords.txt:22
+msgid   "Approve formal aspects of discussion"
+msgstr  "核准正式讨论内容"
+
+#: data/System/KVPPluginCommonWords.txt:19
+msgid   "Approve formal aspects of draft"
+msgstr  "核准正式划案内容"
+
+#: data/System/KVPPluginCommonWords.txt:6
+msgid   "Approved Page"
+msgstr  "核准的页面"
+
+#: data/System/ExampleSkinTopHeadTemplate.txt:108
+#: data/System/ExampleSkinTopHeadTemplate.txt:222
+#: data/System/KvpSkinTopHeadTemplate.txt:103
+#: data/System/KvpSkinTopHeadTemplate.txt:214
+msgid   "Approved by"
+msgstr  "被核准"
+
+#: data/System/ExampleSkinTopHeadTemplate.txt:100
+#: data/System/ExampleSkinTopHeadTemplate.txt:214
+#: data/System/ExampleSkinTopHeadTemplate.txt:304
+#: data/System/KvpSkinTopHeadTemplate.txt:206
+#: data/System/KvpSkinTopHeadTemplate.txt:95
+msgid   "Area of application"
+msgstr  "应用范围"
+
+#: templates/oopswfplease.tmpl:4 templates/oopsworkflowchanged.tmpl:5
+#: templates/oopsworkflowerr.tmpl:5 templates/oopsworkflowfork.tmpl:5
+#: templates/oopsworkflowlink.tmpl:5 templates/oopsworkflowmoved.tmpl:5
+#: templates/oopswrkflwsaveerr.tmpl:5
+msgid   "Attention"
+msgstr  "注意"
+
+#: data/System/KvpSkinTransitionsTemplate.txt:5
+msgid   "Attention, there is a discussion for this topic!\\nDo you really "
+        "want to continue?"
+msgstr  "注意，关于此主题有问题需讨论!\\n你确定继续"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:982
+msgid   "Cannot execute transition =%1= on =%2= (invalid on source-workflow)!"
+msgstr  "不能执行转化 =%1= 在 =%2=上 (原工作流上无效)!"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:988
+msgid   "Cannot execute transition =%1= on =%2= (invalid on target-workflow)!"
+msgstr  "不能执行转化 =%1= 在 =%2=上 (目标工作流上无效)!"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:472
+msgid   "Change status"
+msgstr  "改变状态"
+
+#: templates/oopshistory.kvp.tmpl:12
+msgid   "Comment"
+msgstr  "评论"
+
+#: data/System/KvpSkinTransitionsTemplate.txt:16
+msgid   "Compare with approved version"
+msgstr  "与核准的版本比较"
+
+#: templates/oopsworkflowchanged.tmpl:15
+msgid   "Continue to the topic here:"
+msgstr  "继续此主题："
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1057
+msgid   "Could not initialize workflow for"
+msgstr  "不能初始化工作流"
+
+#: templates/oopswrkflwsaveerr.tmpl:14
+msgid   "Could not initialize workflow for %1! Maybe the topic was deleted?"
+msgstr  "不能初始化%1工作流!此主题可能被删除?"
+
+#: data/System/ExampleSkinTopHeadTemplate.txt:104
+#: data/System/ExampleSkinTopHeadTemplate.txt:218
+msgid   "Creator"
+msgstr  "作者"
+
+#: templates/oopshistory.kvp.tmpl:21 templates/oopshistory.kvp.tmpl:8
+msgid   "Date"
+msgstr  "日期"
+
+#: data/System/KvpSkinTransitionsTemplate.txt:16
+msgid   "Difference to approved version"
+msgstr  "核准版本的差异"
+
+#: data/System/KVPPluginCommonWords.txt:15
+msgid   "Discard discussion"
+msgstr  "终止讨论"
+
+#: data/System/KVPPluginCommonWords.txt:14
+msgid   "Discard draft"
+msgstr  "终止草案"
+
+#: data/System/KVPPluginCommonWords.txt:16
+msgid   "Discuss"
+msgstr  "讨论"
+
+#: data/System/KVPPluginCommonWords.txt:8
+msgid   "Discussion"
+msgstr  "讨论"
+
+#: templates/viewtopicactionbuttons.kvp.tmpl:21
+#: templates/viewtopicactionbuttons.kvp.tmpl:27
+#: templates/viewtopicactionbuttons.kvp.tmpl:30
+msgid   "Discussion about Improvements"
+msgstr  "关于改进的讨论"
+
+#: data/System/KVPPluginCommonWords.txt:7
+msgid   "Draft"
+msgstr  "草案"
+
+#: data/System/KvpSkinSolrSearchBaseTemplate.txt:18
+msgid   "English"
+msgstr  "英语"
+
+#: lib/Foswiki/Plugins/KVPPlugin/Workflow.pm:406
+msgid   "Error in Workflow: state %1 does not exist!"
+msgstr  "工作流错误:不存在%1!"
+
+#: templates/oopsworkflowlink.tmpl:3 templates/oopsworkflowlink.tmpl:7
+msgid   "Error in link"
+msgstr  "链接错误"
+
+#: templates/oopsworkflowerr.tmpl:7 templates/oopsworkflowfork.tmpl:7
+#: templates/oopswrkflwsaveerr.tmpl:7
+msgid   "Error in workflow"
+msgstr  "工作流错误　"
+
+#: data/System/KvpSkinWorkflowMailTemplate.txt:19
+msgid   "For questions, please refer to:"
+msgstr  "答案请参考："
+
+#: templates/oopswfplease.tmpl:19
+msgid   "Force the transition anyway"
+msgstr  "强制转换"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1396
+msgid   "Found an invalid workflow (there must be none in a newly created "
+        "topic)!"
+msgstr  "存在异常工作流 (新主题为空)!"
+
+#: data/System/KvpSkinSolrSearchBaseTemplate.txt:19
+msgid   "French"
+msgstr  "法语"
+
+#: data/System/KvpSkinSolrSearchBaseTemplate.txt:17
+msgid   "German"
+msgstr  "德语"
+
+#: data/System/KVPPluginCommonWords.txt:23
+msgid   "Give article the accept status"
+msgstr  "确认此文本"
+
+#: data/System/KvpSkinTransitionsTemplate.txt:14
+msgid   "Improvement Process"
+msgstr  "改进步骤"
+
+#: templates/oopswfplease.tmpl:12
+msgid   "In an emergency you can transition the topic anyway, by clicking "
+msgstr  "紧急情况下，通过点击可转换此主题。"
+
+#: data/System/KVPPluginCommonWords.txt:36
+msgid   "Info Page"
+msgstr  "信息页面"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:978 lib/Foswiki/Plugins/KVPPlugin.pm:997
+msgid   "Invalid destination to fork to: %1"
+msgstr  "到%1无法的定位"
+
+#: lib/Foswiki/Plugins/KVPPlugin/Workflow.pm:168
+msgid   "Invalid state table in %1"
+msgstr  "1%中无效的状态表"
+
+#: templates/oopsworkflowchanged.tmpl:14
+msgid   "It used to be in %1 but is now in %2"
+msgstr  "1%中使用过，但现在%2中使用"
+
+#: data/System/KvpSkinTopHeadTemplate.txt:210
+#: data/System/KvpSkinTopHeadTemplate.txt:99
+msgid   "Last author"
+msgstr  ""
+
+#: data/System/KvpSkinTransitionsTemplate.txt:17
+msgid   "Last editing person"
+msgstr  "更后编辑用户"
+
+#: data/System/KvpSkinWorkflowMailTemplate.txt:15
+msgid   "Link to the page:"
+msgstr  "链接此页面:"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1354
+msgid   "Must find exactly one workflow in the topic, but found %1!"
+msgstr  "在此主题中必须匹配适合的流程，但是匹配%1!"
+
+#: data/System/KvpSkinTransitionsTemplate.txt:16
+msgid   "Next step"
+msgstr  "下一步"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:192
+msgid   "No Suffix defined! Defaulting to %1!"
+msgstr  "未定义后缀！默认%1"
+
+#: templates/oopswrkflwsaveerr.tmpl:14
+msgid   "No action was specified!"
+msgstr  "未指定操作"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1003
+msgid   "No transition with =FORK= attribute to fork"
+msgstr  ""
+
+#: templates/oopsworkflowchanged.tmpl:9 templates/oopsworkflowerr.tmpl:9
+#: templates/oopsworkflowfork.tmpl:9 templates/oopsworkflowmoved.tmpl:9
+#: templates/oopswrkflwsaveerr.tmpl:9
+msgid   "OK"
+msgstr  "OK"
+
+#: data/System/KVPPluginCommonWords.txt:35
+msgid   "Old Discussion"
+msgstr  "以前的讨论"
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt:20
+msgid   "Process State"
+msgstr  "进程状态"
+
+#: data/System/KVPPluginCommonWords.txt:12
+msgid   "Put under CIP"
+msgstr  "放到CIP下"
+
+#: data/System/ExampleSkinTopHeadTemplate.txt:110
+#: data/System/ExampleSkinTopHeadTemplate.txt:224
+#: data/System/KvpSkinTopHeadTemplate.txt:105
+#: data/System/KvpSkinTopHeadTemplate.txt:216
+msgid   "Release date"
+msgstr  "发出日期"
+
+#: data/System/KvpSkinWorkflowMailTemplate.txt:33
+msgid   "Remarks"
+msgstr  "备注"
+
+#: data/System/KvpSkinTransitionsTemplate.txt:16
+msgid   "Remarks for this state:"
+msgstr  "此状态备注："
+
+#: data/System/KVPPluginCommonWords.txt:13
+msgid   "Request approval"
+msgstr  "批准请求"
+
+#: data/System/KVPPluginCommonWords.txt:17
+msgid   "Request further revision"
+msgstr  "需进一步修改"
+
+#: data/System/ExampleSkinTopHeadTemplate.txt:106
+#: data/System/ExampleSkinTopHeadTemplate.txt:220
+#: data/System/KvpSkinTopHeadTemplate.txt:101
+#: data/System/KvpSkinTopHeadTemplate.txt:212
+msgid   "Responsible"
+msgstr  "可靠的"
+
+#: templates/oopshistory.kvp.tmpl:20 templates/oopshistory.kvp.tmpl:7
+msgid   "Revision"
+msgstr  "修订版"
+
+#: templates/oopshistory.kvp.tmpl:3
+msgid   "Revision history of "
+msgstr  "修改记录"
+
+#: data/System/KvpSkinWorkflowViewMacrosTemplate.txt:3
+#: data/System/KvpSkinWorkflowViewTemplate.txt:3
+msgid   "Show macros"
+msgstr  ""
+
+#: data/System/KVPPluginCommonWords.txt:18
+msgid   "Start discussion"
+msgstr  "开始讨论"
+
+#: templates/viewtopicactionbuttons.kvp.tmpl:30
+msgid   "Start new Discussion"
+msgstr  "开始新的讨论"
+
+#: data/System/KvpSkinTransitionsTemplate.txt:15
+#: templates/oopshistory.kvp.tmpl:22 templates/oopshistory.kvp.tmpl:9
+msgid   "State"
+msgstr  "状态"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1376
+msgid   "The Workflowstate =%1= does not match the old state =%2=...maybe "
+        "someone edited the topic after you opened it? Topic cannot be saved!"
+msgstr  "此工作流状态 =%1= 与以前状态 =%2=不匹配…可能有人在你打开时编辑此主"
+        "题? 导致主题不能保存!"
+
+#: templates/oopsworkflowmoved.tmpl:13
+msgid   "The discussion you clicked is no longer available. You can go to the "
+        "original topic by clicking OK."
+msgstr  "你点击的讨论失效。你可以通过点击确定链接原来的主题。"
+
+#: templates/oopsworkflowlink.tmpl:13
+msgid   "The link you clicked is malformed."
+msgstr  "你点击的链接有问题。"
+
+#: templates/oopsworkflowmoved.tmpl:13
+msgid   "The link you clicked is no longer available."
+msgstr  "你点击的链接失效。"
+
+#: templates/oopsworkflowchanged.tmpl:13
+msgid   "The topic you clicked has changed state since this link was created."
+msgstr  "你点击链接的主题已由链接创建时的状态发生改变。"
+
+#: templates/oopswrkflwsaveerr.tmpl:14
+msgid   "The transition was not possible because the state of the topic (%1) "
+        "did not match the state of the action (%2)! Maybe someone else "
+        "already transitioned the topic?"
+msgstr  "因为此主题状态(%1)与此转换状态(%2)不匹配，所以不能进行此转换！可能此"
+        "主题已被转换？、"
+
+#: data/System/KVPPluginCommonWords.txt:29
+msgid   "This document has been discarded."
+msgstr  "此文档已废弃。"
+
+#: data/System/KVPPluginCommonWords.txt:26
+msgid   "This document is a draft."
+msgstr  "此文档为草稿"
+
+#: data/System/KVPPluginCommonWords.txt:28
+msgid   "This document is currently being revised."
+msgstr  "此文档正被校订。"
+
+#: data/System/KVPPluginCommonWords.txt:25
+msgid   "This document is not yet in CIP."
+msgstr  "此文档仍没有在CIP。"
+
+#: data/System/KVPPluginCommonWords.txt:30
+msgid   "This document is waiting for approval by the QM-department."
+msgstr  "此文档待QM部门核准。"
+
+#: data/System/KVPPluginCommonWords.txt:31
+msgid   "This document is waiting for approval by the person in charge of the "
+        "page."
+msgstr  "此文档待负责此页面的用户核准。"
+
+#: data/System/KvpSkinWorkflowMailTemplate.txt:17
+msgid   "This is an automatically generated message. Please do not reply to "
+        "this email."
+msgstr  "此为系统自动发送的信息，请不用回复此邮件。"
+
+#: data/System/KVPPluginCommonWords.txt:34
+msgid   "This topic is not under any workflow."
+msgstr  "任何工作流中无此主题。"
+
+#: templates/oopsworkflowchanged.tmpl:3 templates/oopsworkflowchanged.tmpl:7
+msgid   "Topic changed"
+msgstr  "更改的主题"
+
+#: templates/oopshistory.kvp.tmpl:18 templates/oopshistory.kvp.tmpl:5
+msgid   "Topic history"
+msgstr  "主题历史记录"
+
+#: templates/oopsworkflowmoved.tmpl:3 templates/oopsworkflowmoved.tmpl:7
+msgid   "Topic no longer available"
+msgstr  "主题失效"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:944
+msgid   "Topic to fork from does not exist:"
+msgstr  ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:948
+msgid   "Tried to fork from a topic, which is not under any workflow:"
+msgstr  ""
+
+#: templates/oopshistory.kvp.tmpl:11 templates/oopshistory.kvp.tmpl:24
+msgid   "Username"
+msgstr  "用户名"
+
+#: templates/oopshistory.kvp.tmpl:10 templates/oopshistory.kvp.tmpl:23
+msgid   "Version"
+msgstr  "版本"
+
+#: data/System/KVPPluginCommonWords.txt:10
+msgid   "Waiting for PO"
+msgstr  "等待采购单"
+
+#: data/System/KVPPluginCommonWords.txt:9
+msgid   "Waiting for QM"
+msgstr  "等待QM"
+
+#: templates/oopsworkflowerr.tmpl:12 templates/oopswrkflwsaveerr.tmpl:12
+msgid   "While changing %1 an error occured in the workflow!"
+msgstr  "更改%1时工作流中产生错误!"
+
+#: templates/oopsworkflowfork.tmpl:12
+msgid   "While forking %1 an error occured in the workflow!"
+msgstr  ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1191
+msgid   "You are not permitted to edit this topic. You have been denied "
+        "access by workflow restrictions."
+msgstr  "你无权编辑此主题，由于工作流限制你已无法访问。"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1340
+msgid   "You are not permitted to save this topic. You have been denied "
+        "access by workflow restrictions."
+msgstr  "你无权保存此主题，由于工作流限制你已无法访问。"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1218
+msgid   "You are not permitted to upload to this topic. You have been denied "
+        "access by workflow restrictions."
+msgstr  "你无权上传此主题，由于工作流限制你已无法访问。"
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm:1411
+msgid   "You may not create this topic under this workflow!"
+msgstr  "你不能在此工作流下创建此主题！"
+
+#: templates/oopswfplease.tmpl:9
+msgid   "You must ask %1 to close their edit and release their lock before "
+        "you can change the state of the topic."
+msgstr  "更改此主题状态前，你必须要求%1停止他们对此主题的编辑和发行动作。"
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt:6
+msgid   "approved"
+msgstr  "核准"
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt:12
+msgid   "contentual revision"
+msgstr  "内容修订"
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt:13
+msgid   "contentual revision (draft)"
+msgstr  "内容修订(草搞)"
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt:9
+msgid   "discarded"
+msgstr  "放弃"
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt:8
+msgid   "draft"
+msgstr  "草稿"
+
+#: templates/oopshistory.kvp.tmpl:14
+msgid   "earlier"
+msgstr  "早前"
+
+#: templates/oopshistory.kvp.tmpl:14
+msgid   "first"
+msgstr  "第一"
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt:10
+msgid   "formal revision"
+msgstr  "正式修订"
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt:11
+msgid   "formal revision (draft)"
+msgstr  "正式修订(草稿)"
+
+#: data/System/KvpSkinSolrSearchBaseTemplate.txt:13
+msgid   "in %1"
+msgstr  "在%1"
+
+#: templates/oopshistory.kvp.tmpl:14
+msgid   "last"
+msgstr  "最后"
+
+#: data/System/ExampleSkinTopHeadTemplate.txt:202
+#: data/System/ExampleSkinTopHeadTemplate.txt:88
+#: data/System/KvpSkinTopHeadTemplate.txt:194
+#: data/System/KvpSkinTopHeadTemplate.txt:83
+msgid   "old revision"
+msgstr  "旧版修订"
+
+#: templates/oopshistory.kvp.tmpl:27
+msgid   "restore"
+msgstr  "复原"
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt:7
+msgid   "under discussion"
+msgstr  "讨论中"
+
+#: data/System/ExampleSkinTopHeadTemplate.txt:218
+#: data/System/ExampleSkinTopHeadTemplate.txt:222
+#: data/System/ExampleSkinTopHeadTemplate.txt:224
+#: data/System/KvpSkinTopHeadTemplate.txt:210
+#: data/System/KvpSkinTopHeadTemplate.txt:214
+#: data/System/KvpSkinTopHeadTemplate.txt:216
+msgid   "under&#160;discussion"
+msgstr  "在&#160;讨论"
+
+#: templates/oopshistory.kvp.tmpl:27
+msgid   "view"
+msgstr  "浏览"
