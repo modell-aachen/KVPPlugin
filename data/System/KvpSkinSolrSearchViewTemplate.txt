@@ -33,6 +33,7 @@
 %TMPL:DEF{"modacExtraFacets"}%%TMPL:PREV%
 %TMPL:P{"solr::facet"
     id="process_state_s"
+    title="%MAKETEXT{"Process State"}%"
     format="$key&nbsp;($count)"
     value="$id:$key"
     input="checkbox"

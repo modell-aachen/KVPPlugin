@@ -541,3 +541,7 @@ msgstr "Macros anzeigen"
 
 msgid "Last author"
 msgstr "Letzter Autor"
+
+#: data/System/KvpSkinSolrSearchViewTemplate
+msgid "Process State"
+msgstr "Prozessstatus"
