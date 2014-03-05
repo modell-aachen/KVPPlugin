@@ -1043,7 +1043,7 @@ sub _restFork {
                 }
 
                 my $forkhistory = {
-                    value => "<br>Forked from [[$forkWeb.$forkTopic]] by $who at $now",
+                    value => "<br />Forked from [[$forkWeb.$forkTopic]] by $who at $now",
                 };
                 $meta->put( "WORKFLOWHISTORY", $forkhistory );
 

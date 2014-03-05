@@ -22,13 +22,13 @@
 		</tr>
 		<tr height: 24px;>
 			<td style='text-align: center;'>
-				Letzter Autor:<strong><br>%WORKFLOWMETA{"LASTPROCESSOR_INHALTLICHE_PRUEFUNG" or="LASTPROCESSOR_INHALTLICHE_PRUEFUNG_ENTWURF" nousersweb="1"}%</strong></td>
+				Letzter Autor:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_INHALTLICHE_PRUEFUNG" or="LASTPROCESSOR_INHALTLICHE_PRUEFUNG_ENTWURF" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
-				Verantwortlich:<strong><br>%QUERY{"Seitenverantwortlicher"}%</strong></td>
+				Verantwortlich:<strong><br />%QUERY{"Seitenverantwortlicher"}%</strong></td>
 			<td style='text-align: center;'>
-				Freigegeben durch:<strong><br>%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
+				Freigegeben durch:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
-				Freigabedatum:<strong><br>%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
+				Freigabedatum:<strong><br />%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
 				%TMPL:P{"modacPageNr"}%</td>
 		</tr>
@@ -59,13 +59,13 @@
 		</tr>
 		<tr height: 24px;>
 			<td style='text-align: center;'>
-				Last author:<strong><br>%WORKFLOWMETA{"LASTPROCESSOR_INHALTLICHE_PRUEFUNG" or="LASTPROCESSOR_INHALTLICHE_PRUEFUNG_ENTWURF" nousersweb="1"}%</strong></td>
+				Last author:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_INHALTLICHE_PRUEFUNG" or="LASTPROCESSOR_INHALTLICHE_PRUEFUNG_ENTWURF" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
-				Responsible:<strong><br>%QUERY{"Seitenverantwortlicher"}%</strong></td>
+				Responsible:<strong><br />%QUERY{"Seitenverantwortlicher"}%</strong></td>
 			<td style='text-align: center;'>
-				Approved by:<strong><br>%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
+				Approved by:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
-				Release date:<strong><br>%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
+				Release date:<strong><br />%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
 				%TMPL:P{"modacPageNr"}%</td>
 		</tr>
@@ -96,13 +96,13 @@
 		</tr>
 		<tr height: 24px;>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Last author"}%:<strong><br>%WORKFLOWMETA{"LASTPROCESSOR_INHALTLICHE_PRUEFUNG" or="LASTPROCESSOR_INHALTLICHE_PRUEFUNG_ENTWURF" nousersweb="1"}%</strong></td>
+				%MAKETEXT{"Last author"}%:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_INHALTLICHE_PRUEFUNG" or="LASTPROCESSOR_INHALTLICHE_PRUEFUNG_ENTWURF" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Responsible"}%:<strong><br>%QUERY{"Seitenverantwortlicher"}%</strong></td>
+				%MAKETEXT{"Responsible"}%:<strong><br />%QUERY{"Seitenverantwortlicher"}%</strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Approved by"}%:<strong><br>%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
+				%MAKETEXT{"Approved by"}%:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Release date"}%:<strong><br>%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
+				%MAKETEXT{"Release date"}%:<strong><br />%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
 				%TMPL:P{"modacPageNr"}%</td>
 		</tr>
@@ -133,13 +133,13 @@
 		</tr>
 		<tr height: 24px;>
 			<td style='text-align: center;'>
-				Letzter Autor:<strong><br><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
+				Letzter Autor:<strong><br /><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
-				Verantwortlich:<strong><br>%QUERY{"Seitenverantwortlicher"}%</strong></td>
+				Verantwortlich:<strong><br />%QUERY{"Seitenverantwortlicher"}%</strong></td>
 			<td style='text-align: center;'>
-				Freigegeben durch:<strong><br><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
+				Freigegeben durch:<strong><br /><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
-				Freigabedatum:<strong><br><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
+				Freigabedatum:<strong><br /><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
 				%TMPL:P{"modacPageNr"}%</td>
 		</tr>
@@ -170,13 +170,13 @@
 		</tr>
 		<tr height: 24px;>
 			<td style='text-align: center;'>
-				Last author:<strong><br><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
+				Last author:<strong><br /><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
-				Responsible:<strong><br>%QUERY{"Seitenverantwortlicher"}%</strong></td>
+				Responsible:<strong><br />%QUERY{"Seitenverantwortlicher"}%</strong></td>
 			<td style='text-align: center;'>
-				Approved by:<strong><br><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
+				Approved by:<strong><br /><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
-				Release date:<strong><br><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
+				Release date:<strong><br /><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
 				%TMPL:P{"modacPageNr"}%</td>
 		</tr>
@@ -207,13 +207,13 @@
 		</tr>
 		<tr height: 24px;>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Last author"}%:<strong><br><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
+				%MAKETEXT{"Last author"}%:<strong><br /><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Responsible"}%:<strong><br>%QUERY{"Seitenverantwortlicher"}%</strong></td>
+				%MAKETEXT{"Responsible"}%:<strong><br />%QUERY{"Seitenverantwortlicher"}%</strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Approved by"}%:<strong><br><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
+				%MAKETEXT{"Approved by"}%:<strong><br /><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Release date"}%:<strong><br><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
+				%MAKETEXT{"Release date"}%:<strong><br /><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
 				%TMPL:P{"modacPageNr"}%</td>
 		</tr>

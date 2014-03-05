@@ -384,7 +384,7 @@ sub changeState {
     $this->setState($state, $version, $remark);
 
     my $fmt = Foswiki::Func::getPreferencesValue("WORKFLOWHISTORYFORMAT")
-      || '<br>$state -- $date';
+      || '<br />$state -- $date';
     $fmt =~ s/\$wikiusername/Foswiki::Func::getWikiUserName()/geo;
     $fmt =~ s/\$state/$this->getState()/goe;
     $fmt =~ s/\$date/$this->{state}->{"LASTTIME_$state"}/geo;
