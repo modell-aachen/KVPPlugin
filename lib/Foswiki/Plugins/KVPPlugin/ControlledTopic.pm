@@ -177,7 +177,7 @@ sub setState {
 
     # Leave state-change comment
     $this->{meta}->remove( 'KVPSTATECHANGE' );
-    $this->{meta}->putKeyed( 'KVPSTATECHANGE', {name => 'TRANSITION', value=> "$oldState -> $state"} );
+    $this->{meta}->putKeyed( 'KVPSTATECHANGE', {name => 'TRANSITION', value=> "$oldState -> $state", old=>$oldState, new=>$state} );
 
     # manage comments
     my $allowComment = $this->{workflow}->getRow($this, 'allowcomment');
