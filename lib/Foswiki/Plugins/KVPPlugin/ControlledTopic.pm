@@ -99,6 +99,13 @@ sub getAttributes {
 
 sub getWorkflowMeta {
     my ( $this, $attributes ) = @_;
+
+    if($attributes eq 'STATECHANGE') {
+        my $t = $this->{meta}->get( 'KVPSTATECHANGE', 'TRANSITION' );
+        return unless $t && $t->{value};
+        return $t->{value};
+    }
+
     return $this->{state}->{$attributes};
 }
 
@@ -167,6 +174,10 @@ sub setState {
     # Replace workflow-metadata
     $this->{meta}->remove( 'WORKFLOW' ); # XXX sometime putKeyed doesn't replace
     $this->{meta}->putKeyed( "WORKFLOW", $this->{state} );
+
+    # Leave state-change comment
+    $this->{meta}->remove( 'KVPSTATECHANGE' );
+    $this->{meta}->putKeyed( 'KVPSTATECHANGE', {name => 'TRANSITION', value=> "$oldState -> $state"} );
 
     # manage comments
     my $allowComment = $this->{workflow}->getRow($this, 'allowcomment');
