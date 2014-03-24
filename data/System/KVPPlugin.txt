@@ -120,6 +120,7 @@ Mit diesemn Makro kann man Metadaten &uuml;ber den Workflow abfragen.%BR%
 | =LEAVING_=... | Gibt an, wer den Status verlassen hat.| %%NOP%WORKFLOWMETA{"LEAVING_FREIGEGEBEN"}% &rarr; Main.AdminUser |
 | =Revision= | Die KVP-Version.%BR%Wird bei jeder Freigabe hochgez&auml;hlt. | %%NOP%WORKFLOWMETA{"Revision"}% &rarr; 4 |
 | =LASTTIME_=... | Gibt an, wann die seite zuletzt in diesen Status gebracht wurde. | %%NOP%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN"}% &rarr; 15.1.2000 |
+| =CHANGESTATE= | Wenn in der gegebenen revision eine Transition stattgefunden hat, wird dies hier angegeben.%BR%Gab es keine Transition wird ein Leerstring zur&uuml;ck geliefert.%BR%%X% Achtung: Wenn nach einer Transition beim Bearbeiten keine neue Revision erzeugt wird (gleicher Benutzer, kurze Zeit sp&auml;ter) geht die Transitionsinformation verloren. | %%NOP%WORKFLOWMETA{"CHANGESTATE"}% &rarr; =DISKUSSION -> WARTEN_AUF_FREIGABE= |
 %I% Anstatt der Punkte ... ist der jeweilige Statusname anzugeben. 
 
 ---+++ =WORKFLOWFORK=

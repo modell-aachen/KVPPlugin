@@ -1327,6 +1327,30 @@ sub beforeSaveHandler {
     # In this case we don't need the access check.
     return if ($isStateChange);
 
+    # not a state-change, remove old state-change comment if present
+    if($meta->get( 'KVPSTATECHANGE' )) {
+        $meta->remove( 'KVPSTATECHANGE' );
+        # XXX a new revision should be forced here
+        # Possibility:
+        # sub beforeSaveHandler {
+        #   ...
+        #   if($meta->get( 'KVPSTATECHANGE' )) {
+        #     ...
+        #     our $ReplaceIfEditedAgainWithin = $Foswiki::cfg{ReplaceIfEditedAgainWithin};
+        #     $Foswiki::cfg{ReplaceIfEditedAgainWithin} = 0;
+        #   }
+        #   ...
+        # }
+        # sub initPlugin {
+        #   ...
+        #   our $ReplaceIfEditedAgainWithin;
+        #   if(defined $ReplaceIfEditedAgainWithin) {
+        #     $Foswiki::cfg{ReplaceIfEditedAgainWithin} = $ReplaceIfEditedAgainWithin;
+        #     undef $ReplaceIfEditedAgainWithin;
+        #   }
+        # }
+    }
+
     my $oldControlledTopic = _initTOPIC( $web, $topic, undef, undef, undef, NOCACHE );
     my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, FORCENEW );
 
