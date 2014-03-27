@@ -1161,22 +1161,8 @@ sub beforeRenameHandler {
 sub beforeEditHandler {
     my ( $text, $topic, $web, $meta ) = @_;
 
-    # Check the state change parameters to see if this edit is
-    # part of a state change (state changes may be permitted even
-    # for users who can't edit, so we have to suppress the edit
-    # check in this case)
-    my $changingState = 1;
     my $query = Foswiki::Func::getCgiQuery();
-    foreach my $p ('WORKFLOWPENDINGACTION', 'WORKFLOWCURRENTSTATE',
-                     'WORKFLOWPENDINGSTATE', 'WORKFLOWWORKFLOW') {
-        if (!defined $query->param($p)) {
-            # All params must be present to change state
-            $changingState = 0;
-            last;
-        }
     }
-
-    return if $changingState; # permissions check not required
 
     my $controlledTopic = _initTOPIC( $web, $topic );
 
