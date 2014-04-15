@@ -332,26 +332,6 @@ sub getTaskForAction {
     return '';
 }
 
-# Get the form defined for the given current state and action
-# (the first 2 columns of the transition table). The returned form
-# will be undef if the transition doesn't exist, or is not allowed.
-sub getNextForm {
-    my ( $this, $topic, $action ) = @_;
-    my $currentState = $topic->getState();
-    foreach my $t ( @{ $this->{transitions} } ) {
-        my $allowed = $topic->expandMacros( $t->{allowed} );
-        if (
-                $t->{state} eq $currentState
-                && $t->{action} eq $action
-                && _isAllowed($allowed)
-            )
-        {
-            return $t->{form};
-        }
-    }
-    return undef;
-}
-
 # Get the notify column defined for the given current state and action
 # (the first 2 columns of the transition table). The returned list
 # will be undef if the transition doesn't exist, or is not allowed.

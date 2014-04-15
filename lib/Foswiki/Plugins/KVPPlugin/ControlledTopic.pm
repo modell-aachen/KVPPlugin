@@ -324,20 +324,6 @@ sub getTask {
     return $this->{workflow}->getTask($this->{state}->{name});
 }
 
-# if the form employed in the state arrived after after applying $action
-# is different to the form currently on the topic.
-sub newForm {
-    my ( $this, $action ) = @_;
-    my $form = $this->{workflow}->getNextForm( $this, $action );
-    my $oldForm = $this->{meta}->get('FORM');
-
-    # If we want to have a form attached initially, we need to have
-    # values in the topic, due to the form initialization
-    # algorithm, or pass them here via URL parameters (take from
-    # initialization topic)
-    return ( $form && ( !$oldForm || $oldForm ne $form ) ) ? $form : undef;
-}
-
 # Returns array of people assigned to currently attached task
 sub getTaskedPeople {
     my ( $this ) = @_;
@@ -362,7 +348,6 @@ sub changeState {
         return;
     }
     #Alex: Es muss garantiert sein, dass die Form nicht leer ist (also " ")
-    my $form = $this->{workflow}->getNextForm( $this, $action );
     my $notify = $this->{workflow}->getNotifyList( $this, $action );
     my $attributes = $this->{workflow}->getAttributes( $this->getState(), $action );
 
@@ -414,10 +399,6 @@ sub changeState {
 
     $this->{history}->{value} .= $fmt;
     $this->{meta}->put( "WORKFLOWHISTORY", $this->{history} );
-
-    if ($form) {
-        #$this->{meta}->put( "FORM", { name => $form } );
-    }    # else leave the existing form in place
 
     # Set preferences / fields from transition-table
     if ($attributes) {

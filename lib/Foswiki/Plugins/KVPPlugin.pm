@@ -651,8 +651,6 @@ sub _changeState {
         return undef;
     }
 
-    my $newForm = $controlledTopic->newForm($action);
-
     # Check that no-one else has a lease on the topic
     my $breaklock = $query->param('breaklock');
     unless (Foswiki::Func::isTrue($breaklock)) {
@@ -685,33 +683,7 @@ sub _changeState {
 
     try {
         try {
-            #Alex: Forms erstmal vorenthalten
-            if ($newForm && "peter" eq "manni") {
-
-                # If there is a form with the new state, and it's not
-                # the same form as previously, we need to kick into edit
-                # mode to support form field changes. In this case the
-                # transition is delayed until after the edit is saved
-                # (the transition is executed by the beforeSaveHandler)
-                $url =
-                  Foswiki::Func::getScriptUrl(
-                      $web, $topic, 'edit',
-                      breaklock             => $breaklock,
-                      t                     => time(),
-                      formtemplate          => $newForm,
-                      # pass info about pending state change
-                      template              => 'workflowedit',
-                      WORKFLOWPENDINGACTION => $action,
-                      WORKFLOWCURRENTSTATE  => $state,
-                      WORKFLOWPENDINGSTATE  =>
-                        $controlledTopic->haveNextState($action),
-                      WORKFLOWWORKFLOW      =>
-                        $controlledTopic->{workflow}->{name},
-                     );
-            }
-            else {
-                $url = Foswiki::Func::getScriptUrl( $web, $topic, 'view' );
-            }
+            $url = Foswiki::Func::getScriptUrl( $web, $topic, 'view' );
 
             # Get ForkingAction. This will determine, if discussion will be copied, overwritten or discarded
             my $actionAttributes = $controlledTopic->getAttributes($action) || '';
