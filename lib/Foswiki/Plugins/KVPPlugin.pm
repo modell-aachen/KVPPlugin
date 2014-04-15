@@ -44,7 +44,7 @@ sub initPlugin {
         'fork', \&_restFork,
         authenticate => 1, http_allow => 'GET' );
     Foswiki::Func::registerRESTHandler(
-        'link', \&_restLink, 
+        'link', \&_restLink,
         http_allow => 'GET' );
 
     Foswiki::Func::registerTagHandler(
@@ -230,7 +230,7 @@ sub _initTOPIC {
 
     ( $web, $topic ) = Foswiki::Func::normalizeWebTopicName( $web, $topic );
     return undef unless(Foswiki::Func::isValidWebName( $web ));
-    
+
     my $controlledTopic;
     my $controlledTopicCID = "$web.$topic.$rev";
 
@@ -604,9 +604,9 @@ sub _trashTopic {
 # Handle actions. REST handler, on changeState action.
 sub _changeState {
     my ($session) = @_;
-    
+
     my $query = Foswiki::Func::getCgiQuery();
-    
+
     return unless $query;
 
     my $web   = $query->param('web') || $session->{webName};
@@ -615,10 +615,10 @@ sub _changeState {
     my $removeComments = $query->param('removeComments') || '0';
     my $action = $query->param('WORKFLOWACTION');
     my $state  = $query->param('WORKFLOWSTATE');
-    
+
     ($web, $topic) =
       Foswiki::Func::normalizeWebTopicName( $web, $topic );
-    
+
     die unless $web && $topic;
 
     my $url;
@@ -700,7 +700,7 @@ sub _changeState {
             { #scope
                 my ($allowRemove, $suggestRemove) = $controlledTopic->getTransitionAttributes();
                 if(
-                        $removeComments eq '1' 
+                        $removeComments eq '1'
                         && not ($allowRemove =~ /,$action,/ || $suggestRemove =~ /,$action,/)
                     )
                 {
@@ -723,7 +723,7 @@ sub _changeState {
             #Alex: Zugehriges Topic finden
             my $appTopic = $originCache;
 
-            # Hier Action 
+            # Hier Action
             if ($forkingAction && $forkingAction eq "DISCARD") {
                 $controlledTopic->purgeContributors(); # XXX Wirklich?
                 my $origMeta = $controlledTopic->{meta};
@@ -743,16 +743,16 @@ sub _changeState {
                     if (defined $meta->get("PREFERENCE", "ALLOWTOPICCHANGE")){
                         if ($meta->get("PREFERENCE", "ALLOWTOPICCHANGE")->{"value"} eq "nobody")
                         {# XXX Hier muessen die permissions aus dem Workflow hin
-                            $meta->remove("PREFERENCE", "ALLOWTOPICCHANGE"); 
+                            $meta->remove("PREFERENCE", "ALLOWTOPICCHANGE");
                         }
                     }
                     #Workflowhistory entfernen. Alex: Oder wollen wir die ggf. speichern?
                     if (defined $meta->get("WORKFLOWHISTORY")){
-                        $meta->remove("WORKFLOWHISTORY"); 
+                        $meta->remove("WORKFLOWHISTORY");
                     }
 
                     #Alex: Keine neue Revision erzeugen, Autor nicht ueberschreiben
-                    Foswiki::Func::saveTopic( 
+                    Foswiki::Func::saveTopic(
                         $web, $appTopic, $meta, $text,
                         { forcenewrevision => 0, minor => 1, dontlog => 1, ignorepermissions => 1 }
                     );
@@ -791,7 +791,7 @@ sub _changeState {
             }
 
             Foswiki::Func::redirectCgiQuery( undef, $url );
-            
+
         } catch Error::Simple with {
             my $error = shift;
             throw Foswiki::OopsException(
@@ -826,9 +826,9 @@ sub transferACL {
         if ( $hash ) {
             $acl = $hash->{"value"};
         }
-    } 
-   
-    if ($acl) { 
+    }
+
+    if ($acl) {
         $dst->{meta}->putKeyed( 'PREFERENCE', { name => "ALLOWTOPICCHANGE", value => $acl } );
     } else {
         $dst->{meta}->remove("PREFERENCE", "ALLOWTOPICCHANGE");
@@ -893,7 +893,7 @@ sub _restLink {
 }
 
 sub _restFork {
-    my ($session, $plugin, $verb, $response) = @_; 
+    my ($session, $plugin, $verb, $response) = @_;
     # Update the history in the template topic and the new topic
     my $query = Foswiki::Func::getCgiQuery();
     my $forkTopic = $query->param('topic');
@@ -985,8 +985,8 @@ sub _restFork {
             push( @actions, $newAction );
         }
 
-        # Now copy the topics and do the transitions.    
-        unless ($erroneous) { 
+        # Now copy the topics and do the transitions.
+        unless ($erroneous) {
             while (scalar @topics) {
                 my $newTopic = shift @topics;
                 my $newAction = shift @actions;
@@ -995,7 +995,7 @@ sub _restFork {
                 $directToWeb = $newWeb;
                 $directToTopic = $newTopic;
 
-                next if (Foswiki::Func::topicExists($newWeb, $newTopic)); 
+                next if (Foswiki::Func::topicExists($newWeb, $newTopic));
 
                 #Alex: Topic mit allen Dateien kopieren
                 my $handler = $session->{store}->getHandler( $forkWeb, $forkTopic );
@@ -1020,7 +1020,7 @@ sub _restFork {
                 $meta->put( "WORKFLOWHISTORY", $forkhistory );
 
                 # Modell Aachen Settings:
-                # Ueberfuehren in Underrevision:    
+                # Ueberfuehren in Underrevision:
                 my $newcontrolledTopic = _initTOPIC( $newWeb, $newTopic, undef, $meta, $text, FORCENEW);
 
                 unless ( $newcontrolledTopic ) {
@@ -1388,14 +1388,14 @@ sub beforeSaveHandler {
         }
         # TODO Check if metacommentstuff changed unless workflow does so
 
-        if( Foswiki::Func::topicExists( $web, $topic ) 
+        if( Foswiki::Func::topicExists( $web, $topic )
                 && not $meta->getPreference('WorkflowStub') ) {
             # topic already exists, check if Workflowstuff didn't change
             # but do not touch uncontrolled topics
             if(scalar @newStateName == 0) {
                 return;
             }
-            
+
             my $oldMeta = $controlledTopic->{meta};
             my $oldState = $oldMeta->get( 'WORKFLOW' );
             unless($newStateName[0]->{name} eq $oldState->{name}) {

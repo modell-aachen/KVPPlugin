@@ -168,7 +168,7 @@ sub new {
         Foswiki::Plugins::KVPPlugin::_broadcast( '%MAKETEXT{"Invalid state table in [_1]" args="'.$web.'.'.$topic.'"}%' );
         return undef;
     }
-    
+
     return $this;
 }
 
@@ -279,7 +279,7 @@ sub getTransitionAttributes {
 # will be undef if the transition doesn't exist, or is not allowed.
 sub getNextState {
     my ( $this, $topic, $action ) = @_;
-    unless($action) {Foswiki::Func::writeWarning("No action! topic: ".$topic); return undef;} # XXX 
+    unless($action) {Foswiki::Func::writeWarning("No action! topic: ".$topic); return undef;} # XXX
     my $currentState = $topic->getState();
     foreach my $t ( @{ $this->{transitions} } ) {
         my $allowed = $topic->expandMacros( $t->{allowed} );
@@ -301,7 +301,7 @@ sub getTask {
     my ( $this, $task ) = @_;
 
     foreach my $t (@{ $this->{tasks} }) {
-        if( 
+        if(
                 $t->{task} eq $task
         ) {
             return $t;
@@ -358,7 +358,7 @@ sub getChangeACL {
     my ( $this, $topic, $state ) = @_;
 
     return undef unless $this->{states}{$state};
-    
+
     return $topic->expandMacros($this->{states}{$state}->{allowedit});
 }
 
@@ -440,7 +440,7 @@ sub getRow {
 # of a group in the list.
 sub _isAllowed {
     my ($allow) = @_;
-    
+
     #Modac: Hier knnte ein Abfangen von ACLDISCUSS, ACLCHANGE, ACLVIEW, ACLRENAME hin
 
     return 1 unless ($allow);

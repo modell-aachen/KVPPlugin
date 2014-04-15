@@ -116,7 +116,7 @@ sub getContributors {
     $state ||= $this->{state}->{name};
 
     my $contributors = $this->{meta}->get( 'WRKFLWCONTRIBUTORS', $state);
-    return '' unless $contributors;    
+    return '' unless $contributors;
 
     return $contributors->{value};
 }
@@ -267,7 +267,7 @@ sub isForkable {
     my $this = shift;
 
     unless (defined $this->{isAllowingFork}) {
-        $this->{isAllowingFork} = 
+        $this->{isAllowingFork} =
              # Allow forking if there is an action for it
              ($this->{workflow}->getActionWithAttribute($this, 'FORK')) ? 1 : 0;
     }
@@ -376,7 +376,7 @@ sub changeState {
         }
         $this->{state}->{"TASK_DUE"} = $duedate;
     }
-    
+
     $this->setState($state, $version, $remark);
 
     my $fmt = Foswiki::Func::getPreferencesValue("WORKFLOWHISTORYFORMAT")
@@ -427,9 +427,9 @@ sub changeState {
         # Set Language
         my $language = $Foswiki::cfg{Extensions}{KVPPlugin}{MailLanguage};
         if($language) {
-            Foswiki::Func::setPreferencesValue( 'LANGUAGE', $language );            
+            Foswiki::Func::setPreferencesValue( 'LANGUAGE', $language );
         }
-        
+
         # Dig up the bodies
         my @emails;
 
@@ -456,7 +456,7 @@ sub changeState {
             }
 
         }
-        
+
         # Alex: Email Doubletten verhindern:
         @emails = del_double(@emails);
 
@@ -501,7 +501,7 @@ sub save {
     }
     Foswiki::Func::saveTopic(
         $this->{web}, $this->{topic}, $this->{meta},
-        $this->{text}, $options 
+        $this->{text}, $options
     );
 }
 
