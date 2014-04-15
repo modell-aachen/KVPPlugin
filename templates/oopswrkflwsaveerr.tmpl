@@ -11,6 +11,23 @@
 %TMPL:DEF{"message"}%
 %MAKETEXT{"While changing [_1] an error occured in the workflow." args="<nop>%WEB%.<nop>%TOPIC%"}%
 
-%IF{"not '%URLPARAM{state}%'" then="%MAKETEXT{"Could not initialize workflow for [_1]. Maybe the topic was deleted?" args="<nop>%WEB%.<nop>%TOPIC%"}%"}%%IF{"'%URLPARAM{state}%' and '%URLPARAM{state}%' != '%URLPARAM{cstate}%'" then="%MAKETEXT{"The transition was not possible because the state of the topic ([_1]) did not match the state of the action ([_2]). Maybe someone else already transitioned the topic?" args="%URLPARAM{cstate}%,%URLPARAM{state}%"}%"}%%IF{"'%URLPARAM{action}%'" else=" %MAKETEXT{"No action was specified."}%"}%
+%INSTANTIATE%
+%TMPL:END%
 
+%TMPL:DEF{"MissingParameter"}%
+%MAKETEXT{"The request was missing parameters (state='[_1]', action='[_2]'). This is most likely due to a technical problem." args="%PARAM1%, %PARAM2%"}%
+%TMPL:END%
+
+%TMPL:DEF{"TopicNotFound"}%%MAKETEXT{"Could not initialize workflow for [_1]. Maybe the topic was deleted?" args="<nop>%WEB%.<nop>%TOPIC%"}%%TMPL:END%
+
+%TMPL:DEF{"WrongState"}%
+%MAKETEXT{"The transition was not possible because the state of the topic ([_1]) did not match the state of the action ([_2]). Maybe someone else already transitioned the topic?" args="%PARAM1%,%PARAM2%"}%
+%TMPL:END%
+
+%TMPL:DEF{"NoNextState"}%
+%MAKETEXT{"The transition was not possible, because [_1] in state '[_2]' can not be transitioned with '[_3]'." args="<nop>%WEB%.<nop>%TOPIC%, %PARAM1%, %PARAM2%"}%
+%TMPL:END%
+
+%TMPL:DEF{"generic"}%
+%PARAM1%
 %TMPL:END%

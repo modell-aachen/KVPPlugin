@@ -652,12 +652,39 @@ sub _changeState {
 
     return unless $query;
 
-    my $web   = $query->param('web') || $session->{webName};
-    my $topic = $query->param('topic') || $session->{topicName};
-    my $remark = $query->param('message');
-    my $removeComments = $query->param('removeComments') || '0';
-    my $action = $query->param('WORKFLOWACTION');
-    my $state  = $query->param('WORKFLOWSTATE');
+    try {
+        my $url = transitionTopic(
+            $query->param('web') || $session->{webName},
+            $query->param('topic') || $session->{topicName},
+            $query->param('WORKFLOWACTION'),
+            $query->param('WORKFLOWSTATE'),
+            $query->param('message'),
+            $query->param('removeComments') || '0',
+            $query->param('breaklock')
+        );
+        Foswiki::Func::redirectCgiQuery( undef, $url ) if $url;
+    } catch Foswiki::OopsException with {
+        my $e = shift;
+        $e->generate($session);
+    };
+    return undef;
+}
+
+# Will transition a topic.
+# Throws an OopsException when anything goes wrong.
+# Returns a url the user should go to next (to the transitioned topic, or the
+# parent if the topic was discarded).
+#
+# Parameters:
+#    * web: web of the topic
+#    * topic: topic name
+#    * action: The transition to be performed
+#    * state: The _current_ state of the topic
+#    * remark: remark for the transition
+#    * removeComments: set to 1 if MetaComments should be deleted
+#    * breaklock: set to 1 to clear any lease
+sub transitionTopic {
+    my ($web, $topic, $action, $state, $remark, $removeComments, $breaklock) = @_;
 
     ($web, $topic) =
       Foswiki::Func::normalizeWebTopicName( $web, $topic );
@@ -668,35 +695,47 @@ sub _changeState {
     my $controlledTopic = _initTOPIC( $web, $topic );
 
     unless ($controlledTopic && Foswiki::Func::topicExists( $web, $topic )) {
-        $url = Foswiki::Func::getScriptUrl(
-            $web, $topic, 'oops',
-            template => "oopswrkflwsaveerr",
-            action   => $action
+        throw Foswiki::OopsException(
+            "oopswrkflwsaveerr",
+            web => $web,
+            topic => $topic,
+            def => 'TopicNotFound',
+            params => [ $action ]
         );
-        Foswiki::Func::redirectCgiQuery( undef, $url );
-        return undef;
     }
 
     my $oldIsApproved = $controlledTopic->getRow( "approved" );
 
-    unless ($action
-            && $state
-            && $state eq $controlledTopic->getState()
-            && $controlledTopic->haveNextState($action) ) {
-        $url = Foswiki::Func::getScriptUrl(
-            $web, $topic, 'oops',
-            template => "oopswrkflwsaveerr",
-            state   => $state,
-            cstate   => $controlledTopic->getState(),
-            action   => $action
+    unless ($action && $state) {
+        throw Foswiki::OopsException(
+            "oopswrkflwsaveerr",
+            web => $web,
+            topic => $topic,
+            def => 'MissingParameter',
+            params => [$state || '', $action || '']
         );
-        Foswiki::Func::redirectCgiQuery( undef, $url );
-        return undef;
+    }
+    unless ($state eq $controlledTopic->getState()) {
+        throw Foswiki::OopsException(
+            "oopswrkflwsaveerr",
+            web => $web,
+            topic => $topic,
+            def => 'WrongState',
+            params => [$state, $controlledTopic->getState()]
+        );
+    }
+    unless ($controlledTopic->haveNextState($action)) {
+        throw Foswiki::OopsException(
+            "oopswrkflwsaveerr",
+            web => $web,
+            topic => $topic,
+            def => 'NoNextState',
+            params => [$state, $action]
+        );
     }
     $removeComments = '0' unless defined $removeComments;
 
     # Check that no-one else has a lease on the topic
-    my $breaklock = $query->param('breaklock');
     unless (Foswiki::Func::isTrue($breaklock)) {
         my ( $url, $loginName, $t ) = Foswiki::Func::checkTopicEditLock(
             $web, $topic
@@ -710,147 +749,134 @@ sub _changeState {
                 );
                 $remark ||= '';
                 $remark =~ s#"#&quot;#;
-                $url = Foswiki::Func::getScriptUrl(
-                    $web, $topic, 'oops',
-                    template => 'oopswfplease',
-                    param1   => Foswiki::Func::getWikiName($locker),
-                    param2   => $t,
-                    param3   => $state,
-                    param4   => $action,
-                    param5   => $remark,
-                    param6   => $removeComments
-                   );
-                Foswiki::Func::redirectCgiQuery( undef, $url );
-                return undef;
+                throw Foswiki::OopsException(
+                    'oopswfplease',
+                    web => $web,
+                    topic => $topic,
+                    params => [Foswiki::Func::getWikiName($locker), $t, $state, $action, $remark, $removeComments ]
+                );
             }
         }
     }
 
     try {
-        try {
-            $url = Foswiki::Func::getScriptUrl( $web, $topic, 'view' );
+        $url = Foswiki::Func::getScriptUrl( $web, $topic, 'view' );
 
-            # Get ForkingAction. This will determine, if discussion will be copied, overwritten or discarded
-            my $actionAttributes = $controlledTopic->getAttributes($action) || '';
-            $actionAttributes =~ /(?:\W|^)(FORK|DISCARD)(?:\W|$)/;
-            my $forkingAction = $1;
+        # Get ForkingAction. This will determine, if discussion will be copied, overwritten or discarded
+        my $actionAttributes = $controlledTopic->getAttributes($action) || '';
+        $actionAttributes =~ /(?:\W|^)(FORK|DISCARD)(?:\W|$)/;
+        my $forkingAction = $1;
 
-            # clear message, if workflow doesn't allow it (maybe the
-            # user entered a message and then switched state...)
-            if( $actionAttributes !~ /(?:\W|^)REMARK(?:\W|$)/ ) {
-                $remark = '';
+        # clear message, if workflow doesn't allow it (maybe the
+        # user entered a message and then switched state...)
+        if( $actionAttributes !~ /(?:\W|^)REMARK(?:\W|$)/ ) {
+            $remark = '';
+        }
+
+        # check if deleting comments is allowed if requested
+        { #scope
+            my ($allowRemove, $suggestRemove) = $controlledTopic->getTransitionAttributes();
+            if(
+                    $removeComments eq '1'
+                    && not ($allowRemove =~ /,$action,/ || $suggestRemove =~ /,$action,/)
+                )
+            {
+                # this can happen by changing the popup-menue after
+                # selecting the checkbox
+                $removeComments = '0';
             }
+        }
+        # overwrite user-choice if workflow demands it
+        if($controlledTopic->isRemovingComments($state, $action)) {
+            $removeComments = '1';
+        }
+        removeComments($controlledTopic) if ($removeComments eq '1');
 
-            # check if deleting comments is allowed if requested
-            { #scope
-                my ($allowRemove, $suggestRemove) = $controlledTopic->getTransitionAttributes();
-                if(
-                        $removeComments eq '1'
-                        && not ($allowRemove =~ /,$action,/ || $suggestRemove =~ /,$action,/)
-                    )
-                {
-                    # this can happen by changing the popup-menue after
-                    # selecting the checkbox
-                    $removeComments = '0';
-                }
-            }
-            # overwrite user-choice if workflow demands it
-            if($controlledTopic->isRemovingComments($state, $action)) {
-                $removeComments = '1';
-            }
-            removeComments($controlledTopic) if ($removeComments eq '1');
+        # Do the actual transition
+        $controlledTopic->changeState($action, $remark);
 
-            # Do the actual transition
-            $controlledTopic->changeState($action, $remark);
+        # Flag that this is a state change to the beforeSaveHandler (beforeRenameHandler)
+        local $isStateChange = 1;
+        #Alex: Zugehriges Topic finden
+        my $appTopic = $originCache;
 
-            # Flag that this is a state change to the beforeSaveHandler (beforeRenameHandler)
-            local $isStateChange = 1;
-            #Alex: Zugehriges Topic finden
-            my $appTopic = $originCache;
+        # Hier Action
+        if ($forkingAction && $forkingAction eq "DISCARD") {
+            $controlledTopic->purgeContributors(); # XXX Wirklich?
+            my $origMeta = $controlledTopic->{meta};
 
-            # Hier Action
-            if ($forkingAction && $forkingAction eq "DISCARD") {
-                $controlledTopic->purgeContributors(); # XXX Wirklich?
-                my $origMeta = $controlledTopic->{meta};
+            # Move topic to trash
+            $controlledTopic->save(1);
+            _trashTopic($web, $topic);
 
-                # Move topic to trash
-                $controlledTopic->save(1);
-                _trashTopic($web, $topic);
-
-                # Only unlock / add to history if web exists (does not when topic)
-                if(Foswiki::Func::topicExists( $web, $appTopic )) {
-                    $url = Foswiki::Func::getScriptUrl( $web, $appTopic, 'view' );
-
-                    #Alex: Alte Metadaten wiederherstellen
-                    my ($meta, $text) = Foswiki::Func::readTopic($web, $appTopic);
-
-                    #gesperrte Seiten wieder entsperren
-                    if (defined $meta->get("PREFERENCE", "ALLOWTOPICCHANGE")){
-                        if ($meta->get("PREFERENCE", "ALLOWTOPICCHANGE")->{"value"} eq "nobody")
-                        {# XXX Hier muessen die permissions aus dem Workflow hin
-                            $meta->remove("PREFERENCE", "ALLOWTOPICCHANGE");
-                        }
-                    }
-                    #Workflowhistory entfernen. Alex: Oder wollen wir die ggf. speichern?
-                    if (defined $meta->get("WORKFLOWHISTORY")){
-                        $meta->remove("WORKFLOWHISTORY");
-                    }
-
-                    #Alex: Keine neue Revision erzeugen, Autor nicht ueberschreiben
-                    Foswiki::Func::saveTopic(
-                        $web, $appTopic, $meta, $text,
-                        { forcenewrevision => 0, minor => 1, dontlog => 1, ignorepermissions => 1 }
-                    );
-                } else {
-                    # if non-talk topic does not exist redirect to parent
-                    my $parent = $origMeta->getParent();
-                    my $parentWeb = $origMeta->web();
-                    $url = Foswiki::Func::getViewUrl($parentWeb, $parent);
-                }
-            }
-            # Check if discussion is beeing accepted
-            elsif (!$oldIsApproved && $controlledTopic->getRow("approved")) {
-                # transfer ACLs from old document to new
-                transferACL($web, $appTopic, $controlledTopic);
-                $controlledTopic->purgeContributors();
-                $controlledTopic->nextRev() unless $actionAttributes =~ m#NOREV#;
-                # Will save changes after moving original topic away
-
+            # Only unlock / add to history if web exists (does not when topic)
+            if(Foswiki::Func::topicExists( $web, $appTopic )) {
                 $url = Foswiki::Func::getScriptUrl( $web, $appTopic, 'view' );
 
-                #Alex: Force new Revision, damit Aenderungen auf jeden Fall in der History sichtbar werden
-                # only move topic if it has a talk suffix
-                if($appTopic eq $topic) {
-                    $controlledTopic->save(1);
-                } else {
-                    #Zuerst kommt das alte Topic in den Muell, dann wird das neue verschoben
-                    _trashTopic($web, $appTopic);
-                    # Save now that I know i can move it afterwards
-                    $controlledTopic->save(1);
-                    Foswiki::Func::moveTopic( $web, $topic, $web, $appTopic );
+                #Alex: Alte Metadaten wiederherstellen
+                my ($meta, $text) = Foswiki::Func::readTopic($web, $appTopic);
+
+                #gesperrte Seiten wieder entsperren
+                if (defined $meta->get("PREFERENCE", "ALLOWTOPICCHANGE")){
+                    if ($meta->get("PREFERENCE", "ALLOWTOPICCHANGE")->{"value"} eq "nobody")
+                    {# XXX Hier muessen die permissions aus dem Workflow hin
+                        $meta->remove("PREFERENCE", "ALLOWTOPICCHANGE");
+                    }
                 }
+                #Workflowhistory entfernen. Alex: Oder wollen wir die ggf. speichern?
+                if (defined $meta->get("WORKFLOWHISTORY")){
+                    $meta->remove("WORKFLOWHISTORY");
+                }
+
+                #Alex: Keine neue Revision erzeugen, Autor nicht ueberschreiben
+                Foswiki::Func::saveTopic(
+                    $web, $appTopic, $meta, $text,
+                    { forcenewrevision => 0, minor => 1, dontlog => 1, ignorepermissions => 1 }
+                );
+            } else {
+                # if non-talk topic does not exist redirect to parent
+                my $parent = $origMeta->getParent();
+                my $parentWeb = $origMeta->web();
+                $url = Foswiki::Func::getViewUrl($parentWeb, $parent);
             }
-            else{
-                $controlledTopic->nextRev() if $actionAttributes =~ m#NEXTREV#;
+        }
+        # Check if discussion is beeing accepted
+        elsif (!$oldIsApproved && $controlledTopic->getRow("approved")) {
+            # transfer ACLs from old document to new
+            transferACL($web, $appTopic, $controlledTopic);
+            $controlledTopic->purgeContributors();
+            $controlledTopic->nextRev() unless $actionAttributes =~ m#NOREV#;
+            # Will save changes after moving original topic away
+
+            $url = Foswiki::Func::getScriptUrl( $web, $appTopic, 'view' );
+
+            #Alex: Force new Revision, damit Aenderungen auf jeden Fall in der History sichtbar werden
+            # only move topic if it has a talk suffix
+            if($appTopic eq $topic) {
                 $controlledTopic->save(1);
+            } else {
+                #Zuerst kommt das alte Topic in den Muell, dann wird das neue verschoben
+                _trashTopic($web, $appTopic);
+                # Save now that I know i can move it afterwards
+                $controlledTopic->save(1);
+                Foswiki::Func::moveTopic( $web, $topic, $web, $appTopic );
             }
-
-            Foswiki::Func::redirectCgiQuery( undef, $url );
-
-        } catch Error::Simple with {
-            my $error = shift;
-            throw Foswiki::OopsException(
-                'oopssaveerr',
-                web    => $web,
-                topic  => $topic,
-                params => [ $error || '?' ]
-               );
-        };
-    } catch Foswiki::OopsException with {
-        my $e = shift;
-        $e->generate($session);
+        }
+        else{
+            $controlledTopic->nextRev() if $actionAttributes =~ m#NEXTREV#;
+            $controlledTopic->save(1);
+        }
+    } catch Error::Simple with {
+        my $error = shift;
+        throw Foswiki::OopsException(
+            'oopssaveerr',
+            def => 'generic',
+            web => $web,
+            topic => $topic,
+            params => [ $error || '?' ]
+           );
     };
-    return undef;
+    return $url;
 }
 
 # Forces write permission

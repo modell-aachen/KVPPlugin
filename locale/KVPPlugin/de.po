@@ -515,6 +515,14 @@ msgstr "in&#160;Diskussion"
 msgid "view"
 msgstr "ansehen"
 
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "The request was missing parameters (state='%1', action='%2'). This is most likely due to a technical problem."
+msgstr "In der Anfrage fehlten Parameter (state='%1', action='%2'). Vermutlich handelt es sich um ein technisches Problem."
+
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "The transition was not possible, because %1 in state '%2' can not be transitioned with '%3'."
+msgstr "Die Transition war nicht möglich, weil %1 mit Status '%2' nicht mit '%3' transitioniert werden kann."
+
 #~ msgid ""
 #~ "The workflow state did not match the current state.\n"
 #~ "\n"
