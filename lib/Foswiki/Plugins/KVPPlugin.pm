@@ -803,14 +803,7 @@ sub _changeState {
         };
     } catch Foswiki::OopsException with {
         my $e = shift;
-        if ( $e->can('generate') ) {
-            $e->generate($session);
-        }
-        else {
-
-            # Deprecated, TWiki compatibility only
-            $e->redirect($session);
-        }
+        $e->generate($session);
     };
     return undef;
 }
