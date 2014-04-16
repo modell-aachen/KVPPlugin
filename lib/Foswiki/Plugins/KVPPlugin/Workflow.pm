@@ -284,9 +284,11 @@ sub getNextState {
     foreach my $t ( @{ $this->{transitions} } ) {
         my $allowed = $topic->expandMacros( $t->{allowed} );
         my $nextState = $topic->expandMacros( $t->{nextstate} );
+        my $condition = $topic->expandMacros( $t->{condition} );
         if (
                 $t->{state} eq $currentState
                 && $t->{action} eq $action
+                && _isTrue($condition)
                 && _isAllowed($allowed) && $nextState
             )
         {
