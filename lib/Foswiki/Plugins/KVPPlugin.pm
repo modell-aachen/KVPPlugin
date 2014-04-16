@@ -652,21 +652,28 @@ sub _changeState {
 
     return unless $query;
 
+    my $mails = [];
+
     try {
         my $url = transitionTopic(
             $query->param('web') || $session->{webName},
             $query->param('topic') || $session->{topicName},
             $query->param('WORKFLOWACTION'),
             $query->param('WORKFLOWSTATE'),
+            $mails,
             $query->param('message'),
             $query->param('removeComments') || '0',
             $query->param('breaklock')
         );
         Foswiki::Func::redirectCgiQuery( undef, $url ) if $url;
+        foreach my $mail ( @$mails ) {
+            _sendMail($mail);
+        }
     } catch Foswiki::OopsException with {
         my $e = shift;
         $e->generate($session);
     };
+
     return undef;
 }
 
@@ -680,11 +687,12 @@ sub _changeState {
 #    * topic: topic name
 #    * action: The transition to be performed
 #    * state: The _current_ state of the topic
+#    * mail: an array transition emails can be pushed on
 #    * remark: remark for the transition
 #    * removeComments: set to 1 if MetaComments should be deleted
 #    * breaklock: set to 1 to clear any lease
 sub transitionTopic {
-    my ($web, $topic, $action, $state, $remark, $removeComments, $breaklock) = @_;
+    my ($web, $topic, $action, $state, $mails, $remark, $removeComments, $breaklock) = @_;
 
     ($web, $topic) =
       Foswiki::Func::normalizeWebTopicName( $web, $topic );
@@ -793,7 +801,8 @@ sub transitionTopic {
         removeComments($controlledTopic) if ($removeComments eq '1');
 
         # Do the actual transition
-        $controlledTopic->changeState($action, $remark);
+        my $mail = $controlledTopic->changeState($action, $remark);
+        push(@$mails, $mail);
 
         # Flag that this is a state change to the beforeSaveHandler (beforeRenameHandler)
         local $isStateChange = 1;
@@ -965,6 +974,7 @@ sub _restFork {
     my $lockdown = $query->param('lockdown');
 
     my $erroneous = '';
+    my $mails = [];
 
     (my $forkWeb, $forkTopic) =
       Foswiki::Func::normalizeWebTopicName( undef, $forkTopic );
@@ -1092,10 +1102,11 @@ sub _restFork {
                     next; # XXX this leaves the created topic behind
                 }
 
-                $newcontrolledTopic->changeState($newAction);
+                my $mail = $newcontrolledTopic->changeState($newAction);
                 local $isStateChange = 1;
                 $newcontrolledTopic->save(1);
                 local $isStateChange = 0;
+                push(@$mails, $mail);
 
                 # Topic successfully forked
             }
@@ -1120,6 +1131,10 @@ sub _restFork {
             params => $message
         );
         return "Error";
+    }
+
+    foreach my $mail ( @$mails ) {
+        _sendMail($mail);
     }
 
     #redirect to last successfully forked topic
@@ -1496,7 +1511,8 @@ sub beforeSaveHandler {
 #always overwrite?            unless ($mstate && $mstate->{ state }) {
                 my $newAction = $controlledTopic->getActionWithAttribute('NEW');
                 if($newAction) {
-                    $controlledTopic->changeState($newAction);
+                    my $mail = $controlledTopic->changeState($newAction);
+                    _sendMail($mail);
                 } elsif ( not ( Foswiki::Func::isAnAdmin() || $Foswiki::cfg{Plugins}{KVPPlugin}{NoNewRequired} ) ) {
                     my $message = Foswiki::Func::expandCommonVariables('%MAKETEXT{"You may not create this topic under this workflow."}%');
                     throw Foswiki::OopsException(
@@ -1620,6 +1636,19 @@ sub indexAttachmentHandler {
     }
 
     $doc->add_fields( %indexFields );
+}
+
+sub _sendMail {
+    my ($mail) = @_;
+
+    return unless $mail;
+
+    my $errors = Foswiki::Func::sendEmail( $mail, 5 );
+    if ($errors) {
+        Foswiki::Func::writeWarning(
+            'Failed to send transition mails: ' . $errors
+        );
+    }
 }
 
 1;

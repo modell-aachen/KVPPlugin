@@ -347,8 +347,8 @@ sub getTaskedPeople {
     return _listToWikiNames( $this->expandMacros( $task->{who} ) );
 }
 
-# change the state of the topic. Does *not* save the updated topic, but
-# does notify the change to listeners.
+# change the state of the topic. Does *not* save the updated topic.
+# Returns a notify-mail of the change to listeners.
 sub changeState {
     my ( $this, $action, $remark ) = @_;
     my $oldstate = $this->{state}->{name};
@@ -430,7 +430,8 @@ sub changeState {
         }
     }
 
-    # Send mails
+    my $notification;
+    # generate mails
     if ($notify) {
         # Expand vars in the notify list. This supports picking up the
         # value of the notifees from the topic itself.
@@ -484,20 +485,14 @@ sub changeState {
                 'TARGET_STATE',
                 $this->getState()
             );
-            $text = $this->expandMacros($text);
-            my $errors = Foswiki::Func::sendEmail( $text, 5 );
-            if ($errors) {
-                Foswiki::Func::writeWarning(
-                    'Failed to send transition mails: ' . $errors
-                );
-            }
+            $notification = $this->expandMacros($text);
         }
         Foswiki::Func::writeWarning("Topic: '$this->{web}.$this->{topic}' Transition: '$action' Notify column: '$notify' Mails: ".join(", ", @emails)) if ($Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails});
     } else {
         Foswiki::Func::writeWarning("Topic: '$this->{web}.$this->{topic}' Transition: '$action' Notify column: empty") if ($Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails});
     }
 
-    return undef;
+    return $notification;
 }
 
 # Save the topic to the store
