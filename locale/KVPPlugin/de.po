@@ -523,6 +523,10 @@ msgstr "In der Anfrage fehlten Parameter (state='%1', action='%2'). Vermutlich h
 msgid "The transition was not possible, because %1 in state '%2' can not be transitioned with '%3'."
 msgstr "Die Transition war nicht möglich, weil %1 mit Status '%2' nicht mit '%3' transitioniert werden kann."
 
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "There was an error parsing the workflow table. Please contact the person in charge of the workflow."
+msgstr "Es gab einen Fehler beim Verarbeiten der Workflow-Tabelle. Bitte kontactieren Sie die für den Workflow zuständige Person."
+
 #~ msgid ""
 #~ "The workflow state did not match the current state.\n"
 #~ "\n"

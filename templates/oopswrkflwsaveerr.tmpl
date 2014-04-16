@@ -28,6 +28,12 @@
 %MAKETEXT{"The transition was not possible, because [_1] in state '[_2]' can not be transitioned with '[_3]'." args="<nop>%WEB%.<nop>%TOPIC%, %PARAM1%, %PARAM2%"}%
 %TMPL:END%
 
+%TMPL:DEF{"WorkflowParseErr"}%
+%MAKETEXT{"There was an error parsing the workflow table. Please contact the person in charge of the workflow."}%
+
+(=%PARAM1%=)
+%TMPL:END%
+
 %TMPL:DEF{"generic"}%
 %PARAM1%
 %TMPL:END%

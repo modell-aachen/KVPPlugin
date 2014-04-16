@@ -804,10 +804,40 @@ sub transitionTopic {
         my $mail = $controlledTopic->changeState($action, $remark);
         push(@$mails, $mail);
 
+        # Our transition worked, do the chained transitions now
+        while( $actionAttributes =~ m/\G.*?(?<!\w)CHAIN\s*\(\s*/g ) {
+            my $options = {
+                web => $web,
+                topic => $topic
+            };
+            my ($name, $val);
+            while($actionAttributes !~ m/\G\)/gc) {
+                unless( $actionAttributes =~ m/\G([a-z]+)\s*=\s*"(.*?)(?<!\\)"\s*/gc ) {
+                    my $err = "Error while parsing attributes '$actionAttributes' for $web.$topic in state '$state' for action '$action'";
+                    Foswiki::Func::writeWarning($err);
+                    throw Foswiki::OopsException(
+                        'oopswrkflwsaveerr',
+                        web => $web,
+                        topic => $topic,
+                        def => 'WorkflowParseErr',
+                        params => [ $err ]
+                    );
+                }
+                $name = $1;
+                $val = $2;
+                $val =~ s#\\"#"#g;
+                $options->{$name} = $val;
+            }
+            my $other = _initTOPIC( $options->{web}, $options->{topic} );
+            my $otherState;
+            $otherState = $other->getState() if $other;
+            transitionTopic($options->{web}, $options->{topic}, $options->{action}, $otherState, $mails, $options->{remark}, $options->{removecomments}, $options->{breaklock});
+        }
+
         # Flag that this is a state change to the beforeSaveHandler (beforeRenameHandler)
         local $isStateChange = 1;
         #Alex: Zugehriges Topic finden
-        my $appTopic = $originCache;
+        my $appTopic = _getOrigin($topic);
 
         # Hier Action
         if ($forkingAction && $forkingAction eq "DISCARD") {
@@ -875,6 +905,7 @@ sub transitionTopic {
             $controlledTopic->nextRev() if $actionAttributes =~ m#NEXTREV#;
             $controlledTopic->save(1);
         }
+        local $isStateChange = 0;
     } catch Error::Simple with {
         my $error = shift;
         throw Foswiki::OopsException(
