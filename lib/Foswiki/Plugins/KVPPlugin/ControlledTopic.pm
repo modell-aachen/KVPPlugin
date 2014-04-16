@@ -94,7 +94,8 @@ sub getActions {
 # Get attributes for the given action
 sub getAttributes {
     my ($this, $action) = @_;
-    return $this->{workflow}->getAttributes($this->{state}->{name}, $action);
+    my $attribs = $this->{workflow}->getAttributes($this->{state}->{name}, $action);
+    return $this->expandMacros($attribs);
 }
 
 sub getWorkflowMeta {
