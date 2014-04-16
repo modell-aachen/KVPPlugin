@@ -66,6 +66,8 @@ sub initPlugin {
     Foswiki::Func::registerTagHandler(
         'WORKFLOWEDITPERM', \&_WORKFLOWEDITPERM );
     Foswiki::Func::registerTagHandler(
+        'WORKFLOWCANTRANSITION', \&_WORKFLOWCANTRANSITION );
+    Foswiki::Func::registerTagHandler(
         'WORKFLOWORIGIN', \&_WORKFLOWORIGIN );
 
     # init the displayed topic to set according contexts for skin
@@ -138,6 +140,20 @@ sub _WORKFLOWEDITPERM {
         'CHANGE', $Foswiki::Plugins::SESSION->{user},
         undef, $rTopic, $rWeb, undef
     ) ? 1 : 0;
+}
+
+# Tag handler for WORKFLOWCANTRANSITION
+# Will return true if action is possible.
+sub _WORKFLOWCANTRANSITION {
+    my ( $session, $params, $topic, $web ) = @_;
+
+    my $rWeb = $params->{web} || $web;
+    my $rTopic = $params->{topic} || $topic;
+    my $action = $params->{_DEFAULT};
+    my $controlledTopic = _initTOPIC( $rWeb, $rTopic );
+
+    return '0' unless $controlledTopic;
+    return ($controlledTopic->haveNextState($action))?'1':'0';
 }
 
 # Tag handler for WORKFLOWCONTRIBUTORS
