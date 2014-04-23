@@ -538,10 +538,10 @@ sub _WORKFLOWFORK {
     my ( $session, $attributes, $topic, $web ) = @_;
 
     my $controlledTopic = _initTOPIC( $web, $topic );
-    return '' unless $controlledTopic;
+    return ($attributes->{uncontrolled} || '') unless $controlledTopic;
 
     #Check we can fork
-    return '' unless ($controlledTopic->canFork());
+    return ($attributes->{cannotfork} || '') unless ($controlledTopic->canFork());
 
     my $newnames;
     if (!defined $attributes->{newnames}) {
