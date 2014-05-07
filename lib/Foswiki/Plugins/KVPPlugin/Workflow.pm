@@ -433,6 +433,13 @@ sub allowEdit {
     return $this->_topicAllows( $topic, 'allowedit' );
 }
 
+# Returns the web.topic of this workflow.
+sub getName {
+    my ( $this ) = @_;
+
+    return $this->{name};
+}
+
 # Get to contents of the given row (in workflow states) and topic for the current state.
 sub getRow {
     my ( $this, $topic, $row ) = @_;

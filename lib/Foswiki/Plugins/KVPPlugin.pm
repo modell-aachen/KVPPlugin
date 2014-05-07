@@ -1434,6 +1434,8 @@ sub _getIndexHash {
         return %indexFields;
     }
 
+    $indexFields{ workflow_controlledby_s } = $controlledTopic->getWorkflowName();
+
     # might result in default-state
     my $state = $controlledTopic->getState();
     $indexFields{ process_state_s } = $state if $state;

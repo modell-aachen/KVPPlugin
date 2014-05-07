@@ -535,6 +535,13 @@ sub expandMacros {
     return $text;
 }
 
+# Returns the web.topic of the workflow controlling this topic.
+sub getWorkflowName {
+    my ( $this ) = @_;
+
+    return $this->{workflow}->getName();
+}
+
 sub _listToWikiNames {
     my ( $string ) = @_;
     $string =~ s#^\s*|\s*$##g;
