@@ -136,7 +136,7 @@ msgstr "Datum"
 
 #: data/System/KvpSkinTransitionsTemplate.txt:7
 msgid "Difference to approved version"
-msgstr "Unterschied zu Freigegebenemstand"
+msgstr "Unterschied zu Freigegebenem Stand"
 
 #: data/System/KVPPluginCommonWords.txt:15
 msgid "Discard discussion"
