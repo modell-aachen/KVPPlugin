@@ -36,15 +36,21 @@ msgstr "(erreur de flux de travail)"
 msgid "Action"
 msgstr "Action"
 
+#, fuzzy
+msgid "Approve content"
+msgstr "Page approuvée"
+
 #: data/System/KVPPluginCommonWords.txt:21
 msgid "Approve contentual aspects of discussion"
 msgstr "Approuver les aspects contentuels de discussion "
 
-#: data/System/KVPPluginCommonWords.txt:20
 msgid "Approve contentual aspects of draft"
 msgstr "Approuver les aspects contentuels du projet"
 
-#: data/System/KVPPluginCommonWords.txt:22
+#, fuzzy
+msgid "Approve formal aspects"
+msgstr "Approuver les aspects formels du projet"
+
 msgid "Approve formal aspects of discussion"
 msgstr "approuver les aspects formels de discussion"
 

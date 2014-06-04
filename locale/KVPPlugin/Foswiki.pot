@@ -35,11 +35,15 @@ msgstr ""
 msgid "Approve contentual aspects of discussion"
 msgstr ""
 
-#: data/System/KVPPluginCommonWords.txt:20
 msgid "Approve contentual aspects of draft"
 msgstr ""
 
-#: data/System/KVPPluginCommonWords.txt:22
+msgid "Approve content"
+msgstr ""
+
+msgid "Approve formal aspects"
+msgstr ""
+
 msgid "Approve formal aspects of discussion"
 msgstr ""
 

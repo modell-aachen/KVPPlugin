@@ -1570,6 +1570,7 @@ __END__
  Copyright (C) 2005 Thomas Hartkens <thomas@hartkens.de>
  Copyright (C) 2005 Thomas Weigert <thomas.weigert@motorola.com>
  Copyright (C) 2008-2010 Crawford Currie http://c-dot.co.uk
+ Copyright (C) 2011-2014 Modell Aachen GmbH
 
  This program is free software; you can redistribute it and/or
  modify it under the terms of the GNU General Public License
