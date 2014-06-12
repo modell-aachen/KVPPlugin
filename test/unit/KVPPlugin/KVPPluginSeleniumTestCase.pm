@@ -175,6 +175,34 @@ TEMPLATE
     $this->assert( Foswiki::Func::expandCommonVariables("%WORKFLOWMETA%", $topic, $web) eq 'DONE' );
 }
 
+# Tests if...
+# ...there is a link to create a discussion
+# ...clicking it creates a discussion
+# ...clicking it redirects to the discussion
+sub verify_createDiscussionLink {
+    my ( $this ) = @_;
+
+    my $topic = 'CreateDiscussionLinkTest';
+    my $web = Helper::KVPWEB;
+
+    my $admin = Helper::becomeAnAdmin( $this );
+    Helper::createWithState( $this, $web, $topic, 'FREIGEGEBEN' );
+    $this->assert( !Foswiki::Func::topicExists( $web, "${topic}TALK") );
+
+    $this->login();
+
+    $this->selenium->get(
+        Foswiki::Func::getScriptUrl(
+            $web, $topic, 'view'
+        )
+    );
+    $this->setMarker();
+    $this->{selenium}->find_element('a.kvpForkLink', 'css')->click();
+    $this->waitForPageToLoad();
+    $this->assert( $this->{selenium}->get_current_url() =~ m#/$web/${topic}TALK$# );
+    $this->assert( Foswiki::Func::topicExists( $web, "${topic}TALK" ) );
+}
+
 # Transitions a topic until it is in the requested state (via Selenium).
 # Works for the standard workflow in that web only.
 # Topic may be in any state possible in the workflow.
