@@ -110,6 +110,71 @@ sub verify_SeleniumRc_config {
     $this->login();
 }
 
+# Test if...
+# ...the WORKFLOW-preference set in a template is beeing used.
+sub verify_templatesSetsWorkflow {
+    my ( $this ) = @_;
+
+    $this->login();
+
+    my $user = Helper::becomeAnAdmin($this);
+    my $web = Helper::KVPWEB;
+    my $topic = 'SimpleWorkflowTest';
+    my $workflow = 'SimpleWorkflow';
+    Foswiki::Func::saveTopic( $web, $workflow, undef, <<'WORKFLOW' );
+---++ Defaults
+%EDITTABLE{format="| text, 20 | text, 20 | text, 20 | text, 2 |"}%
+| *State Type* | *Left Tab* | *Right Tab* | *Approved* |
+| approved | Approved Page | Discussion | 1 |
+
+---++ States
+%EDITTABLE{format="| text, 20 | text, 30 | text, 30 | text, 50 | text, 30 | text, 15 |"}%
+| *State* | *Allow Edit* | *Allow Move* | *Message* | *Allow Comment* | *State Type* |
+| NEU | LOGGEDIN |  | This document is not yet in CIP. | LOGGEDIN | approved |
+| DONE | LOGGEDIN |  | This document is done. | LOGGEDIN | approved |
+ 
+---++ Transitions
+%EDITTABLE{format="| text, 20 | text, 40 | text, 20 | text, 30 | text, 30 | text, 15 | text, 15 |"}%
+| *State* | *Action* | *Next State* | *Allowed* | *Notify* | *Condition* | *Attribute* |
+| NEU | Create | DONE | LOGGEDIN, Main.KeyUserGroup | | | NEW |
+
+   * Set NOWYSIWYG=1
+   * Set WORKFLOW=
+   * Set ALLOWTOPICCHANGE=Main.AdminUser
+WORKFLOW
+
+    my $template = 'SimpleWorkflowTemplate';
+    Foswiki::Func::saveTopic( $web, $template, undef, <<TEMPLATE );
+%META:PREFERENCE{name="WORKFLOW" title="WORKFLOW" type="Set" value="$workflow"}%
+TEMPLATE
+
+    # now create the topic
+    $this->selenium->get(
+        Foswiki::Func::getScriptUrl(
+            $web, 'WebCreateNewTopic', 'view', templatetopic=>$template, newtopic=>$topic, topictitle=>$topic, t => time()
+        )
+    );
+    $this->{selenium}->find_element('input.foswikiSubmit', 'css')->click();
+    my $ckeditor;
+    try {
+        # let's try CKEditor first
+        $this->waitFor( sub { $this->{selenium}->execute_script('return jQuery(".CKEDITORReady").length'); }, 'CKEditor did not become ready' );
+        $ckeditor = 1;
+    } otherwise {
+    };
+    $this->setMarker();
+    if($ckeditor) {
+        $this->waitFor( sub { $this->{selenium}->execute_script('return jQuery(".CKEDITORReady").length'); }, 'CKEditor did not become ready' );
+        $this->{selenium}->find_element('.cke_button__ma-save_icon', 'css')->click();
+    } else {
+        $this->waitFor( sub { try { $this->{selenium}->find_element('save', 'id')->is_displayed(); } otherwise { return 0; }; }, 'Save button did not become ready' );
+        $this->{selenium}->find_element('save', 'id')->click();
+    }
+
+    $this->waitForPageToLoad();
+    $this->assert( Foswiki::Func::expandCommonVariables("%WORKFLOWMETA%", $topic, $web) eq 'DONE' );
+}
+
 # Transitions a topic until it is in the requested state (via Selenium).
 # Works for the standard workflow in that web only.
 # Topic may be in any state possible in the workflow.
