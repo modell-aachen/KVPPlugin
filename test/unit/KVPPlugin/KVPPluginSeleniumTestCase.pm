@@ -236,6 +236,58 @@ sub verify_redirectDiscussionLink {
     $this->assert( Foswiki::Func::topicExists( $web, "/$web/${topic}TALK") );
 }
 
+# Tests if...
+# ...one is redirected at the last forked topic when multiple newnames
+sub verify_redirectMultipleDiscussionLink {
+    my ( $this ) = @_;
+
+    my $topic = 'RedirectMultipleForkTest';
+    my $web = Helper::KVPWEB;
+    $this->assert( !Foswiki::Func::topicExists( $web, "${topic}F1") );
+    $this->assert( !Foswiki::Func::topicExists( $web, "${topic}F2") );
+    $this->assert( !Foswiki::Func::topicExists( $web, "${topic}F3") );
+    $this->assert( !Foswiki::Func::topicExists( $web, "${topic}F4") );
+
+    my $text = <<TEXT;
+   * %WORKFLOWFORK{newnames="%TOPIC%F1,%TOPIC%F2,%TOPIC%F3" label="Fork it"}%
+   * %WORKFLOWFORK{newnames="%TOPIC%F1,%TOPIC%F4,%TOPIC%F3" label="Fork again"}%
+TEXT
+
+    my $admin = Helper::becomeAnAdmin( $this );
+    Helper::createWithState( $this, $web, ${topic}, 'FREIGEGEBEN', $text );
+
+    $this->login();
+
+    $this->{selenium}->get(
+        Foswiki::Func::getScriptUrl(
+            $web, ${topic}, 'view'
+        )
+    );
+
+    # first fork
+    $this->setMarker();
+    $this->{selenium}->find_element('Fork it', 'link')->click();
+    $this->waitForPageToLoad();
+    $this->assert( $this->{selenium}->get_current_url() =~ m#/$web/${topic}F3$#, "Did not redirect to forked topic; current url: ".$this->{selenium}->get_current_url() );
+
+    # fork again and see if redirect is good
+    $this->{selenium}->get(
+        Foswiki::Func::getScriptUrl(
+            $web, ${topic}, 'view'
+        )
+    );
+    $this->setMarker();
+    $this->{selenium}->find_element('Fork again', 'link')->click();
+    $this->waitForPageToLoad();
+    $this->assert( $this->{selenium}->get_current_url() =~ m#/$web/${topic}F3$# );
+
+    # also check if topics were created
+    $this->assert( Foswiki::Func::topicExists( $web, "${topic}F1") );
+    $this->assert( Foswiki::Func::topicExists( $web, "${topic}F2") );
+    $this->assert( Foswiki::Func::topicExists( $web, "${topic}F3") );
+    $this->assert( Foswiki::Func::topicExists( $web, "${topic}F4") );
+}
+
 # Transitions a topic until it is in the requested state (via Selenium).
 # Works for the standard workflow in that web only.
 # Topic may be in any state possible in the workflow.
