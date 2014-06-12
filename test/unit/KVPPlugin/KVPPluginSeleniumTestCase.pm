@@ -382,6 +382,113 @@ TOPIC
     $this->seleniumTransition( 'do not delete comments' );
 }
 
+# Tests if...
+# ...transitions with (ALLOW|SUGGEST)REMOVECOMMENTS actually removes comments
+sub verify_removeComments {
+    my ( $this ) = @_;
+
+    my $topic = 'RemoveCommentTest';
+    my $workflow = 'RemarkCommentWorkflow';
+    my $wtext = Helper::R_C_WORKFLOW;
+
+    my $admin = Helper::becomeAnAdmin( $this );
+
+    # setup topic and workflow
+    Foswiki::Func::saveTopic( Helper::NONEW, $workflow, undef, $wtext );
+    Foswiki::Func::saveTopic( Helper::NONEW, ${topic}, undef, <<TOPIC );
+   * Set WORKFLOW = $workflow
+TOPIC
+
+    $this->login();
+
+    # bring to state and make comment
+    $this->selenium->get(
+        Foswiki::Func::getScriptUrl(
+            Helper::NONEW, $topic, 'view'
+        )
+    );
+    $this->seleniumTransition( 'To allow/suggest delete comments' );
+    $this->seleniumComment();
+    $this->assert( $this->hasComment( Helper::NONEW, $topic ) );
+
+    # these should keep the comment
+    # allowdelete
+    $this->seleniumTransition( 'allowdeletecomment' );
+    $this->assert( $this->hasComment( Helper::NONEW, $topic ) );
+    $this->seleniumTransition( 'To allow/suggest delete comments' );
+    # suggestdelete - uncheck the box
+    $this->WorkflowSelect( "suggestdeletecomment" );
+    $this->{selenium}->find_element( 'WORKFLOWchkboxbox', 'id' )->click();
+    $this->{selenium}->find_element( 'a.KVPChangeStatus', 'css' )->click();
+    $this->assert( $this->hasComment( Helper::NONEW, $topic ) );
+    $this->seleniumTransition( 'To allow/suggest delete comments' );
+    # nodelete - no attribute
+    $this->seleniumTransition( 'nodelete' );
+    $this->assert( $this->hasComment( Helper::NONEW, $topic ) );
+    $this->seleniumTransition( 'To allow/suggest delete comments' );
+
+    # these should delete the comment
+    # allowdelete - check the box
+    $this->WorkflowSelect( "allowdeletecomment" );
+    $this->{selenium}->find_element( 'WORKFLOWchkboxbox', 'id' )->click();
+    $this->setMarker();
+    $this->{selenium}->find_element( 'a.KVPChangeStatus', 'css' )->click();
+    $this->waitForPageToLoad();
+    $this->assert( !$this->hasComment( Helper::NONEW, $topic ) );
+    $this->seleniumComment();
+    $this->seleniumTransition( 'To allow/suggest delete comments' );
+    # suggestdelete
+    $this->seleniumTransition( 'suggestdeletecomment' );
+    $this->assert( !$this->hasComment( Helper::NONEW, $topic ) );
+    $this->seleniumComment();
+    $this->seleniumTransition( 'To allow/suggest delete comments' );
+    # nodelete - no attribute
+    $this->seleniumTransition( 'dodelete' );
+    $this->assert( !$this->hasComment( Helper::NONEW, $topic ) );
+}
+
+# Checks (in backend) if a topic has a specific MetaCommentPlugin comment.
+#
+# Parameters:
+#    * web: the web
+#    * topic: the topic
+#    * comment: comment text
+sub hasComment {
+    my ( $this, $web, $topic, $comment ) = @_;
+    $comment ||= COMMENTEXAMPLE;
+
+    my ( $meta, $text ) = Foswiki::Func::readTopic( $web, $topic );
+
+    my @comments = $meta->find( 'COMMENT' );
+    foreach my $eachcomment (@comments) {
+        if( $eachcomment->{text} eq $comment ) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+# Makes a MetaCommentPlugin comment (via Selenium).
+#
+# Parameters:
+#    * comment: comment text
+#    * title: title for the comment
+sub seleniumComment {
+    my ( $this, $comment, $title ) = @_;
+
+    $comment ||= COMMENTEXAMPLE;
+    $title ||= 'Selenium test';
+
+    if( $this->element_visible( 'commentlist1show', 'id' ) ) {
+        $this->{selenium}->find_element( '#commentlist1show > a.patternTwistyButton.patternAttachmentHeader > img', 'css' )->click();
+    }
+    $this->{selenium}->find_element( '[name=title]', 'css' )->send_keys( $title );
+    $this->{selenium}->find_element( '[name=text]', 'css' )->send_keys( $comment );
+    $this->{selenium}->find_element( '.cmtAddCommentForm div.foswikiFormButtons a.jqButton', 'css' )->click();
+    $this->waitFor( sub { $this->{selenium}->execute_script('return jQuery("div#cmtComment1").length') }, 'Comment did not appear', undef, 10_000 );
+    $this->waitFor( sub { $this->{selenium}->execute_script('return (jQuery(".blockUI.blockMsg:visible").length)?"0":"1"') }, 'Comment was not processed by JS' ); # XXX unpublished API
+}
+
 # Transitions a topic until it is in the requested state (via Selenium).
 # Works for the standard workflow in that web only.
 # Topic may be in any state possible in the workflow.
