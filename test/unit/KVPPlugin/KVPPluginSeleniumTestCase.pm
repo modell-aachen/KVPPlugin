@@ -203,6 +203,39 @@ sub verify_createDiscussionLink {
     $this->assert( Foswiki::Func::topicExists( $web, "${topic}TALK" ) );
 }
 
+# Tests if...
+# ...when one clicks on "Create new Discussion" but discussion already exists, one will be redirected
+# ...the existing discussion will not be overwritten
+sub verify_redirectDiscussionLink {
+    my ( $this ) = @_;
+
+    my $topic = 'RedirectForkTest';
+    my $web = Helper::KVPWEB;
+
+    my $admin = Helper::becomeAnAdmin( $this );
+    Helper::createWithState( $this, $web, $topic, 'FREIGEGEBEN' );
+    $this->assert( !Foswiki::Func::topicExists( $web, "${topic}TALK") );
+
+    $this->login();
+
+    $this->{selenium}->get(
+        Foswiki::Func::getScriptUrl(
+            $web, $topic, 'view'
+        )
+    );
+
+    # there should be a link visible now... creating discussion in background and THEN click the link
+    Helper::createDiscussion( $this, $web, $topic );
+    my ( $meta, $text ) = Foswiki::Func::readTopic( $web, "${topic}TALK" );
+    $text = 'This discussion has changed';
+    Foswiki::Func::saveTopic( $web, "${topic}TALK", $meta, $text );
+
+    $this->{selenium}->find_element('a.kvpForkLink', 'css')->click();
+    $this->assert( $this->{selenium}->get_current_url() =~ m#${topic}TALK$# );
+    $this->assert( $this->{selenium}->find_element('div.foswikiTopic', 'css')->get_text() =~ m#This discussion has changed# );
+    $this->assert( Foswiki::Func::topicExists( $web, "/$web/${topic}TALK") );
+}
+
 # Transitions a topic until it is in the requested state (via Selenium).
 # Works for the standard workflow in that web only.
 # Topic may be in any state possible in the workflow.
