@@ -1,0 +1,276 @@
+# See bottom of file for license and copyright information
+
+package KVPPluginSeleniumTestCase;
+
+use FoswikiSeleniumWdTestCase();
+our @ISA = qw( FoswikiSeleniumWdTestCase );
+
+use strict;
+use warnings;
+
+use Foswiki();
+use Error qw ( :try );
+use Foswiki::Plugins::KVPPlugin();
+use KVPPlugin::Helper qw ( :attachments :webs WRKFLW R_C_WORKFLOW setup );
+
+use constant COMMENTEXAMPLE => 'Comment made in selenium-testrun';
+
+my $users;
+my @attachments;
+
+sub new {
+    my ($class, @args) = @_;
+    my $this = $class->SUPER::new('KVPPluginSeleniumTests', @args);
+
+    return $this;
+}
+
+sub skip {
+    my ( $this, $test ) = @_;
+
+    if ( $test && $ENV{DOTEST} && $test !~ m#^KVPPluginSeleniumTestCase::\Q$ENV{DOTEST}\E_on# ) {
+        return "test not selected";
+    }
+    return $this->SUPER::skip( $test );
+}
+
+sub loadExtraConfig {
+    my $this = shift;
+    $this->SUPER::loadExtraConfig();
+    $Foswiki::cfg{Plugins}{KVPPlugin}{Enabled} = 1;
+}
+
+sub set_up {
+    my $this = shift;
+
+    $this->SUPER::set_up();
+
+    $this->{webs} = Helper::set_up_webs($this);
+
+    our @attachments = Helper::set_up_attachments($this);
+}
+
+sub tear_down {
+    my ( $this ) = @_;
+
+    Helper::tear_down_attachments(\@attachments);
+
+    unless ( $ENV{KEEPTESTWEBS} ) {
+        Helper::tear_down_webs( $this, $this->{webs} );
+    }
+
+    $this->SUPER::tear_down();
+}
+
+# XXX Copy/Paste/Change from FoswikiSeleniumTestCase
+sub login {
+    my $this = shift;
+
+    #SMELL: Assumes TemplateLogin
+    $this->{selenium}->get(
+        Foswiki::Func::getScriptUrl(
+            $this->{test_web}, $this->{test_topic}, 'login', t => time()
+        )
+    );
+    my $usernameInputFieldLocator = 'input[name="username"]';
+    $this->{selenium}->find_element($usernameInputFieldLocator, 'css')->send_keys($Foswiki::cfg{UnitTestContrib}{SeleniumRc}{Username});
+    my $passwordInputFieldLocator = 'input[name="password"]';
+    $this->{selenium}->find_element($passwordInputFieldLocator, 'css')->send_keys($Foswiki::cfg{UnitTestContrib}{SeleniumRc}{Password});
+
+    my $loginFormLocator = 'form[name="loginform"]';
+    $this->{selenium}->find_element('//input[@type="submit"]')->click();
+
+    my $postLoginLocation = $this->{selenium}->get_current_url();
+    my $viewUrl =
+      Foswiki::Func::getScriptUrl( $this->{test_web}, $this->{test_topic},
+        'view' );
+
+    # XXX change here, so short urls work
+    my $viewUrlShort = $viewUrl;
+    $viewUrlShort =~ s#/bin/view##;
+    my $urlTest = qr/^(?:\Q$viewUrl\E|\Q$viewUrlShort\E)$/;
+    unless($postLoginLocation=~m/$urlTest/) {
+        sleep(5); # maybe the page didn't load yet
+        $postLoginLocation = $this->{selenium}->get_current_url();
+        my $attempt = shift || 0;
+        if(not $postLoginLocation=~m/$urlTest/ && $attempt < 5) {
+            return $this->login(++$attempt);
+        }
+    }
+    $this->assert_matches( qr/\Q$viewUrl\E|\Q$viewUrlShort\E$/, $postLoginLocation );
+}
+
+sub verify_SeleniumRc_config {
+    my $this = shift;
+    $this->selenium->get(
+        Foswiki::Func::getScriptUrl(
+            $this->{test_web}, $this->{test_topic}, 'view'
+        )
+    );
+    $this->login();
+}
+
+# Transitions a topic until it is in the requested state (via Selenium).
+# Works for the standard workflow in that web only.
+# Topic may be in any state possible in the workflow.
+#
+# Parameters:
+#    * web: web the topic is in; may be Helper::KVPWEB or Helper::NONEW
+#    * topic: the topic
+#    * to: the desired state
+sub seleniumBringToState {
+    my ( $this, $web, $topic, $to ) = @_;
+
+    $this->waitForPageToLoad();
+    my @transitions = @{Helper::getNextStates( $this, $web, $topic )};
+
+    my $state = shift @transitions;
+
+    $this->selenium->get(
+        Foswiki::Func::getScriptUrl(
+            $web, $topic, 'view'
+        )
+    );
+
+    while ($state ne $to) {
+        my $transition = shift @transitions;
+        $this->assert($transition ne 'error', "Desired state for '$web.$topic' not found: $state");
+        seleniumTransition($this, $transition);
+        $state = shift @transitions;
+        $this->recreateSession( $web, 'WebHome'); #$topic );
+        if($state eq 'FREIGEGEBEN') {
+            $this->assert(!Foswiki::Func::topicExists( $web, $topic ), "Discussion $web.$topic was not moved away") if $topic =~ m/TALK$/;
+            $topic =~ s#TALK$##g;
+        }
+        Helper::ensureState($this, $web, $topic, $state);
+    }
+}
+
+# Creates a new session for the current user.
+#
+# Parameters:
+#    * web: the web
+#    * topic: the topic
+sub recreateSession {
+    my ( $this, $web, $topic ) = @_;
+
+    my $query = Unit::Request->new( { action=>'view', topic=>"$web.$topic" } );
+    my $user = Foswiki::Func::getWikiName();
+    $this->createNewFoswikiSession( $user, $query );
+}
+
+# Performs a transition by pressing the corresponding buttons (via Selenium).
+# Page must already be opened.
+#
+# Parameters:
+#    * transition: name of the action
+#    * type: set to 'button' or 'select' to check the input type (optional)
+sub seleniumTransition {
+    my ( $this, $transition, $type ) = @_;
+
+    $this->setMarker();
+    if ( !$this->element_present( 'WORKFLOWmenu', 'id' ) ) {
+        if ( $type ) {
+            $this->assert ( $type eq 'button' );
+        }
+        $this->{selenium}->find_element( $transition, 'link' )->click();
+    } else {
+        if ( $type ) {
+            $this->assert ( $type eq 'select' );
+        }
+        $this->WorkflowSelect( $transition );
+        $this->{selenium}->find_element( 'a.KVPChangeStatus', 'css' )->click();
+    }
+
+    $this->waitForPageToLoad();
+}
+
+# Selects an action by value in the workflow menue (via Selenium)
+#
+# Parameters:
+#    * value: the name of the action
+sub WorkflowSelect {
+    my ( $this, $value) = @_;
+
+    my $option;
+    try {
+        $option = $this->{selenium}->find_element( "select#WORKFLOWmenu option[value='$value']", 'css' );
+    } otherwise {
+        $this->assert(0, "Selection not available: $value");
+    };
+    $this->assert($option->is_enabled(), "Selection not enabled: $value");
+
+    $this->{selenium}->execute_script("jQuery('select#WORKFLOWmenu').val('$value').change();");
+}
+
+# Checks if an element is present in the dom (via Selenium)
+#
+# Parameters:
+#    * selector: the selector of the element
+#    * type: type of selector
+#
+# Returns:
+#    * 1 if present
+#    * 0 if not present
+sub element_present {
+    my ( $this, $selector, $type ) = @_;
+
+    try {
+        return $this->{selenium}->find_element( $selector, $type );
+    } otherwise {
+        return 0;
+    };
+}
+
+# Checks if an element is visible (via Selenium).
+#
+# Parameters:
+#    * selector: the selector of the element
+#    * type: type of selector
+#
+# Return:
+#    * 1 if present and visible
+#    * 0 if present but not visible
+#    * 0 if not present
+sub element_visible {
+    my ( $this, $selector, $type ) = @_;
+
+    my $e = $this->element_present( $selector, $type );
+    return 0 unless $e;
+    return $e->is_displayed();
+}
+
+# XXX Make sure new page loaded before continueing.
+# This should not be required, but seems to be buggy on ff atm.
+# Note: Updating Selenium::Remote::Driver to 0.2102 did not redeem this
+sub waitForPageToLoad {
+    my $this = shift;
+    $this->waitFor( sub { $this->{selenium}->execute_script('if(window.SeleniumMarker) return 0; return jQuery("#modacContentsWrapper").length'); }, 'Page did not load after transition', undef, 10_000 );
+}
+# Sets a marker for waitForPageToLoad to listen to.
+sub setMarker {
+    my ( $this) = @_;
+    $this->{selenium}->execute_script("window.SeleniumMarker = 1");
+}
+
+1;
+__END__
+Foswiki - The Free and Open Source Wiki, http://foswiki.org/
+
+Author: Modell Aachen GmbH
+
+Copyright (C) 2008-2011 Foswiki Contributors. Foswiki Contributors
+are listed in the AUTHORS file in the root of this distribution.
+NOTE: Please extend that file, not this notice.
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version. For
+more details read LICENSE in the root of this distribution.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+As per the GPL, removal of this notice is prohibited.
