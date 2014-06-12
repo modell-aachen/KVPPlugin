@@ -313,6 +313,75 @@ sub verify_basicTransitions {
     seleniumTransition( $this, 'Discard discussion' );
 }
 
+# Tests if...
+# ...JavaScript for REMOVECOMMENTS makes checkboxes (dis-)appear correctly
+sub verify_removeCommentsJS {
+    my ( $this ) = @_;
+
+    my $topic = 'RemoveCommentBoxTest';
+    my $workflow = 'RemarkCommentWorkflow';
+    my $wtext = Helper::R_C_WORKFLOW;
+
+    my $admin = Helper::becomeAnAdmin( $this );
+
+    # setup topic and workflow
+    Foswiki::Func::saveTopic( Helper::NONEW, $workflow, undef, $wtext );
+    Foswiki::Func::saveTopic( Helper::NONEW, ${topic}, undef, <<TOPIC );
+   * Set WORKFLOW = $workflow
+TOPIC
+
+    $this->login();
+
+    # bring to state
+    $this->{selenium}->get(
+        Foswiki::Func::getScriptUrl(
+            Helper::NONEW, $topic, 'view'
+        )
+    );
+    $this->seleniumTransition( 'To allow/suggest delete comments' );
+
+    # test checkboxes for select
+    # select allowdelete, see if box appeared
+    $this->WorkflowSelect( "allowdeletecomment" );
+    $this->assert( !$this->{selenium}->find_element('WORKFLOWchkboxbox', 'id')->is_selected() );
+    # select suggestdelete, see if box got selected
+    $this->WorkflowSelect( "suggestdeletecomment" );
+    $this->assert( $this->{selenium}->find_element('WORKFLOWchkboxbox', 'id')->is_selected() );
+    # select back, see if box got unselected
+    $this->WorkflowSelect( "allowdeletecomment" );
+    $this->assert( !$this->{selenium}->find_element('WORKFLOWchkboxbox', 'id')->is_selected() );
+    # select suggestdelete, see if box got selected again
+    $this->WorkflowSelect( "suggestdeletecomment" );
+    $this->assert( $this->{selenium}->find_element('WORKFLOWchkboxbox', 'id')->is_selected() );
+    # select nodelete, see if box dissappears
+    try {
+        $this->assert( !$this->{selenium}->find_element('WORKFLOWchkboxbox', 'id')->is_selected() );
+        $this->assert( 0, "There should be no box!" );
+    }
+    catch Error::Simple with {
+    };
+    $this->seleniumTransition( 'nodelete' );
+
+    # test checkboxes for button
+    # transition allowdelete, see if box unchecked
+    $this->seleniumTransition( 'To allow delete comments' );
+    $this->assert( !$this->{selenium}->find_element('WORKFLOWchkboxbox', 'id')->is_selected() );
+    $this->seleniumTransition( 'allowdeletecomments', 'button' );
+    # transition suggestdelete, see if box checked
+    $this->seleniumTransition( 'To suggest delete comments' );
+    $this->assert( $this->{selenium}->find_element('WORKFLOWchkboxbox', 'id')->is_selected() );
+    $this->seleniumTransition( 'suggestdeletecomments', 'button' );
+    # transition no delete, see if box unvisible
+    $this->seleniumTransition( 'To no delete comments' );
+    try {
+        $this->assert( !$this->{selenium}->find_element('WORKFLOWchkboxbox', 'id')->is_selected() );
+        $this->assert( 0, "There should be no box!" );
+    }
+    catch Error::Simple with {
+    };
+    $this->seleniumTransition( 'do not delete comments' );
+}
+
 # Transitions a topic until it is in the requested state (via Selenium).
 # Works for the standard workflow in that web only.
 # Topic may be in any state possible in the workflow.
