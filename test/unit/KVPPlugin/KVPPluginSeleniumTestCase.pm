@@ -288,6 +288,31 @@ TEXT
     $this->assert( Foswiki::Func::topicExists( $web, "${topic}F4") );
 }
 
+# Test if...
+# ...I can visit every state in a standard workflow
+sub verify_basicTransitions {
+    my ( $this ) = @_;
+
+    my $web = Helper::KVPWEB;
+    my $topic = 'SeleniumBasicTransitions';
+
+    $this->login();
+    Helper::becomeAnAdmin($this);
+
+    Helper::createWithState( $this, $web, $topic, 'ENTWURF', undef, $Foswiki::cfg{UnitTestContrib}{SeleniumRc}{Username} );
+    seleniumBringToState( $this, $web, $topic, 'FREIGEGEBEN' );
+    $this->{selenium}->find_element( 'a.kvpForkLink', 'css' )->click();
+    seleniumBringToState( $this, $web, "${topic}TALK", 'FORMALE_PRUEFUNG' );
+    seleniumTransition( $this, 'Request further revision' );
+    seleniumTransition( $this, 'Request approval' );
+    seleniumTransition( $this, 'Request further revision' );
+    Helper::becomeAnAdmin($this); # create a new session, so topics get reloaded
+    Helper::ensureState( $this, $web, "${topic}TALK", 'DISKUSSIONSSTAND' );
+    seleniumBringToState( $this, $web, "${topic}TALK", 'FREIGEGEBEN' );
+    $this->{selenium}->find_element( 'a.kvpForkLink', 'css' )->click();
+    seleniumTransition( $this, 'Discard discussion' );
+}
+
 # Transitions a topic until it is in the requested state (via Selenium).
 # Works for the standard workflow in that web only.
 # Topic may be in any state possible in the workflow.
