@@ -40,7 +40,7 @@ $percentWORKFLOWMETA{Remark}$percent"}%%TMPL:END%
 %TMPL:DEF{"Type"}%text/plain%TMPL:END%
 
 %{"Provides a link to transitioned topic, use this instead of %TOPIC%"}%
-%TMPL:DEF{"LinkToPage"}%%SCRIPTURL{"rest"}%/KVPPlugin/link?state=%TARGET_STATE%;webtopic=%WEB%.%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN%"}%%TMPL:END%
+%TMPL:DEF{"LinkToPage"}%%SCRIPTURL{"rest"}%/KVPPlugin/link?state=%TARGET_STATE%;webtopic=%WEB%.%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN{%TOPIC%}%"}%%TMPL:END%
 
 %{"Provides the name of the transitioned topic:"}%
-%TMPL:DEF{"TOPIC"}%%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN%"}%%TMPL:END%
+%TMPL:DEF{"TOPIC"}%%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN{%TOPIC%}%"}%%TMPL:END%
