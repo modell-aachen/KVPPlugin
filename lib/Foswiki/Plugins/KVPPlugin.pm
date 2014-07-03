@@ -1161,6 +1161,12 @@ sub beforeRenameHandler {
 sub beforeEditHandler {
     my ( $text, $topic, $web, $meta ) = @_;
 
+    # FlexFormPlugin dispatches the handler again, usually on the template topic.
+    # As a workaround, only perform this check in the first handler dispatched in
+    # an edit session. (MODAC #5049)
+    return if Foswiki::Func::getContext()->{kvp_beforeedit_done};
+    Foswiki::Func::getContext()->{kvp_beforeedit_done} = 1;
+
     my $query = Foswiki::Func::getCgiQuery();
     if($meta && $query->param('templatetopic')) {
         _onTemplateExpansion( $web, $topic, $meta, 1 );
