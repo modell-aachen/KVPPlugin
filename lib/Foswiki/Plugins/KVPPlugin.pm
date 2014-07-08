@@ -1508,6 +1508,17 @@ sub _getIndexHash {
         $indexFields{ "workflowmeta_". lc($key) ."_s" } = $workflow->{$key};
     }
 
+    # provide all state info
+    { # scope
+        my $fields = $controlledTopic->getFields();
+        if ( $fields ) {
+            foreach my $field (keys %$fields) {
+                next if $field =~ m#^(?:approved$|allow|state$)#; # skip those already indexed
+                $indexFields{ "workflowstate_${field}_s" } = $fields->{$field};
+            }
+        }
+    }
+
     # Contributors
     my @cHashes = $controlledTopic->{meta}->find('WRKFLWCONTRIBUTORS');
     foreach my $contis (@cHashes) {
