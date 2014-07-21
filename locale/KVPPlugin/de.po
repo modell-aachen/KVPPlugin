@@ -37,7 +37,7 @@ msgid "Action"
 msgstr "Aktion"
 
 msgid "Approve content"
-msgstr "Inhaltlich freigeben."
+msgstr "Inhaltlich freigeben"
 
 #: data/System/KVPPluginCommonWords.txt:21
 msgid "Approve contentual aspects of discussion"
