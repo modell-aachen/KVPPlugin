@@ -21,7 +21,7 @@
 %TMPL:DEF{"talktopicactionviewactive"}%<div class="modacActionButtonACTIVE"><a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%' rel='nofollow' title='%MAKETEXT{"Discussion about Improvements"}%' >%MAKETEXT{%GETWORKFLOWROW{"righttab"}%}%</a></div>%TMPL:END%
 
 %{ Anzeige im freigegebenen Stand }%
-%TMPL:DEF{"talktopicactionviewinactive"}%%IF{"context KVPHasDiscussion" then="$percntTMPL:P{talktopicactionviewinactivelink}$percnt" else="$percntTMPL:P{talktopicactionviewinactivenew}$percnt"}%%TMPL:END%
+%TMPL:DEF{"talktopicactionviewinactive"}%<div class="modacActionButtonINACTIVE">%IF{"context KVPHasDiscussion" then="$percntTMPL:P{talktopicactionviewinactivelink}$percnt" else="$percntTMPL:P{talktopicactionviewinactivenew}$percnt"}%</div>%TMPL:END%
 
 %{ Diskussionsstand bearbeiten }%
 %TMPL:DEF{"talktopicactionviewinactivelink"}%<a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%%TMPL:P{talktopic}%' rel='nofollow' title='%MAKETEXT{"Discussion about Improvements"}%' >%MAKETEXT{%GETWORKFLOWROW{"righttab"}%}%</a>%TMPL:END%
