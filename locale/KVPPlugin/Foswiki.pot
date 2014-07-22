@@ -492,6 +492,3 @@ msgstr ""
 
 msgid "This document is waiting for approval by the person in charge of the page."
 msgstr ""
-
-msgid "Weblate-Test"
-msgstr ""
