@@ -84,6 +84,7 @@ Jede Aktion kann mehrere Attribute haben.
 | =REMARK= | Wenn diese Aktion ausgef&uuml;hrt wird, besteht die M&ouml;glichkeit in einem Textfeld eine Bemerkung zur Transition anzugeben. Diese wird im n&auml;chsten Status angezeigt und auch in der Transitionsmail angegeben. |
 | =NOREV= | Bei dieser Aktion wird die KVP-Version niemals hochgez&auml;hlt, auch bei Freigabe nicht. | |
 | =NEXTREV= | Bei dieser Aktion wird die KVP-Version hochgez&auml;hlt, au&szlig;er bei einem =DISCARD=.%BR%Implizit gesetzt, wenn von einem Status mit _Approved = 0_ auf _Approved = 1_ gewechselt wird (=ACCEPT=) | Siehe =NOREV=. |
+| =SYNCREV= | Bei dieser Aktion wird die KVP-Version des angegebenen Topics &uuml;bernommen.%BR%Format:<verbatim>SYNCREV(Web.Topic)</verbatim> | Anderes Topic mit _Web_ angeben.%BR%Beispiel:<verbatim>| INTRANSLATION | Finish translation | ... | SYNCREV(%WEB%.%SUBST{text="%WORKFLOWORIGIN%" pattern="-EN$" format=""}%) |</verbatim> |
 | =HIDDEN= | Durch dieses Attribut erscheint die Transition nicht mehr im Transitionsmenue | Kann durch eigenen =rest= -Aufruf durchgef&uuml;hrt werden.<br />Diese Aktion ist im Transitionsmenue nicht zu sehen. |
 | =SETPREF= | Hiermit k&ouml;nnen Einstellungen im Topic gesetzt werden.%BR%Format: =SETPREF(Einstellung="Wert")= - die Klammern und Anf&uuml;hrungszeichen sind zwingend erforderlich.  | Beispiel: <verbatim>| *State* | *Action* | ... | *Attribute* |
 | INTRANSLATION | Finish translation | ... | SETPREF(CONTENT_LANGUAGE="en") |</verbatim> |

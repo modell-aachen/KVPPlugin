@@ -158,6 +158,12 @@ sub nextRev {
     $this->{state}->{Revision}++;
 }
 
+# Sets the WorkflowRev
+sub setRev {
+    my ( $this, $rev ) = @_;
+    $this->{state}->{Revision} = $rev;
+}
+
 # Set the current state in the topic
 # Alex: Bearbeiter hinzu
 sub setState {

@@ -834,6 +834,20 @@ sub transitionTopic {
             transitionTopic($options->{web}, $options->{topic}, $options->{action}, $otherState, $mails, $options->{remark}, $options->{removecomments}, $options->{breaklock});
         }
 
+        if($actionAttributes =~ m#SYNCREV\(\s*topic\s*=\s*\"(.*?)(?<!\\)\"\s*\)#) {
+            my $otherWebTopic = $1;
+            my $webParam = (($otherWebTopic =~ m#[./]#) ? undef : $web); # default to current web
+            my $synced;
+            my ($otherWeb, $otherTopic) = Foswiki::Func::normalizeWebTopicName( $webParam, $otherWebTopic );
+            my $otherControlledTopic = _initTOPIC( $otherWeb, $otherTopic );
+            if( $otherControlledTopic ) {
+                $synced = $otherControlledTopic->getWorkflowMeta( 'Revision' );
+            } else {
+                Foswiki::Func::writeWarning("Could not SYNCREV $web.$topic to $otherWeb.$otherTopic");
+            }
+            $synced ||= 0;
+            $controlledTopic->setRev( $synced );
+        }
         # Flag that this is a state change to the beforeSaveHandler (beforeRenameHandler)
         local $isStateChange = 1;
         #Alex: Zugehriges Topic finden
@@ -884,7 +898,7 @@ sub transitionTopic {
             # transfer ACLs from old document to new
             transferACL($web, $appTopic, $controlledTopic);
             $controlledTopic->purgeContributors();
-            $controlledTopic->nextRev() unless $actionAttributes =~ m#NOREV#;
+            $controlledTopic->nextRev() unless $actionAttributes =~ m#NOREV|SYNCREV#;
             # Will save changes after moving original topic away
 
             $url = Foswiki::Func::getScriptUrl( $web, $appTopic, 'view' );
