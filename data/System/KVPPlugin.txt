@@ -139,7 +139,7 @@ Existiert der Zielartikel bereits, wird der Nutzer dorthin geleitet, ohne das ei
 | *Parameter* | *Defaultwert* | *Effekt* | *Beispiel* |
 | =newnames= | Topicname + Suffix | Name des neu zu erstellenden Topics (vgl. %RED%TODO%ENDCOLOR%) | %%NOP%WORKFLOWFORK{newnames="%TOPIC%Copy"}% |
 | =lockdown= | =off= | Ist diese Option gesetzt (=1= oder =on=) wird beim forken das Recht =SETALLOWTOPICCHANGE= des Quellartikels auf =nobody= gesetzt. | %%NOP%WORKFLOWFORK{label="Im Fork arbeiten" lockdown="on"}% |
-| =label= | FORK | Text des Links | %%NOP%WORKFLOWFORK{label="Zum Arbeitsstand"}% |
+| =label= | FORK | Text des Links%BR%Wenn nicht gesetzt wird die erste verf&uuml;gbare =action= genommen. | %%NOP%WORKFLOWFORK{label="Zum Arbeitsstand"}% |
 | =title= | _leer (kein Popup)_ | Popup f&uuml;r den Link| %%NOP%WORKFLOWFORK{label="Zum Arbeitsstand" title="Arbeitsstand anlegen, oder dorthin wechseln"}% |
 
 ---+++ Weitere Makros

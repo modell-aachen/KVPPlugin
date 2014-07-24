@@ -264,13 +264,12 @@ sub getTransitionAttributes {
 }
 
 # Check if the topic is allowed to fork
+# Returns the first allowed action.
 sub isForkable {
     my $this = shift;
 
     unless (defined $this->{isAllowingFork}) {
-        $this->{isAllowingFork} =
-             # Allow forking if there is an action for it
-             ($this->{workflow}->getActionWithAttribute($this, 'FORK')) ? 1 : 0;
+        $this->{isAllowingFork} = $this->{workflow}->getActionWithAttribute($this, 'FORK');
     }
     return $this->{isAllowingFork};
 }

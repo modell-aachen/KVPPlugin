@@ -541,7 +541,8 @@ sub _WORKFLOWFORK {
     return ($attributes->{uncontrolled} || '') unless $controlledTopic;
 
     #Check we can fork
-    return ($attributes->{cannotfork} || '') unless ($controlledTopic->canFork());
+    my $action = $controlledTopic->canFork();
+    return ($attributes->{cannotfork} || '') unless $action;
 
     my $newnames;
     if (!defined $attributes->{newnames}) {
@@ -560,7 +561,7 @@ sub _WORKFLOWFORK {
         return "<span class='foswikiAlert'>WORKFLOWFORK: '$topic' does not exist</span>";
     }
 
-    my $label = $attributes->{label} || 'Fork';
+    my $label = $attributes->{label} || "%MAKETEXT{$action}%";
     my $title = $attributes->{title};
     $title = ($title)?"title='$title'":'';
 
