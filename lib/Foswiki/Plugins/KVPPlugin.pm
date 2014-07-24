@@ -667,6 +667,7 @@ sub _changeState {
         Foswiki::Func::redirectCgiQuery( undef, $url );
         return undef;
     }
+    $removeComments = '0' unless defined $removeComments;
 
     # Check that no-one else has a lease on the topic
     my $breaklock = $query->param('breaklock');
@@ -681,6 +682,7 @@ sub _changeState {
                 $t = Foswiki::Time::formatDelta(
                     $t, $Foswiki::Plugins::SESSION->i18n
                 );
+                $remark ||= '';
                 $remark =~ s#"#&quot;#;
                 $url = Foswiki::Func::getScriptUrl(
                     $web, $topic, 'oops',
