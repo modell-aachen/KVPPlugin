@@ -1435,8 +1435,14 @@ sub _onTemplateExpansion {
 # right params are present to trigger a state change. The legality of
 # the state change is *not* checked - it's assumed that the change is
 # coming as the result of an edit invoked by a state transition.
+#
+# When the context 'IgnoreKVPPermission' is true, this handler will
+# be ignored.
 sub beforeSaveHandler {
     my ( $text, $topic, $web, $meta ) = @_;
+
+    my $context = Foswiki::Func::getContext();
+    return if $context->{'IgnoreKVPPermission'};
 
     my $query = Foswiki::Func::getCgiQuery();
     return if($query->url() =~ m#/bin/jsonrpc$#); # XXX always pass MetaCommentPlugin
