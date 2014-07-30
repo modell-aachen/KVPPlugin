@@ -357,6 +357,7 @@ sub _WORKFLOWMETA {
     my $rev = $attributes->{rev} || 0;
     my $alt = $attributes->{alt} || '';
     my $remove = $attributes->{nousersweb};
+    my $timeformat = $attributes->{timeformat};
 
     my $attr;
     my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev );
@@ -391,7 +392,15 @@ sub _WORKFLOWMETA {
         }
     }
     if(defined $ret) {
+        # remove UsersWeb
         $ret =~ s#^$Foswiki::cfg{UsersWebName}\.##g if $remove;
+
+        # convert time format
+        if($timeformat && $ret =~ m#(\d{1,2})\.(\d{1,2})\.(\d{4})#) {
+            my $epoch = Foswiki::Time::parseTime("$3-$2-$1T");
+            $ret = Foswiki::Time::formatTime($epoch, $timeformat);
+        }
+
         return $ret;
     }
     return  $alt;
@@ -1490,7 +1499,11 @@ sub _getIndexHash {
 
     # provide ALL the fields
     for my $key (keys %$workflow) {
-        $indexFields{ "workflowmeta_". lc($key) ."_s" } = $workflow->{$key};
+        my $lckey = lc($key);
+        $indexFields{ "workflowmeta_${lckey}_s" } = $workflow->{$key};
+        if($lckey =~ m#^lasttime_# && $workflow->{$key} =~ m#(\d{1,2})\.(\d{1,2})\.(\d{4})#) {
+            $indexFields{ "workflowmeta_${lckey}_dt" } = "$3-$2-${1}T00:00:00Z";
+        }
     }
 
     # provide all state info

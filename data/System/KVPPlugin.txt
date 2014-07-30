@@ -112,6 +112,7 @@ Mit diesemn Makro kann man Metadaten &uuml;ber den Workflow abfragen.%BR%
 | =alt= | _nichts_ | Dieser String wird ausgegeben, wenn es das Datum nicht gibt (weil z.B. ein bestimmter Status nicht durchlaufen wurde).%BR%%I% =or= ist meistens besser geeignet. | %%NOP%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" alt="Dieses Dokument wurde noch nicht freigegeben."}% |
 | =or= | _nichts_ | Hier k&ouml;nnen mehrere Metadaten in einer Kommasepparierten Liste angegeben werden.%BR%Sollte das =_default= Datum nicht existieren, werden nacheinander alle hier angegebenen Daten ausprobiert, bis eines einen Wert liefert. | %%NOP%WORKFLOWMETA{"LASTPROCESSOR_DISKUSSION" or="LASTPROCESSOR_ENTWURF, LASTPROCESSOR_FREIGEGEBEN"}% |
 | =nousersweb= | 0 | Auf 1, oder 0 setzten (bzw. perl-true/perl-false).%BR%Ist diese Option aktiviert, wird das Usersweb ausgeblenden. | %%NOP%WORKFLOWMETA%{"LASTPROCESSOR_FREIGEGEBEN"}% &rarr; Main.AdminUser%BR%%%NOP%WORKFLOWMETA%{"LASTPROCESSOR_FREIGEGEBEN" nousersweb="1"}% &rarr; AdminUser |
+| =timeformat= | _deutsches Format_ | Damit kann das Zeitformat wie in Foswiki::Time::formatTime angegeben werden. | %%NOP%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" timeformat="$year-$mo-$day"}% &rarr; 2000-01-15%BR%%%NOP%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" timeformat="$epoch"}% &rarr; 947894400 |
 
 ---++++ Workflowmetadaten
 | *Name* | *Beschreibung* | *Beispiel* |
