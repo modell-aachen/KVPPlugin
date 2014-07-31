@@ -16,6 +16,8 @@ These words are often mentioned in workflows and might slip into a %MAKE%NOP%TEX
 %MAKETEXT{"Discuss"}%
 %MAKETEXT{"Request further revision"}%
 %MAKETEXT{"Start discussion"}%
+%MAKETEXT{"Approve content"}%
+%MAKETEXT{"Approve formal aspects"}%
 %MAKETEXT{"Approve formal aspects of draft"}%
 %MAKETEXT{"Approve contentual aspects of draft"}%
 %MAKETEXT{"Approve contentual aspects of discussion"}%
@@ -24,14 +26,18 @@ These words are often mentioned in workflows and might slip into a %MAKE%NOP%TEX
 </p><p>Messages<br />
 %MAKETEXT{"This document is not yet in CIP."}%
 %MAKETEXT{"This document is a draft."}%
-%NAKETEXT{"This document has been approved."}%
+%MAKETEXT{"This document has been approved."}%
 %MAKETEXT{"This document is currently being revised."}%
 %MAKETEXT{"This document has been discarded."}%
 %MAKETEXT{"This document is waiting for approval by the QM-department."}%
 %MAKETEXT{"This document is waiting for approval by the person in charge of the page."}%
+%MAKETEXT{"This document is waiting for approval by the topic owner."}%
+%MAKETEXT{"This document is waiting for formal approval."}%
 </p>
 <p>Configure<br />
 %MAKETEXT{"This topic is not under any workflow."}%
 %MAKETEXT{"Old Discussion"}%
 %MAKETEXT{"Info Page"}%
+%MAKETEXT{"in %1"}%
+%MAKETEXT{"Comparison"}%
 </p>
