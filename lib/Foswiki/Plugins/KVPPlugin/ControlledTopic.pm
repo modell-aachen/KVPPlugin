@@ -42,7 +42,8 @@ sub new {
             state     => $meta->get('WORKFLOW'),
             history   => $meta->get('WORKFLOWHISTORY'),
             forkweb   => $web,
-            forktopic => $topic . $forkSuffix
+            forktopic => $topic . $forkSuffix,
+            isAllowing => {},
         },
         $class
     );
@@ -272,6 +273,17 @@ sub isForkable {
         $this->{isAllowingFork} = $this->{workflow}->getActionWithAttribute($this, 'FORK');
     }
     return $this->{isAllowingFork};
+}
+
+# Returns true if the workflow allows the action.
+# Does NOT check topic permissions.
+sub isAllowing {
+    my ($this, $action) = @_;
+
+    unless (defined $this->{isAllowing}{$action}) {
+        $this->{isAllowing}{$action} = $this->{workflow}->_topicAllows($this, $action);
+    }
+    return $this->{isAllowing}{$action};
 }
 
 # Return true if this topic is movable

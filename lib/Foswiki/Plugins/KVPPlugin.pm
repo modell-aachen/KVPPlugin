@@ -64,6 +64,8 @@ sub initPlugin {
     Foswiki::Func::registerTagHandler(
         'GETWORKFLOWROW', \&_GETWORKFLOWROW );
     Foswiki::Func::registerTagHandler(
+        'WORKFLOWALLOWS', \&_WORKFLOWALLOWS );
+    Foswiki::Func::registerTagHandler(
         'WORKFLOWEDITPERM', \&_WORKFLOWEDITPERM );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWCANTRANSITION', \&_WORKFLOWCANTRANSITION );
@@ -119,6 +121,21 @@ sub _broadcast {
     unless ($oldMessage =~ m/\Q$message\E/) {
         Foswiki::Func::setPreferencesValue( 'BROADCASTMESSAGE', "$oldMessage<p>$message</p>" );
     }
+}
+
+# Tag handler for WORKFLOWALLOWS
+# Will return 1 if the user is allowed to the action in this topic
+sub _WORKFLOWALLOWS {
+    my ( $session, $params, $topic, $web ) = @_;
+
+    my $rev = $params->{rev};
+    my $rWeb = $params->{web} || $web;
+    my $rTopic = $params->{topic} || $topic;
+    my $action = $params->{_DEFAULT} || 'allowedit';
+
+    my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev );
+    return $params->{uncontrolled} unless $controlledTopic;
+    return $controlledTopic->isAllowing($action) ? 1 : 0;
 }
 
 # Tag handler for WORKFLOWEDITPERM
