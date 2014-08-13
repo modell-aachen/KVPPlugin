@@ -34,7 +34,8 @@ templates/oopsworkflowfork.tmpl 0666
 templates/oopshistory.kvp.tmpl 0666
 templates/viewtopicactionbuttons.kvp.tmpl 0666
 templates/view.kvp.tmpl 0666
-test/unit/KVPPlugin/KVPPluginTests.pm 0666
-test/unit/KVPPlugin/KVPPluginSuite.pm 0666
-test/unit/KVPPlugin/KVPPluginSeleniumTestCase.pm 0666
 test/unit/KVPPlugin/Helper.pm 0666
+test/unit/KVPPlugin/KVPPluginSeleniumTestCase.pm 0666
+test/unit/KVPPlugin/KVPPluginSuite.pm 0666
+test/unit/KVPPlugin/KVPPluginTests.pm 0666
+test/unit/KVPPlugin/qwikitest 0666
