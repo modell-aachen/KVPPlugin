@@ -479,8 +479,11 @@ sub seleniumComment {
     $comment ||= COMMENTEXAMPLE;
     $title ||= 'Selenium test';
 
-    if( $this->element_visible( 'commentlist1show', 'id' ) ) {
-        $this->{selenium}->find_element( '#modacComments div.twistyPlugin > span.twistyInited > a.patternTwistyButton.patternAttachmentHeader > img', 'css' )->click();
+    foreach my $twisty ( $this->{selenium}->find_elements( '#modacComments span.twistyTrigger', 'css' ) ) {
+        if ( $twisty->is_displayed() && $twisty->get_attribute( 'id' ) =~ m#commentlist\d*show# ) {
+            $twisty->click();
+            $this->waitFor( sub { !$twisty->is_displayed() } );
+        }
     }
     $this->{selenium}->find_element( '[name=title]', 'css' )->send_keys( $title );
     $this->{selenium}->find_element( '[name=text]', 'css' )->send_keys( $comment );
