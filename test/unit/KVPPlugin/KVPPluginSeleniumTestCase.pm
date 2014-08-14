@@ -480,7 +480,7 @@ sub seleniumComment {
     $title ||= 'Selenium test';
 
     if( $this->element_visible( 'commentlist1show', 'id' ) ) {
-        $this->{selenium}->find_element( '#commentlist1show > a.patternTwistyButton.patternAttachmentHeader > img', 'css' )->click();
+        $this->{selenium}->find_element( '#modacComments div.twistyPlugin > span.twistyInited > a.patternTwistyButton.patternAttachmentHeader > img', 'css' )->click();
     }
     $this->{selenium}->find_element( '[name=title]', 'css' )->send_keys( $title );
     $this->{selenium}->find_element( '[name=text]', 'css' )->send_keys( $comment );
