@@ -230,7 +230,9 @@ sub verify_redirectDiscussionLink {
     $text = 'This discussion has changed';
     Foswiki::Func::saveTopic( $web, "${topic}TALK", $meta, $text );
 
+    $this->setMarker();
     $this->{selenium}->find_element('a.kvpForkLink', 'css')->click();
+    $this->waitForPageToLoad();
     $this->assert( $this->{selenium}->get_current_url() =~ m#${topic}TALK$# );
     $this->assert( $this->{selenium}->find_element('div.foswikiTopic', 'css')->get_text() =~ m#This discussion has changed# );
     $this->assert( Foswiki::Func::topicExists( $web, "/$web/${topic}TALK") );
