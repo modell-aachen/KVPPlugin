@@ -311,7 +311,9 @@ sub verify_basicTransitions {
     Helper::becomeAnAdmin($this); # create a new session, so topics get reloaded
     Helper::ensureState( $this, $web, "${topic}TALK", 'DISKUSSIONSSTAND' );
     seleniumBringToState( $this, $web, "${topic}TALK", 'FREIGEGEBEN' );
+    $this->setMarker();
     $this->{selenium}->find_element( 'a.kvpForkLink', 'css' )->click();
+    $this->waitForPageToLoad();
     seleniumTransition( $this, 'Discard discussion' );
 }
 
