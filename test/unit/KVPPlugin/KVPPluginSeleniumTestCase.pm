@@ -72,6 +72,7 @@ sub login {
             $this->{test_web}, $this->{test_topic}, 'login', t => time()
         )
     );
+    $this->waitForPageToLoad();
     my $usernameInputFieldLocator = 'input[name="username"]';
     $this->{selenium}->find_element($usernameInputFieldLocator, 'css')->send_keys($Foswiki::cfg{UnitTestContrib}{SeleniumRc}{Username});
     my $passwordInputFieldLocator = 'input[name="password"]';
@@ -218,11 +219,13 @@ sub verify_redirectDiscussionLink {
 
     $this->login();
 
+    $this->setMarker();
     $this->{selenium}->get(
         Foswiki::Func::getScriptUrl(
             $web, $topic, 'view'
         )
     );
+    $this->waitForPageToLoad();
 
     # there should be a link visible now... creating discussion in background and THEN click the link
     Helper::createDiscussion( $this, $web, $topic );
