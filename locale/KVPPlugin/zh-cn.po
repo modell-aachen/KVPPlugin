@@ -1,468 +1,450 @@
-# KVPPlugin translation for German
-# Translators:
-# ModellAachen
-msgid ""
-msgstr ""
-"Project-Id-Version: KVPPlugin $Id\n"
-"Report-Msgid-Bugs-To: osthold@modell-aachen.de\n"
-"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2012-07-09 16:56+0200\n"
-"Last-Translator: Modell Aachen\n"
-"Language-Team: Modell Aachen <none>\n"
-"Language: de\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Pootle 2.0.5\n"
-
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "%1 edited the topic %2."
-msgstr "%1 hat die Seite %2 bearbeitet."
+msgstr ""
 
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "%1 has a new state: %2"
-msgstr "%1 hat einen neuen Status: %2"
+msgstr ""
 
 #: templates/oopswfplease.tmpl
 msgid "%1 is editing %2, and their lock is still active for another %3"
-msgstr "%1 bearbeitet gerade %2 und die Sperrung ist noch für %3 aktiv"
+msgstr ""
 
 #: templates/oopsworkflowerr.tmpl templates/oopsworkflowfork.tmpl
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "(workflow error)"
-msgstr "(Fehler im Workflow)"
+msgstr ""
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Action"
-msgstr "Aktion"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approve content"
-msgstr "Inhaltlich freigeben"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approve contentual aspects of discussion"
-msgstr "Diskussionsstand inhaltlich freigeben"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approve contentual aspects of draft"
-msgstr "Entwurfsstand inhaltlich freigeben"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approve formal aspects"
-msgstr "Formale Freigabe erteilen"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approve formal aspects of discussion"
-msgstr "Diskussionsstand formal freigeben"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approve formal aspects of draft"
-msgstr "Entwurf formal freigeben"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approved Page"
-msgstr "Freigegebener Stand"
+msgstr ""
 
 #: data/System/ExampleSkinTopHeadTemplate.txt
 #: data/System/KvpSkinTopHeadTemplate.txt
 msgid "Approved by"
-msgstr "Freigegeben durch"
+msgstr ""
 
 #: data/System/ExampleSkinTopHeadTemplate.txt
 #: data/System/KvpSkinTopHeadTemplate.txt
 msgid "Area of application"
-msgstr "Geltungsbereich"
+msgstr ""
 
 #: templates/oopswfplease.tmpl templates/oopsworkflowchanged.tmpl
 #: templates/oopsworkflowerr.tmpl templates/oopsworkflowfork.tmpl
 #: templates/oopsworkflowlink.tmpl templates/oopsworkflowmoved.tmpl
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "Attention"
-msgstr "Achtung"
+msgstr ""
 
 #: data/System/KvpSkinTransitionsTemplate.txt templates/foswiki.kvp.tmpl
 msgid "Attention, there is a discussion for this topic!\\nDo you really want to continue?"
-msgstr "Achtung, zu dieser Seite gibt es einen Diskussionsstand!\\nWollen Sie wirklich fortfahren?"
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Cannot execute transition =%1= on =%2= (invalid on source-workflow)."
-msgstr "Kann Transition =%1= nicht auf =%2= anwenden (ungültig im Quellworkflow)."
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Cannot execute transition =%1= on =%2= (invalid on target-workflow)."
-msgstr "Kann Transition =%1= nicht auf =%2= anwenden (ungültig im Zielworkflow)."
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Change status"
-msgstr "Status ändern"
+msgstr ""
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Comment"
-msgstr "Kommentar"
+msgstr ""
 
 #: data/System/KvpSkinTransitionsTemplate.txt
 msgid "Compare with approved version"
-msgstr "Vergleich mit freigegebenen Stand"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Comparison"
-msgstr "Vergleich"
+msgstr ""
 
 #: templates/oopsworkflowchanged.tmpl
 msgid "Continue to the topic here:"
-msgstr "Zur Seite gelangen Sie hier:"
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Could not initialize workflow for"
-msgstr "Konnte Workflow nicht initialisieren für"
+msgstr ""
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "Could not initialize workflow for %1. Maybe the topic was deleted?"
-msgstr "Der Workflow konnte für %1 nicht initialisiert werden. Eventuell wurde die Seite gelöscht?"
+msgstr ""
 
 #: data/System/ExampleSkinTopHeadTemplate.txt
 msgid "Creator"
-msgstr "Ersteller"
+msgstr ""
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Date"
-msgstr "Datum"
+msgstr ""
 
 #: data/System/KvpSkinTransitionsTemplate.txt
 msgid "Difference to approved version"
-msgstr "Unterschied zu freigegebenem Stand"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Discard discussion"
-msgstr "Diskussion verwerfen"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Discard draft"
-msgstr "Entwurf verwerfen"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Discuss"
-msgstr "Diskutieren"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Discussion"
-msgstr "Diskussion"
+msgstr ""
 
 #: data/System/KVPPlugin.txt templates/viewtopicactionbuttons.kvp.tmpl
 msgid "Discussion about Improvements"
-msgstr "Diskussion über Verbesserungen"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Draft"
-msgstr "Entwurf"
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin/Workflow.pm
 msgid "Error in Workflow: state %1 does not exist!"
-msgstr "Fehler im Workflow: Status %1 existiert nicht!"
+msgstr ""
 
 #: templates/oopsworkflowlink.tmpl
 msgid "Error in link"
-msgstr "Fehler im Link"
+msgstr ""
 
 #: templates/oopsworkflowerr.tmpl templates/oopsworkflowfork.tmpl
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "Error in workflow"
-msgstr "Fehler im Workflow"
+msgstr ""
 
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "For questions, please refer to:"
-msgstr "Bei Fragen wenden Sie sich bitte an:"
+msgstr ""
 
 #: templates/oopswfplease.tmpl
 msgid "Force the transition anyway"
-msgstr "Transition dennoch durchführen"
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Found an invalid workflow (there must be none in a newly created topic)."
-msgstr "Ungültigen Workflow gefunden (in einer neuen Seite darf keiner vorhanden sein)."
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Give article the accept status"
-msgstr "Artikel freigeben"
+msgstr ""
 
 #: data/System/KvpSkinTransitionsTemplate.txt
 msgid "Improvement Process"
-msgstr "Verbesserungsprozess"
+msgstr ""
 
 #: templates/oopswfplease.tmpl
 msgid "In an emergency you can transition the topic anyway, by clicking "
-msgstr "In dringenden Fällen könnnen Sie die Transition dennoch durchführen, durch Klicken von "
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Info Page"
-msgstr "Infoseite"
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Invalid destination to fork to: %1"
-msgstr "Ungültiges Ziel zum Abspalten: %1"
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin/Workflow.pm
 msgid "Invalid state table in %1"
-msgstr "Ungültige Statustabelle in %1"
+msgstr ""
 
 #: templates/oopsworkflowchanged.tmpl
 msgid "It used to be in %1 but is now in %2"
-msgstr "Er war im Status %1, aber ist jetzt in %2"
+msgstr ""
 
 #: data/System/KvpSkinTopHeadTemplate.txt
 msgid "Last author"
-msgstr "Letzter Autor"
+msgstr ""
 
 #: data/System/KvpSkinTransitionsTemplate.txt
 msgid "Last editing person"
-msgstr "Letzter Bearbeiter"
+msgstr ""
 
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "Link to the page:"
-msgstr "Link zur Seite:"
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Must find exactly one workflow in the topic, but found %1."
-msgstr "Erwarte genau einen Workflow in der Seite, habe aber %1 gefunden."
+msgstr ""
 
 #: data/System/KvpSkinTransitionsTemplate.txt
 msgid "Next step"
-msgstr "Nächster Schritt"
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "No Suffix defined! Defaulting to %1!"
-msgstr "Kein Suffix definiert! Nehme %1 als Suffix an!"
+msgstr ""
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "No action was specified."
-msgstr "Die Aktion wurde nicht angegeben."
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "No transition with =FORK= attribute to fork"
-msgstr "Keine Transition mit =FORK= Attribut zum Forken von"
+msgstr ""
 
 #: templates/oopsworkflowchanged.tmpl templates/oopsworkflowerr.tmpl
 #: templates/oopsworkflowfork.tmpl templates/oopsworkflowmoved.tmpl
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "OK"
-msgstr "OK"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Old Discussion"
-msgstr "alte Diskussion"
+msgstr ""
 
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "Process State"
-msgstr "Prozessstatus"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Put under CIP"
-msgstr "In KVP überführen"
+msgstr ""
 
 #: data/System/ExampleSkinTopHeadTemplate.txt
 #: data/System/KvpSkinTopHeadTemplate.txt
 msgid "Release date"
-msgstr "Freigabedatum"
+msgstr ""
 
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "Remarks"
-msgstr "Bemerkungen"
+msgstr ""
 
 #: data/System/KvpSkinTransitionsTemplate.txt
 msgid "Remarks for this state:"
-msgstr "Bemerkungen zu diesem Status:"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Request approval"
-msgstr "Um Freigabe bitten"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Request further revision"
-msgstr "Um weitere Überarbeitung bitten"
+msgstr ""
 
 #: data/System/ExampleSkinTopHeadTemplate.txt
 #: data/System/KvpSkinTopHeadTemplate.txt
 msgid "Responsible"
-msgstr "Verantwortlich"
+msgstr ""
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Revision"
-msgstr "Revision"
+msgstr ""
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Revision history of "
-msgstr "Revisionsgeschichte von "
+msgstr ""
 
 #: data/System/KvpSkinWorkflowViewMacrosTemplate.txt
 #: data/System/KvpSkinWorkflowViewTemplate.txt
 msgid "Show macros"
-msgstr "Macros anzeigen"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Start discussion"
-msgstr "Diskussion starten"
+msgstr ""
 
 #: data/System/KVPPlugin.txt templates/viewtopicactionbuttons.kvp.tmpl
 msgid "Start new Discussion"
-msgstr "Diskussion starten"
+msgstr ""
 
 #: data/System/KvpSkinTransitionsTemplate.txt templates/oopshistory.kvp.tmpl
 msgid "State"
-msgstr "Status"
+msgstr ""
 
 #: templates/oopsworkflowmoved.tmpl
 msgid "The discussion you clicked is no longer available. You can go to the original topic by clicking OK."
-msgstr "Die Diskussion, die Sie aufgerufen haben, ist leider nicht mehr verfügbar. Sie gelangen zur Originalseite durch klicken von OK."
+msgstr ""
 
 #: templates/oopsworkflowlink.tmpl
 msgid "The link you clicked is malformed."
-msgstr "Der Link, den Sie geklickt haben, ist fehlerhaft."
+msgstr ""
 
 #: templates/oopsworkflowmoved.tmpl
 msgid "The link you clicked is no longer available."
-msgstr "Der Link, den Sie geklickt haben ist leider nicht mehr verfügbar."
+msgstr ""
 
 #: templates/oopsworkflowchanged.tmpl
 msgid "The topic you clicked has changed state since this link was created."
-msgstr "Die Seite, die Sie aufgerufen haben, hat den Status gewechselt seitdem der Link kreiert wurde."
+msgstr ""
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "The transition was not possible because the state of the topic (%1) did not match the state of the action (%2). Maybe someone else already transitioned the topic?"
-msgstr "Die Transition war leider nicht möglich, da der Status der Seite (%1) nicht gleich dem Status der Aktion (%2) ist. Eventuell hat bereits jemand anderes eine Transition durchgeführt?"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document has been approved."
-msgstr "Dieses Dokument ist freigegeben."
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document has been discarded."
-msgstr "Dieses Dokument wurde verworfen."
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is a draft."
-msgstr "Dieses Dokument ist ein Entwurf."
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is currently being revised."
-msgstr "Dieses Dokument wird überarbeitet."
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is not yet in CIP."
-msgstr "Dieses Dokument ist noch nicht im KVP."
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is waiting for approval by the QM-department."
-msgstr "Dieses Dokument wartet auf Freigabe durch die QM-Abteilung."
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is waiting for approval by the person in charge of the page."
-msgstr "Dieses Dokument wartet auf Freigabe durch den Seitenverantwortlichen."
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is waiting for approval by the topic owner."
-msgstr "Dieses Dokument wartet auf Freigabe durch den Seitenverantwortlichen."
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is waiting for formal approval."
-msgstr "Dieses Dokument wartet auf formale Freigabe."
+msgstr ""
 
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "This is an automatically generated message. Please do not reply to this email."
-msgstr "Dies ist eine automatisch generierte Nachricht. Bitte antworten Sie nicht auf diese E-Mail."
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This topic is not under any workflow."
-msgstr "Diese Seite steht nicht unter einem Workflow."
+msgstr ""
 
 #: templates/oopsworkflowchanged.tmpl
 msgid "Topic changed"
-msgstr "Seite wurde verändert"
+msgstr ""
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Topic history"
-msgstr "Historie der Seite"
+msgstr ""
 
 #: templates/oopsworkflowmoved.tmpl
 msgid "Topic no longer available"
-msgstr "Seite nicht mehr verfügbar"
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Topic to fork from does not exist:"
-msgstr "Die Quelle zum Abspalten existiert nicht:"
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Tried to fork from a topic, which is not under any workflow:"
-msgstr "Sie haben versucht von eine Seite abzuspalten, welche gar nicht unter einem Workflow steht:"
+msgstr ""
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Username"
-msgstr "Benutzername"
+msgstr ""
 
 #: data/System/KvpSkinTopHeadTemplate.txt templates/oopshistory.kvp.tmpl
 msgid "Version"
-msgstr "Version"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Waiting for PO"
-msgstr "Warten auf PO"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Waiting for QM"
-msgstr "Warten auf QM"
+msgstr ""
 
 #: templates/oopsworkflowerr.tmpl templates/oopswrkflwsaveerr.tmpl
 msgid "While changing %1 an error occured in the workflow."
-msgstr "Beim Statuswechsel von %1 ist ein Fehler im Workflow aufgetreten."
+msgstr ""
 
 #: templates/oopsworkflowfork.tmpl
 msgid "While forking %1 an error occured in the workflow."
-msgstr "Bei der Abspaltung von %1 ist ein Fehler im Workflow aufgetreten."
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "You are not permitted to edit this topic. You have been denied access by workflow restrictions."
-msgstr "Sie sind nicht berechtig die Seite zu bearbeiten. Ihnen wurde der Zugang durch den Workflow verwehrt."
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "You are not permitted to save this topic. You have been denied access by workflow restrictions."
-msgstr "Sie sind nicht berechtig diese Seite zu speichern. Ihnen wurde der Zugang durch den Workflow verwehrt."
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "You are not permitted to upload to this topic. You have been denied access by workflow restrictions."
-msgstr "Sie sind nicht berechtig die Datei an diese Seite anzuhänen. Ihnen wurde der Zugang durch den Workflow verwehrt."
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "You may not create this topic under this workflow."
-msgstr "Sie dürfen diese Seite unter diesem Workflow nicht anlegen."
+msgstr ""
 
 #: templates/oopswfplease.tmpl
 msgid "You must ask %1 to close their edit and release their lock before you can change the state of the topic."
-msgstr "Sie müssen %1 bitten die Bearbeitung abzuschließen und die Sperre aufzuheben, um den Status dieser Seite zu ändern."
+msgstr ""
 
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "approved"
-msgstr "Freigegeben"
+msgstr ""
 
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "contentual revision"
-msgstr "inhaltliche Prüfung"
+msgstr ""
 
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "contentual revision (draft)"
-msgstr "formale Prüfung (Entwurf)"
+msgstr ""
 
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "discarded"
-msgstr "Verworfen"
+msgstr ""
 
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "draft"
-msgstr "Entwurf"
+msgstr ""
 
 #: templates/oopshistory.kvp.tmpl
 msgid "earlier"
-msgstr "früher"
+msgstr ""
 
 #: data/System/KvpSkinSolrSearchBaseTemplate.txt
 msgid "else"
@@ -470,59 +452,46 @@ msgstr ""
 
 #: templates/oopshistory.kvp.tmpl
 msgid "first"
-msgstr "erster"
+msgstr ""
 
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "formal revision"
-msgstr "formale Prüfung"
+msgstr ""
 
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "formal revision (draft)"
-msgstr "formale Prüfung (Entwurf)"
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "in %1"
-msgstr "in %1"
+msgstr ""
 
 #: templates/oopshistory.kvp.tmpl
 msgid "last"
-msgstr "letzter"
+msgstr ""
 
 #: templates/oopshistory.kvp.tmpl
 msgid "later"
-msgstr "später"
+msgstr ""
 
 #: data/System/ExampleSkinTopHeadTemplate.txt
 #: data/System/KvpSkinTopHeadTemplate.txt
 msgid "old revision"
-msgstr "alte Revision"
+msgstr ""
 
 #: templates/oopshistory.kvp.tmpl
 msgid "restore"
-msgstr "wiederherstellen"
+msgstr ""
 
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "under discussion"
-msgstr "in Diskussion"
+msgstr ""
 
 #: data/System/ExampleSkinTopHeadTemplate.txt
 #: data/System/KvpSkinTopHeadTemplate.txt
 msgid "under&#160;discussion"
-msgstr "in&#160;Diskussion"
+msgstr ""
 
 #: templates/oopshistory.kvp.tmpl
 msgid "view"
-msgstr "ansehen"
-
-#~ msgid ""
-#~ "The workflow state did not match the current state.\n"
-#~ "\n"
-#~ "A common reason is an old article in the browser cache. Please edit the article again via the wiki frontend.\n"
-#~ "\n"
-#~ "(stored state: %1, new state: %2)"
-#~ msgstr ""
-#~ "Der Workflowstatus stimmt nicht dem aktuellen Status überein.\n"
-#~ "\n"
-#~ "Eine häufige Ursache ist eine alte Seite im Browsercache. Bitte öffnen Sie die  Seite noch einmal über die Wiki-Oberfläche zur Bearbeitung.\n"
-#~ "\n"
-#~ "(hinterleger Status: %1, neuer Status: %2)"
+msgstr ""

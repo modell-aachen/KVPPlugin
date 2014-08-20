@@ -15,27 +15,29 @@ pub/System/KVPPlugin/changewarning.js 0644 Script for transition menue
 pub/System/KVPPlugin/changewarning.js.gz 0644 Script for transition menue
 pub/System/KVPPlugin/blockLink.js 0644 Script for blocking links
 pub/System/KVPPlugin/blockLink.js.gz 0644 Script for blocking links
-locale/KVPPlugin/de.po 0666 German translations
-locale/KVPPlugin/fr.po 0666 French translations
-lib/Foswiki/Plugins/KVPPlugin.pm 0666
-lib/Foswiki/Plugins/KVPPlugin/ControlledTopic.pm 0666
-lib/Foswiki/Plugins/KVPPlugin/Workflow.pm 0666
+locale/KVPPlugin/de.po 0644 German translations
+locale/KVPPlugin/fr.po 0644 French translations
+locale/KVPPlugin/it.po 0644 Italian translations
+locale/KVPPlugin/zh-cn.po 0644 Chinese translations
+lib/Foswiki/Plugins/KVPPlugin.pm 0644
+lib/Foswiki/Plugins/KVPPlugin/ControlledTopic.pm 0644
+lib/Foswiki/Plugins/KVPPlugin/Workflow.pm 0644
 lib/Foswiki/Plugins/KVPPlugin/Config.spec 0755 Configuration
-lib/Foswiki/Plugins/SafeWikiPlugin/Signatures/KVPPlugin.pm 0666 Signatures
-templates/foswiki.kvp.tmpl 0666
-templates/mailworkflowtransition.tmpl 0666
-templates/oopswfplease.tmpl 0666
-templates/oopswrkflwsaveerr.tmpl 0666
-templates/oopsworkflowchanged.tmpl 0666
-templates/oopsworkflowmoved.tmpl 0666
-templates/oopsworkflowerr.tmpl 0666
-templates/oopsworkflowlink.tmpl 0666
-templates/oopsworkflowfork.tmpl 0666
-templates/oopshistory.kvp.tmpl 0666
-templates/viewtopicactionbuttons.kvp.tmpl 0666
-templates/view.kvp.tmpl 0666
-test/unit/KVPPlugin/Helper.pm 0666
-test/unit/KVPPlugin/KVPPluginSeleniumTestCase.pm 0666
-test/unit/KVPPlugin/KVPPluginSuite.pm 0666
-test/unit/KVPPlugin/KVPPluginTests.pm 0666
-test/unit/KVPPlugin/qwikitest 0666
+lib/Foswiki/Plugins/SafeWikiPlugin/Signatures/KVPPlugin.pm 0644 Signatures
+templates/foswiki.kvp.tmpl 0644
+templates/mailworkflowtransition.tmpl 0644
+templates/oopswfplease.tmpl 0644
+templates/oopswrkflwsaveerr.tmpl 0644
+templates/oopsworkflowchanged.tmpl 0644
+templates/oopsworkflowmoved.tmpl 0644
+templates/oopsworkflowerr.tmpl 0644
+templates/oopsworkflowlink.tmpl 0644
+templates/oopsworkflowfork.tmpl 0644
+templates/oopshistory.kvp.tmpl 0644
+templates/viewtopicactionbuttons.kvp.tmpl 0644
+templates/view.kvp.tmpl 0644
+test/unit/KVPPlugin/Helper.pm 0644
+test/unit/KVPPlugin/KVPPluginSeleniumTestCase.pm 0644
+test/unit/KVPPlugin/KVPPluginSuite.pm 0644
+test/unit/KVPPlugin/KVPPluginTests.pm 0644
+test/unit/KVPPlugin/qwikitest 0644
