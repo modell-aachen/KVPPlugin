@@ -422,7 +422,7 @@ msgstr "Bei der Abspaltung von %1 ist ein Fehler im Workflow aufgetreten."
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "You are not permitted to edit this topic. You have been denied access by workflow restrictions."
-msgstr "Sie sind nicht berechtig die Seite zu bearbeiten. Ihnen wurde der Zugang durch den Workflow verwehrt."
+msgstr "Sie sind nicht berechtigt die Seite zu bearbeiten. Ihnen wurde der Zugang durch den Workflow verwehrt."
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "You are not permitted to save this topic. You have been denied access by workflow restrictions."
