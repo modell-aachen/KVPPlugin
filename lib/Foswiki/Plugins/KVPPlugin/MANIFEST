@@ -1,29 +1,30 @@
 # Release manifest for KVPPlugin
-data/System/KVPPlugin.txt 0644 Documentation
-data/System/KVPPluginCommonWords.txt 0644
-data/System/KvpSkinSolrSearchBaseTemplate.txt 0644 Adjustments for SolrSearch
-data/System/KvpSkinSolrSearchViewTemplate.txt 0644 Adjustments for SolrSearch
-data/System/ExampleSkinTopHeadTemplate.txt 0644 Example template for header
-data/System/KvpSkinTopHeadTemplate.txt 0644 Template for header
-data/System/KvpSkinTransitionsTemplate.txt 0644 Template for transitionmenue
-data/System/KvpSkinWorkflowMailTemplate.txt 0644 Customization template for mails
-data/System/KvpSkinWorkflowViewTemplate.txt 0644 ViewTemplate to allow showing macros
-data/System/KvpSkinWorkflowViewMacrosTemplate.txt 0644 ViewTemplate for showing macros
+data/System/KVPPlugin.txt 0664 Documentation
+data/System/KVPPluginCommonWords.txt 0664
+data/System/KvpSkinSolrSearchBaseTemplate.txt 0664 Adjustments for SolrSearch
+data/System/KvpSkinSolrSearchViewTemplate.txt 0664 Adjustments for SolrSearch
+data/System/ExampleSkinTopHeadTemplate.txt 0664 Example template for header
+data/System/KvpSkinTopHeadTemplate.txt 0664 Template for header
+data/System/KvpSkinTransitionsTemplate.txt 0664 Template for transitionmenue
+data/System/KvpSkinWorkflowMailTemplate.txt 0664 Customization template for mails
+data/System/KvpSkinWorkflowViewTemplate.txt 0664 ViewTemplate to allow showing macros
+data/System/KvpSkinWorkflowViewMacrosTemplate.txt 0664 ViewTemplate for showing macros
 pub/System/KVPPlugin/transitions.js 0644 Script for transition menue
 pub/System/KVPPlugin/transitions.js.gz 0644 Script for transition menue
 pub/System/KVPPlugin/changewarning.js 0644 Script for transition menue
 pub/System/KVPPlugin/changewarning.js.gz 0644 Script for transition menue
 pub/System/KVPPlugin/blockLink.js 0644 Script for blocking links
 pub/System/KVPPlugin/blockLink.js.gz 0644 Script for blocking links
-locale/KVPPlugin/de.po 0644 German translations
-locale/KVPPlugin/fr.po 0644 French translations
-locale/KVPPlugin/it.po 0644 Italian translations
-locale/KVPPlugin/zh-cn.po 0644 Chinese translations
-lib/Foswiki/Plugins/KVPPlugin.pm 0644
-lib/Foswiki/Plugins/KVPPlugin/ControlledTopic.pm 0644
-lib/Foswiki/Plugins/KVPPlugin/Workflow.pm 0644
-lib/Foswiki/Plugins/KVPPlugin/Config.spec 0755 Configuration
-lib/Foswiki/Plugins/SafeWikiPlugin/Signatures/KVPPlugin.pm 0644 Signatures
+locale/KVPPlugin/cs.po 0664 Czech translations
+locale/KVPPlugin/de.po 0664 German translations
+locale/KVPPlugin/fr.po 0664 French translations
+locale/KVPPlugin/it.po 0664 Italian translations
+locale/KVPPlugin/zh-cn.po 0664 Chinese translations
+lib/Foswiki/Plugins/KVPPlugin.pm 0444
+lib/Foswiki/Plugins/KVPPlugin/ControlledTopic.pm 0444
+lib/Foswiki/Plugins/KVPPlugin/Workflow.pm 0444
+lib/Foswiki/Plugins/KVPPlugin/Config.spec 0444 Configuration
+lib/Foswiki/Plugins/SafeWikiPlugin/Signatures/KVPPlugin.pm 0444 Signatures
 templates/foswiki.kvp.tmpl 0644
 templates/mailworkflowtransition.tmpl 0644
 templates/oopswfplease.tmpl 0644
