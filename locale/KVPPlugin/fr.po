@@ -6,9 +6,10 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: Modell Aachen\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2014-08-11 17:16+0200\n"
+"PO-Revision-Date: 2014-09-05 14:37+0200\n"
 "Last-Translator: Modell Aachen <access@modell-aachen.de>\n"
-"Language-Team: French <http://translate.modell-aachen.de/projects/kvpplugin/releasenew-york/fr/>\n"
+"Language-Team: French <http://translate.modell-aachen.de/projects/kvpplugin"
+"/releasenew-york/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -466,7 +467,7 @@ msgstr "Voir antérieure"
 
 #: data/System/KvpSkinSolrSearchBaseTemplate.txt
 msgid "else"
-msgstr ""
+msgstr "autre"
 
 #: templates/oopshistory.kvp.tmpl
 msgid "first"
