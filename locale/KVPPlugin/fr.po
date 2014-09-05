@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: fr\n"
 "Report-Msgid-Bugs-To: Modell Aachen\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2014-09-05 14:37+0200\n"
+"PO-Revision-Date: 2014-09-05 14:38+0200\n"
 "Last-Translator: Modell Aachen <access@modell-aachen.de>\n"
 "Language-Team: French <http://translate.modell-aachen.de/projects/kvpplugin"
 "/releasenew-york/fr/>\n"
@@ -44,7 +44,7 @@ msgstr "Approuver la page"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approve contentual aspects of discussion"
-msgstr "Approuver les aspects contentuels de discussion "
+msgstr "Approuver les aspects contentuels de discussion"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approve contentual aspects of draft"
@@ -85,7 +85,8 @@ msgstr "Attention"
 
 #: data/System/KvpSkinTransitionsTemplate.txt templates/foswiki.kvp.tmpl
 msgid "Attention, there is a discussion for this topic!\\nDo you really want to continue?"
-msgstr "attention, il ya une discussion pour cette page!\\nVoulez-vous continuez?"
+msgstr ""
+"attention, il ya une discussion pour cette page!\\nVoulez-vous continuez ?"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Cannot execute transition =%1= on =%2= (invalid on source-workflow)."
@@ -113,7 +114,7 @@ msgstr "Comparaison"
 
 #: templates/oopsworkflowchanged.tmpl
 msgid "Continue to the topic here:"
-msgstr "Continuer vers la page ici"
+msgstr "Continuer vers la page ici :"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Could not initialize workflow for"
@@ -121,7 +122,9 @@ msgstr "n´a pas pu initialiser le flux de traivail pour"
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "Could not initialize workflow for %1. Maybe the topic was deleted?"
-msgstr "n´a pas pu initialisez le flux de travail pour %1. la page est peut ètre supprimée"
+msgstr ""
+"n´a pas pu initialisez le flux de travail pour %1. la page est peut ètre "
+"supprimée ?"
 
 #: data/System/ExampleSkinTopHeadTemplate.txt
 msgid "Creator"
@@ -161,7 +164,7 @@ msgstr "Projet"
 
 #: lib/Foswiki/Plugins/KVPPlugin/Workflow.pm
 msgid "Error in Workflow: state %1 does not exist!"
-msgstr "Erreur : état %1 n'existe pas"
+msgstr "Erreur : état %1 n'existe pas !"
 
 #: templates/oopsworkflowlink.tmpl
 msgid "Error in link"
@@ -174,7 +177,7 @@ msgstr "Erreur avec le flux de travail"
 
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "For questions, please refer to:"
-msgstr "si vous avez des questions, référez vous s'il vous plaît à"
+msgstr "si vous avez des questions, référez vous s'il vous plaît à :"
 
 #: templates/oopswfplease.tmpl
 msgid "Force the transition anyway"
@@ -222,7 +225,7 @@ msgstr "Dernier auteur"
 
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "Link to the page:"
-msgstr "liens à la page"
+msgstr "liens à la page :"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Must find exactly one workflow in the topic, but found %1."
@@ -234,11 +237,11 @@ msgstr "Suivant"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "No Suffix defined! Defaulting to %1!"
-msgstr "Aucun suffixe défini! défaut de %1!"
+msgstr "Aucun suffixe défini! défaut de %1 !"
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "No action was specified."
-msgstr "pas d´action spécifiée"
+msgstr "Pas d´action spécifiée."
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "No transition with =FORK= attribute to fork"
@@ -273,7 +276,7 @@ msgstr "remarques"
 
 #: data/System/KvpSkinTransitionsTemplate.txt
 msgid "Remarks for this state:"
-msgstr "remarques pour cet état"
+msgstr "Remarques pour cet état :"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Request approval"
@@ -331,7 +334,10 @@ msgstr "Le sujet que vous avez cliqué a changé d'état depuis ce lien a été 
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "The transition was not possible because the state of the topic (%1) did not match the state of the action (%2). Maybe someone else already transitioned the topic?"
-msgstr "La transition n'a pas été possible en raison de l'état du sujet (% 1) n'a pascorrespondu à l'état de l'action (% 2). Peut-être que quelqu'un d'autre a déjà fait la transitiondu sujet?"
+msgstr ""
+"La transition n'a pas été possible en raison de l'état du sujet (% 1) n'a "
+"pascorrespondu à l'état de l'action (% 2). Peut-être que quelqu'un d'autre a "
+"déjà fait la transitiondu sujet ?"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document has been approved."
@@ -391,11 +397,11 @@ msgstr "La page n´est plus disponible"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Topic to fork from does not exist:"
-msgstr "La page de laquelle vous voulez bifurquer n´existe pas"
+msgstr "La page de laquelle vous voulez bifurquer n´existe pas :"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Tried to fork from a topic, which is not under any workflow:"
-msgstr "La page est dans un format obsolète."
+msgstr "La page est dans un format obsolète :"
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Username"
