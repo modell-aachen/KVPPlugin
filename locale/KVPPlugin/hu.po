@@ -1,0 +1,534 @@
+# Hungarian translations for PACKAGE package.
+# Copyright (C) 2014 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Automatically generated, 2014.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ASCII\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: hu\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: data/System/KvpSkinWorkflowMailTemplate.txt
+msgid "%1 edited the topic %2."
+msgstr ""
+
+#: data/System/KvpSkinWorkflowMailTemplate.txt
+msgid "%1 has a new state: %2"
+msgstr ""
+
+#: templates/oopswfplease.tmpl
+msgid "%1 is editing %2, and their lock is still active for another %3"
+msgstr ""
+
+#: templates/oopsworkflowerr.tmpl templates/oopsworkflowfork.tmpl
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "(workflow error)"
+msgstr ""
+
+#: templates/oopshistory.kvp.tmpl
+msgid "Action"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Approve content"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Approve contentual aspects of discussion"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Approve contentual aspects of draft"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Approve formal aspects"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Approve formal aspects of discussion"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Approve formal aspects of draft"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Approved Page"
+msgstr ""
+
+#: data/System/ExampleSkinTopHeadTemplate.txt
+#: data/System/KvpSkinTopHeadTemplate.txt
+msgid "Approved by"
+msgstr ""
+
+#: data/System/ExampleSkinTopHeadTemplate.txt
+#: data/System/KvpSkinTopHeadTemplate.txt
+msgid "Area of application"
+msgstr ""
+
+#: templates/oopswfplease.tmpl templates/oopsworkflowchanged.tmpl
+#: templates/oopsworkflowerr.tmpl templates/oopsworkflowfork.tmpl
+#: templates/oopsworkflowlink.tmpl templates/oopsworkflowmoved.tmpl
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "Attention"
+msgstr ""
+
+#: data/System/KvpSkinTransitionsTemplate.txt templates/foswiki.kvp.tmpl
+msgid ""
+"Attention, there is a discussion for this topic!\\nDo you really want to "
+"continue?"
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm
+msgid "Cannot execute transition =%1= on =%2= (invalid on source-workflow)."
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm
+msgid "Cannot execute transition =%1= on =%2= (invalid on target-workflow)."
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm
+msgid "Change status"
+msgstr ""
+
+#: templates/oopshistory.kvp.tmpl
+msgid "Comment"
+msgstr ""
+
+#: data/System/KvpSkinTransitionsTemplate.txt
+msgid "Compare with approved version"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Comparison"
+msgstr ""
+
+#: templates/oopsworkflowchanged.tmpl
+msgid "Continue to the topic here:"
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm
+msgid "Could not initialize workflow for"
+msgstr ""
+
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "Could not initialize workflow for %1. Maybe the topic was deleted?"
+msgstr ""
+
+#: data/System/ExampleSkinTopHeadTemplate.txt
+msgid "Creator"
+msgstr ""
+
+#: templates/oopshistory.kvp.tmpl
+msgid "Date"
+msgstr ""
+
+#: data/System/KvpSkinTransitionsTemplate.txt
+msgid "Difference to approved version"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Discard discussion"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Discard draft"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Discuss"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Discussion"
+msgstr ""
+
+#: data/System/KVPPlugin.txt templates/viewtopicactionbuttons.kvp.tmpl
+msgid "Discussion about Improvements"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Draft"
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin/Workflow.pm
+msgid "Error in Workflow: state %1 does not exist!"
+msgstr ""
+
+#: templates/oopsworkflowlink.tmpl
+msgid "Error in link"
+msgstr ""
+
+#: templates/oopsworkflowerr.tmpl templates/oopsworkflowfork.tmpl
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "Error in workflow"
+msgstr ""
+
+#: data/System/KvpSkinWorkflowMailTemplate.txt
+msgid "For questions, please refer to:"
+msgstr ""
+
+#: templates/oopswfplease.tmpl
+msgid "Force the transition anyway"
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm
+msgid ""
+"Found an invalid workflow (there must be none in a newly created topic)."
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Give article the accept status"
+msgstr ""
+
+#: data/System/KvpSkinTransitionsTemplate.txt
+msgid "Improvement Process"
+msgstr ""
+
+#: templates/oopswfplease.tmpl
+msgid "In an emergency you can transition the topic anyway, by clicking "
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Info Page"
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm
+msgid "Invalid destination to fork to: %1"
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin/Workflow.pm
+msgid "Invalid state table in %1"
+msgstr ""
+
+#: templates/oopsworkflowchanged.tmpl
+msgid "It used to be in %1 but is now in %2"
+msgstr ""
+
+#: data/System/KvpSkinTopHeadTemplate.txt
+msgid "Last author"
+msgstr ""
+
+#: data/System/KvpSkinTransitionsTemplate.txt
+msgid "Last editing person"
+msgstr ""
+
+#: data/System/KvpSkinWorkflowMailTemplate.txt
+msgid "Link to the page:"
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm
+msgid "Must find exactly one workflow in the topic, but found %1."
+msgstr ""
+
+#: data/System/KvpSkinTransitionsTemplate.txt
+msgid "Next step"
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm
+msgid "No Suffix defined! Defaulting to %1!"
+msgstr ""
+
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "No action was specified."
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm
+msgid "No transition with =FORK= attribute to fork"
+msgstr ""
+
+#: templates/oopsworkflowchanged.tmpl templates/oopsworkflowerr.tmpl
+#: templates/oopsworkflowfork.tmpl templates/oopsworkflowmoved.tmpl
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "OK"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Old Discussion"
+msgstr ""
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt
+msgid "Process State"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Put under CIP"
+msgstr ""
+
+#: data/System/ExampleSkinTopHeadTemplate.txt
+#: data/System/KvpSkinTopHeadTemplate.txt
+msgid "Release date"
+msgstr ""
+
+#: data/System/KvpSkinWorkflowMailTemplate.txt
+msgid "Remarks"
+msgstr ""
+
+#: data/System/KvpSkinTransitionsTemplate.txt
+msgid "Remarks for this state:"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Request approval"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Request further revision"
+msgstr ""
+
+#: data/System/ExampleSkinTopHeadTemplate.txt
+#: data/System/KvpSkinTopHeadTemplate.txt
+msgid "Responsible"
+msgstr ""
+
+#: templates/oopshistory.kvp.tmpl
+msgid "Revision"
+msgstr ""
+
+#: templates/oopshistory.kvp.tmpl
+msgid "Revision history of "
+msgstr ""
+
+#: data/System/KvpSkinWorkflowViewMacrosTemplate.txt
+#: data/System/KvpSkinWorkflowViewTemplate.txt
+msgid "Show macros"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Start discussion"
+msgstr ""
+
+#: data/System/KVPPlugin.txt templates/viewtopicactionbuttons.kvp.tmpl
+msgid "Start new Discussion"
+msgstr ""
+
+#: data/System/KvpSkinTransitionsTemplate.txt templates/oopshistory.kvp.tmpl
+msgid "State"
+msgstr ""
+
+#: templates/oopsworkflowmoved.tmpl
+msgid ""
+"The discussion you clicked is no longer available. You can go to the "
+"original topic by clicking OK."
+msgstr ""
+
+#: templates/oopsworkflowlink.tmpl
+msgid "The link you clicked is malformed."
+msgstr ""
+
+#: templates/oopsworkflowmoved.tmpl
+msgid "The link you clicked is no longer available."
+msgstr ""
+
+#: templates/oopsworkflowchanged.tmpl
+msgid "The topic you clicked has changed state since this link was created."
+msgstr ""
+
+#: templates/oopswrkflwsaveerr.tmpl
+msgid ""
+"The transition was not possible because the state of the topic (%1) did not "
+"match the state of the action (%2). Maybe someone else already transitioned "
+"the topic?"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "This document has been approved."
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "This document has been discarded."
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "This document is a draft."
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "This document is currently being revised."
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "This document is not yet in CIP."
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "This document is waiting for approval by the QM-department."
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid ""
+"This document is waiting for approval by the person in charge of the page."
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "This document is waiting for approval by the topic owner."
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "This document is waiting for formal approval."
+msgstr ""
+
+#: data/System/KvpSkinWorkflowMailTemplate.txt
+msgid ""
+"This is an automatically generated message. Please do not reply to this "
+"email."
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "This topic is not under any workflow."
+msgstr ""
+
+#: templates/oopsworkflowchanged.tmpl
+msgid "Topic changed"
+msgstr ""
+
+#: templates/oopshistory.kvp.tmpl
+msgid "Topic history"
+msgstr ""
+
+#: templates/oopsworkflowmoved.tmpl
+msgid "Topic no longer available"
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm
+msgid "Topic to fork from does not exist:"
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm
+msgid "Tried to fork from a topic, which is not under any workflow:"
+msgstr ""
+
+#: templates/oopshistory.kvp.tmpl
+msgid "Username"
+msgstr ""
+
+#: data/System/KvpSkinTopHeadTemplate.txt templates/oopshistory.kvp.tmpl
+msgid "Version"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Waiting for PO"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "Waiting for QM"
+msgstr ""
+
+#: templates/oopsworkflowerr.tmpl templates/oopswrkflwsaveerr.tmpl
+msgid "While changing %1 an error occured in the workflow."
+msgstr ""
+
+#: templates/oopsworkflowfork.tmpl
+msgid "While forking %1 an error occured in the workflow."
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm
+msgid ""
+"You are not permitted to edit this topic. You have been denied access by "
+"workflow restrictions."
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm
+msgid ""
+"You are not permitted to save this topic. You have been denied access by "
+"workflow restrictions."
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm
+msgid ""
+"You are not permitted to upload to this topic. You have been denied access "
+"by workflow restrictions."
+msgstr ""
+
+#: lib/Foswiki/Plugins/KVPPlugin.pm
+msgid "You may not create this topic under this workflow."
+msgstr ""
+
+#: templates/oopswfplease.tmpl
+msgid ""
+"You must ask %1 to close their edit and release their lock before you can "
+"change the state of the topic."
+msgstr ""
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt
+msgid "approved"
+msgstr ""
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt
+msgid "contentual revision"
+msgstr ""
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt
+msgid "contentual revision (draft)"
+msgstr ""
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt
+msgid "discarded"
+msgstr ""
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt
+msgid "draft"
+msgstr ""
+
+#: templates/oopshistory.kvp.tmpl
+msgid "earlier"
+msgstr ""
+
+#: data/System/KvpSkinSolrSearchBaseTemplate.txt
+msgid "else"
+msgstr ""
+
+#: templates/oopshistory.kvp.tmpl
+msgid "first"
+msgstr ""
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt
+msgid "formal revision"
+msgstr ""
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt
+msgid "formal revision (draft)"
+msgstr ""
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "in %1"
+msgstr ""
+
+#: templates/oopshistory.kvp.tmpl
+msgid "last"
+msgstr ""
+
+#: templates/oopshistory.kvp.tmpl
+msgid "later"
+msgstr ""
+
+#: data/System/ExampleSkinTopHeadTemplate.txt
+#: data/System/KvpSkinTopHeadTemplate.txt
+msgid "old revision"
+msgstr ""
+
+#: templates/oopshistory.kvp.tmpl
+msgid "restore"
+msgstr ""
+
+#: data/System/KvpSkinSolrSearchViewTemplate.txt
+msgid "under discussion"
+msgstr ""
+
+#: data/System/ExampleSkinTopHeadTemplate.txt
+#: data/System/KvpSkinTopHeadTemplate.txt
+msgid "under&#160;discussion"
+msgstr ""
+
+#: templates/oopshistory.kvp.tmpl
+msgid "view"
+msgstr ""
