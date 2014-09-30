@@ -1111,9 +1111,6 @@ sub _restFork {
         my ($ttmeta, $tttext) = Foswiki::Func::readTopic(
             $forkWeb, $forkTopic);
 
-        my $now = Foswiki::Func::formatTime( time(), undef, 'servertime' );
-        my $who = Foswiki::Func::getWikiUserName();
-
         # Default to topicTALKSUFFIX if no newnames are given, the action is valid.
         if ( scalar @newnames == 0 ) {
             my $forkSuffix = _WORKFLOWSUFFIX();
@@ -1190,52 +1187,23 @@ sub _restFork {
                 my $newWeb = shift @webs;
                 my $withParams = shift @params;
 
-                if($newTopic =~ m#AUTOINC\d+#) {
-                    require Foswiki::UI::Save;
-                    $newTopic = Foswiki::UI::Save::expandAUTOINC( $session, $newWeb, $newTopic );
-                }
                 my $saved;
                 $saved = _pushParams( $withParams ) if $withParams;
 
-                $directToWeb = $newWeb;
-                $directToTopic = $newTopic;
-
                 next if (Foswiki::Func::topicExists($newWeb, $newTopic));
 
-                #Alex: Topic mit allen Dateien kopieren
-                my $handler = $session->{store}->getHandler( $forkWeb, $forkTopic );
-                $handler->copyTopic($session->{store}, $newWeb, $newTopic);
-
-                my $text = $tttext;
-                my $meta = new Foswiki::Meta($session, $newWeb, $newTopic);
-                foreach my $k ( keys %$ttmeta ) {
-                    # Note that we don't carry over the history from the forked topic
-                    next if ( $k =~ /^_/ || $k eq 'WORKFLOWHISTORY' );
-                    my @data;
-                    foreach my $item ( @{ $ttmeta->{$k} } ) {
-                        my %datum = %$item;
-                        push( @data, \%datum );
-                    }
-                    $meta->putAll( $k, @data );
-                }
-
-                my $forkhistory = {
-                    value => "<br />Forked from [[$forkWeb.$forkTopic]] by $who at $now",
-                };
-                $meta->put( "WORKFLOWHISTORY", $forkhistory );
-
-                # Modell Aachen Settings:
-                # Ueberfuehren in Underrevision:
-                my $newcontrolledTopic = _initTOPIC( $newWeb, $newTopic, undef, $meta, $text, FORCENEW);
-
-                unless ( $newcontrolledTopic ) {
+                my $newControlledTopic = _createForkedCopy($session, $ttmeta, $newWeb, $newTopic);
+                unless ( $newControlledTopic ) {
                     $erroneous .= '%MAKETEXT{"Could not initialize workflow for"}% '."$newWeb.$newTopic\n\n";
                     next; # XXX this leaves the created topic behind
                 }
 
-                my $mail = $newcontrolledTopic->changeState($newAction);
+                $directToWeb = $newWeb;
+                $directToTopic = $newControlledTopic->{topic}; # might have changed due to AUTOINC
+
+                my $mail = $newControlledTopic->changeState($newAction);
                 local $isStateChange = 1;
-                $newcontrolledTopic->save(1);
+                $newControlledTopic->save(1);
                 local $isStateChange = 0;
                 push(@$mails, $mail);
 
@@ -1272,6 +1240,44 @@ sub _restFork {
 
     #redirect to last successfully forked topic
     return $response->redirect(Foswiki::Func::getViewUrl($directToWeb, $directToTopic));
+}
+
+sub _createForkedCopy {
+    my ($session, $ttmeta, $newWeb, $newTopic) = @_;
+
+    if($newTopic =~ m#AUTOINC\d+#) {
+        require Foswiki::UI::Save;
+        $newTopic = Foswiki::UI::Save::expandAUTOINC( $session, $newWeb, $newTopic );
+    }
+
+    my $now = Foswiki::Func::formatTime( time(), undef, 'servertime' );
+    my $who = Foswiki::Func::getWikiUserName();
+
+    my $forkWeb = $ttmeta->web();
+    my $forkTopic = $ttmeta->topic();
+
+    #Alex: Topic mit allen Dateien kopieren
+    my $handler = $session->{store}->getHandler( $forkWeb, $forkTopic );
+    $handler->copyTopic($session->{store}, $newWeb, $newTopic);
+
+    my $meta = new Foswiki::Meta($session, $newWeb, $newTopic);
+    foreach my $k ( keys %$ttmeta ) {
+        # Note that we don't carry over the history from the forked topic
+        next if ( $k =~ /^_/ || $k eq 'WORKFLOWHISTORY' );
+        my @data;
+        foreach my $item ( @{ $ttmeta->{$k} } ) {
+            my %datum = %$item;
+            push( @data, \%datum );
+        }
+        $meta->putAll( $k, @data );
+    }
+
+    my $forkhistory = {
+        value => "<br />Forked from [[$forkWeb.$forkTopic]] by $who at $now",
+    };
+    $meta->put( "WORKFLOWHISTORY", $forkhistory );
+
+    return _initTOPIC( $newWeb, $newTopic, undef, $meta, $meta->{text}, FORCENEW );
 }
 
 # XXX requires changes in lib/Foswiki/Meta.pm
