@@ -6,9 +6,9 @@
 	<tbody>
 		<tr height: 24px;>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%QUERY{"Dokumententyp"}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
-				%{Nummer: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
+				%{Nummer: <strong>ProzentQUERY{"Number"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
 				Version&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
@@ -18,17 +18,17 @@
 			<td colspan='3' style='text-align: center;'>
 				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
 			<td colspan='2' style='text-align: center;'>
-				Geltungsbereich&#58; <strong>%QUERY{"Geltungsbereich"}%</strong></td>
+				Geltungsbereich&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
 		</tr>
 		<tr height: 24px;>
 			<td style='text-align: center;'>
-				Letzter Autor:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_INHALTLICHE_PRUEFUNG" or="LASTPROCESSOR_INHALTLICHE_PRUEFUNG_ENTWURF" nousersweb="1"}%</strong></td>
+				Letzter Autor:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
-				Verantwortlich:<strong><br />%QUERY{"Seitenverantwortlicher"}%</strong></td>
+				Verantwortlich:<strong><br />%QUERY{"Responsible"}%</strong></td>
 			<td style='text-align: center;'>
-				Freigegeben durch:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
+				Freigegeben durch:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
-				Freigabedatum:<strong><br />%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
+				Freigabedatum:<strong><br />%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
 				%TMPL:P{"modacPageNr"}%</td>
 		</tr>
@@ -43,9 +43,9 @@
 	<tbody>
 		<tr height: 24px;>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%QUERY{"Dokumententyp"}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%QUERY{"DocumentType"}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
-				%{Number:<strong> ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
+				%{Number:<strong> ProzentQUERY{"Number"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
 				Version&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
@@ -55,17 +55,17 @@
 			<td colspan='3' style='text-align: center;'>
 				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
 			<td colspan='2' style='text-align: center;'>
-				Area of application&#58; <strong>%QUERY{"Geltungsbereich"}%</strong></td>
+				Area of application&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
 		</tr>
 		<tr height: 24px;>
 			<td style='text-align: center;'>
-				Last author:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_INHALTLICHE_PRUEFUNG" or="LASTPROCESSOR_INHALTLICHE_PRUEFUNG_ENTWURF" nousersweb="1"}%</strong></td>
+				Last author:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
-				Responsible:<strong><br />%QUERY{"Seitenverantwortlicher"}%</strong></td>
+				Responsible:<strong><br />%QUERY{"Responsible"}%</strong></td>
 			<td style='text-align: center;'>
-				Approved by:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
+				Approved by:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
-				Release date:<strong><br />%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
+				Release date:<strong><br />%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
 				%TMPL:P{"modacPageNr"}%</td>
 		</tr>
@@ -80,9 +80,9 @@
 	<tbody>
 		<tr height: 24px;>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%QUERY{"Dokumententyp"}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
-				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
+				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Number"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
 				%MAKETEXT{"Version"}%&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
@@ -92,17 +92,17 @@
 			<td colspan='3' style='text-align: center;'>
 				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
 			<td colspan='2' style='text-align: center;'>
-				%MAKETEXT{"Area of application"}%&#58; <strong>%QUERY{"Geltungsbereich"}%</strong></td>
+				%MAKETEXT{"Area of application"}%&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
 		</tr>
 		<tr height: 24px;>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Last author"}%:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_INHALTLICHE_PRUEFUNG" or="LASTPROCESSOR_INHALTLICHE_PRUEFUNG_ENTWURF" nousersweb="1"}%</strong></td>
+				%MAKETEXT{"Last author"}%:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Responsible"}%:<strong><br />%QUERY{"Seitenverantwortlicher"}%</strong></td>
+				%MAKETEXT{"Responsible"}%:<strong><br />%QUERY{"Responsible"}%</strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Approved by"}%:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
+				%MAKETEXT{"Approved by"}%:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Release date"}%:<strong><br />%WORKFLOWMETA{"LASTTIME_FREIGEGEBEN" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
+				%MAKETEXT{"Release date"}%:<strong><br />%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
 				%TMPL:P{"modacPageNr"}%</td>
 		</tr>
@@ -117,9 +117,9 @@
 	<tbody>
 		<tr height: 24px;>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%QUERY{"Dokumententyp"}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
-				%{Nummer: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
+				%{Nummer: <strong>ProzentQUERY{"Number"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
 				Version&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
@@ -129,13 +129,13 @@
 			<td colspan='3' style='text-align: center;'>
 				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
 			<td colspan='2' style='text-align: center;'>
-				Geltungsbereich&#58; <strong>%QUERY{"Geltungsbereich"}%</strong></td>
+				Geltungsbereich&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
 		</tr>
 		<tr height: 24px;>
 			<td style='text-align: center;'>
 				Letzter Autor:<strong><br /><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
-				Verantwortlich:<strong><br />%QUERY{"Seitenverantwortlicher"}%</strong></td>
+				Verantwortlich:<strong><br />%QUERY{"Responsible"}%</strong></td>
 			<td style='text-align: center;'>
 				Freigegeben durch:<strong><br /><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
@@ -154,9 +154,9 @@
 	<tbody>
 		<tr height: 24px;>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%QUERY{"Dokumententyp"}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%QUERY{"DocumentType"}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
-				%{Number: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
+				%{Number: <strong>ProzentQUERY{"Number"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
 				Version&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
@@ -166,13 +166,13 @@
 			<td colspan='3' style='text-align: center;'>
 				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
 			<td colspan='2' style='text-align: center;'>
-				Area of application&#58; <strong>%QUERY{"Geltungsbereich"}%</strong></td>
+				Area of application&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
 		</tr>
 		<tr height: 24px;>
 			<td style='text-align: center;'>
 				Last author:<strong><br /><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
-				Responsible:<strong><br />%QUERY{"Seitenverantwortlicher"}%</strong></td>
+				Responsible:<strong><br />%QUERY{"Responsible"}%</strong></td>
 			<td style='text-align: center;'>
 				Approved by:<strong><br /><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
@@ -191,7 +191,7 @@
 	<tbody>
 		<tr height: 24px;>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%QUERY{"Dokumententyp"}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
 				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
@@ -203,13 +203,249 @@
 			<td colspan='3' style='text-align: center;'>
 				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
 			<td colspan='2' style='text-align: center;'>
-				%MAKETEXT{"Area of application"}%&#58; <strong>%QUERY{"Geltungsbereich"}%</strong></td>
+				%MAKETEXT{"Area of application"}%&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
 		</tr>
 		<tr height: 24px;>
 			<td style='text-align: center;'>
 				%MAKETEXT{"Last author"}%:<strong><br /><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Responsible"}%:<strong><br />%QUERY{"Seitenverantwortlicher"}%</strong></td>
+				%MAKETEXT{"Responsible"}%:<strong><br />%QUERY{"Responsible"}%</strong></td>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Approved by"}%:<strong><br /><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Release date"}%:<strong><br /><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				%TMPL:P{"modacPageNr"}%</td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
+
+%{<verbatim class="tml" />}%
+%TMPL:DEF{"top_head_approved"}%%SWITCHTMPL{"%CONTENT_LANGUAGE%" prefix="top_head_approved_" defaultTo="auto"}%%TMPL:END%
+%TMPL:DEF{"top_head_discussion"}%%SWITCHTMPL{"%CONTENT_LANGUAGE%" prefix="top_head_discussion_" defaultTo="auto"}%%TMPL:END%
+%{</verbatim>}%
+
+%{<verbatim class="tml" />}%
+%TMPL:DEF{"top_head"}%%TMPL:P{context="KVPControlled" then="top_head_kvp" else="top_head_standard"}%%TMPL:END%
+%{</verbatim>}%
+
+%{<verbatim class="tml" />}%
+%TMPL:DEF{"top_head_kvp"}%%TMPL:P{context="KVPIsDiscussion" then="top_head_discussion" else="top_head_approved"}%%TMPL:END%
+%{</verbatim>}%
+%TMPL:INCLUDE{"TopHead"}%
+
+%TMPL:DEF{"top_head_approved_de"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{Nummer: <strong>ProzentQUERY{"Number"}Prozent</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Version&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+			<td rowspan='3' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				Geltungsbereich&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
+		</tr>
+		<tr height: 24px;>
+			<td style='text-align: center;'>
+				Letzter Autor:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				Verantwortlich:<strong><br />%QUERY{"Responsible"}%</strong></td>
+			<td style='text-align: center;'>
+				Freigegeben durch:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				Freigabedatum:<strong><br />%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				%TMPL:P{"modacPageNr"}%</td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
+
+%TMPL:DEF{"top_head_approved_en"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%QUERY{"DocumentType"}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{Number:<strong> ProzentQUERY{"Number"}Prozent</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Version&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+			<td rowspan='3' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				Area of application&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
+		</tr>
+		<tr height: 24px;>
+			<td style='text-align: center;'>
+				Last author:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				Responsible:<strong><br />%QUERY{"Responsible"}%</strong></td>
+			<td style='text-align: center;'>
+				Approved by:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				Release date:<strong><br />%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				%TMPL:P{"modacPageNr"}%</td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
+
+%TMPL:DEF{"top_head_approved_auto"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Number"}Prozent</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				%MAKETEXT{"Version"}%&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+			<td rowspan='3' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				%MAKETEXT{"Area of application"}%&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
+		</tr>
+		<tr height: 24px;>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Last author"}%:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Responsible"}%:<strong><br />%QUERY{"Responsible"}%</strong></td>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Approved by"}%:<strong><br />%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Release date"}%:<strong><br />%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
+			<td style='text-align: center;'>
+				%TMPL:P{"modacPageNr"}%</td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
+
+%TMPL:DEF{"top_head_discussion_de"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{Nummer: <strong>ProzentQUERY{"Number"}Prozent</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Version&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+			<td rowspan='3' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				Geltungsbereich&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
+		</tr>
+		<tr height: 24px;>
+			<td style='text-align: center;'>
+				Letzter Autor:<strong><br /><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				Verantwortlich:<strong><br />%QUERY{"Responsible"}%</strong></td>
+			<td style='text-align: center;'>
+				Freigegeben durch:<strong><br /><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				Freigabedatum:<strong><br /><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				%TMPL:P{"modacPageNr"}%</td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
+
+%TMPL:DEF{"top_head_discussion_en"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%QUERY{"DocumentType"}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{Number: <strong>ProzentQUERY{"Number"}Prozent</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				Version&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+			<td rowspan='3' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				Area of application&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
+		</tr>
+		<tr height: 24px;>
+			<td style='text-align: center;'>
+				Last author:<strong><br /><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				Responsible:<strong><br />%QUERY{"Responsible"}%</strong></td>
+			<td style='text-align: center;'>
+				Approved by:<strong><br /><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				Release date:<strong><br /><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				%TMPL:P{"modacPageNr"}%</td>
+		</tr>
+	</tbody>
+</table>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
+%TMPL:END%
+
+%TMPL:DEF{"top_head_discussion_auto"}%
+<div class='patternTop'>
+<table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
+	<tbody>
+		<tr height: 24px;>
+			<td colspan='3' width='50%' style='text-align: center;'>
+				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
+			<td width='35%' style='text-align: center;'>
+				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
+			<td width='12%' style='text-align: center;'>
+				%MAKETEXT{"Version"}%&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+			<td rowspan='3' width='12%'>
+				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+		</tr>
+		<tr height: 24px;>
+			<td colspan='3' style='text-align: center;'>
+				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>
+				%MAKETEXT{"Area of application"}%&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
+		</tr>
+		<tr height: 24px;>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Last author"}%:<strong><br /><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
+			<td style='text-align: center;'>
+				%MAKETEXT{"Responsible"}%:<strong><br />%QUERY{"Responsible"}%</strong></td>
 			<td style='text-align: center;'>
 				%MAKETEXT{"Approved by"}%:<strong><br /><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
