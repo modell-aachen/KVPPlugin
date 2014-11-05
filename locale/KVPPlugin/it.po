@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 16:54+0200\n"
-"PO-Revision-Date: 2014-11-05 16:55+0200\n"
+"PO-Revision-Date: 2014-11-05 16:56+0200\n"
 "Last-Translator: Modell Aachen <access@modell-aachen.de>\n"
 "Language-Team: Italian <http://translate.modell-aachen.de/projects/kvpplugin"
 "/releasenew-york/it/>\n"
@@ -341,33 +341,33 @@ msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document has been approved."
-msgstr "Quresto documento è stato approvato"
+msgstr "Quresto documento è stato approvato."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document has been discarded."
-msgstr "Questo documento non è stato approvato"
+msgstr "Questo documento non è stato approvato."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is a draft."
-msgstr "Questo documento è in bozza"
+msgstr "Questo documento è in bozza."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is currently being revised."
-msgstr "Questo documento è  in fase di revisione"
+msgstr "Questo documento è  in fase di revisione."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is not yet in CIP."
-msgstr "Questo documento non è ancora nel CIP"
+msgstr "Questo documento non è ancora nel CIP."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is waiting for approval by the QM-department."
-msgstr "Questo documento è in attesa di approvazione del dipartimento Qualità"
+msgstr "Questo documento è in attesa di approvazione del dipartimento Qualità."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is waiting for approval by the person in charge of the page."
 msgstr ""
 "Questo documento è in attesa di approvazione della persona responsabile di "
-"questa pagina"
+"questa pagina."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is waiting for approval by the topic owner."
@@ -377,7 +377,7 @@ msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is waiting for formal approval."
-msgstr "Questo documetno è in attesa di approvazione formale"
+msgstr "Questo documetno è in attesa di approvazione formale."
 
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "This is an automatically generated message. Please do not reply to this email."
@@ -387,7 +387,7 @@ msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This topic is not under any workflow."
-msgstr "Questo argomento non è nel workflow"
+msgstr "Questo argomento non è nel workflow."
 
 #: templates/oopsworkflowchanged.tmpl
 msgid "Topic changed"
