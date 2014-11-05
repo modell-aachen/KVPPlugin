@@ -1,3 +1,19 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-11-05 16:54+0200\n"
+"PO-Revision-Date: 2014-11-05 16:55+0200\n"
+"Last-Translator: Modell Aachen <access@modell-aachen.de>\n"
+"Language-Team: Italian <http://translate.modell-aachen.de/projects/kvpplugin"
+"/releasenew-york/it/>\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 1.9\n"
+
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "%1 edited the topic %2."
 msgstr ""
@@ -67,16 +83,16 @@ msgstr "Attenzione"
 #: data/System/KvpSkinTransitionsTemplate.txt templates/foswiki.kvp.tmpl
 msgid "Attention, there is a discussion for this topic!\\nDo you really want to continue?"
 msgstr ""
-"Attenzione è in corso una discuissione per questo argomento!\\Vuoi davvero "
+"Attenzione è in corso una discuissione per questo argomento!\\nVuoi davvero "
 "continuare?"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Cannot execute transition =%1= on =%2= (invalid on source-workflow)."
-msgstr "Cannot execute transition =%1= on =%2= (invalid on source-workflow)."
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Cannot execute transition =%1= on =%2= (invalid on target-workflow)."
-msgstr "Cannot execute transition =%1= on =%2= (invalid on target-workflow)."
+msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Change status"
@@ -168,7 +184,7 @@ msgstr "Forzare la transizione"
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Found an invalid workflow (there must be none in a newly created topic)."
 msgstr ""
-"Trovato un workflow non valido (non presente in un argomento appena creato)"
+"Trovato un workflow non valido (non presente in un argomento appena creato)."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Give article the accept status"
@@ -224,7 +240,7 @@ msgstr ""
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "No action was specified."
-msgstr "Nessuna azione specificata"
+msgstr "Nessuna azione specificata."
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "No transition with =FORK= attribute to fork"
@@ -280,7 +296,7 @@ msgstr "Revisione"
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Revision history of "
-msgstr "Cronologia modifiche di"
+msgstr "Cronologia modifiche di "
 
 #: data/System/KvpSkinWorkflowViewMacrosTemplate.txt
 #: data/System/KvpSkinWorkflowViewTemplate.txt
@@ -311,13 +327,13 @@ msgstr "Il link che hai selezionato non è corretto."
 
 #: templates/oopsworkflowmoved.tmpl
 msgid "The link you clicked is no longer available."
-msgstr "Il collegamento selezionato non è più disponibile"
+msgstr "Il collegamento selezionato non è più disponibile."
 
 #: templates/oopsworkflowchanged.tmpl
 msgid "The topic you clicked has changed state since this link was created."
 msgstr ""
 "L'argomento selezionato ha cambiato stato nel momento in cui è stato creato "
-"questo collegamento"
+"questo collegamento."
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "The transition was not possible because the state of the topic (%1) did not match the state of the action (%2). Maybe someone else already transitioned the topic?"
