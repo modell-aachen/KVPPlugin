@@ -6,15 +6,16 @@ msgstr ""
 "Project-Id-Version: KVPPlugin $Id\n"
 "Report-Msgid-Bugs-To: osthold@modell-aachen.de\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: 2012-07-09 16:56+0200\n"
-"Last-Translator: Modell Aachen\n"
-"Language-Team: Modell Aachen <none>\n"
+"PO-Revision-Date: 2014-11-11 15:27+0200\n"
+"Last-Translator: Modell Aachen <access@modell-aachen.de>\n"
+"Language-Team: German <http://translate.modell-aachen.de/projects/kvpplugin"
+"/releasenew-york/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Pootle 2.0.5\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 1.9\n"
 
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "%1 edited the topic %2."
@@ -104,7 +105,7 @@ msgstr "Kommentar"
 
 #: data/System/KvpSkinTransitionsTemplate.txt
 msgid "Compare with approved version"
-msgstr "Vergleich mit freigegebenen Stand"
+msgstr "Vergleich mit freigegebenem Stand"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Comparison"
