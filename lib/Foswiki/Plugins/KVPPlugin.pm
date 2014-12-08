@@ -826,6 +826,9 @@ sub transitionTopic {
                     $appTopic = $1;
                 }
             }
+            if($actionAttributes =~ m#SETREV\(\s*version\s*=\s*\"(\d+[.,]?\d*)(?<!\\)\"\s*\)#) {
+                $controlledTopic->setRev( $1 );
+            }
 
             if ( Foswiki::Func::topicExists($web, $appTopic) && $appTopic !~ m#AUTOINC\d+# ) {
                 throw Error::Simple('%MAKETEXT{"Forked topic exists: [_1]" args="'."Rweb.$appTopic".'"}%');
