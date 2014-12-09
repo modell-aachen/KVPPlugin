@@ -226,6 +226,7 @@ sub set_up_webs {
                 $prefText .= "\n   * Set WORKFLOW = $workflow\n";
             }
             # and permissions
+            $prefText =~ s#(\s{3,}\*\sSet ALLOWWEBVIEW).*#$1 =#g;
             $prefText =~ s#(\s{3,}\*\sSet ALLOWWEBCHANGE).*#$1 =#g;
             $prefText =~ s#(\s{3,}\*\sSet DENYWEBCHANGE).*#$1 =#g;
 
