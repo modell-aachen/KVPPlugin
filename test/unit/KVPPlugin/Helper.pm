@@ -226,6 +226,7 @@ sub set_up_webs {
                 $prefText .= "\n   * Set WORKFLOW = $workflow\n";
             }
             # and permissions
+            $prefText =~ s#(\s{3,}\*\sSet ALLOWWEBVIEW).*#$1 =#g;
             $prefText =~ s#(\s{3,}\*\sSet ALLOWWEBCHANGE).*#$1 =#g;
             $prefText =~ s#(\s{3,}\*\sSet DENYWEBCHANGE).*#$1 =#g;
 
@@ -268,7 +269,7 @@ sub set_up_webs {
 sub tear_down_webs {
     my ( $other, $webs ) = @_;
 
-    foreach my $web ( keys($webs) ) {
+    foreach my $web ( keys(%$webs) ) {
         $other->removeWebFixture( $other->{session}, $web );
     }
 }
