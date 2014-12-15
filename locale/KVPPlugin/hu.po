@@ -7,14 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
+"PO-Revision-Date: 2014-12-15 15:47+0200\n"
+"Last-Translator: Modell Aachen <access@modell-aachen.de>\n"
+"Language-Team: Hungarian <http://translate.modell-"
+"aachen.de/projects/kvpplugin/releasenew-york/hu/>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 1.9\n"
 
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "%1 edited the topic %2."
@@ -68,7 +70,7 @@ msgstr "Jóváhagyott dokumentum"
 #: data/System/ExampleSkinTopHeadTemplate.txt
 #: data/System/KvpSkinTopHeadTemplate.txt
 msgid "Approved by"
-msgstr "Jóváhagyta:"
+msgstr "Jóváhagyta"
 
 #: data/System/ExampleSkinTopHeadTemplate.txt
 #: data/System/KvpSkinTopHeadTemplate.txt
@@ -126,11 +128,11 @@ msgstr "Nem kezdhető munkafolyamat. A téma törölve lett?"
 
 #: data/System/ExampleSkinTopHeadTemplate.txt
 msgid "Creator"
-msgstr "Készítette:"
+msgstr "Készítette"
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Date"
-msgstr "Dátum:"
+msgstr "Dátum"
 
 #: data/System/KvpSkinTransitionsTemplate.txt
 msgid "Difference to approved version"
@@ -268,11 +270,11 @@ msgstr ""
 #: data/System/ExampleSkinTopHeadTemplate.txt
 #: data/System/KvpSkinTopHeadTemplate.txt
 msgid "Release date"
-msgstr "Kiadás dátuma:"
+msgstr "Kiadás dátuma"
 
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "Remarks"
-msgstr "Észrevételek:"
+msgstr "Észrevételek"
 
 #: data/System/KvpSkinTransitionsTemplate.txt
 msgid "Remarks for this state:"
@@ -289,7 +291,7 @@ msgstr "További módosítás kérése"
 #: data/System/ExampleSkinTopHeadTemplate.txt
 #: data/System/KvpSkinTopHeadTemplate.txt
 msgid "Responsible"
-msgstr "Felelős:"
+msgstr "Felelős"
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Revision"
@@ -297,7 +299,7 @@ msgstr "Felülvizsgálat"
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Revision history of "
-msgstr "Felülvizsgálat története"
+msgstr "Felülvizsgálat története "
 
 #: data/System/KvpSkinWorkflowViewMacrosTemplate.txt
 #: data/System/KvpSkinWorkflowViewTemplate.txt
@@ -392,7 +394,7 @@ msgstr "Ez a téma nem tálálható meg egyetlen munkafolyamat alatt sem."
 
 #: templates/oopsworkflowchanged.tmpl
 msgid "Topic changed"
-msgstr "Téma megváltozott."
+msgstr "Téma megváltozott"
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Topic history"
@@ -424,7 +426,7 @@ msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Waiting for QM"
-msgstr "Várakozás a QM osztályra."
+msgstr "Várakozás a QM osztályra"
 
 #: templates/oopsworkflowerr.tmpl templates/oopswrkflwsaveerr.tmpl
 msgid "While changing %1 an error occured in the workflow."
@@ -470,7 +472,7 @@ msgstr ""
 
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "approved"
-msgstr "Jóváhagyva."
+msgstr "Jóváhagyva"
 
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "contentual revision"
