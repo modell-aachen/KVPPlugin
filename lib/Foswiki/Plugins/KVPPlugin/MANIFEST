@@ -18,6 +18,7 @@ pub/System/KVPPlugin/blockLink.js.gz 0644 Script for blocking links
 locale/KVPPlugin/cs.po 0664 Czech translations
 locale/KVPPlugin/de.po 0664 German translations
 locale/KVPPlugin/fr.po 0664 French translations
+locale/KVPPlugin/hu.po 0644
 locale/KVPPlugin/it.po 0664 Italian translations
 locale/KVPPlugin/zh-cn.po 0664 Chinese translations
 lib/Foswiki/Plugins/KVPPlugin.pm 0444
