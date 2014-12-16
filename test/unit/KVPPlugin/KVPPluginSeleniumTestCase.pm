@@ -494,8 +494,21 @@ sub seleniumComment {
     }
     $this->{selenium}->find_element( '[name=title]', 'css' )->send_keys( $title );
     $this->{selenium}->find_element( '[name=text]', 'css' )->send_keys( $comment );
-    $this->{selenium}->find_element( '.cmtAddCommentForm div.foswikiFormButtons a.jqButton', 'css' )->click();
-    $this->waitFor( sub { $this->{selenium}->execute_script('return jQuery("div#cmtComment1").length') }, 'Comment did not appear', undef, 10_000 );
+    my $succeeded;
+    my $attempts = 3;
+    my $element = $this->{selenium}->find_element( '.cmtAddCommentForm div.foswikiFormButtons a.jqButton', 'css' );
+    while(!$succeeded) {
+        $element->click();
+        try {
+            $this->waitFor( sub { $this->{selenium}->execute_script('return jQuery("div#cmtComment1").length') }, 'Comment did not appear', undef, 10_000 );
+            $succeeded = 1;
+        } otherwise {
+            if(!--$attempts) {
+                my $e = shift;
+                throw $e;
+            }
+        }
+    }
     $this->waitFor( sub { $this->{selenium}->execute_script('return (jQuery(".blockUI.blockMsg:visible").length)?"0":"1"') }, 'Comment was not processed by JS' ); # XXX unpublished API
 }
 
@@ -557,21 +570,38 @@ sub recreateSession {
 sub seleniumTransition {
     my ( $this, $transition, $type ) = @_;
 
-    $this->setMarker();
+    my $element;
     if ( !$this->element_present( 'WORKFLOWmenu', 'id' ) ) {
         if ( $type ) {
             $this->assert ( $type eq 'button' );
         }
-        $this->{selenium}->find_element( $transition, 'link' )->click();
+        $element = $this->{selenium}->find_element( $transition, 'link' );
     } else {
         if ( $type ) {
             $this->assert ( $type eq 'select' );
         }
         $this->WorkflowSelect( $transition );
-        $this->{selenium}->find_element( 'a.KVPChangeStatus', 'css' )->click();
+        $element = $this->{selenium}->find_element( 'a.KVPChangeStatus', 'css' );
     }
 
-    $this->waitForPageToLoad();
+    my $attempts = 3; # On certain browsers in version 9 the click might fail
+                      # randomly for no reason.
+                      # Because this method is being called a lot it is worth
+                      # retrying a bit so the test will still pass.
+    my $succeeded;
+    $this->setMarker();
+    while(!$succeeded) {
+        $element->click();
+        try {
+            $this->waitForPageToLoad();
+            $succeeded = 1;
+        } otherwise {
+            if(!--$attempts) {
+                my $e = shift;
+                throw $e;
+            }
+        };
+    }
 }
 
 # Selects an action by value in the workflow menue (via Selenium)
