@@ -665,6 +665,10 @@ sub _changeState {
             $query->param('removeComments') || '0',
             $query->param('breaklock')
         );
+        if($query->param('redirectto')) {
+            my ($redirectWeb, $redirectTopic) = Foswiki::Func::normalizeWebTopicName(undef, $query->param('redirectto'));
+            $url = Foswiki::Func::getViewUrl($redirectWeb, $redirectTopic) if Foswiki::Func::topicExists($redirectWeb, $redirectTopic);
+        }
         Foswiki::Func::redirectCgiQuery( undef, $url ) if $url;
         foreach my $mail ( @$mails ) {
             _sendMail($mail);
