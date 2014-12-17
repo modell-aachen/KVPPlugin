@@ -1631,7 +1631,7 @@ sub _getIndexHash {
         if ( $fields ) {
             foreach my $field (keys %$fields) {
                 next if $field =~ m#^(?:approved$|allow|state$)#; # skip those already indexed
-                $indexFields{ "workflowstate_${field}_s" } = $fields->{$field};
+                $indexFields{ "workflowstate_${field}_s" } = $controlledTopic->expandMacros($controlledTopic->getRow($field));
             }
         }
     }
