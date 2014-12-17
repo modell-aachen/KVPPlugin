@@ -1592,6 +1592,15 @@ sub _getIndexHash {
         $indexFields{ workflow_controlled_b } = 1;
     } else {
         $indexFields{ workflow_controlled_b } = 0;
+        my $fields = $Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow};
+        if ( $fields ) {
+            Foswiki::Func::pushTopicContext($web, $topic);
+            foreach my $field (keys %$fields) {
+                next if $field =~ m#^(?:approved$|allow|state$)#; # skip those already indexed
+                $indexFields{ "workflowstate_${field}_s" } = Foswiki::Func::expandCommonVariables($fields->{$field});
+            }
+            Foswiki::Func::popTopicContext();
+        }
         return %indexFields;
     }
 
