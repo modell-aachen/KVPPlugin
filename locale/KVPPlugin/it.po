@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2014-11-05 16:54+0200\n"
-"PO-Revision-Date: 2014-11-05 16:56+0200\n"
+"PO-Revision-Date: 2015-01-22 14:57+0200\n"
 "Last-Translator: Modell Aachen <access@modell-aachen.de>\n"
 "Language-Team: Italian <http://translate.modell-aachen.de/projects/kvpplugin"
 "/releasenew-york/it/>\n"
@@ -142,7 +142,7 @@ msgstr "Discussione respinta"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Discard draft"
-msgstr "Bozza respinta"
+msgstr "Cancella bozza"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Discuss"
