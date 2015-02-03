@@ -594,6 +594,9 @@ sub _WORKFLOWSTATE {
 sub _WORKFLOWFORK {
     my ( $session, $attributes, $topic, $web ) = @_;
 
+    $web = $attributes->{web} || $web;
+    $topic = $attributes->{topic} || $topic;
+
     my $controlledTopic = _initTOPIC( $web, $topic );
     return ($attributes->{uncontrolled} || '') unless $controlledTopic;
 

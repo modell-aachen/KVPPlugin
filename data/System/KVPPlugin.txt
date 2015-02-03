@@ -146,6 +146,7 @@ Existiert der Zielartikel bereits, wird der Nutzer dorthin geleitet, ohne das ei
 | =lockdown= | =off= | Ist diese Option gesetzt (=1= oder =on=) wird beim forken das Recht =SETALLOWTOPICCHANGE= des Quellartikels auf =nobody= gesetzt. | %%NOP%WORKFLOWFORK{label="Im Fork arbeiten" lockdown="on"}% |
 | =label= | FORK | Text des Links%BR%Wenn nicht gesetzt wird die erste verf&uuml;gbare =action= genommen. | %%NOP%WORKFLOWFORK{label="Zum Arbeitsstand"}% |
 | =title= | _leer (kein Popup)_ | Popup f&uuml;r den Link| %%NOP%WORKFLOWFORK{label="Zum Arbeitsstand" title="Arbeitsstand anlegen, oder dorthin wechseln"}% |
+| =web= %BR% =topic= | Aktuelles Web/Topic. | Das Web, bzw. Topic, welches geforkt werden soll. | %%NOP%WORKFLOWFORK{web="MeinWeb" topic="MeinTopic"}% |
 
 ---+++ Weitere Makros
 | *Makro* | *Parameter* | *Beschreibung* | *Beispiel* | *Hauptanwendungsgebiete* |
