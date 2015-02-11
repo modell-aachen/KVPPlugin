@@ -397,6 +397,7 @@ sub changeState {
     $fmt =~ s/\$state/$this->getState()/goe;
     $fmt =~ s/\$date/$this->{state}->{"LASTTIME_$state"}/geo;
     $fmt =~ s/\$rev/$this->{state}->{"LASTVERSION_$state"}/geo;
+    $fmt =~ s/\$expand\((.*?)(?<!\\)\)/$this->expandHistory($1)/geo;
     if ( defined &Foswiki::Func::decodeFormatTokens ) {
         # Compatibility note: also expands $percnt etc.
         $fmt = Foswiki::Func::decodeFormatTokens($fmt);
@@ -498,6 +499,14 @@ sub changeState {
     }
 
     return undef;
+}
+
+sub expandHistory {
+    my ( $this, $text ) = @_;
+
+    $text = $this->expandMacros($text);
+    $text =~ s#\\\)#)#g;
+    return $text;
 }
 
 # Save the topic to the store
