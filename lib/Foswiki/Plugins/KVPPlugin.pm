@@ -1470,6 +1470,12 @@ sub beforeSaveHandler {
 #            foreach my $comment ($oldMeta->find( 'COMMENT' )) {
 #                $meta->putKeyed('COMMENT', $comment);
 #            }
+
+            # perform AUTO actions
+            my $autoAction = $controlledTopic->getActionWithAttribute('AUTO');
+            if($autoAction) {
+                $controlledTopic->changeState($autoAction);
+            }
         } else {
             # This topic is now no longer a stub.
             $controlledTopic->{meta}->remove('PREFERENCE', 'WorkflowStub');
