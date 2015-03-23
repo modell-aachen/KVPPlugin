@@ -87,7 +87,9 @@ Jede Aktion kann mehrere Attribute haben.
 | =SYNCREV= | Bei dieser Aktion wird die KVP-Version des angegebenen Topics &uuml;bernommen.%BR%Format:<verbatim>SYNCREV(Web.Topic)</verbatim> | Anderes Topic mit _Web_ angeben.%BR%Beispiel:<verbatim>| INTRANSLATION | Finish translation | ... | SYNCREV(%WEB%.%SUBST{text="%WORKFLOWORIGIN%" pattern="-EN$" format=""}%) |</verbatim> |
 | =HIDDEN= | Durch dieses Attribut erscheint die Transition nicht mehr im Transitionsmenue | Kann durch eigenen =rest= -Aufruf durchgef&uuml;hrt werden.<br />Diese Aktion ist im Transitionsmenue nicht zu sehen. |
 | =SETPREF= | Hiermit k&ouml;nnen Einstellungen im Topic gesetzt werden.%BR%Format: =SETPREF(Einstellung="Wert")= - die Klammern und Anf&uuml;hrungszeichen sind zwingend erforderlich.  | Beispiel: <verbatim>| *State* | *Action* | ... | *Attribute* |
-| INTRANSLATION | Finish translation | ... | SETPREF(CONTENT_LANGUAGE="en") |</verbatim> |
+| INTRANSLATION | Finish translation | ... | SETPREF(CONTENT_LANGUAGE="en") - die Klammern und Anf&uuml;hrungszeichen sind zwingend erforderlich. |</verbatim> |
+| =REMOVEPREF= | Hiermit k&ouml;nnen Einstellungen im Topic gel&ouml;scht werden.%BR%Format: =REMOVEPREF("Einstellung")= | Beispiel: <verbatim>| *State* | *Action* | ... | *Attribute* |
+| INTRANSLATION | Finish translation | ... | REMOVEPREF("ALLOWTOPICVIEW") |</verbatim> |
 | =SETFIELD= | Hiermit k&ouml;nnen Werte in Formfeldern gesetzt werden.%BR%Format: =SETFIELD(Feldname="Wert")= - die Klammern und Anf&uuml;hrungszeichen sind zwingend erforderlich. | Beispiel: <verbatim>| *State* | *Action* | ... | *Attribute * |
 | DRAFT | Approve | ... | SETFIELD(Prozesseigner="%USERNAME%") |</verbatim> |
 | _SETFORM_ | Dieses Feature lie&szlig;e sich in ca. einem halben MT implementieren. | |

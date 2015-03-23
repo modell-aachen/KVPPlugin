@@ -429,6 +429,14 @@ sub changeState {
             $this->{meta}->putKeyed( 'PREFERENCE', { name=>$name, value=>$value, type=>'Set' } );
             Foswiki::Func::setPreferencesValue( $name, $value ); # in case its important for the mail
         }
+        while ( $attributes =~ m/REMOVEPREF\(\s*"([^"]*)"\s*\)/g ) {
+            my $name = $1;
+            $name = Foswiki::Func::expandCommonVariables( $name, $this->{topic}, $this->{web}, $this->{meta} );
+            if($name) {
+                $this->{meta}->remove( 'PREFERENCE', $name);
+                Foswiki::Func::setPreferencesValue( $name, '' ); # in case its important for the mail
+            }
+        }
         while ( $attributes =~ m/SETFIELD\(\s*(\w+)\s*=\s*"([^"]*)"\s*\)/g ) {
             my $name = $1;
             my $value = Foswiki::Func::decodeFormatTokens( $2 || '' );
