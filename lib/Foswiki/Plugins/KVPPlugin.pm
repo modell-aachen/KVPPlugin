@@ -1180,6 +1180,13 @@ sub beforeEditHandler {
     my $query = Foswiki::Func::getCgiQuery();
     if($meta && $query->param('templatetopic')) {
         _onTemplateExpansion( $web, $topic, $meta, 1 );
+
+        # For better compatibility with FlexFormPlugin's RENDERFORDISPLAY, copy all field values into the query object
+        my $request = Foswiki::Func::getCgiQuery();
+        for my $field ($meta->find('FIELD')) {
+            next if defined $request->param($field->{name});
+            $request->param($field->{name}, $field->{value});
+        }
     }
 
     my $controlledTopic = _initTOPIC( $web, $topic );
