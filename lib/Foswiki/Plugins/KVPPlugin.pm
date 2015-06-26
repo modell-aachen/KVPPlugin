@@ -132,8 +132,9 @@ sub _WORKFLOWALLOWS {
     my $rWeb = $params->{web} || $web;
     my $rTopic = $params->{topic} || $topic;
     my $action = $params->{_DEFAULT} || 'allowedit';
+    my $nocache = ( ($params->{nocache}) ? 1 : undef );
 
-    my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev );
+    my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev, undef, undef, $nocache );
     return $params->{uncontrolled} unless $controlledTopic;
     return $controlledTopic->isAllowing($action) ? 1 : 0;
 }
