@@ -56,6 +56,8 @@ sub initPlugin {
     Foswiki::Func::registerTagHandler(
         'WORKFLOWFORK', \&_WORKFLOWFORK );
     Foswiki::Func::registerTagHandler(
+        'WORKFLOWGETREVFOR', \&_WORKFLOWGETREVFOR );
+    Foswiki::Func::registerTagHandler(
         'WORKFLOWMETA', \&_WORKFLOWMETA );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWSUFFIX', \&_WORKFLOWSUFFIX );
@@ -364,6 +366,40 @@ sub afterRenameHandler {
     }
 
     Foswiki::Func::moveTopic($oldWeb, $oldDiscussion, $newWeb, $newDiscussion);
+}
+
+sub _WORKFLOWGETREVFOR {
+    my ( $session, $attributes, $topic, $web ) = @_;
+
+    # TODO: get rev by version etc.
+
+    my $name = $attributes->{name} || $attributes->{_DEFAULT};
+    return '0' unless $name;
+    my $nameRegExp = qr#^(?:$name)$#;
+
+    my $skip = $attributes->{skip} || 0;
+
+    my $rWeb = $attributes->{web} || $web;
+    my $rTopic = $attributes->{topic} || $topic;
+
+    my $rev = $attributes->{startrev};
+
+    my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev, undef, undef, NOCACHE );
+    return ($attributes->{uncontrolled} || '0') unless $controlledTopic;
+
+    unless (defined $rev) {
+        my %info = $controlledTopic->{meta}->getRevisionInfo();
+        $rev = $info{version} || 0;
+    }
+
+    while((not $controlledTopic->getState() =~ m#$nameRegExp#) || $skip--) {
+        unless(--$rev >= 0) {
+            $rev = $attributes->{notfound} || 0;
+            last;
+        }
+        $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev, undef, undef, NOCACHE );
+    }
+    return $rev;
 }
 
 sub _WORKFLOWMETA {
