@@ -1,17 +1,18 @@
 jQuery(function($) {
-    WORKFLOW.getSelection = function() {
-        var menu = $('#WORKFLOWmenu');
+    WORKFLOW.getSelection = function($form) {
+        if($form === undefined || $form.length === 0) {
+            $form = $('.KVPTransitionForm:first');
+        }
+        var menu = $form.find('#WORKFLOWmenu');
         var selection = menu.val();
         if(selection === undefined) {
-            menu = $('#WORKFLOWbutton');
-            if (menu === undefined) return undefined;
-            selection = menu.text().replace(/^\s+|\s+$/g, '');
+            selection = $form.find('[name="WORKFLOWACTION"]').val();
         }
         return selection;
     }
 
-    WORKFLOW.confirm = function() {
-        var warning = WORKFLOW.w[WORKFLOW.getSelection()] || '';
+    WORKFLOW.confirm = function($form) {
+        var warning = WORKFLOW.w[WORKFLOW.getSelection($form)] || '';
         if(warning == '' || confirm(warning) === true) {
             // get block-message
             var message = foswiki.getMetaTag('TEXT_BLOCKUI_KVP');
@@ -58,7 +59,7 @@ jQuery(function($) {
     }
     $('select').change(WORKFLOW.showCheckBox);
     $('.KVPTransitionForm').submit(function(ev) {
-        return WORKFLOW.confirm();
+        return WORKFLOW.confirm($(this));
     });
     WORKFLOW.showCheckBox();
 });
