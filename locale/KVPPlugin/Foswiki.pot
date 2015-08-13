@@ -498,3 +498,15 @@ msgstr ""
 #: templates/oopshistory.kvp.tmpl
 msgid "view"
 msgstr ""
+
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "The request was missing parameters (state='%1', action='%2'). This is most likely due to a technical problem."
+msgstr ""
+
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "The transition was not possible, because %1 in state '%2' can not be transitioned with '%3'."
+msgstr ""
+
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "There was an error parsing the workflow table. Please contact the person in charge of the workflow."
+msgstr ""
