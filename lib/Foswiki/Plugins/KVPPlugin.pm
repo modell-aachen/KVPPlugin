@@ -385,7 +385,7 @@ sub _WORKFLOWGETREVFOR {
     my $rev = $attributes->{startrev};
 
     my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev, undef, undef, NOCACHE );
-    return ($attributes->{uncontrolled} || '0') unless $controlledTopic;
+    return ((defined $attributes->{uncontrolled}) ? $attributes->{uncontrolled} : '0') unless $controlledTopic;
 
     unless (defined $rev) {
         my %info = $controlledTopic->{meta}->getRevisionInfo();
@@ -394,7 +394,7 @@ sub _WORKFLOWGETREVFOR {
 
     while((not $controlledTopic->getState() =~ m#$nameRegExp#) || $skip--) {
         unless(--$rev >= 0) {
-            $rev = $attributes->{notfound} || 0;
+            $rev = ((defined $attributes->{notfound}) ? $attributes->{notfound} : 0);
             last;
         }
         $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev, undef, undef, NOCACHE );
