@@ -493,9 +493,11 @@ $transwarn
 SCRIPT
 
     if ( $numberOfActions == 1 ) {
+        my $action = $actions[0];
+        $action =~ s#"#&quot;#g;
+        $action =~ s#'#&\#39;#g;
         push( @fields,
-              "<input type='hidden' name='WORKFLOWACTION' value='"
-                .$actions[0]."' />" );
+              "<input type='hidden' name='WORKFLOWACTION' value='$action' />" );
         push(
             @fields,
             "<noautolink>%BUTTON{\"%MAKETEXT{$actions[0]}%\" id=\"WORKFLOWbutton\" type=\"submit\"}%</noautolink>"
