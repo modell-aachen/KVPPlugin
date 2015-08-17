@@ -1682,8 +1682,12 @@ sub _getIndexHash {
     for my $key (keys %$workflow) {
         my $lckey = lc($key);
         $indexFields{ "workflowmeta_${lckey}_s" } = $workflow->{$key};
-        if($lckey =~ m#^lasttime_# && $workflow->{$key} =~ m#(\d{1,2})\.(\d{1,2})\.(\d{4})#) {
-            $indexFields{ "workflowmeta_${lckey}_dt" } = "$3-$2-${1}T00:00:00Z";
+        if($workflow->{"${key}_DT"}) {
+            $indexFields{ "workflowmeta_${lckey}_dt" } = Foswiki::Time::formatTime($workflow->{"${key}_DT"}, '$year-$mo-$dayT$hours:$mins:$secondsZ');
+        } else {
+            if($lckey =~ m#^lasttime_# && $workflow->{$key} =~ m#(\d{1,2})\.(\d{1,2})\.(\d{4})#) {
+                $indexFields{ "workflowmeta_${lckey}_dt" } = "$3-$2-${1}T00:00:00Z";
+            }
         }
     }
 
