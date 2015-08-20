@@ -227,10 +227,6 @@ msgstr ""
 msgid "No Suffix defined! Defaulting to %1!"
 msgstr ""
 
-#: templates/oopswrkflwsaveerr.tmpl
-msgid "No action was specified."
-msgstr ""
-
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "No transition with =FORK= attribute to fork"
 msgstr ""
@@ -311,12 +307,24 @@ msgstr ""
 msgid "The link you clicked is no longer available."
 msgstr ""
 
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "The request was missing parameters (state='%1', action='%2'). This is most likely due to a technical problem."
+msgstr ""
+
 #: templates/oopsworkflowchanged.tmpl
 msgid "The topic you clicked has changed state since this link was created."
 msgstr ""
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "The transition was not possible because the state of the topic (%1) did not match the state of the action (%2). Maybe someone else already transitioned the topic?"
+msgstr ""
+
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "The transition was not possible, because %1 in state '%2' can not be transitioned with '%3'."
+msgstr ""
+
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "There was an error parsing the workflow table. Please contact the person in charge of the workflow."
 msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
@@ -439,6 +447,10 @@ msgstr ""
 msgid "contentual revision (draft)"
 msgstr ""
 
+#: data/System/KVPPluginCommonWords.txt
+msgid "delete comments"
+msgstr ""
+
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "discarded"
 msgstr ""
@@ -497,16 +509,4 @@ msgstr ""
 
 #: templates/oopshistory.kvp.tmpl
 msgid "view"
-msgstr ""
-
-#: templates/oopswrkflwsaveerr.tmpl
-msgid "The request was missing parameters (state='%1', action='%2'). This is most likely due to a technical problem."
-msgstr ""
-
-#: templates/oopswrkflwsaveerr.tmpl
-msgid "The transition was not possible, because %1 in state '%2' can not be transitioned with '%3'."
-msgstr ""
-
-#: templates/oopswrkflwsaveerr.tmpl
-msgid "There was an error parsing the workflow table. Please contact the person in charge of the workflow."
 msgstr ""
