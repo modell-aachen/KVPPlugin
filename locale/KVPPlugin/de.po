@@ -8,8 +8,7 @@ msgstr ""
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: 2014-11-11 15:27+0200\n"
 "Last-Translator: Modell Aachen <access@modell-aachen.de>\n"
-"Language-Team: German <http://translate.modell-aachen.de/projects/kvpplugin"
-"/releasenew-york/de/>\n"
+"Language-Team: German <http://translate.modell-aachen.de/projects/kvpplugin/releasenew-york/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -236,10 +235,6 @@ msgstr "Nächster Schritt"
 msgid "No Suffix defined! Defaulting to %1!"
 msgstr "Kein Suffix definiert! Nehme %1 als Suffix an!"
 
-#: templates/oopswrkflwsaveerr.tmpl
-msgid "No action was specified."
-msgstr "Die Aktion wurde nicht angegeben."
-
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "No transition with =FORK= attribute to fork"
 msgstr "Keine Transition mit =FORK= Attribut zum Forken von"
@@ -325,6 +320,10 @@ msgstr "Der Link, den Sie geklickt haben, ist fehlerhaft."
 msgid "The link you clicked is no longer available."
 msgstr "Der Link, den Sie geklickt haben ist leider nicht mehr verfügbar."
 
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "The request was missing parameters (state='%1', action='%2'). This is most likely due to a technical problem."
+msgstr "In der Anfrage fehlten Parameter (state='%1', action='%2'). Vermutlich handelt es sich um ein technisches Problem."
+
 #: templates/oopsworkflowchanged.tmpl
 msgid "The topic you clicked has changed state since this link was created."
 msgstr "Die Seite, die Sie aufgerufen haben, hat den Status gewechselt seitdem der Link kreiert wurde."
@@ -332,6 +331,14 @@ msgstr "Die Seite, die Sie aufgerufen haben, hat den Status gewechselt seitdem d
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "The transition was not possible because the state of the topic (%1) did not match the state of the action (%2). Maybe someone else already transitioned the topic?"
 msgstr "Die Transition war leider nicht möglich, da der Status der Seite (%1) nicht gleich dem Status der Aktion (%2) ist. Eventuell hat bereits jemand anderes eine Transition durchgeführt?"
+
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "The transition was not possible, because %1 in state '%2' can not be transitioned with '%3'."
+msgstr "Die Transition war nicht möglich, weil %1 mit Status '%2' nicht mit '%3' transitioniert werden kann."
+
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "There was an error parsing the workflow table. Please contact the person in charge of the workflow."
+msgstr "Es gab einen Fehler beim Verarbeiten der Workflow-Tabelle. Bitte kontactieren Sie die für den Workflow zuständige Person."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document has been approved."
@@ -453,6 +460,10 @@ msgstr "inhaltliche Prüfung"
 msgid "contentual revision (draft)"
 msgstr "formale Prüfung (Entwurf)"
 
+#: data/System/KVPPluginCommonWords.txt
+msgid "delete comments"
+msgstr ""
+
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "discarded"
 msgstr "Verworfen"
@@ -515,17 +526,8 @@ msgstr "in&#160;Diskussion"
 msgid "view"
 msgstr "ansehen"
 
-#: templates/oopswrkflwsaveerr.tmpl
-msgid "The request was missing parameters (state='%1', action='%2'). This is most likely due to a technical problem."
-msgstr "In der Anfrage fehlten Parameter (state='%1', action='%2'). Vermutlich handelt es sich um ein technisches Problem."
-
-#: templates/oopswrkflwsaveerr.tmpl
-msgid "The transition was not possible, because %1 in state '%2' can not be transitioned with '%3'."
-msgstr "Die Transition war nicht möglich, weil %1 mit Status '%2' nicht mit '%3' transitioniert werden kann."
-
-#: templates/oopswrkflwsaveerr.tmpl
-msgid "There was an error parsing the workflow table. Please contact the person in charge of the workflow."
-msgstr "Es gab einen Fehler beim Verarbeiten der Workflow-Tabelle. Bitte kontactieren Sie die für den Workflow zuständige Person."
+#~ msgid "No action was specified."
+#~ msgstr "Die Aktion wurde nicht angegeben."
 
 #~ msgid ""
 #~ "The workflow state did not match the current state.\n"

@@ -2,11 +2,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-11-05 16:54+0200\n"
+"POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: 2015-01-22 14:57+0200\n"
 "Last-Translator: Modell Aachen <access@modell-aachen.de>\n"
-"Language-Team: Italian <http://translate.modell-aachen.de/projects/kvpplugin"
-"/releasenew-york/it/>\n"
+"Language-Team: Italian <http://translate.modell-aachen.de/projects/kvpplugin/releasenew-york/it/>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -82,9 +81,7 @@ msgstr "Attenzione"
 
 #: data/System/KvpSkinTransitionsTemplate.txt templates/foswiki.kvp.tmpl
 msgid "Attention, there is a discussion for this topic!\\nDo you really want to continue?"
-msgstr ""
-"Attenzione è in corso una discuissione per questo argomento!\\nVuoi davvero "
-"continuare?"
+msgstr "Attenzione è in corso una discuissione per questo argomento!\\nVuoi davvero continuare?"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Cannot execute transition =%1= on =%2= (invalid on source-workflow)."
@@ -120,9 +117,7 @@ msgstr "Impossibile iniziare il workflow per"
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "Could not initialize workflow for %1. Maybe the topic was deleted?"
-msgstr ""
-"Non è possibile iniziare il workflow for %1. Probabilmente l'argomento è "
-"stato cancellato?"
+msgstr "Non è possibile iniziare il workflow for %1. Probabilmente l'argomento è stato cancellato?"
 
 #: data/System/ExampleSkinTopHeadTemplate.txt
 msgid "Creator"
@@ -183,8 +178,7 @@ msgstr "Forzare la transizione"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Found an invalid workflow (there must be none in a newly created topic)."
-msgstr ""
-"Trovato un workflow non valido (non presente in un argomento appena creato)."
+msgstr "Trovato un workflow non valido (non presente in un argomento appena creato)."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Give article the accept status"
@@ -237,10 +231,6 @@ msgstr "Step successivo"
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "No Suffix defined! Defaulting to %1!"
 msgstr ""
-
-#: templates/oopswrkflwsaveerr.tmpl
-msgid "No action was specified."
-msgstr "Nessuna azione specificata."
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "No transition with =FORK= attribute to fork"
@@ -317,9 +307,7 @@ msgstr "Stato"
 
 #: templates/oopsworkflowmoved.tmpl
 msgid "The discussion you clicked is no longer available. You can go to the original topic by clicking OK."
-msgstr ""
-"La discussione selezionata non è più disponibile. E' possibile accedere "
-"all'argomento iniziale cliccando OK."
+msgstr "La discussione selezionata non è più disponibile. E' possibile accedere all'argomento iniziale cliccando OK."
 
 #: templates/oopsworkflowlink.tmpl
 msgid "The link you clicked is malformed."
@@ -329,14 +317,24 @@ msgstr "Il link che hai selezionato non è corretto."
 msgid "The link you clicked is no longer available."
 msgstr "Il collegamento selezionato non è più disponibile."
 
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "The request was missing parameters (state='%1', action='%2'). This is most likely due to a technical problem."
+msgstr ""
+
 #: templates/oopsworkflowchanged.tmpl
 msgid "The topic you clicked has changed state since this link was created."
-msgstr ""
-"L'argomento selezionato ha cambiato stato nel momento in cui è stato creato "
-"questo collegamento."
+msgstr "L'argomento selezionato ha cambiato stato nel momento in cui è stato creato questo collegamento."
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "The transition was not possible because the state of the topic (%1) did not match the state of the action (%2). Maybe someone else already transitioned the topic?"
+msgstr ""
+
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "The transition was not possible, because %1 in state '%2' can not be transitioned with '%3'."
+msgstr ""
+
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "There was an error parsing the workflow table. Please contact the person in charge of the workflow."
 msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
@@ -365,15 +363,11 @@ msgstr "Questo documento è in attesa di approvazione del dipartimento Qualità.
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is waiting for approval by the person in charge of the page."
-msgstr ""
-"Questo documento è in attesa di approvazione della persona responsabile di "
-"questa pagina."
+msgstr "Questo documento è in attesa di approvazione della persona responsabile di questa pagina."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is waiting for approval by the topic owner."
-msgstr ""
-"Questo documento è in attesa di approvazione da parte del responsabile "
-"dell'argomento."
+msgstr "Questo documento è in attesa di approvazione da parte del responsabile dell'argomento."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is waiting for formal approval."
@@ -381,9 +375,7 @@ msgstr "Questo documetno è in attesa di approvazione formale."
 
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "This is an automatically generated message. Please do not reply to this email."
-msgstr ""
-"Questo è un messaggio generato automaticamente. Per cortesia non rispondere "
-"a questa e-mail."
+msgstr "Questo è un messaggio generato automaticamente. Per cortesia non rispondere a questa e-mail."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This topic is not under any workflow."
@@ -435,21 +427,15 @@ msgstr ""
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "You are not permitted to edit this topic. You have been denied access by workflow restrictions."
-msgstr ""
-"Non è consentito modificare questo argomento. E' stato negato l'accesso per "
-"limiti  di autorizzazione."
+msgstr "Non è consentito modificare questo argomento. E' stato negato l'accesso per limiti  di autorizzazione."
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "You are not permitted to save this topic. You have been denied access by workflow restrictions."
-msgstr ""
-"Non è consentito all'utento salvare quest'argomento. E' stato negato "
-"l'accesso per limiti  di autorizzazione."
+msgstr "Non è consentito all'utento salvare quest'argomento. E' stato negato l'accesso per limiti  di autorizzazione."
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "You are not permitted to upload to this topic. You have been denied access by workflow restrictions."
-msgstr ""
-"Non è consentito caricare quest'argomento. L'accesso è stato negato dalle "
-"procedure di lavoro."
+msgstr "Non è consentito caricare quest'argomento. L'accesso è stato negato dalle procedure di lavoro."
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "You may not create this topic under this workflow."
@@ -470,6 +456,10 @@ msgstr "revisione dei contenuti"
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "contentual revision (draft)"
 msgstr "Revisione dei contenuti (bozza)"
+
+#: data/System/KVPPluginCommonWords.txt
+msgid "delete comments"
+msgstr ""
 
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "discarded"
@@ -532,3 +522,6 @@ msgstr "in&#160;discussione"
 #: templates/oopshistory.kvp.tmpl
 msgid "view"
 msgstr "vista"
+
+#~ msgid "No action was specified."
+#~ msgstr "Nessuna azione specificata."
