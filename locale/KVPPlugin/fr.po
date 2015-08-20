@@ -8,8 +8,7 @@ msgstr ""
 "POT-Creation-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "PO-Revision-Date: 2014-09-05 14:38+0200\n"
 "Last-Translator: Modell Aachen <access@modell-aachen.de>\n"
-"Language-Team: French <http://translate.modell-aachen.de/projects/kvpplugin"
-"/releasenew-york/fr/>\n"
+"Language-Team: French <http://translate.modell-aachen.de/projects/kvpplugin/releasenew-york/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -85,8 +84,7 @@ msgstr "Attention"
 
 #: data/System/KvpSkinTransitionsTemplate.txt templates/foswiki.kvp.tmpl
 msgid "Attention, there is a discussion for this topic!\\nDo you really want to continue?"
-msgstr ""
-"attention, il ya une discussion pour cette page!\\nVoulez-vous continuez ?"
+msgstr "attention, il ya une discussion pour cette page!\\nVoulez-vous continuez ?"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Cannot execute transition =%1= on =%2= (invalid on source-workflow)."
@@ -122,9 +120,7 @@ msgstr "n´a pas pu initialiser le flux de traivail pour"
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "Could not initialize workflow for %1. Maybe the topic was deleted?"
-msgstr ""
-"n´a pas pu initialisez le flux de travail pour %1. la page est peut ètre "
-"supprimée ?"
+msgstr "n´a pas pu initialisez le flux de travail pour %1. la page est peut ètre supprimée ?"
 
 #: data/System/ExampleSkinTopHeadTemplate.txt
 msgid "Creator"
@@ -239,10 +235,6 @@ msgstr "Suivant"
 msgid "No Suffix defined! Defaulting to %1!"
 msgstr "Aucun suffixe défini! défaut de %1 !"
 
-#: templates/oopswrkflwsaveerr.tmpl
-msgid "No action was specified."
-msgstr "Pas d´action spécifiée."
-
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "No transition with =FORK= attribute to fork"
 msgstr "Aucune transition avec =FORK= attribut à fork"
@@ -328,16 +320,25 @@ msgstr "Le lien que vous avez cliqué est incorrect."
 msgid "The link you clicked is no longer available."
 msgstr "Le lien que vous avez cliqué n'est plus disponible."
 
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "The request was missing parameters (state='%1', action='%2'). This is most likely due to a technical problem."
+msgstr ""
+
 #: templates/oopsworkflowchanged.tmpl
 msgid "The topic you clicked has changed state since this link was created."
 msgstr "Le sujet que vous avez cliqué a changé d'état depuis ce lien a été créé."
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "The transition was not possible because the state of the topic (%1) did not match the state of the action (%2). Maybe someone else already transitioned the topic?"
+msgstr "La transition n'a pas été possible en raison de l'état du sujet (% 1) n'a pascorrespondu à l'état de l'action (% 2). Peut-être que quelqu'un d'autre a déjà fait la transitiondu sujet ?"
+
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "The transition was not possible, because %1 in state '%2' can not be transitioned with '%3'."
 msgstr ""
-"La transition n'a pas été possible en raison de l'état du sujet (% 1) n'a "
-"pascorrespondu à l'état de l'action (% 2). Peut-être que quelqu'un d'autre a "
-"déjà fait la transitiondu sujet ?"
+
+#: templates/oopswrkflwsaveerr.tmpl
+msgid "There was an error parsing the workflow table. Please contact the person in charge of the workflow."
+msgstr ""
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document has been approved."
@@ -459,6 +460,10 @@ msgstr "version contentuelle"
 msgid "contentual revision (draft)"
 msgstr "version contentuelle (avant-projet)"
 
+#: data/System/KVPPluginCommonWords.txt
+msgid "delete comments"
+msgstr ""
+
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "discarded"
 msgstr "écarté"
@@ -520,3 +525,6 @@ msgstr "en&#160;cours&#160;de&#160;discussion"
 #: templates/oopshistory.kvp.tmpl
 msgid "view"
 msgstr "visualiser"
+
+#~ msgid "No action was specified."
+#~ msgstr "Pas d´action spécifiée."
