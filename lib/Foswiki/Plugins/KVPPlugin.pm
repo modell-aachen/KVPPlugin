@@ -19,6 +19,7 @@ use Foswiki::Plugins::KVPPlugin::ControlledTopic ();
 use Foswiki::OopsException ();
 use Foswiki::Sandbox ();
 
+use HTML::Entities;
 use JSON;
 
 use constant FORCENEW => 1;
@@ -33,6 +34,8 @@ our %cache;
 our $isStateChange;
 # Although the origin is quick to calculate it is called often enough to be worth being cached
 our $originCache;
+
+our $unsafe_chars = "<&>'\"";
 
 sub initPlugin {
     my ( $topic, $web ) = @_;
@@ -479,7 +482,8 @@ sub _WORKFLOWTRANSITION {
     my @actions;
     my $numberOfActions;
     my $transwarn = {};
-    my $cs = $controlledTopic->getState();
+    my $cs = encode_entities($controlledTopic->getState(), $unsafe_chars);
+    my $webtopic = encode_entities("$web.$topic", $unsafe_chars);
 
     # Get actions and warnings
     { # scope
@@ -508,13 +512,9 @@ sub _WORKFLOWTRANSITION {
         return '';
     }
 
-    my @fields = (
-        CGI::hidden( 'WORKFLOWSTATE', $cs ),
-        CGI::hidden( 'topic', "$web.$topic" ),
-
-        # Use a time field to help defeat the cache
-        CGI::hidden( 't', time() )
-    );
+    my @fields = ();
+    push( @fields, "<input type='hidden' name='WORKFLOWSTATE' value='$cs' />");
+    push( @fields, "<input type='hidden' name='topic' value='$webtopic' />");
 
     my ($allow, $suggest, $remark) = $controlledTopic->getTransitionAttributes();
 
@@ -539,17 +539,18 @@ SCRIPT
         );
     }
     else {
+        push( @fields, "<select name='WORKFLOWACTION' id='WORKFLOWmenu' style='float: left'>");
+
         my %labels = map{$_ => Foswiki::Func::expandCommonVariables("\%MAKETEXT{\"$_\"}\%")} @actions;
-        push(
-            @fields,
-            CGI::popup_menu(
-                -name   => 'WORKFLOWACTION',
-                -values => \@actions,
-                -labels => \%labels,
-                -id => 'WORKFLOWmenu',
-                -style => 'float: left'
-            )
-        );
+
+        # first one is special, because it must be selected
+        my $firstAction = shift @actions;
+        push( @fields, "<option selected='selected' value='" . encode_entities($firstAction, $unsafe_chars) . "'>" . encode_entities(Foswiki::Func::expandCommonVariables("\%MAKETEXT{\"$firstAction\"}\%"), $unsafe_chars) . "</option>" );
+        # now the rest
+        foreach my $action ( @actions ) {
+            push( @fields, "<option value='" . encode_entities($action, $unsafe_chars) . "'>" . encode_entities(Foswiki::Func::expandCommonVariables("\%MAKETEXT{\"$action\"}\%"), $unsafe_chars) . "</option>" );
+        };
+        push( @fields, "</select>");
         push(
             @fields,
             '<noautolink>%BUTTON{"%MAKETEXT{"Change status"}%" type="submit" class="KVPChangeStatus"}%</noautolink>'
@@ -557,32 +558,24 @@ SCRIPT
     }
 
     push( @fields,
-          "<span style=\"display: none;\" id=\"WORKFLOWchkbox\">".CGI::checkbox(
-              -name => 'removeComments',
-              -selected => 0,
-              -value => '1',
-              -label => '%MAKETEXT{delete comments}%',
-              -id => 'WORKFLOWchkboxbox'
-          )."</span>"
+          "<span style=\"display: none;\" id=\"WORKFLOWchkbox\"><label><input type='checkbox' value='1' name='removeComments' id='WORKFLOWchkboxbox'>"
+          . encode_entities(Foswiki::Func::expandCommonVariables('%MAKETEXT{"delete comments"}%'), $unsafe_chars)
+          . "</label></span>"
     );
 
     push( @fields,
-        '<br /><div style="display: none" id="KVPRemark">%CLEAR%%MAKETEXT{Remarks}%:<br /><textarea name="message" cols="50" rows="3" ></textarea></div>'
+        '<br /><div style="display: none" id="KVPRemark">%CLEAR%%MAKETEXT{"Remarks"}%:<br /><textarea name="message" cols="50" rows="3" ></textarea></div>'
     );
 
 
     my $url = Foswiki::Func::getScriptUrl(
         $pluginName, 'changeState', 'rest'
     );
-    my $form =
-        CGI::start_form( -method => 'POST', -action => $url , -class => 'KVPTransitionForm' )
-      . join( '', @fields )
-      . CGI::end_form();
 
-    $form =~ s/\r?\n//g;    # to avoid breaking TML
-    # XXX I don't know what this is supposed to break but since I can't use %BUTTON{"..."}% without handling the qouotes specially I will disable it for now. An alternative is to do something like %BUTTON(?...?)% ... s/\?/"/g...
-    #    $form =~ s/"/'/g;    # to avoid breaking TML
-    return $form;
+    unshift( @fields, "<form method='post' action='$url' class='KVPTransitionForm'>" );
+    push( @fields, '</form>' );
+
+    return join('', @fields);
 }
 
 # Tag handler
