@@ -19,6 +19,8 @@ use Foswiki::Plugins::KVPPlugin::ControlledTopic ();
 use Foswiki::OopsException ();
 use Foswiki::Sandbox ();
 
+use JSON;
+
 use constant FORCENEW => 1;
 use constant NOCACHE => 2;
 
@@ -476,7 +478,7 @@ sub _WORKFLOWTRANSITION {
     #
     my @actions;
     my $numberOfActions;
-    my $transwarn = '';
+    my $transwarn = {};
     my $cs = $controlledTopic->getState();
 
     # Get actions and warnings
@@ -495,7 +497,7 @@ sub _WORKFLOWTRANSITION {
             $warning =~ s#'#\\'#g;
             my $action = $actions[$a];
             $action =~ s#'#\\'#g;
-            $transwarn .= "WORKFLOW.w['$action']='$warning';";
+            $transwarn->{WORKFLOW}->{w}->{$action} = $warning;
         }
     }
 
@@ -516,15 +518,12 @@ sub _WORKFLOWTRANSITION {
 
     my ($allow, $suggest, $remark) = $controlledTopic->getTransitionAttributes();
 
+    $transwarn->{WORKFLOW}->{allowOption} = $allow;
+    $transwarn->{WORKFLOW}->{suggestOption} = $suggest;
+    $transwarn->{WORKFLOW}->{remarkOption} = $remark;
+    my $json = to_json($transwarn);
     Foswiki::Func::addToZone('script', 'WORKFLOW::COMMENT', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI');
-<script type="text/javascript">
-WORKFLOW = function(){};
-WORKFLOW.allowOption = new String("$allow");
-WORKFLOW.suggestOption = new String("$suggest");
-WORKFLOW.remarkOption = new String("$remark");
-WORKFLOW.w = function(){};
-$transwarn
-</script>
+<script type="text/json" class="KVPPlugin_WORKFLOW">$json</script>
 <script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/transitions.js"></script>
 SCRIPT
 

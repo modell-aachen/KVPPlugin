@@ -1,4 +1,12 @@
 jQuery(function($) {
+    var json = $('script.KVPPlugin_WORKFLOW');
+    if(!json.length) {
+        window.console && console.log('Could not find json in script.KVPPLUGIN_WORKFLOW');
+        return;
+    }
+    var WORKFLOW = window.JSON.parse(json.html()).WORKFLOW;
+    window.WORKFLOW = WORKFLOW; // XXX: legacy
+
     WORKFLOW.getSelection = function($form) {
         if($form === undefined || $form.length === 0) {
             $form = $('.KVPTransitionForm:first');
@@ -12,8 +20,9 @@ jQuery(function($) {
     }
 
     WORKFLOW.confirm = function($form) {
-        var warning = WORKFLOW.w[WORKFLOW.getSelection($form)] || '';
-        if(warning == '' || confirm(warning) === true) {
+        var warning;
+        if(WORKFLOW.w) warning = WORKFLOW.w[WORKFLOW.getSelection($form)];
+        if(!warning || warning == '' || confirm(warning) === true) {
             // get block-message
             var message = foswiki.getMetaTag('TEXT_BLOCKUI_KVP');
             if(message === undefined || message === "") {
