@@ -1146,6 +1146,11 @@ sub _restFork {
                 my $newAction = shift @actions;
                 my $newWeb = shift @webs;
 
+                if($newTopic =~ m#AUTOINC\d+#) {
+                    require Foswiki::UI::Save;
+                    $newTopic = Foswiki::UI::Save::expandAUTOINC( $session, $newWeb, $newTopic );
+                }
+
                 $directToWeb = $newWeb;
                 $directToTopic = $newTopic;
 
