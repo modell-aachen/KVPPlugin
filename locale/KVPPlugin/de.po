@@ -530,6 +530,9 @@ msgstr "ansehen"
 #~ msgid "No action was specified."
 #~ msgstr "Die Aktion wurde nicht angegeben."
 
+msgid "Could not parse parameters: \"%1\""
+msgstr "Konnte Parameter nicht verarbeiten: \"%1\""
+
 #~ msgid ""
 #~ "The workflow state did not match the current state.\n"
 #~ "\n"

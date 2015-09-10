@@ -1045,6 +1045,33 @@ sub _restLink {
     return $response->redirect($url);
 }
 
+sub _pushParams {
+    my ( $params ) = @_;
+
+    return undef unless $params =~ m#^with#gc;
+    my $saved = [];
+    while($params =~ m#\G\s+(\w+)\s*=\s*("|')(.*?)\2#gc) {
+        my ($param, $value) = ($1, $3);
+
+        push(@$saved, $param);
+        push(@$saved, Foswiki::Func::getPreferencesValue($param));
+
+        Foswiki::Func::setPreferencesValue($param, $value);
+    }
+    return undef if $params =~ m#\G\s*\S#gc;
+    return $saved;
+}
+
+sub _popParams {
+    my ( $saved ) = @_;
+    while( scalar @$saved gt 1 ) {
+        my $param = pop(@$saved);
+        my $value = pop(@$saved);
+        $value = '' unless defined $value;
+        Foswiki::Func::setPreferencesValue($param, $value);
+    }
+}
+
 sub _restFork {
     my ($session, $plugin, $verb, $response) = @_;
     # Update the history in the template topic and the new topic
@@ -1090,26 +1117,37 @@ sub _restFork {
             @newnames = ($forkTopic.$forkSuffix);
         }
 
-        my (@webs, @topics, @actions) = ((), (), ());
+        my (@webs, @topics, @actions, @params) = ((), (), (), ());
 
         # First find out topicnames and actions.
         # In case of an error return without having changed anything in the wiki.
         foreach my $newname (@newnames) {
 
             # Get name for new topic and action to execute
-            my ($newWeb, $newTopic, $newAction);
-            if ( $newname =~ m/\s*\[(.*)\]\[(.*)\]\s*/ ) {
-                ($newTopic, $newAction) = ($1, $2);
+            my ($newWeb, $newTopic, $newAction, $withParams);
+            if ( $newname =~ m#^s*$# ) {
+                $erroneous .= "\n" . '%MAKETEXT{"Missing a destination to fork to (newname is empty)."}%' . "\n\n" unless $query->param('skipempty');
+                next;
+            } elsif ( $newname =~ m/^\s*\[(.+)\]\[(.+)\]\s*(.*?)\s*$/ ) {
+                ($newTopic, $newAction, $withParams) = ($1, $2, $3);
                 ($newWeb, $newTopic) = Foswiki::Func::normalizeWebTopicName( $forkWeb, $newTopic );
                 unless (
                         Foswiki::Func::isValidTopicName( $newTopic, 1 ) &&
                         Foswiki::Func::isValidWebName( $newWeb ) ) {
-                    $erroneous .= '%MAKETEXT{"Invalid destination to fork to: [_1]" args="'."'$newWeb.$newTopic'\"}%\n\n";
+                    $erroneous .= "\n" . '%MAKETEXT{"Invalid destination to fork to: [_1]" args="'."'$newWeb.$newTopic'\"}%\n\n";
                     next;
                 }
                 unless ( $controlledTopic->haveNextState($newAction) ) {
-                    $erroneous .= '%MAKETEXT{"Cannot execute transition =[_1]= on =[_2]= (invalid on source-workflow)." args="'."$newAction, $forkWeb.$forkTopic\"}%\n\n";
+                    $erroneous .= "\n" . '%MAKETEXT{"Cannot execute transition =[_1]= on =[_2]= (invalid on source-workflow)." args="'."$newAction, $forkWeb.$forkTopic\"}%\n\n";
                     next;
+                }
+                my $saved;
+                if($withParams) {
+                    $saved = _pushParams( $withParams );
+                    unless ( $saved) {
+                        $erroneous .= '%MAKETEXT{"Could not parse parameters: \"[_1]\"" args="' . $withParams . '"}%' . "\n\n";
+                        next;
+                    }
                 }
                 # check if action allowed in targetworkflow
                 my $targetControlledTopic = _initTOPIC( $newWeb, $newTopic, undef, $ttmeta, $tttext, FORCENEW);
@@ -1117,6 +1155,7 @@ sub _restFork {
                     $erroneous .= '%MAKETEXT{"Cannot execute transition =[_1]= on =[_2]= (invalid on target-workflow)." args="'."$newAction, $newWeb.$newTopic\"}%\n\n";
                     next;
                 }
+                _popParams( $saved ) if $saved;
             } else {
                 $newTopic = Foswiki::Sandbox::untaintUnchecked( $newname );
                 ($newWeb, $newTopic) = Foswiki::Func::normalizeWebTopicName( $forkWeb, $newTopic );
@@ -1137,6 +1176,7 @@ sub _restFork {
             push( @webs, $newWeb );
             push( @topics, $newTopic );
             push( @actions, $newAction );
+            push( @params, $withParams );
         }
 
         # Now copy the topics and do the transitions.
@@ -1145,11 +1185,14 @@ sub _restFork {
                 my $newTopic = shift @topics;
                 my $newAction = shift @actions;
                 my $newWeb = shift @webs;
+                my $withParams = shift @params;
 
                 if($newTopic =~ m#AUTOINC\d+#) {
                     require Foswiki::UI::Save;
                     $newTopic = Foswiki::UI::Save::expandAUTOINC( $session, $newWeb, $newTopic );
                 }
+                my $saved;
+                $saved = _pushParams( $withParams ) if $withParams;
 
                 $directToWeb = $newWeb;
                 $directToTopic = $newTopic;
@@ -1192,6 +1235,8 @@ sub _restFork {
                 $newcontrolledTopic->save(1);
                 local $isStateChange = 0;
                 push(@$mails, $mail);
+
+                _popParams( $saved ) if $saved;
 
                 # Topic successfully forked
             }
