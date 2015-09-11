@@ -689,7 +689,8 @@ sub _changeState {
     my $mails = [];
 
     try {
-        my $url = transitionTopic(
+        my $report = transitionTopic(
+            $session,
             $query->param('web') || $session->{webName},
             $query->param('topic') || $session->{topicName},
             $query->param('WORKFLOWACTION'),
@@ -699,6 +700,7 @@ sub _changeState {
             $query->param('removeComments') || '0',
             $query->param('breaklock')
         );
+        my $url = $report->{url};
         if($query->param('redirectto')) {
             my ($redirectWeb, $redirectTopic) = Foswiki::Func::normalizeWebTopicName(undef, $query->param('redirectto'));
             $url = Foswiki::Func::getViewUrl($redirectWeb, $redirectTopic) if Foswiki::Func::topicExists($redirectWeb, $redirectTopic);
@@ -730,7 +732,7 @@ sub _changeState {
 #    * removeComments: set to 1 if MetaComments should be deleted
 #    * breaklock: set to 1 to clear any lease
 sub transitionTopic {
-    my ($web, $topic, $action, $state, $mails, $remark, $removeComments, $breaklock) = @_;
+    my ($session, $web, $topic, $action, $state, $mails, $remark, $removeComments, $breaklock) = @_;
 
     ($web, $topic) =
       Foswiki::Func::normalizeWebTopicName( $web, $topic );
@@ -869,7 +871,7 @@ sub transitionTopic {
             my $other = _initTOPIC( $options->{web}, $options->{topic} );
             my $otherState;
             $otherState = $other->getState() if $other;
-            transitionTopic($options->{web}, $options->{topic}, $options->{action}, $otherState, $mails, $options->{remark}, $options->{removecomments}, $options->{breaklock});
+            transitionTopic($session, $options->{web}, $options->{topic}, $options->{action}, $otherState, $mails, $options->{remark}, $options->{removecomments}, $options->{breaklock});
         }
 
         if($actionAttributes =~ m#SYNCREV\(\s*topic\s*=\s*\"(.*?)(?<!\\)\"\s*\)#) {
@@ -968,7 +970,8 @@ sub transitionTopic {
             params => [ $error || '?' ]
            );
     };
-    return $url;
+
+    return { url => $url, webAfterTransition => $web, topicAfterTransition => $appTopic };
 }
 
 # Forces write permission
