@@ -28,7 +28,7 @@ use Foswiki::Func ();
 
 # Constructor
 sub new {
-    my ( $class, $workflow, $web, $topic, $meta, $text ) = @_;
+    my ( $class, $workflow, $web, $topic, $meta ) = @_;
 
     my $forkSuffix = Foswiki::Plugins::KVPPlugin::_WORKFLOWSUFFIX();
 
@@ -38,7 +38,6 @@ sub new {
             web       => $web,
             topic     => $topic,
             meta      => $meta,
-            text      => $text,
             state     => $meta->get('WORKFLOW'),
             history   => $meta->get('WORKFLOWHISTORY'),
             forkweb   => $web,
@@ -64,6 +63,9 @@ sub new {
             $this->{state}->{Revision} = 0;
         }
     }
+
+    # Disable the lazy loader, omitting this may results in erroneous forked topics:
+    $this->{meta}->loadVersion();
 
     return $this;
 }
@@ -247,7 +249,7 @@ sub isModifyable {
             # Does Foswiki permit editing?
             && Foswiki::Func::checkAccessPermission(
                 'CHANGE', $Foswiki::Plugins::SESSION->{user},
-                $this->{text}, $this->{topic}, $this->{web},
+                $this->{meta}->text(), $this->{topic}, $this->{web},
                 $this->{meta})
         ) ? 1 : 0;
     }
@@ -305,7 +307,7 @@ sub canMove {
             # Does Foswiki permit moving?
             && Foswiki::Func::checkAccessPermission(
                 'RENAME', $Foswiki::Plugins::SESSION->{user},
-                $this->{text}, $this->{topic}, $this->{web},
+                $this->{meta}->text(), $this->{topic}, $this->{web},
                 $this->{meta})
         ) ? 1 : 0;
     }
@@ -532,7 +534,7 @@ sub save {
     }
     Foswiki::Func::saveTopic(
         $this->{web}, $this->{topic}, $this->{meta},
-        $this->{text}, $options
+        $this->{meta}->text(), $options
     );
 }
 

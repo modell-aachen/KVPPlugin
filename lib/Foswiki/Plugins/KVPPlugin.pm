@@ -141,7 +141,7 @@ sub _WORKFLOWALLOWS {
     my $action = $params->{_DEFAULT} || 'allowedit';
     my $nocache = ( ($params->{nocache}) ? 1 : undef );
 
-    my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev, undef, undef, $nocache );
+    my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev, undef, $nocache );
     return $params->{uncontrolled} unless $controlledTopic;
     return $controlledTopic->isAllowing($action) ? 1 : 0;
 }
@@ -258,7 +258,7 @@ sub _WORKFLOWORIGIN {
 }
 
 sub _initTOPIC {
-    my ( $web, $topic, $rev, $meta, $text, $forceNew ) = @_;
+    my ( $web, $topic, $rev, $meta, $forceNew ) = @_;
 
     # Skip system web for performance
     return undef if ($web eq "System");
@@ -313,12 +313,12 @@ sub _initTOPIC {
         }
 
         if ($workflow) {
-            ( $meta, $text ) =
+            ( $meta, undef ) =
               Foswiki::Func::readTopic( $web, $topic, $rev )
               unless defined $meta;
             $controlledTopic =
               new Foswiki::Plugins::KVPPlugin::ControlledTopic(
-                $workflow, $web, $topic, $meta, $text );
+                $workflow, $web, $topic, $meta );
         }
     }
 
@@ -390,7 +390,7 @@ sub _WORKFLOWGETREVFOR {
 
     my $rev = $attributes->{startrev};
 
-    my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev, undef, undef, NOCACHE );
+    my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev, undef, NOCACHE );
     return ((defined $attributes->{uncontrolled}) ? $attributes->{uncontrolled} : '0') unless $controlledTopic;
 
     unless (defined $rev) {
@@ -403,7 +403,7 @@ sub _WORKFLOWGETREVFOR {
             $rev = ((defined $attributes->{notfound}) ? $attributes->{notfound} : 0);
             last;
         }
-        $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev, undef, undef, NOCACHE );
+        $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev, undef, NOCACHE );
     }
     return $rev;
 }
@@ -1108,8 +1108,7 @@ sub _restFork {
     } else {
         my $defaultAction = $controlledTopic->getActionWithAttribute('FORK');
 
-        my ($ttmeta, $tttext) = Foswiki::Func::readTopic(
-            $forkWeb, $forkTopic);
+        my $ttmeta = $controlledTopic->{meta};
 
         # Default to topicTALKSUFFIX if no newnames are given, the action is valid.
         if ( scalar @newnames == 0 ) {
@@ -1150,7 +1149,7 @@ sub _restFork {
                     }
                 }
                 # check if action allowed in targetworkflow
-                my $targetControlledTopic = _initTOPIC( $newWeb, $newTopic, undef, $ttmeta, $tttext, FORCENEW);
+                my $targetControlledTopic = _initTOPIC( $newWeb, $newTopic, undef, $ttmeta, FORCENEW );
                 unless( $targetControlledTopic && $targetControlledTopic->haveNextState($newAction) ) {
                     $erroneous .= '%MAKETEXT{"Cannot execute transition =[_1]= on =[_2]= (invalid on target-workflow)." args="'."$newAction, $newWeb.$newTopic\"}%\n\n";
                     next;
@@ -1217,7 +1216,7 @@ sub _restFork {
             $ttmeta->putKeyed("PREFERENCE",
                 { name => 'ALLOWTOPICCHANGE', value => 'nobody' });
             local $isStateChange = 1;
-            Foswiki::Func::saveTopic( $forkWeb, $forkTopic, $ttmeta, $tttext,
+            Foswiki::Func::saveTopic( $forkWeb, $forkTopic, $ttmeta, $ttmeta->text(),
                     { forcenewrevision => 1, ignorepermissions => 1 });
             local $isStateChange = 0;
         }
@@ -1277,7 +1276,7 @@ sub _createForkedCopy {
     };
     $meta->put( "WORKFLOWHISTORY", $forkhistory );
 
-    return _initTOPIC( $newWeb, $newTopic, undef, $meta, $meta->{text}, FORCENEW );
+    return _initTOPIC( $newWeb, $newTopic, undef, $meta, FORCENEW );
 }
 
 # XXX requires changes in lib/Foswiki/Meta.pm
@@ -1339,8 +1338,8 @@ sub beforeRenameHandler {
             params => "You may not move $oldWeb.$oldTopic." # XXX maketext
         );
     }
-    my ($meta, $text) = Foswiki::Func::readTopic($oldWeb, $oldTopic);
-    my $newControlledTopic = _initTOPIC( $newWeb, $newTopic, undef, $meta, $text, 1);
+    my ($meta, undef) = Foswiki::Func::readTopic($oldWeb, $oldTopic);
+    my $newControlledTopic = _initTOPIC( $newWeb, $newTopic, undef, $meta, 1 );
     if( $newControlledTopic && !$newControlledTopic->canEdit() ){
         die("You may not move to $newWeb.$newTopic.");
         throw Foswiki::OopsException( # not supported by bin/rename
@@ -1594,8 +1593,8 @@ sub beforeSaveHandler {
         # }
     }
 
-    my $oldControlledTopic = _initTOPIC( $web, $topic, undef, undef, undef, NOCACHE );
-    my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, FORCENEW );
+    my $oldControlledTopic = _initTOPIC( $web, $topic, undef, undef, NOCACHE );
+    my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, FORCENEW );
 
     if ( $oldControlledTopic && !$oldControlledTopic->canEdit() ) {
         # Not a state change, make sure the AllowEdit in the state table
@@ -1694,12 +1693,12 @@ sub beforeSaveHandler {
 }
 
 sub _getIndexHash {
-    my ($web, $topic, $meta, $text) = @_;
+    my ($web, $topic, $meta) = @_;
 
     my %indexFields = ();
 
     # only index controlled topics, or old metadata will end up in index.
-    my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, $text, NOCACHE );
+    my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, NOCACHE );
 
     if( $controlledTopic ) {
         $indexFields{ workflow_controlled_b } = 1;
@@ -1794,7 +1793,7 @@ sub indexTopicHandler {
     my ($indexer, $doc, $web, $topic, $meta, $text) = @_;
 
     our $indexCacheWebTopic = $web.$topic;
-    our %indexFields = _getIndexHash( $web, $topic, $meta, $text );
+    our %indexFields = _getIndexHash( $web, $topic, $meta );
 
     $doc->add_fields( %indexFields );
 }
@@ -1807,9 +1806,9 @@ sub indexAttachmentHandler {
 
     unless ( $indexCacheWebTopic && $indexCacheWebTopic eq $web.$topic ) {
         Foswiki::Func::writeWarning("Cache missed for attachment: $web.$topic");
-        my ($meta, $text) = Foswiki::Func::readTopic( $web, $topic );
+        my ($meta, undef) = Foswiki::Func::readTopic( $web, $topic );
         $indexCacheWebTopic = $web.$topic;
-        %indexFields = _getIndexHash( $web, $topic, $meta, $text );
+        %indexFields = _getIndexHash( $web, $topic, $meta );
     }
 
     $doc->add_fields( %indexFields );
