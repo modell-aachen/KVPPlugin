@@ -731,8 +731,9 @@ sub _changeState {
 #    * remark: remark for the transition
 #    * removeComments: set to 1 if MetaComments should be deleted
 #    * breaklock: set to 1 to clear any lease
+#    * noFork: actions with FORK attribute will not automatically fork if this is true
 sub transitionTopic {
-    my ($session, $web, $topic, $action, $state, $mails, $remark, $removeComments, $breaklock) = @_;
+    my ($session, $web, $topic, $action, $state, $mails, $remark, $removeComments, $breaklock, $noFork) = @_;
 
     ($web, $topic) =
       Foswiki::Func::normalizeWebTopicName( $web, $topic );
@@ -807,13 +808,36 @@ sub transitionTopic {
         }
     }
 
+    my $appTopic = _getOrigin($topic); # do not fallback on originCache, this might be called from another plugin
     try {
         $url = Foswiki::Func::getScriptUrl( $web, $topic, 'view' );
 
-        # Get ForkingAction. This will determine, if discussion will be copied, overwritten or discarded
         my $actionAttributes = $controlledTopic->getAttributes($action) || '';
-        $actionAttributes =~ /(?:\W|^)(FORK|DISCARD)(?:\W|$)/;
-        my $forkingAction = $1;
+
+        my $saved;
+
+        # Create copy if this is a fork
+        if( !$noFork && $actionAttributes =~ m#(?:\W|^)FORK((?:\((?:".*?")?[^)]*\))?)(?:\W|$)# ) {
+            my $params = $1;
+
+            $appTopic .= _WORKFLOWSUFFIX();
+            if($params) {
+                if( $params =~ s#"(.*?)"\s*## ) {
+                    $appTopic = $1;
+                }
+            }
+
+            if ( Foswiki::Func::topicExists($web, $appTopic) && $appTopic !~ m#AUTOINC\d+# ) {
+                throw Error::Simple('%MAKETEXT{"Forked topic exists: [_1]" args="'."Rweb.$appTopic".'"}%');
+            }
+
+            $saved = _pushParams( $params );
+            $controlledTopic = _createForkedCopy($session, $controlledTopic->{meta}, $web, $appTopic);
+            $appTopic = $controlledTopic->{topic};
+
+            $url = Foswiki::Func::getScriptUrl( $web, $appTopic, 'view' );
+        }
+
 
         # clear message, if workflow doesn't allow it (maybe the
         # user entered a message and then switched state...)
@@ -844,6 +868,8 @@ sub transitionTopic {
         my $mail = $controlledTopic->changeState($action, $remark);
         push(@$mails, $mail);
 
+        _popParams( $saved ) if $saved;
+
         # Our transition worked, do the chained transitions now
         while( $actionAttributes =~ m/\G.*?(?<!\w)CHAIN\s*\(\s*/g ) {
             my $options = {
@@ -871,7 +897,7 @@ sub transitionTopic {
             my $other = _initTOPIC( $options->{web}, $options->{topic} );
             my $otherState;
             $otherState = $other->getState() if $other;
-            transitionTopic($session, $options->{web}, $options->{topic}, $options->{action}, $otherState, $mails, $options->{remark}, $options->{removecomments}, $options->{breaklock});
+            transitionTopic($session, $options->{web}, $options->{topic}, $options->{action}, $otherState, $mails, $options->{remark}, $options->{removecomments}, $options->{breaklock}, 1);
         }
 
         if($actionAttributes =~ m#SYNCREV\(\s*topic\s*=\s*\"(.*?)(?<!\\)\"\s*\)#) {
@@ -890,11 +916,9 @@ sub transitionTopic {
         }
         # Flag that this is a state change to the beforeSaveHandler (beforeRenameHandler)
         local $isStateChange = 1;
-        #Alex: Zugehriges Topic finden
-        my $appTopic = _getOrigin($topic);
 
         # Hier Action
-        if ($forkingAction && $forkingAction eq "DISCARD") {
+        if ($actionAttributes =~ m#(?:\W|^)DISCARD(\W|$)#) {
             $controlledTopic->purgeContributors(); # XXX Wirklich?
             my $origMeta = $controlledTopic->{meta};
 
@@ -934,7 +958,7 @@ sub transitionTopic {
             }
         }
         # Check if discussion is beeing accepted
-        elsif (!$oldIsApproved && $controlledTopic->getRow("approved")) {
+        elsif (!$oldIsApproved && $controlledTopic->getRow("approved") && $actionAttributes !~ m#(?:\W|^)FORK(?:\W|$)#) {
             # transfer ACLs from old document to new
             transferACL($web, $appTopic, $controlledTopic);
             $controlledTopic->purgeContributors();
@@ -1127,7 +1151,7 @@ sub _restFork {
 
             # Get name for new topic and action to execute
             my ($newWeb, $newTopic, $newAction, $withParams);
-            if ( $newname =~ m#^s*$# ) {
+            if ( $newname =~ m#^\s*$# ) {
                 $erroneous .= "\n" . '%MAKETEXT{"Missing a destination to fork to (newname is empty)."}%' . "\n\n" unless $query->param('skipempty');
                 next;
             } elsif ( $newname =~ m/^\s*\[(.+)\]\[(.+)\]\s*(.*?)\s*$/ ) {
