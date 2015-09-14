@@ -429,6 +429,7 @@ sub changeState {
             my $name = $1;
             my $value = Foswiki::Func::decodeFormatTokens( $2 || '' );
             $value = Foswiki::Func::expandCommonVariables( $value, $this->{topic}, $this->{web}, $this->{meta} );
+            $this->{meta}->remove( 'PREFERENCE', $name );
             $this->{meta}->putKeyed( 'PREFERENCE', { name=>$name, value=>$value, type=>'Set' } );
             Foswiki::Func::setPreferencesValue( $name, $value ); # in case its important for the mail
         }
