@@ -440,6 +440,12 @@ sub changeState {
                 Foswiki::Func::setPreferencesValue( $name, '' ); # in case its important for the mail
             }
         }
+        while ( $attributes =~ m/SETFORM\(\s*(\w+)\s*\)/g ) {
+            my $value = Foswiki::Func::decodeFormatTokens( $1 || '' );
+            $value = Foswiki::Func::expandCommonVariables( $value, $this->{topic}, $this->{web}, $this->{meta} );
+            $this->{meta}->remove( 'FORM' );
+            $this->{meta}->put( 'FORM', { name=>$value } ) if $value && $value ne '';
+        }
         while ( $attributes =~ m/SETFIELD\(\s*(\w+)\s*=\s*"([^"]*)"\s*\)/g ) {
             my $name = $1;
             my $value = Foswiki::Func::decodeFormatTokens( $2 || '' );

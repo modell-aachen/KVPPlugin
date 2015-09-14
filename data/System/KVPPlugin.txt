@@ -92,7 +92,8 @@ Jede Aktion kann mehrere Attribute haben.
 | INTRANSLATION | Finish translation | ... | REMOVEPREF("ALLOWTOPICVIEW") |</verbatim> |
 | =SETFIELD= | Hiermit k&ouml;nnen Werte in Formfeldern gesetzt werden.%BR%Format: =SETFIELD(Feldname="Wert")= - die Klammern und Anf&uuml;hrungszeichen sind zwingend erforderlich. | Beispiel: <verbatim>| *State* | *Action* | ... | *Attribute * |
 | DRAFT | Approve | ... | SETFIELD(Prozesseigner="%USERNAME%") |</verbatim> |
-| _SETFORM_ | Dieses Feature lie&szlig;e sich in ca. einem halben MT implementieren. | |
+| =SETFORM= | Hiermit kann das Form ausgewechselt werden.%BR%Format: =SETFORM(Formname)=. | Beispiel: <verbatim>| *State* | *Action* | ... | *Attribute * |
+| DRAFT | Approve | ... | SETFORM(ApprovedDocumentsForm) |</verbatim> |
 | =CHAIN= | F&uuml;hrt eine weitere Transition auf einem weiteren Topic durch.%BR%Format:<verbatim>CHAIN(web="SomeWeb" topic="SomeTopic" action="The action")</verbatim> | Wenn eine chained Transition nicht m&ouml;glich ist wird der gesamte Vorgang abgebrochen.%BR%Es k&ouml;nnen mehrere CHAINs in eine Attributspalte stehen, sie werden in der angegebenen Reihenfolge ausgef&uuml;hrt. %BR%Parameter:%BR%* web: Bereich des Topics, f&auml;llt auf aktuellen Bereich zur&uuml;ck%BR%* Topic: Name des Topics, f&auml;llt auf aktuelles Topic zur&uuml;ck%BR%* action: auszuf&uuml;hrende Transition (Pflichtparameter)%BR%* remark: Remark f&uuml;r die Transition%BR%removecomments: auf 1 setzen um MetaComments zu l&ouml;schen%BR%* breaklock: auf 1 setzen um eventuelle Leases zu l&ouml;schen.%BR%Beispiel:<verbatim>CHAIN(topic="%WORKFLOWORIGIN%-EN" action="Start translation")</verbatim> |
 
 ---+++ Einschalten des Workflows in Topics
