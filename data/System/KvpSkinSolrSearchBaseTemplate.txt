@@ -9,7 +9,7 @@
 %{</verbatim>}%
 
 %{<verbatim class="tml">}%
-%TMPL:DEF{"kvp_status"}% {{if typeof(workflow_isapproved_b) === 'undefined' || workflow_isapproved_b}}{{else}}<em style='font-size: 0.9em;' title='${jsi18n.get('solrkvp', 'not approved')}'>(${jsi18n.get('solrkvp', (typeof(process_state_s) ==='undefined')?'state not defined':process_state_s)})</em>{{/if}}%TMPL:END%
+%TMPL:DEF{"kvp_status"}% {{if workflow_isapproved_b === false}}<em style='font-size: 0.9em;' title='{{:~foswiki.jsi18n.get('solrkvp', 'not approved')}}'>({{if process_state_s}}{{:~foswiki.jsi18n.get('solrkvp', process_state_s)}}{{else}}{{:~foswiki.jsi18n.get('solrkvp', 'state not defined')}}{{/if}})</em>{{/if}}%TMPL:END%
 %{</verbatim>}%
 
 %{<verbatim class="tml">}%
