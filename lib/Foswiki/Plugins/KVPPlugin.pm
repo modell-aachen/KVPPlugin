@@ -599,8 +599,10 @@ sub _WORKFLOWFORK {
     return ($attributes->{uncontrolled} || '') unless $controlledTopic;
 
     #Check we can fork
-    my $action = $controlledTopic->canFork();
+    my ($action, $warning) = @{$controlledTopic->canFork()};
     return ($attributes->{cannotfork} || '') unless $action;
+
+    my $warning = encode_entities($warning, $unsafe_chars);
 
     my $newnames;
     if (!defined $attributes->{newnames}) {
@@ -625,9 +627,9 @@ sub _WORKFLOWFORK {
 
     my $url;
     if ( $newnames ) {
-        $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'restauth', topic=> "$web.$topic", lockdown=> $lockdown, newnames=> $newnames );
+        $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'restauth', topic => "$web.$topic", lockdown => $lockdown, newnames => $newnames );
     } else {
-        $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'restauth', topic=> "$web.$topic", lockdown=> $lockdown );
+        $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'restauth', topic => "$web.$topic", lockdown => $lockdown );
     }
 
     # Add script to prevent double-clicking link
@@ -635,7 +637,7 @@ sub _WORKFLOWFORK {
     Foswiki::Func::addToZone('script', 'WORKFLOW::DISABLE', "<script type=\"text/javascript\" src=\"$js\"></script>", 'JQUERYPLUGIN::FOSWIKI');
     Foswiki::Plugins::JQueryPlugin::createPlugin( 'blockUI', $session );
 
-    return "<a class=\"kvpForkLink\" href='$url' $title>$label</a>";
+    return "<a class=\"kvpForkLink\" warning=\"$warning\" href='$url' $title>$label</a>";
 }
 
 # Tag handler
@@ -1131,7 +1133,7 @@ sub _restFork {
     unless($controlledTopic) {
         $erroneous = '%MAKETEXT{"Tried to fork from a topic, which is not under any workflow:"}% '."$forkWeb.$forkTopic" unless $erroneous;
     } else {
-        my $defaultAction = $controlledTopic->getActionWithAttribute('FORK');
+        my ($defaultAction, undef) = @{$controlledTopic->getActionWithAttribute('FORK')};
 
         my $ttmeta = $controlledTopic->{meta};
 
@@ -1676,7 +1678,7 @@ sub beforeSaveHandler {
 #            }
 
             # perform AUTO actions
-            my $autoAction = $controlledTopic->getActionWithAttribute('AUTO');
+            my ($autoAction, undef) = @{$controlledTopic->getActionWithAttribute('AUTO')};
             if($autoAction) {
                 $controlledTopic->changeState($autoAction);
             }
@@ -1697,7 +1699,7 @@ sub beforeSaveHandler {
             }
             # Assure that newly created topics have a state
 #always overwrite?            unless ($mstate && $mstate->{ state }) {
-                my $newAction = $controlledTopic->getActionWithAttribute('NEW');
+                my ($newAction, undef) = @{$controlledTopic->getActionWithAttribute('NEW')};
                 if($newAction) {
                     my $mail = $controlledTopic->changeState($newAction);
                     _sendMail($mail);
