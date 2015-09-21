@@ -44,13 +44,13 @@ sub initPlugin {
 
     Foswiki::Func::registerRESTHandler(
         'changeState', \&_changeState,
-        http_allow => 'POST' );
+        authenticate => 1, http_allow => 'POST', validate => 1 );
     Foswiki::Func::registerRESTHandler(
         'fork', \&_restFork,
-        authenticate => 1, http_allow => 'GET' );
+        authenticate => 1, http_allow => 'POST,GET', validate => 0 );
     Foswiki::Func::registerRESTHandler(
         'link', \&_restLink,
-        http_allow => 'GET' );
+        authenticate => 0, http_allow => 'GET', validate => 0 );
 
     Foswiki::Func::registerTagHandler(
         'WORKFLOWSTATE', \&_WORKFLOWSTATE );
