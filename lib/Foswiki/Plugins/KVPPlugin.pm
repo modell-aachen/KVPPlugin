@@ -498,9 +498,7 @@ sub _WORKFLOWTRANSITION {
             next unless $warning;
             $warning = Foswiki::Func::expandCommonVariables("%MAKETEXT{$warning}%");
             next unless $warning;
-            $warning =~ s#'#\\'#g;
             my $action = $actions[$a];
-            $action =~ s#'#\\'#g;
             $transwarn->{WORKFLOW}->{w}->{$action} = $warning;
         }
     }
