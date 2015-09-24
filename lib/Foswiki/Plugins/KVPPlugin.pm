@@ -1283,8 +1283,15 @@ sub _createForkedCopy {
     my $forkTopic = $ttmeta->topic();
 
     #Alex: Topic mit allen Dateien kopieren
-    my $handler = $session->{store}->getHandler( $forkWeb, $forkTopic );
-    $handler->copyTopic($session->{store}, $newWeb, $newTopic);
+    if ( $session->{store}->can('copyTopic') ) { # PlainFileStore
+        my $meta = new Foswiki::Meta($session, $newWeb, $newTopic);
+        $session->{store}->copyTopic($ttmeta, $meta);
+    } elsif( $session->{store}->can('getHandler') ) { # Rcs
+        my $handler = $session->{store}->getHandler( $forkWeb, $forkTopic );
+        $handler->copyTopic($session->{store}, $newWeb, $newTopic);
+    } else {
+        die 'Can not fork topic with current store implementation.';
+    }
 
     my $meta = new Foswiki::Meta($session, $newWeb, $newTopic);
     foreach my $k ( keys %$ttmeta ) {
