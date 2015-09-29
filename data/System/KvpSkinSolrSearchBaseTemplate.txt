@@ -3,6 +3,10 @@
 %{</verbatim>}%
 
 %{<verbatim class="tml">}%
+%TMPL:DEF{"script:skinbase"}%%TMPL:PREV%%JSI18N{"KVPPlugin" id="solrkvp"}%%TMPL:END%
+%{</verbatim>}%
+
+%{<verbatim class="tml">}%
 %TMPL:DEF{"topic_title"}%%TMPL:P{"kvp_status"}% %TMPL:PREV%%TMPL:END%
 %TMPL:DEF{"image_title"}%%TMPL:P{"kvp_status"}% %TMPL:PREV%%TMPL:END%
 %TMPL:DEF{"misc_title"}%%TMPL:P{"kvp_status"}% %TMPL:PREV%%TMPL:END%
