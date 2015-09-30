@@ -602,7 +602,7 @@ sub _WORKFLOWFORK {
     my ($action, $warning) = @{$controlledTopic->canFork()};
     return ($attributes->{cannotfork} || '') unless $action;
 
-    my $warning = encode_entities($warning, $unsafe_chars);
+    $warning = encode_entities($warning, $unsafe_chars);
 
     my $newnames;
     if (!defined $attributes->{newnames}) {
