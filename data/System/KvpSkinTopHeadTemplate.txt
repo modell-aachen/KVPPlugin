@@ -4,7 +4,7 @@
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
 	<tbody>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
 				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
@@ -14,13 +14,13 @@
 			<td rowspan='3' width='12%'>
 				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
 		</tr>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td colspan='3' style='text-align: center;'>
 				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
 			<td colspan='2' style='text-align: center;'>
 				Geltungsbereich&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
 		</tr>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td style='text-align: center;'>
 				Letzter Autor:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%" format="$displayName"}%</strong></td>
 			<td style='text-align: center;'>
@@ -41,7 +41,7 @@
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
 	<tbody>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
 				<strong><font size='4'>%QUERY{"DocumentType"}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
@@ -51,13 +51,13 @@
 			<td rowspan='3' width='12%'>
 				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
 		</tr>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td colspan='3' style='text-align: center;'>
 				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
 			<td colspan='2' style='text-align: center;'>
 				Area of application&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
 		</tr>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td style='text-align: center;'>
 				Last author:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%" format="$diplayName"}%</strong></td>
 			<td style='text-align: center;'>
@@ -78,7 +78,7 @@
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
 	<tbody>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
 				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
@@ -88,13 +88,13 @@
 			<td rowspan='3' width='12%'>
 				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
 		</tr>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td colspan='3' style='text-align: center;'>
 				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
 			<td colspan='2' style='text-align: center;'>
 				%MAKETEXT{"Area of application"}%&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
 		</tr>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td style='text-align: center;'>
 				%MAKETEXT{"Last author"}%:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%" format="$displayName"}%</strong></td>
 			<td style='text-align: center;'>
@@ -115,7 +115,7 @@
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
 	<tbody>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
 				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
@@ -125,13 +125,13 @@
 			<td rowspan='3' width='12%'>
 				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
 		</tr>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td colspan='3' style='text-align: center;'>
 				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
 			<td colspan='2' style='text-align: center;'>
 				Geltungsbereich&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
 		</tr>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td style='text-align: center;'>
 				Letzter Autor:<strong><br /><em>%RED%im&#160;Diskussionsstand%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
@@ -152,7 +152,7 @@
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
 	<tbody>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
 				<strong><font size='4'>%QUERY{"DocumentType"}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
@@ -162,13 +162,13 @@
 			<td rowspan='3' width='12%'>
 				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
 		</tr>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td colspan='3' style='text-align: center;'>
 				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
 			<td colspan='2' style='text-align: center;'>
 				Area of application&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
 		</tr>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td style='text-align: center;'>
 				Last author:<strong><br /><em>%RED%under&#160;discussion%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
@@ -189,7 +189,7 @@
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
 	<tbody>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
 				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
@@ -199,13 +199,13 @@
 			<td rowspan='3' width='12%'>
 				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
 		</tr>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td colspan='3' style='text-align: center;'>
 				<strong><font size='3'>%QUERY{"TopicTitle"}%</font></strong></td>
 			<td colspan='2' style='text-align: center;'>
 				%MAKETEXT{"Area of application"}%&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
 		</tr>
-		<tr height: 24px;>
+		<tr style='height: 24px;'>
 			<td style='text-align: center;'>
 				%MAKETEXT{"Last author"}%:<strong><br /><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
