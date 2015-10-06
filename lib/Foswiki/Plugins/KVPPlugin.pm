@@ -1861,6 +1861,41 @@ sub _sendMail {
     }
 }
 
+sub maintenanceHandler {
+    Foswiki::Plugins::MaintenancePlugin::registerCheck("KVPPlugin:pluginorder", {
+        name => "KVPPlugin in PluginsOrder",
+        description => "KVPPlugin should be in {PluginsOrder} for EarlySetField etc.",
+        check => sub {
+            unless($Foswiki::cfg{PluginsOrder} =~ m#\bKVPPlugin\b#) {
+                use Foswiki::Plugins::MaintenancePlugin;
+                return {
+                    result => 1,
+                    priority => Foswiki::Plugins::MaintenancePlugin::WARN,
+                    solution => "Add KVPPlugin to {PluginsOrder} in configure"
+                }
+            } else {
+                return { result => 0 };
+            }
+        }
+    });
+    Foswiki::Plugins::MaintenancePlugin::registerCheck("KVPPlugin:pluginorder2", {
+        name => "KVPPlugin after MoreFormfieldsPlugin in PluginsOrder",
+        description => "KVPPlugin should be listed before MoreFormfieldsPlugin in {PluginsOrder}",
+        check => sub {
+            if($Foswiki::cfg{PluginsOrder} =~ m#\MoreFormfieldsPlugin\b.*\bKVPPlugin\b#) {
+                use Foswiki::Plugins::MaintenancePlugin;
+                return {
+                    result => 1,
+                    priority => Foswiki::Plugins::MaintenancePlugin::WARN,
+                    solution => "Edit {PluginsOrder} in configure to list KVPPlugin before MoreFormfieldsPlugin"
+                }
+            } else {
+                return { result => 0 };
+            }
+        }
+    });
+}
+
 1;
 __END__
 
