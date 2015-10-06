@@ -14,10 +14,11 @@
 %TMPL:END%
 %{</verbatim>}%
 
-%{<verbatim class="tml">}%
-%TMPL:DEF{"solr::facets"}%
-  %TMPL:PREV%,
-  %MAKETEXT{"Process State"}%=process_state_s
+%TMPL:DEF{"modac::solr::dictionary"}%%TMPL:PREV%,
+  "draft":"%MAKETEXT{"draft"}%",
+  "approved":"%MAKETEXT{"approved"}%",
+  "discarded":"%MAKETEXT{"discarded"}%",
+  "discussion":"%MAKETEXT{"discussion"}%"
 %TMPL:END%
 %{</verbatim>}%
 
@@ -32,15 +33,13 @@
 %{<verbatim class="tml">}%
 %TMPL:DEF{"modacExtraFacets"}%%TMPL:PREV%
 %TMPL:P{"solr::facet"
-    id="process_state_s"
+    id="workflowstate_statetype_s"
     title="%MAKETEXT{"Process State"}%"
-    format="$key&nbsp;($count)"
-    value="$id:$key"
-    input="checkbox"
-    include="%TMPL:P{"solr::facet::include::process_state_s"}%"
-    exclude="%TMPL:P{"solr::facet::exclude::process_state_s"}%"
-    extraclass=""
-    pageropts=""
+    union="false"
+    multivalue="true"
+    hidesingle="false"
+    include="%TMPL:P{"solr::facet::include::workflowstate_statetype_s"}%"
+    exclude="%TMPL:P{"solr::facet::exclude::workflowstate_statetype_s"}%"
   }%
 %TMPL:END%
 %{</verbatim>}%
