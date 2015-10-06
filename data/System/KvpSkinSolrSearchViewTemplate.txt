@@ -1,19 +1,6 @@
 %TMPL:INCLUDE{"SolrSearchView"}%
 
 %{<verbatim class="tml">}%
-%TMPL:DEF{"solr::extramapping"}%
-  %TMPL:PREV%,
-  %MAKETEXT{"approved"}%=FREIGEGEBEN,
-  %MAKETEXT{"under discussion"}%=DISKUSSIONSSTAND,
-  %MAKETEXT{"draft"}%=ENTWURF,
-  %MAKETEXT{"discarded"}%=VERWORFEN,
-  %MAKETEXT{"formal revision"}%=FORMALE_PRUEFUNG,
-  %MAKETEXT{"formal revision (draft)"}%=FORMALE_PRUEFUNG_ENTWURF,
-  %MAKETEXT{"contentual revision"}%=INHALTLICHE_PRUEFUNG,
-  %MAKETEXT{"contentual revision (draft)"}%=INHALTLICHE_PRUEFUNG_ENTWURF
-%TMPL:END%
-%{</verbatim>}%
-
 %TMPL:DEF{"modac::solr::dictionary"}%%TMPL:PREV%,
   "draft":"%MAKETEXT{"draft"}%",
   "approved":"%MAKETEXT{"approved"}%",

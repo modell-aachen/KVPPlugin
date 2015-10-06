@@ -16,12 +16,4 @@
 %TMPL:DEF{"kvp_status"}% {{if workflow_isapproved_b === false}}<em style='font-size: 0.9em;' title='{{:~foswiki.jsi18n.get('solrkvp', 'not approved')}}'>({{if workflowstate_statetype_s}}{{:~getFromDictionary('default', workflowstate_statetype_s)}}{{else}}{{:~foswiki.jsi18n.get('solrkvp', 'state not defined')}}{{/if}})</em>{{/if}}%TMPL:END%
 %{</verbatim>}%
 
-%{<verbatim class="tml">}%
-%TMPL:DEF{"modacExtraFormat"}%
-%TMPL:PREV%
-state=\"$process_state_s\"
-approved=\"$workflow_isapproved_b\"
-%TMPL:END%
-%{</verbatim>}%
-
 %TMPL:DEF{"solr::fields::append"}%%TMPL:PREV%,workflow_isapproved_b,workflowstate_statetype_s%TMPL:END%
