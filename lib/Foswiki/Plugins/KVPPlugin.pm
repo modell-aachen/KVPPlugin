@@ -1061,7 +1061,7 @@ sub _restLink {
         }
     } else {
         # Try looking for origin
-        my $origin = $originCache;
+        my $origin = _getOrigin( $topic );
         if ( $origin ne $topic && Foswiki::Func::topicExists( $web, $origin ) ) {
             $url = Foswiki::Func::getScriptUrl(
                 $web, $origin, 'oops',
