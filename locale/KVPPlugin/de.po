@@ -536,6 +536,9 @@ msgstr "Konnte Parameter nicht verarbeiten: \"%1\""
 msgid "discussion"
 msgstr "Diskussion"
 
+msgid "Differences to approved version:"
+msgstr "Unterschiede zum Freigegebenenstand:"
+
 #~ msgid ""
 #~ "The workflow state did not match the current state.\n"
 #~ "\n"

@@ -12,7 +12,12 @@
 
 %TMPL:P{"Message"}%%TMPL:P{"Remarks"}%
 
-%MAKETEXT{"Link to the page:"}% %TMPL:P{"LinkToPage"}%
+%MAKETEXT{"Link to the page:"}% %TMPL:P{"LinkToPage"}%%IF{
+  "$TOPIC != $'WORKFLOWORIGIN{%TOPIC%}' and $'GETWORKFLOWROW{approved}' != 1"
+  then="
+
+%MAKETEXT{"Differences to approved version:"}% $percentTMPL:P{LinkToComparePage}$percent"
+}%
 
 %MAKETEXT{"This is an automatically generated message. Please do not reply to this email."}%
 
@@ -41,6 +46,9 @@ $percentWORKFLOWMETA{Remark}$percent"}%%TMPL:END%
 
 %{"Provides a link to transitioned topic, use this instead of %TOPIC%"}%
 %TMPL:DEF{"LinkToPage"}%%SCRIPTURL{"rest"}%/KVPPlugin/link?state=%TARGET_STATE%;webtopic=%WEB%.%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN{%TOPIC%}%"}%%TMPL:END%
+
+%{"Provides a link to a comparison with the approved topic"}%
+%TMPL:DEF{"LinkToComparePage"}%%SCRIPTURL{"rest"}%/KVPPlugin/link?state=%TARGET_STATE%;webtopic=%WEB%.%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN{%TOPIC%}%"}%;compare=1%TMPL:END%
 
 %{"Provides the name of the transitioned topic:"}%
 %TMPL:DEF{"TOPIC"}%%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN{%TOPIC%}%"}%%TMPL:END%

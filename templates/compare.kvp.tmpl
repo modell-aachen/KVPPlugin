@@ -1,0 +1,6 @@
+%TMPL:INCLUDE{"compare"}%
+%TMPL:INCLUDE{"Transitions"}%
+
+%TMPL:DEF{"content"}%%TMPL:PREV%%IF{"defined allowtransition" then="$percentTMPL:P{kvpaction}$percent"}%%TMPL:END%
+
+%TMPL:DEF{"TransitionMsg"}%%ADDTOZONE{"head" id="TEXT_BLOCKUI_KVP" text="<meta name=$quotTEXT_BLOCKUI_KVP$quot content=$quot%MESSAGE%$quot />"}%%TMPL:END%

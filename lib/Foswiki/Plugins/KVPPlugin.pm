@@ -1049,7 +1049,12 @@ sub _restLink {
         my $wrkflw = $meta->get( 'WORKFLOW' );
         if ( $wrkflw && $wrkflw->{name} eq $state ) {
             # states are equal, redirecting to topic...
-            $url = Foswiki::Func::getViewUrl($web, $topic);
+            my $origin = _getOrigin($topic);
+            if($topic ne $origin && $query->param( 'compare' )) {
+                $url = Foswiki::Func::getScriptUrl($web, $topic, 'compare', external => $origin, allowtransition => 1);
+            } else {
+                $url = Foswiki::Func::getViewUrl($web, $topic);
+            }
         } else {
             $url = Foswiki::Func::getScriptUrl(
                 $web, $topic, 'oops',
