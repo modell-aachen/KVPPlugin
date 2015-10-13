@@ -584,14 +584,14 @@ sub _listToWikiNames {
         if ( Foswiki::Func::isGroup($group)) {
             my $it = Foswiki::Func::eachGroupMember($group);
             while ($it->hasNext()) {
-                my $user = $it->next();
+                my $user = Foswiki::Func::getWikiName( $it->next() );
                 push( @persons, $user);
             }
         }
         # Alex: Handler fr Nicht-Gruppen
         else {
-            #Alex: Debug
-            push( @persons, $group);
+            my $user = Foswiki::Func::getWikiName( $group );
+            push( @persons, $user);
         }
     }
     return \@persons;
