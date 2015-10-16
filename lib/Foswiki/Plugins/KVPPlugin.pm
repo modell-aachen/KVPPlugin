@@ -1878,7 +1878,7 @@ sub maintenanceHandler {
                 use Foswiki::Plugins::MaintenancePlugin;
                 return {
                     result => 1,
-                    priority => Foswiki::Plugins::MaintenancePlugin::WARN,
+                    priority => $Foswiki::Plugins::MaintenancePlugin::WARN,
                     solution => "Add KVPPlugin to {PluginsOrder} in configure"
                 }
             } else {
@@ -1894,7 +1894,7 @@ sub maintenanceHandler {
                 use Foswiki::Plugins::MaintenancePlugin;
                 return {
                     result => 1,
-                    priority => Foswiki::Plugins::MaintenancePlugin::WARN,
+                    priority => $Foswiki::Plugins::MaintenancePlugin::WARN,
                     solution => "Edit {PluginsOrder} in configure to list KVPPlugin before MoreFormfieldsPlugin"
                 }
             } else {
