@@ -1890,7 +1890,7 @@ sub maintenanceHandler {
         name => "KVPPlugin after MoreFormfieldsPlugin in PluginsOrder",
         description => "KVPPlugin should be listed before MoreFormfieldsPlugin in {PluginsOrder}",
         check => sub {
-            if($Foswiki::cfg{PluginsOrder} =~ m#\MoreFormfieldsPlugin\b.*\bKVPPlugin\b#) {
+            if($Foswiki::cfg{PluginsOrder} =~ m#\bMoreFormfieldsPlugin\b.*\bKVPPlugin\b#) {
                 use Foswiki::Plugins::MaintenancePlugin;
                 return {
                     result => 1,
