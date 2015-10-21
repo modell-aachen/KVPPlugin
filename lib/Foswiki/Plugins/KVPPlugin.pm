@@ -1875,7 +1875,6 @@ sub maintenanceHandler {
         description => "KVPPlugin should be in {PluginsOrder} for EarlySetField etc.",
         check => sub {
             unless($Foswiki::cfg{PluginsOrder} =~ m#\bKVPPlugin\b#) {
-                use Foswiki::Plugins::MaintenancePlugin;
                 return {
                     result => 1,
                     priority => $Foswiki::Plugins::MaintenancePlugin::WARN,
@@ -1891,7 +1890,6 @@ sub maintenanceHandler {
         description => "KVPPlugin should be listed before MoreFormfieldsPlugin in {PluginsOrder}",
         check => sub {
             if($Foswiki::cfg{PluginsOrder} =~ m#\bMoreFormfieldsPlugin\b.*\bKVPPlugin\b#) {
-                use Foswiki::Plugins::MaintenancePlugin;
                 return {
                     result => 1,
                     priority => $Foswiki::Plugins::MaintenancePlugin::WARN,
