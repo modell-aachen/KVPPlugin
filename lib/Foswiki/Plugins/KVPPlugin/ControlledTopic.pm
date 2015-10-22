@@ -465,7 +465,18 @@ sub changeState {
         # Set Language
         my $language = $Foswiki::cfg{Extensions}{KVPPlugin}{MailLanguage};
         if($language) {
+            $language = Foswiki::Func::expandCommonVariables($language);
             Foswiki::Func::setPreferencesValue( 'LANGUAGE', $language );
+            # Copy/Paste from MailerContrib:
+            if ( $Foswiki::Plugins::SESSION->can('reset_i18n') ) {
+                $Foswiki::Plugins::SESSION->reset_i18n();
+            }
+            elsif ( $Foswiki::Plugins::SESSION->{i18n} ) {
+
+                # Muddy boots.
+                $Foswiki::Plugins::SESSION->i18n->finish();
+                undef $Foswiki::Plugins::SESSION->{i18n};
+            }
         }
 
         # Dig up the bodies
