@@ -537,7 +537,7 @@ msgid "discussion"
 msgstr "Diskussion"
 
 msgid "Differences to approved version:"
-msgstr "Unterschiede zum Freigegebenenstand:"
+msgstr "Unterschiede zum freigegebenen Stand:"
 
 #~ msgid ""
 #~ "The workflow state did not match the current state.\n"
