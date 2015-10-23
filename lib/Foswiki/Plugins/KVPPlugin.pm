@@ -9,6 +9,7 @@
 package Foswiki::Plugins::KVPPlugin;
 
 use strict;
+use warnings;
 
 use Error ':try';
 use Assert;
