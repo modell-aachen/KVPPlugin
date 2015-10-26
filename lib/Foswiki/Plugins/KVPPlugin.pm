@@ -615,8 +615,6 @@ sub _WORKFLOWFORK {
         $newnames = $attributes->{newnames};
     }
 
-    my $lockdown = Foswiki::Func::isTrue($attributes->{lockdown});
-
     if (!Foswiki::Func::topicExists($web, $topic)) {
         return "";
         return "<span class='foswikiAlert'>WORKFLOWFORK: '$topic' does not exist</span>";
@@ -628,9 +626,9 @@ sub _WORKFLOWFORK {
 
     my $url;
     if ( $newnames ) {
-        $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'restauth', topic => "$web.$topic", lockdown => $lockdown, newnames => $newnames );
+        $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'restauth', topic => "$web.$topic", newnames => $newnames );
     } else {
-        $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'restauth', topic => "$web.$topic", lockdown => $lockdown );
+        $url = Foswiki::Func::getScriptUrl( 'KVPPlugin', 'fork', 'restauth', topic => "$web.$topic" );
     }
 
     # Add script to prevent double-clicking link
@@ -933,27 +931,6 @@ sub transitionTopic {
             # Only unlock / add to history if web exists (does not when topic)
             if(Foswiki::Func::topicExists( $web, $appTopic )) {
                 $url = Foswiki::Func::getScriptUrl( $web, $appTopic, 'view' );
-
-                #Alex: Alte Metadaten wiederherstellen
-                my ($meta, $text) = Foswiki::Func::readTopic($web, $appTopic);
-
-                #gesperrte Seiten wieder entsperren
-                if (defined $meta->get("PREFERENCE", "ALLOWTOPICCHANGE")){
-                    if ($meta->get("PREFERENCE", "ALLOWTOPICCHANGE")->{"value"} eq "nobody")
-                    {# XXX Hier muessen die permissions aus dem Workflow hin
-                        $meta->remove("PREFERENCE", "ALLOWTOPICCHANGE");
-                    }
-                }
-                #Workflowhistory entfernen. Alex: Oder wollen wir die ggf. speichern?
-                if (defined $meta->get("WORKFLOWHISTORY")){
-                    $meta->remove("WORKFLOWHISTORY");
-                }
-
-                #Alex: Keine neue Revision erzeugen, Autor nicht ueberschreiben
-                Foswiki::Func::saveTopic(
-                    $web, $appTopic, $meta, $text,
-                    { forcenewrevision => 0, minor => 1, dontlog => 1, ignorepermissions => 1 }
-                );
             } else {
                 # if non-talk topic does not exist redirect to parent
                 my $parent = $origMeta->getParent();
@@ -1117,7 +1094,6 @@ sub _restFork {
     my $query = Foswiki::Func::getCgiQuery();
     my $forkTopic = $query->param('topic');
     my @newnames = split(/,/, $query->param('newnames') || $forkTopic.(_WORKFLOWSUFFIX()));
-    my $lockdown = $query->param('lockdown');
 
     my $erroneous = '';
     my $mails = [];
@@ -1247,14 +1223,6 @@ sub _restFork {
                 # Topic successfully forked
             }
 
-        }
-        if ($lockdown) {
-            $ttmeta->putKeyed("PREFERENCE",
-                { name => 'ALLOWTOPICCHANGE', value => 'nobody' });
-            local $isStateChange = 1;
-            Foswiki::Func::saveTopic( $forkWeb, $forkTopic, $ttmeta, $ttmeta->text(),
-                    { forcenewrevision => 1, ignorepermissions => 1 });
-            local $isStateChange = 0;
         }
     }
 

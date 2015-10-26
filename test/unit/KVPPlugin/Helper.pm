@@ -398,7 +398,7 @@ sub createDiscussion {
 
     $this->assert_equals( 'FREIGEGEBEN', Foswiki::Func::expandCommonVariables("%WORKFLOWMETA{topic=\"$web.$topic\"}%"), "Cannot create discussion for $web.$topic, because it is not FREIGEGEBEN!" );
 
-    my $query = Unit::Request->new( { action => ['rest'], topic=>"$web.$topic", lockdown=>'0' } );
+    my $query = Unit::Request->new( { action => ['rest'], topic=>"$web.$topic" } );
     $query->path_info( '/KVPPlugin/fork' );
     $query->method('get');
     $this->createNewFoswikiSession( $user, $query );
