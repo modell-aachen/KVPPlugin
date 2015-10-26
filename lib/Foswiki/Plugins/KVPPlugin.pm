@@ -695,16 +695,24 @@ sub _changeState {
     my $mails = [];
 
     try {
+        my $web = $query->param('web') || $session->{webName};
+        my $topic = $query->param('topic') || $session->{topicName};
+        my $action = $query->param('WORKFLOWACTION');
+        my $state = $query->param('WORKFLOWSTATE');
+        my $message = $query->param('message');
+        my $removeComments = $query->param('removeComments') || '0';
+        my $breakLock = $query->param('breaklock');
+
         my $report = transitionTopic(
             $session,
-            $query->param('web') || $session->{webName},
-            $query->param('topic') || $session->{topicName},
-            $query->param('WORKFLOWACTION'),
-            $query->param('WORKFLOWSTATE'),
+            $web,
+            $topic,
+            $action,
+            $state,
             $mails,
-            $query->param('message'),
-            $query->param('removeComments') || '0',
-            $query->param('breaklock')
+            $message,
+            $removeComments,
+            $breakLock,
         );
         my $url = $report->{url};
         if($query->param('redirectto')) {
