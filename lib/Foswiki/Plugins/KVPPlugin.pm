@@ -314,9 +314,16 @@ sub _initTOPIC {
         }
 
         if ($workflow) {
-            ( $meta, undef ) =
-              Foswiki::Func::readTopic( $web, $topic, $rev )
-              unless defined $meta;
+            unless( $meta ) {
+                ( $meta, undef ) =
+                  Foswiki::Func::readTopic( $web, $topic, $rev );
+
+                # Disable the lazy loader, omitting this may results in erroneous forked topics:
+                $meta->loadVersion( ($rev ne 99999) ? $rev : undef ) unless $meta->getLoadedRev();
+            } else {
+                $meta->loadVersion() unless $meta->getLoadedRev(); # XXX Why do I have to loadVersion when I get a meta from beforeSaveHandler?
+                                                                   # When omitting: Will get 2 %META:WORKFLOW{...}%
+            }
             $controlledTopic =
               new Foswiki::Plugins::KVPPlugin::ControlledTopic(
                 $workflow, $web, $topic, $meta );

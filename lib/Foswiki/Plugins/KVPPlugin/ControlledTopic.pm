@@ -64,9 +64,6 @@ sub new {
         }
     }
 
-    # Disable the lazy loader, omitting this may results in erroneous forked topics:
-    $this->{meta}->loadVersion();
-
     return $this;
 }
 
