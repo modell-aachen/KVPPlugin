@@ -295,9 +295,15 @@ sub _initTOPIC {
         $workflowName = $pref->{value} if $pref;
     }
     unless( defined $workflowName ) {
+        # we need to clear any persisting setting, or we might get the value from the wrong web
+        my $saved = Foswiki::Func::getPreferencesValue('WORKFLOW');
+        Foswiki::Func::setPreferencesValue('WORKFLOW', undef) if $saved;
+
         Foswiki::Func::pushTopicContext( $web, $topic );
         $workflowName = Foswiki::Func::getPreferencesValue('WORKFLOW');
         Foswiki::Func::popTopicContext();
+
+        Foswiki::Func::setPreferencesValue('WORKFLOW', $saved) if $saved;
     }
 
     if ($workflowName) {
