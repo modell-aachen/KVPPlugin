@@ -616,6 +616,7 @@ sub _WORKFLOWFORK {
     my ($action, $warning) = @{$controlledTopic->canFork()};
     return ($attributes->{cannotfork} || '') unless $action;
 
+    $warning = '' unless defined $warning;
     $warning = encode_entities($warning, $unsafe_chars);
 
     my $newnames;
