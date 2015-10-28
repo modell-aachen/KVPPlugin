@@ -80,31 +80,34 @@ sub initPlugin {
     Foswiki::Func::registerTagHandler(
         'WORKFLOWORIGIN', \&_WORKFLOWORIGIN );
 
-    # init the displayed topic to set according contexts for skin
-    my $controlledTopic = _initTOPIC( $web, $topic );
-    if ($controlledTopic) {
-        my $context = Foswiki::Func::getContext();
-        $context->{'KVPControlled'} = 1;
-        if ($controlledTopic->canEdit()) {
-            $context->{'KVPEdit'} = 1;
-        } else {
-            $context->{'modacRevokeChangePermission'} = 1;
-        }
-        if ($controlledTopic->canMove()) {
-            $context->{'KVPMove'} = 1;
-        } else {
-            $context->{'modacRevokeMovePermission'} = 1;
-        }
-        if ($controlledTopic->getRow( 'approved' )) {
-            my $suffix = _WORKFLOWSUFFIX();
-            if (Foswiki::Func::topicExists($web, "$topic$suffix")) {
-                $context->{'KVPHasDiscussion'} = 1;
+    my $context = Foswiki::Func::getContext();
+    if($context->{view} || $context->{edit} || $context->{KVPPluginSetContextOnInit}) {
+        # init the displayed topic to set according contexts for skin
+        $context->{'KVPContextsSet'} = 1;
+        my $controlledTopic = _initTOPIC( $web, $topic );
+        if ($controlledTopic) {
+            $context->{'KVPControlled'} = 1;
+            if ($controlledTopic->canEdit()) {
+                $context->{'KVPEdit'} = 1;
+            } else {
+                $context->{'modacRevokeChangePermission'} = 1;
             }
-        } else {
-            $context->{'KVPIsDiscussion'} = 1;
+            if ($controlledTopic->canMove()) {
+                $context->{'KVPMove'} = 1;
+            } else {
+                $context->{'modacRevokeMovePermission'} = 1;
+            }
+            if ($controlledTopic->getRow( 'approved' )) {
+                my $suffix = _WORKFLOWSUFFIX();
+                if (Foswiki::Func::topicExists($web, "$topic$suffix")) {
+                    $context->{'KVPHasDiscussion'} = 1;
+                }
+            } else {
+                $context->{'KVPIsDiscussion'} = 1;
+            }
         }
+        our $originCache = _getOrigin( $topic );
     }
-    our $originCache = _getOrigin( $topic );
 
     # Copy/Paste/Modify from MetaCommentPlugin
     # SMELL: this is not reliable as it depends on plugin order
@@ -254,7 +257,7 @@ sub _getOrigin {
 sub _WORKFLOWORIGIN {
     my ( $session, $attributes, $topic, $web ) = @_;
 
-    return $originCache unless $attributes->{_DEFAULT};
+    return $originCache if !$attributes->{_DEFAULT} && defined $originCache;
     return _getOrigin( $attributes->{_DEFAULT} || $topic );
 }
 
