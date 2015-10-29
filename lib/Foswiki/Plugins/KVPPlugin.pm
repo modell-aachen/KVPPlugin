@@ -81,7 +81,7 @@ sub initPlugin {
         'WORKFLOWORIGIN', \&_WORKFLOWORIGIN );
 
     my $context = Foswiki::Func::getContext();
-    if($context->{view} || $context->{edit} || $context->{KVPPluginSetContextOnInit}) {
+    if($context->{view} || $context->{edit} || $context->{comparing} || $context->{oops}  || $context->{manage} || $context->{KVPPluginSetContextOnInit}) {
         # init the displayed topic to set according contexts for skin
         $context->{'KVPContextsSet'} = 1;
         my $controlledTopic = _initTOPIC( $web, $topic );
