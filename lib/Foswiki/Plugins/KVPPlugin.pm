@@ -1866,7 +1866,7 @@ sub _sendMail {
 sub maintenanceHandler {
     Foswiki::Plugins::MaintenancePlugin::registerCheck("KVPPlugin:pluginorder", {
         name => "KVPPlugin in PluginsOrder",
-        description => "KVPPlugin should be in {PluginsOrder} for EarlySetField etc.",
+        description => "KVPPlugin should be in {PluginsOrder} for EarlySetField.",
         check => sub {
             unless($Foswiki::cfg{PluginsOrder} =~ m#\bKVPPlugin\b#) {
                 return {

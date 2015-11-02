@@ -177,17 +177,15 @@ Bei der Expansion von Templates können Einstellungen ver&auml;ndert werden. Das
 
 ---++ Info
 
-Many thanks to the following sponsors for supporting this work:
-   * Acknowledge any sponsors here
-
-|  Author(s): | |
+|  Author: | Modell Aachen GmbH |
+|  Copyright: | &copy; 2012-2015, Modell Aachen GmbH |
 |  Copyright: | &copy; |
 |  License: | [[http://www.gnu.org/licenses/gpl.html][GPL (Gnu General Public License)]] |
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
 |  Change History: | <!-- versions below in reverse order -->&nbsp; |
 |  Dependencies: | %$DEPENDENCIES% |
-|  Home page: | handbuch.open-quality.com/bin/view/Extensions/KVPPlugin |
-|  Support: | handbuch.open-quality.com/bin/view/Support/KVPPlugin |
+|  Home | http://www.modell-aachen.de |
+|  Feedback | support(at)modell-aachen(dot)de |
 
 <!-- Do _not_ attempt to edit this topic; it is auto-generated. -->
