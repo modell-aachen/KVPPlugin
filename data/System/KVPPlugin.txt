@@ -179,7 +179,6 @@ Bei der Expansion von Templates können Einstellungen ver&auml;ndert werden. Das
 
 |  Author: | Modell Aachen GmbH |
 |  Copyright: | &copy; 2012-2015, Modell Aachen GmbH |
-|  Copyright: | &copy; |
 |  License: | [[http://www.gnu.org/licenses/gpl.html][GPL (Gnu General Public License)]] |
 |  Release: | %$RELEASE% |
 |  Version: | %$VERSION% |
