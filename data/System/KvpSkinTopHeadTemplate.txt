@@ -26,7 +26,7 @@
 			<td style='text-align: center;'>
 				Verantwortlich:<strong><br />%RENDERFORDISPLAY{fields="Responsible" format="$value"}%</strong></td>
 			<td style='text-align: center;'>
-				Freigegeben durch:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%" format="displayName"}%</strong></td>
+				Freigegeben durch:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%" format="$displayName"}%</strong></td>
 			<td style='text-align: center;'>
 				Freigabedatum:<strong><br />%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
