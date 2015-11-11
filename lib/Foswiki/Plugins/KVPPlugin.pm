@@ -106,7 +106,9 @@ sub initPlugin {
                 $context->{'KVPIsDiscussion'} = 1;
             }
         }
-        our $originCache = _getOrigin( $topic );
+        $originCache = _getOrigin( $topic );
+    } else {
+        undef $originCache;
     }
 
     # Copy/Paste/Modify from MetaCommentPlugin
