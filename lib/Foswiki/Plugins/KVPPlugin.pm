@@ -35,6 +35,7 @@ our %cache;
 our $isStateChange;
 # Although the origin is quick to calculate it is called often enough to be worth being cached
 our $originCache;
+our $markAsStub;
 
 our $unsafe_chars = "<&>'\"";
 
@@ -42,6 +43,8 @@ sub initPlugin {
     my ( $topic, $web ) = @_;
 
     %cache = ();
+
+    our $markAsStub = 0;
 
     Foswiki::Func::registerRESTHandler(
         'changeState', \&_changeState,
@@ -1435,6 +1438,7 @@ sub beforeEditHandler {
 
 # This beforeUploadHandler will attempt to cancel an upload if the user is
 # denyed editing by the workflow.
+# If the topic does not yet exist, it will tell the afterUploadHandler to mark this topic as a "stub".
 sub beforeUploadHandler {
     my ( $attrs, $meta ) = @_;
 
@@ -1457,7 +1461,18 @@ sub beforeUploadHandler {
     unless(Foswiki::Func::topicExists($web, $topic)) {
         # This topic has probably been created just to attach a file.
         # Mark it as a stub.
+        $markAsStub = 1;
+    }
+}
+
+# Store "WorkflowStub" preference, see beforeUploadHandler
+sub afterUploadHandler {
+    my ($attrs, $meta) = @_;
+
+    if($markAsStub) {
+        $markAsStub = 0;
         $meta->putKeyed('PREFERENCE', { name => 'WorkflowStub', title=>'WorkflowStub', type=>'Set', value=>'1' });
+        $meta->saveAs();
     }
 }
 
