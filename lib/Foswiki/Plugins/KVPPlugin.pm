@@ -1590,6 +1590,104 @@ sub _onTemplateExpansion {
     }
 }
 
+# Copies stuff from a templatetopic to the topicObject
+# Mostly copied from Foswiki::UI::Save, which doesn't do this when the topic already exists.
+sub _XXXCopyTemplateStuffFromCore {
+    my ($query, $topicObject) = @_;
+    my $templateWeb = $topicObject->web;
+    my $templateTopic = $query->param('templatetopic');
+    my $ttom;
+    my $text;
+    my $session = $Foswiki::Plugins::SESSION;
+    my @attachments = ();
+
+    # Chunk copied from Foswiki::UI::Save::buildNewTopic
+    # changes: not changing text of topicObject
+
+    my ( $invalidTemplateWeb, $invalidTemplateTopic ) =
+      $session->normalizeWebTopicName( $templateWeb, $templateTopic );
+
+    $templateWeb = Foswiki::Sandbox::untaint( $invalidTemplateWeb,
+        \&Foswiki::Sandbox::validateWebName );
+    $templateTopic = Foswiki::Sandbox::untaint( $invalidTemplateTopic,
+        \&Foswiki::Sandbox::validateTopicName );
+
+    unless ( $templateWeb && $templateTopic ) {
+        throw Foswiki::OopsException(
+            'attention',
+            def => 'invalid_topic_parameter',
+            params =>
+              [ scalar( $query->param('templatetopic') ), 'templatetopic' ]
+        );
+    }
+    unless ( $session->topicExists( $templateWeb, $templateTopic ) ) {
+        throw Foswiki::OopsException(
+            'attention',
+            def   => 'no_such_topic_template',
+            web   => $templateWeb,
+            topic => $templateTopic
+        );
+    }
+
+    # Initialise new topic from template topic
+    $ttom = Foswiki::Meta->load( $session, $templateWeb, $templateTopic );
+    Foswiki::UI::checkAccess( $session, 'VIEW', $ttom );
+
+    $text = $ttom->text();
+    #$text = '' if $query->param('newtopic');    # created by edit
+    #$topicObject->text($text);
+
+    foreach my $k ( keys %$ttom ) {
+
+        # Skip internal fields and TOPICINFO, TOPICMOVED
+        unless ( $k =~ m/^(_|TOPIC|FILEATTACHMENT)/ ) {
+            $topicObject->copyFrom( $ttom, $k );
+        }
+
+        # attachments to be copied later
+        if ( $k eq 'FILEATTACHMENT' ) {
+            foreach my $a ( @{ $ttom->{$k} } ) {
+                push(
+                    @attachments,
+                    {
+                        name => $a->{name},
+                        tom  => $ttom,
+                    }
+                );
+            }
+        }
+    }
+
+    # Chunk copied from Foswiki::UI::Save::save
+    # change: changed $attachments to @attachments
+
+    if (scalar @attachments) {
+        foreach $a ( @attachments ) {
+            try {
+                $a->{tom}->copyAttachment( $a->{name}, $topicObject );
+            }
+            catch Foswiki::OopsException with {
+                shift->throw();    # propagate
+            }
+            catch Error with {
+                $session->logger->log( 'error', shift->{-text} );
+                throw Foswiki::OopsException(
+                    'attention',
+                    def    => 'save_error',
+                    web    => $topicObject->web,
+                    topic  => $topicObject->topic,
+                    params => [
+                        $session->i18n->maketext(
+                            'Operation [_1] failed with an internal error',
+                            'copyAttachment'
+                        )
+                    ],
+                );
+            };
+        }
+    }
+}
+
 # The beforeSaveHandler inspects the request parameters to see if the
 # right params are present to trigger a state change. The legality of
 # the state change is *not* checked - it's assumed that the change is
@@ -1610,6 +1708,12 @@ sub beforeSaveHandler {
 
     # Do the RemoveMeta, RemovePref, SetForm, SetField, SetPref if save came from a template
     if($query->param('templatetopic')) {
+        if(Foswiki::Func::topicExists($web, $topic)) {
+            # Oh no, the topic already exists and the core will no longer copy stuff from the template!
+            # We will have to do it instead...
+            _XXXCopyTemplateStuffFromCore($query, $meta);
+        }
+
         # We don't ever want to copy over the workflow state from a template
         $meta->remove('WORKFLOW');
         $meta->remove('WORKFLOWHISTORY');
