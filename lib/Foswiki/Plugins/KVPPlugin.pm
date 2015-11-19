@@ -420,7 +420,18 @@ sub _WORKFLOWGETREVFOR {
         $rev = $info{version} || 0;
     }
 
-    while((not $controlledTopic->getState() =~ m#$nameRegExp#) || $skip--) {
+    my $version;
+    if(defined $attributes->{version}) {
+        $version = $attributes->{version};
+        if($version =~ m#-(\d+)#) {
+            $version = $controlledTopic->getWorkflowMeta('Revision') - $1; # if this becomes negative, we'll return 0 next
+        }
+        return '0' unless $version =~ m/^\d+$/;
+    } else {
+        $version = 99999999;
+    }
+
+    while((not ($controlledTopic->getState() =~ m#$nameRegExp# && $version >= $controlledTopic->getWorkflowMeta('Revision')) ) || $skip--) {
         unless(--$rev >= 0) {
             $rev = ((defined $attributes->{notfound}) ? $attributes->{notfound} : 0);
             last;
