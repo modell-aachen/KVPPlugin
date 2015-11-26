@@ -1652,7 +1652,14 @@ sub _XXXCopyTemplateStuffFromCore {
 
         # Skip internal fields and TOPICINFO, TOPICMOVED
         unless ( $k =~ m/^(_|TOPIC|FILEATTACHMENT)/ ) {
-            $topicObject->copyFrom( $ttom, $k );
+            # copyFrom overwrites old values
+            my @oldMeta = $topicObject->find( $k );
+            if( scalar @oldMeta ) {
+                 my @newMeta = $ttom->find( $k );
+                 $topicObject->putAll( $k, @newMeta, @oldMeta ); # XXX Why do I have to re-put the old values? A simple put will clear them...
+            } else {
+                $topicObject->copyFrom( $ttom, $k );
+            }
         }
 
         # attachments to be copied later
