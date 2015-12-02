@@ -110,6 +110,31 @@ sub getWorkflowMeta {
     return $this->{state}->{$attributes};
 }
 
+# Remove LASTTIME_DRAFT etc. from META:WORKFLOW.
+# Do save the topic afterwards.
+# Parameters:
+#    * $this: controlled topic
+#    * state: Remove all data for this state. Leave empty to remove all of them.
+sub clearWorkflowMeta {
+    my ( $this, $state ) = @_;
+
+    my $reg;
+    if ( defined $state && $state !~ m#^\s*$#) {
+        $reg = join('|', map { qr#_\Q$_\E(?:_DT)?$# } split( m#\s*,\s*#, $state ) );
+    } else {
+        $reg = qr#^(?:LASTPROCESSOR|LASTTIME|LASTVERSION|LEAVING)_#;
+    }
+    Foswiki::Func::writeWarning($reg);
+
+    foreach my $key ( keys $this->{state} ) {
+        delete $this->{state}->{$key} if $key =~ m#$reg#;
+    }
+
+    # Replace workflow-metadata
+    $this->{meta}->remove( 'WORKFLOW' ); # XXX sometime putKeyed doesn't replace
+    $this->{meta}->putKeyed( "WORKFLOW", $this->{state} );
+}
+
 # Alex: Get the extra Mailinglist (People involved in the Discussion)
 sub getContributors {
     my ($this, $state) = @_;

@@ -881,6 +881,14 @@ sub transitionTopic {
             $url = Foswiki::Func::getScriptUrl( $web, $appTopic, 'view' );
         }
 
+        if( $actionAttributes =~ m/(?:\W|^)CLEARMETA((?:\((?:".*?")?[^)]*\))?)(?:\W|$)/ ) {
+            my $params = $1;
+            if($params && $params =~ m#\s*"(.*?)"\s*# ) {
+                    $params = $1;
+            }
+
+            $controlledTopic->clearWorkflowMeta( $params );
+        }
 
         # clear message, if workflow doesn't allow it (maybe the
         # user entered a message and then switched state...)
