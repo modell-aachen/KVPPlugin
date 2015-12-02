@@ -579,11 +579,11 @@ sub save {
 }
 
 # Alex: Alle doppelten Werte aus einem Array lschen
-sub del_double{
-        my %all=();
-        @all{@_}=1;
-        delete $all{''};
-        return (keys %all);
+sub del_double {
+    my %all=();
+    @all{@_}=1;
+    delete $all{''};
+    return (keys %all);
 }
 
 sub expandMacros {
