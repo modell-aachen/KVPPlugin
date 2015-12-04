@@ -842,7 +842,7 @@ sub transitionTopic {
                     'oopswfplease',
                     web => $web,
                     topic => $topic,
-                    params => [Foswiki::Func::getWikiName($locker), $t, $state, $action, $remark, $removeComments ]
+                    params => [Foswiki::Func::getWikiName($locker), "$web.$topic", $t, $state, $action, $remark, $removeComments ]
                 );
             }
         }
@@ -948,7 +948,23 @@ sub transitionTopic {
             my $other = _initTOPIC( $options->{web}, $options->{topic} );
             my $otherState;
             $otherState = $other->getState() if $other;
-            transitionTopic($session, $options->{web}, $options->{topic}, $options->{action}, $otherState, $mails, $options->{remark}, $options->{removecomments}, $options->{breaklock}, 1);
+            try {
+                transitionTopic($session, $options->{web}, $options->{topic}, $options->{action}, $otherState, $mails, $options->{remark}, $options->{removecomments}, $options->{breaklock} || $breaklock, 1);
+            } catch Foswiki::OopsException with {
+                my $e = shift;
+
+                if($e->{template} eq 'oopswfplease') {
+                    # We need to rethrow with _this_ transition, or a click on 'transition anyway' will only transition the chained one.
+                    throw Foswiki::OopsException(
+                        'oopswfplease',
+                        web => $web,
+                        topic => $appTopic,
+                        params => [$e->{params}->[0], $e->{params}->[1], $e->{params}->[2], $state, $action, $remark, $removeComments ]
+                    );
+                } else {
+                    throw $e;
+                }
+            };
         }
 
         if($actionAttributes =~ m#SYNCREV\(\s*topic\s*=\s*\"(.*?)(?<!\\)\"\s*\)#) {
