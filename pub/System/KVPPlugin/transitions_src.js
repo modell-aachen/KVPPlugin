@@ -30,7 +30,11 @@ jQuery(function($) {
             }
             // block
             if (message === undefined || message === "") {
-                $('#KVPTransitions').block();
+                var options;
+                if(window.foswiki && window.foswiki.ModacSkin && window.foswiki.ModacSkin.getBlockDefaultOptions) {
+                    options = foswiki.ModacSkin.getBlockDefaultOptions();
+                }
+                $('#KVPTransitions').block(options);
             } else {
                 $('#KVPTransitions').block( {message: '<h1>'+message+'</h1>', css: {width: 'auto', height: 'auto', backgroundColor: 'black'}} );
             }
