@@ -375,13 +375,18 @@ sub afterRenameHandler {
     my ( $oldWeb, $oldTopic, $oldAttachment,
          $newWeb, $newTopic, $newAttachment ) = @_;
 
-    return if $isStateChange;
-
     return unless $oldTopic; # don't handle webs
     return if $oldAttachment; # nor attachments
 
     my $suffix = _WORKFLOWSUFFIX();
     return unless $suffix;
+
+    if($oldTopic ne _getOrigin($oldTopic)) {
+        # index workflow_hasdiscussion_b change
+        _requestSolrUpdate("$oldWeb." . _getOrigin($oldTopic));
+    }
+
+    return if $isStateChange;
 
     my $oldDiscussion = "$oldTopic$suffix";
     return unless Foswiki::Func::topicExists($oldWeb, $oldDiscussion);
@@ -1352,7 +1357,23 @@ sub _createForkedCopy {
     };
     $meta->put( "WORKFLOWHISTORY", $forkhistory );
 
+    my $origin = _getOrigin($newTopic);
+    if($newTopic ne $origin && Foswiki::Func::topicExists($newWeb, $origin)) {
+        # index workflow_hasdiscussion_b change
+        _requestSolrUpdate("$newWeb." . $origin);
+    }
+
     return _initTOPIC( $newWeb, $newTopic, undef, $meta, FORCENEW );
+}
+
+# Notify the SolrWorker, that we want a topic indexed.
+sub _requestSolrUpdate {
+    my ( $topic ) = @_;
+
+    return unless $Foswiki::cfg{Plugins}{TaskDaemonPlugin}{Enabled} && $Foswiki::cfg{Plugins}{SolrPlugin}{Enabled};
+
+    use Foswiki::Plugins::TaskDaemonPlugin;
+    Foswiki::Plugins::TaskDaemonPlugin::send($topic, 'update_topic', 'SolrPlugin');
 }
 
 # XXX requires changes in lib/Foswiki/Meta.pm
