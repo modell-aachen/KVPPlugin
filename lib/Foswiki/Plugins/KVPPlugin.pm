@@ -1271,7 +1271,11 @@ sub _restFork {
                 my $saved;
                 $saved = _pushParams( $withParams ) if $withParams;
 
-                next if (Foswiki::Func::topicExists($newWeb, $newTopic));
+                if (Foswiki::Func::topicExists($newWeb, $newTopic)) {
+                    $directToWeb = $newWeb;
+                    $directToTopic = $newTopic;
+                    next;
+                }
 
                 my $newControlledTopic = _createForkedCopy($session, $ttmeta, $newWeb, $newTopic);
                 unless ( $newControlledTopic ) {
