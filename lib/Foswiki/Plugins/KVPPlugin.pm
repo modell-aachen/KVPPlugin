@@ -2082,6 +2082,22 @@ sub maintenanceHandler {
             }
         }
     });
+    Foswiki::Plugins::MaintenancePlugin::registerCheck("KVPPlugin:mailworkflowtransition.tmpl", {
+        name => "Check if mailworkflowtransition.tmpl customized",
+        description => "Customizing KVPPlugin's mailworkflowtransition.tmpl is no longer supported",
+        check => sub {
+            my @files = <"$Foswiki::cfg{TemplateDir}/mailworkflowtransition.*.tmpl">;
+            if(scalar @files) {
+                return {
+                    result => 1,
+                    priority => $Foswiki::Plugins::MaintenancePlugin::WARN,
+                    solution => "Please change your customization (".join(', ', @files).") to conform with MailTemplatesContrib."
+                }
+            } else {
+                return { result => 0 };
+            }
+        }
+    });
 }
 
 1;

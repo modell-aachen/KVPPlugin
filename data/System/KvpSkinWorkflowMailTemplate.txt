@@ -4,11 +4,11 @@
 %TMPL:DEF{"From"}%%WIKIWEBMASTERNAME% <%WIKIWEBMASTER%>%TMPL:END%
 
 %{"Set subject:"}%
-%TMPL:DEF{"Subject"}%%MAKETEXT{"[_1] has a new state: [_2]" args="%TMPL:P{"TOPIC"}%, %TARGET_STATE%"}%%TMPL:END%
+%TMPL:DEF{"Subject"}%%MAKETEXT{"[_1] has a new state: [_2]" args="%TMPL:P{"TOPICTITLE"}%, %TARGET_STATE%"}%%TMPL:END%
 
 %{"Body of the mail:"}%
 %TMPL:DEF{"mailContents"}%
-%MAKETEXT{"[_1] edited the topic [_2]." args="%WIKINAME%, %TMPL:P{"TOPIC"}%"}%
+%MAKETEXT{"[_1] edited the topic [_2]." args="%WIKINAME%, %TMPL:P{"TOPICTITLE"}%"}%
 
 %TMPL:P{"Message"}%%TMPL:P{"Remarks"}%
 
@@ -52,3 +52,6 @@ $percentWORKFLOWMETA{Remark}$percent"}%%TMPL:END%
 
 %{"Provides the name of the transitioned topic:"}%
 %TMPL:DEF{"TOPIC"}%%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN{%TOPIC%}%"}%%TMPL:END%
+
+%{"Provides the topictitle of the transitioned topic:"}%
+%TMPL:DEF{"TOPICTITLE"}%%TOPICTITLE{"%TMPL:P{"TOPIC"}%"}%%TMPL:END%
