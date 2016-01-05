@@ -1,15 +1,16 @@
+%TMPL:INCLUDE{"mailtemplatescontrib"}%
 %TMPL:INCLUDE{"WorkflowMail"}%
-From: %TMPL:P{"From"}%
-To: %TMPL:P{"To"}%
-Subject: %TMPL:P{"Subject"}%
-MIME-Version: 1.0
-Content-Type: multipart/alternative; boundary="=_=0i0k0i0w0tXuOi0E0A"
 
-This is a multi-part message in MIME format.
---=_=0i0k0i0w0tXuOi0E0A
-Content-Type: %TMPL:P{"Type"}%; %TMPL:P{"Charset"}% format=flowed
-Content-Transfer-Encoding: 8bit
+%{ This template will just make the old format compatible with MailTemplatesContrib. }%
 
-%TMPL:P{"mailContents"}%
+%TMPL:DEF{"ModacMailFrom"}%%TMPL:P{"From"}%%TMPL:END%
 
---=_=0i0k0i0w0tXuOi0E0A--
+%TMPL:DEF{"ModacMailSubject"}%%TMPL:P{"Subject"}%%TMPL:END%
+
+%TMPL:DEF{"ModacMailContents"}%%TMPL:P{"mailContents"}%%TMPL:END%
+
+%TMPL:DEF{"ModacMailTo"}%%TMPL:P{"To"}%%TMPL:END%
+
+%TMPL:DEF{"ModacMailCharset"}%%TMPL:P{"Charset"}%%TMPL:END%
+
+%TMPL:DEF{"ModacMailType"}%%TMPL:P{"Type"}%%TMPL:END%

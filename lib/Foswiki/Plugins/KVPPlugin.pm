@@ -375,13 +375,18 @@ sub afterRenameHandler {
     my ( $oldWeb, $oldTopic, $oldAttachment,
          $newWeb, $newTopic, $newAttachment ) = @_;
 
-    return if $isStateChange;
-
     return unless $oldTopic; # don't handle webs
     return if $oldAttachment; # nor attachments
 
     my $suffix = _WORKFLOWSUFFIX();
     return unless $suffix;
+
+    if($oldTopic ne _getOrigin($oldTopic)) {
+        # index workflow_hasdiscussion_b change
+        _requestSolrUpdate("$oldWeb." . _getOrigin($oldTopic));
+    }
+
+    return if $isStateChange;
 
     my $oldDiscussion = "$oldTopic$suffix";
     return unless Foswiki::Func::topicExists($oldWeb, $oldDiscussion);
@@ -842,7 +847,7 @@ sub transitionTopic {
                     'oopswfplease',
                     web => $web,
                     topic => $topic,
-                    params => [Foswiki::Func::getWikiName($locker), $t, $state, $action, $remark, $removeComments ]
+                    params => [Foswiki::Func::getWikiName($locker), "$web.$topic", $t, $state, $action, $remark, $removeComments ]
                 );
             }
         }
@@ -881,6 +886,14 @@ sub transitionTopic {
             $url = Foswiki::Func::getScriptUrl( $web, $appTopic, 'view' );
         }
 
+        if( $actionAttributes =~ m/(?:\W|^)CLEARMETA((?:\((?:".*?")?[^)]*\))?)(?:\W|$)/ ) {
+            my $params = $1;
+            if($params && $params =~ m#\s*"(.*?)"\s*# ) {
+                    $params = $1;
+            }
+
+            $controlledTopic->clearWorkflowMeta( $params );
+        }
 
         # clear message, if workflow doesn't allow it (maybe the
         # user entered a message and then switched state...)
@@ -940,7 +953,23 @@ sub transitionTopic {
             my $other = _initTOPIC( $options->{web}, $options->{topic} );
             my $otherState;
             $otherState = $other->getState() if $other;
-            transitionTopic($session, $options->{web}, $options->{topic}, $options->{action}, $otherState, $mails, $options->{remark}, $options->{removecomments}, $options->{breaklock}, 1);
+            try {
+                transitionTopic($session, $options->{web}, $options->{topic}, $options->{action}, $otherState, $mails, $options->{remark}, $options->{removecomments}, $options->{breaklock} || $breaklock, 1);
+            } catch Foswiki::OopsException with {
+                my $e = shift;
+
+                if($e->{template} eq 'oopswfplease') {
+                    # We need to rethrow with _this_ transition, or a click on 'transition anyway' will only transition the chained one.
+                    throw Foswiki::OopsException(
+                        'oopswfplease',
+                        web => $web,
+                        topic => $appTopic,
+                        params => [$e->{params}->[0], $e->{params}->[1], $e->{params}->[2], $state, $action, $remark, $removeComments ]
+                    );
+                } else {
+                    throw $e;
+                }
+            };
         }
 
         if($actionAttributes =~ m#SYNCREV\(\s*topic\s*=\s*\"(.*?)(?<!\\)\"\s*\)#) {
@@ -1242,7 +1271,11 @@ sub _restFork {
                 my $saved;
                 $saved = _pushParams( $withParams ) if $withParams;
 
-                next if (Foswiki::Func::topicExists($newWeb, $newTopic));
+                if (Foswiki::Func::topicExists($newWeb, $newTopic)) {
+                    $directToWeb = $newWeb;
+                    $directToTopic = $newTopic;
+                    next;
+                }
 
                 my $newControlledTopic = _createForkedCopy($session, $ttmeta, $newWeb, $newTopic);
                 unless ( $newControlledTopic ) {
@@ -1328,7 +1361,23 @@ sub _createForkedCopy {
     };
     $meta->put( "WORKFLOWHISTORY", $forkhistory );
 
+    my $origin = _getOrigin($newTopic);
+    if($newTopic ne $origin && Foswiki::Func::topicExists($newWeb, $origin)) {
+        # index workflow_hasdiscussion_b change
+        _requestSolrUpdate("$newWeb." . $origin);
+    }
+
     return _initTOPIC( $newWeb, $newTopic, undef, $meta, FORCENEW );
+}
+
+# Notify the SolrWorker, that we want a topic indexed.
+sub _requestSolrUpdate {
+    my ( $topic ) = @_;
+
+    return unless $Foswiki::cfg{Plugins}{TaskDaemonPlugin}{Enabled} && $Foswiki::cfg{Plugins}{SolrPlugin}{Enabled};
+
+    use Foswiki::Plugins::TaskDaemonPlugin;
+    Foswiki::Plugins::TaskDaemonPlugin::send($topic, 'update_topic', 'SolrPlugin');
 }
 
 # XXX requires changes in lib/Foswiki/Meta.pm
@@ -2027,6 +2076,22 @@ sub maintenanceHandler {
                     result => 1,
                     priority => $Foswiki::Plugins::MaintenancePlugin::WARN,
                     solution => "Edit {PluginsOrder} in configure to list KVPPlugin before MoreFormfieldsPlugin"
+                }
+            } else {
+                return { result => 0 };
+            }
+        }
+    });
+    Foswiki::Plugins::MaintenancePlugin::registerCheck("KVPPlugin:mailworkflowtransition.tmpl", {
+        name => "Check if mailworkflowtransition.tmpl customized",
+        description => "Customizing KVPPlugin's mailworkflowtransition.tmpl is no longer supported",
+        check => sub {
+            my @files = <"$Foswiki::cfg{TemplateDir}/mailworkflowtransition.*.tmpl">;
+            if(scalar @files) {
+                return {
+                    result => 1,
+                    priority => $Foswiki::Plugins::MaintenancePlugin::WARN,
+                    solution => "Please change your customization (".join(', ', @files).") to conform with MailTemplatesContrib."
                 }
             } else {
                 return { result => 0 };

@@ -3,6 +3,15 @@
 %{</verbatim>}%
 
 %{<verbatim class="tml">}%
+%TMPL:DEF{"modac::solr::dictionary"}%%TMPL:PREV%,
+  "draft":"%MAKETEXT{"draft"}%",
+  "approved":"%MAKETEXT{"approved"}%",
+  "discarded":"%MAKETEXT{"discarded"}%",
+  "discussion":"%MAKETEXT{"discussion"}%"
+%TMPL:END%
+%{</verbatim>}%
+
+%{<verbatim class="tml">}%
 %TMPL:DEF{"script:skinbase"}%%TMPL:PREV%%JSI18N{"KVPPlugin" id="solrkvp"}%%TMPL:END%
 %{</verbatim>}%
 

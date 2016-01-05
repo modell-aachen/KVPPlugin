@@ -1,15 +1,6 @@
 %TMPL:INCLUDE{"SolrSearchView"}%
 
 %{<verbatim class="tml">}%
-%TMPL:DEF{"modac::solr::dictionary"}%%TMPL:PREV%,
-  "draft":"%MAKETEXT{"draft"}%",
-  "approved":"%MAKETEXT{"approved"}%",
-  "discarded":"%MAKETEXT{"discarded"}%",
-  "discussion":"%MAKETEXT{"discussion"}%"
-%TMPL:END%
-%{</verbatim>}%
-
-%{<verbatim class="tml">}%
 %TMPL:DEF{"solr::hidesinglefacets"}%%TMPL:PREV%, process_state_s%TMPL:END%
 %{</verbatim>}%
 

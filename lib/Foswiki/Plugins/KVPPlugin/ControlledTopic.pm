@@ -26,6 +26,8 @@ use strict;
 use Foswiki (); # for regexes
 use Foswiki::Func ();
 
+use Foswiki::Contrib::MailTemplatesContrib;
+
 # Constructor
 sub new {
     my ( $class, $workflow, $web, $topic, $meta ) = @_;
@@ -108,6 +110,31 @@ sub getWorkflowMeta {
     }
 
     return $this->{state}->{$attributes};
+}
+
+# Remove LASTTIME_DRAFT etc. from META:WORKFLOW.
+# Do save the topic afterwards.
+# Parameters:
+#    * $this: controlled topic
+#    * state: Remove all data for this state. Leave empty to remove all of them.
+sub clearWorkflowMeta {
+    my ( $this, $state ) = @_;
+
+    my $reg;
+    if ( defined $state && $state !~ m#^\s*$#) {
+        $reg = join('|', map { qr#_\Q$_\E(?:_DT)?$# } split( m#\s*,\s*#, $state ) );
+    } else {
+        $reg = qr#^(?:LASTPROCESSOR|LASTTIME|LASTVERSION|LEAVING)_#;
+    }
+    Foswiki::Func::writeWarning($reg);
+
+    foreach my $key ( keys %{$this->{state}} ) {
+        delete $this->{state}->{$key} if $key =~ m#$reg#;
+    }
+
+    # Replace workflow-metadata
+    $this->{meta}->remove( 'WORKFLOW' ); # XXX sometime putKeyed doesn't replace
+    $this->{meta}->putKeyed( "WORKFLOW", $this->{state} );
 }
 
 # Alex: Get the extra Mailinglist (People involved in the Discussion)
@@ -476,51 +503,18 @@ sub changeState {
             }
         }
 
-        # Dig up the bodies
-        my @emails;
+        Foswiki::Func::setPreferencesValue(
+            'TARGET_STATE',
+            $this->getState()
+        );
+        Foswiki::Func::setPreferencesValue(
+            'EMAILTO',
+            $notify
+        );
+        Foswiki::Contrib::MailTemplatesContrib::sendMail('mailworkflowtransition', { IncludeCurrentUser => 1 });
 
-        my @persons = @{ _listToWikiNames( $notify ) };
 
-        # Should be enough to del_double mail adresses: @persons = del_double(@persons);
-
-        # Alex: Emailadressen auslesen
-        foreach my $who (@persons) {
-            if ( $who =~ /^$Foswiki::regex{emailAddrRegex}$/ ) {
-                push( @emails, $who );
-            }
-            else {
-                $who =~ s/^.*\.//;    # web name?
-                my @list = Foswiki::Func::wikinameToEmails($who);
-                if ( scalar(@list) ) {
-                    push( @emails, @list );
-                }
-                else {
-                    Foswiki::Func::writeWarning( __PACKAGE__
-                          . " cannot send mail to '$who'"
-                          . " - cannot determine an email address" );
-                }
-            }
-
-        }
-
-        # Alex: Email Doubletten verhindern:
-        @emails = del_double(@emails);
-
-        # Alex: Emails versenden
-        if ( scalar(@emails) ) {
-            # Have a list of recipients
-            my $text = Foswiki::Func::loadTemplate('mailworkflowtransition');
-            Foswiki::Func::setPreferencesValue(
-                'EMAILTO',
-                join( ', ', @emails )
-            );
-            Foswiki::Func::setPreferencesValue(
-                'TARGET_STATE',
-                $this->getState()
-            );
-            $notification = $this->expandMacros($text);
-        }
-        Foswiki::Func::writeWarning("Topic: '$this->{web}.$this->{topic}' Transition: '$action' Notify column: '$notify' Mails: ".join(", ", @emails)) if ($Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails});
+        Foswiki::Func::writeWarning("Topic: '$this->{web}.$this->{topic}' Transition: '$action' Notify column: '$notify'") if ($Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails});
     } else {
         Foswiki::Func::writeWarning("Topic: '$this->{web}.$this->{topic}' Transition: '$action' Notify column: empty") if ($Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails});
     }
@@ -554,11 +548,11 @@ sub save {
 }
 
 # Alex: Alle doppelten Werte aus einem Array lschen
-sub del_double{
-        my %all=();
-        @all{@_}=1;
-        delete $all{''};
-        return (keys %all);
+sub del_double {
+    my %all=();
+    @all{@_}=1;
+    delete $all{''};
+    return (keys %all);
 }
 
 sub expandMacros {
