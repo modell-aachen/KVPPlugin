@@ -1571,6 +1571,7 @@ sub _onTemplateExpansion {
             $setForm->{value}, $topic, $web, $meta);
         $setForm =~ s#^\s*##g;
         $setForm =~ s#\s*$##g;
+        $meta->remove('FORM');
         $meta->put('FORM', { name => $setForm } );
     }
     # SetField:
