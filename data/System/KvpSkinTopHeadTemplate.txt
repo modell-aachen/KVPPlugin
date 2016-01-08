@@ -59,11 +59,11 @@
 		</tr>
 		<tr style='height: 24px;'>
 			<td style='text-align: center;'>
-				Last author:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%" format="$diplayName"}%</strong></td>
+				Last author:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%" format="$displayName"}%</strong></td>
 			<td style='text-align: center;'>
 				Responsible:<strong><br />%RENDERFORDISPLAY{fields="Responsible" format="$value"}%</strong></td>
 			<td style='text-align: center;'>
-				Approved by:<strong><br />%RENDERUSER{%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%" format="$displayName"}%</strong></td>
+				Approved by:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%" format="$displayName"}%</strong></td>
 			<td style='text-align: center;'>
 				Release date:<strong><br />%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1"}%</strong></td>
 			<td style='text-align: center;'>
