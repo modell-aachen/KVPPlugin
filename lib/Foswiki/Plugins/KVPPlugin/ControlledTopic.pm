@@ -485,6 +485,9 @@ sub changeState {
             $value = Foswiki::Func::expandCommonVariables( $value, $this->{topic}, $this->{web}, $this->{meta} );
             $this->{meta}->putKeyed( 'FIELD', { name=>$name, title=>$name, value=>$value } );
         }
+        if ( $attributes =~ m/FORCESAVECONTEXT/ ) {
+            $this->{forceSaveContext} = 1;
+        }
     }
 
     my $notification;
@@ -549,10 +552,17 @@ sub save {
     } else {
         $options = { forcenewrevision => 1};
     }
+    my $saveContextActive = 1;
+    my $session = $Foswiki::Plugins::SESSION;
+    if ($this->{forceSaveContext} && !$session->inContext('save')) {
+        $saveContextActive = 0;
+        $session->enterContext('save', 1);
+    }
     Foswiki::Func::saveTopic(
         $this->{web}, $this->{topic}, $this->{meta},
         $this->{meta}->text(), $options
     );
+    $session->leaveContext('save') unless $saveContextActive;
 }
 
 # Alex: Alle doppelten Werte aus einem Array lschen
