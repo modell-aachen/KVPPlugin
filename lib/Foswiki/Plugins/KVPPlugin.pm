@@ -1663,7 +1663,9 @@ sub _XXXCopyTemplateStuffFromCore {
     my @attachments = ();
 
     # Chunk copied from Foswiki::UI::Save::buildNewTopic
-    # changes: not changing text of topicObject
+    # changes:
+    #    * not changing text of topicObject
+    #    * copy metadata after copying attachments and check their existance
 
     my ( $invalidTemplateWeb, $invalidTemplateTopic ) =
       $session->normalizeWebTopicName( $templateWeb, $templateTopic );
@@ -1700,21 +1702,13 @@ sub _XXXCopyTemplateStuffFromCore {
 
     foreach my $k ( keys %$ttom ) {
 
-        # Skip internal fields and TOPICINFO, TOPICMOVED
-        unless ( $k =~ m/^(_|TOPIC|FILEATTACHMENT)/ ) {
-            # copyFrom overwrites old values
-            my @oldMeta = $topicObject->find( $k );
-            if( scalar @oldMeta ) {
-                 my @newMeta = $ttom->find( $k );
-                 $topicObject->putAll( $k, @newMeta, @oldMeta ); # XXX Why do I have to re-put the old values? A simple put will clear them...
-            } else {
-                $topicObject->copyFrom( $ttom, $k );
-            }
-        }
+        # change: Will copy metadata later, because copyAttachment might leak metadata if the save gets abortet
+        # change: check if attachment exists in store, because we do want to avoid an exception
 
         # attachments to be copied later
         if ( $k eq 'FILEATTACHMENT' ) {
             foreach my $a ( @{ $ttom->{$k} } ) {
+                next unless $ttom->hasAttachment($a->{name}); # change: make sure it exists
                 push(
                     @attachments,
                     {
@@ -1754,6 +1748,23 @@ sub _XXXCopyTemplateStuffFromCore {
             };
         }
     }
+
+    # change: do the loop again and really do copy the metadata
+    foreach my $k ( keys %$ttom ) {
+
+        # Skip internal fields and TOPICINFO, TOPICMOVED
+        unless ( $k =~ m/^(_|TOPIC|FILEATTACHMENT)/ ) {
+            # copyFrom overwrites old values
+            my @oldMeta = $topicObject->find( $k );
+            if( scalar @oldMeta ) {
+                my @newMeta = $ttom->find( $k );
+                $topicObject->putAll( $k, @newMeta, @oldMeta ); # XXX Why do I have to re-put the old values? A simple put will clear them...
+            } else {
+                $topicObject->copyFrom( $ttom, $k );
+            }
+        }
+    }
+
 }
 
 # The beforeSaveHandler inspects the request parameters to see if the
