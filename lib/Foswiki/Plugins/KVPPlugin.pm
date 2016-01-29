@@ -2121,6 +2121,28 @@ sub maintenanceHandler {
             }
         }
     });
+    Foswiki::Plugins::MaintenancePlugin::registerCheck("KVPPlugin:AlternativeMetaCommentACLs", {
+        name => "Check if alternative MetaCommentPlugin ACLs are used",
+        description => "There is a better alternative ACL check for MetaComments",
+        check => sub {
+            my $isOk = 1;
+            $isOk = 0 unless $Foswiki::cfg{Extensions}{KVPPlugin}{DoNotManageMetaCommentACLs};
+            $isOk = 0 unless $Foswiki::cfg{MetaCommentPlugin}{AlternativeACLCheck};
+            unless($isOk) {
+                return {
+                    result => 1,
+                    priority => $Foswiki::Plugins::MaintenancePlugin::WARN,
+                    solution => "It might be on purpose, but you have not configured the alternative ACL checks for MetaCommentPlugin."
+                        . "<br/>Recommended settings are:"
+                        . "<br/><em>\$Foswiki::cfg{Extensions}{KVPPlugin}{DoNotManageMetaCommentACLs}</em>=<em>enabled</em>"
+                        . "<br/><em>\$Foswiki::cfg{Extensions}{KVPPlugin}{ScrubMetaCommentACLs}</em>=<em>enabled</em> (for legacy installations)"
+                        . "<br/><em>\$Foswiki::cfg{MetaCommentPlugin}{AlternativeACLCheck}</em>=<em>%<nop>WORKFLOWALLOWS{\"comment\" isEmpty=\"0\"}%</em>"
+                }
+            } else {
+                return { result => 0 };
+            }
+        }
+    });
 }
 
 1;
