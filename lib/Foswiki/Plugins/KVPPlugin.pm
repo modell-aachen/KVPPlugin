@@ -151,6 +151,17 @@ sub _WORKFLOWALLOWS {
     my $nocache = ( ($params->{nocache}) ? 1 : undef );
 
     my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev, undef, $nocache );
+
+    if (defined $params->{emptyIs}) {
+        my $row;
+        if($controlledTopic) {
+            $row = $controlledTopic->getRow("allow$action");
+        } else {
+            $row = $params->{uncontrolled};
+        }
+        return $params->{emptyIs} if $row eq '';
+    }
+
     return $params->{uncontrolled} unless $controlledTopic;
     return $controlledTopic->isAllowing($action) ? 1 : 0;
 }
