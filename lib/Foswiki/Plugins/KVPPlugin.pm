@@ -1297,7 +1297,9 @@ sub _restFork {
                 $directToWeb = $newWeb;
                 $directToTopic = $newControlledTopic->{topic}; # might have changed due to AUTOINC
 
+                Foswiki::Func::pushTopicContext($newWeb, $newControlledTopic->{topic}); # have %TOPIC% point to correct location
                 my $mail = $newControlledTopic->changeState($newAction);
+                Foswiki::Func::popTopicContext();
                 local $isStateChange = 1;
                 $newControlledTopic->save(1);
                 local $isStateChange = 0;
