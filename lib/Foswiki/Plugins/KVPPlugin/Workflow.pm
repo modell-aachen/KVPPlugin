@@ -389,6 +389,7 @@ sub _topicAllows {
         $allowed = 'nobody'; # This will empower admins
     } else {
         $allowed = $topic->expandMacros( $this->{states}->{$state}->{$what} );
+        $allowed = 'nobody' if ($allowed !~ m#\S# && $this->{states}->{$state}->{$what} =~ m#\S#); # eg. formfield is empty
     }
     return _isAllowed($allowed);
 }
