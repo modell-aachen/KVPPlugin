@@ -2,7 +2,7 @@
 %TMPL:INCLUDE{"Transitions"}%
 
 %TMPL:DEF{"comments"}% %IF{
-  "%WORKFLOWALLOWS{"comment" emptyIs="0"}% and not context save and not context preview and not context edit"
+  "%WORKFLOWALLOWS{"allowcomment" emptyIs="0" nonEmptyIs="1"}% and not context save and not context preview and not context edit"
   then="<div>$percntTMPL:P{\"metacomments\"}$percnt</div>"
   else="<!-- -->"
 }%<!-- -->

@@ -152,14 +152,15 @@ sub _WORKFLOWALLOWS {
 
     my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev, undef, $nocache );
 
-    if (defined $params->{emptyIs}) {
+    if (defined $params->{emptyIs} || defined $params->{nonEmptyIs}) {
         my $row;
         if($controlledTopic) {
-            $row = $controlledTopic->getRow("allow$action");
+            $row = $controlledTopic->getRow($action);
         } else {
             $row = $params->{uncontrolled};
         }
-        return $params->{emptyIs} if $row eq '';
+        return $params->{emptyIs} if ($row eq '' && defined $params->{emptyIs});
+        return $params->{nonEmptyIs} if ($row ne '' && defined $params->{nonEmptyIs});
     }
 
     return $params->{uncontrolled} unless $controlledTopic;
@@ -2138,7 +2139,7 @@ sub maintenanceHandler {
                         . "<br/>Recommended settings are:"
                         . "<br/><em>\$Foswiki::cfg{Extensions}{KVPPlugin}{DoNotManageMetaCommentACLs}</em>=<em>enabled</em>"
                         . "<br/><em>\$Foswiki::cfg{Extensions}{KVPPlugin}{ScrubMetaCommentACLs}</em>=<em>enabled</em> (for legacy installations)"
-                        . "<br/><em>\$Foswiki::cfg{MetaCommentPlugin}{AlternativeACLCheck}</em>=<em>%<nop>WORKFLOWALLOWS{\"comment\" isEmpty=\"0\"}%</em>"
+                        . "<br/><em>\$Foswiki::cfg{MetaCommentPlugin}{AlternativeACLCheck}</em>=<em>%<nop>WORKFLOWALLOWS{\"allowcomment\" isEmpty=\"0\"}%</em>"
                 }
             } else {
                 return { result => 0 };
