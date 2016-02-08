@@ -215,32 +215,40 @@ sub setState {
     $this->{meta}->putKeyed( 'KVPSTATECHANGE', {name => 'TRANSITION', value=> "$oldState -> $state", old=>$oldState, new=>$state} );
 
     # manage comments
-    my $allowComment = $this->{workflow}->getRow($this, 'allowcomment');
-    $allowComment = $this->expandMacros( $allowComment );
-    if($allowComment) {
-        $this->{meta}->putKeyed("PREFERENCE",
-            { name => 'DISPLAYCOMMENTS', value => 'on' }
-        );
-        if($allowComment =~ m/\bLOGGEDIN\b/) {
-            my $wikiguest = $Foswiki::cfg{DefaultUserWikiName};
-            $this->{meta}->putKeyed("PREFERENCE",
-                {
-                    name => 'DENYTOPICCOMMENT',
-                    title => 'DENYTOPICCOMMENT',
-                    value => ($allowComment =~ m/\b$wikiguest\b/)?'nobody':$wikiguest
-                }
-            );
+    if( $Foswiki::cfg{Extensions}{KVPPlugin}{DoNotManageMetaCommentACLs} ) {
+        if( $Foswiki::cfg{Extensions}{KVPPlugin}{ScrubMetaCommentACLs} ) {
             $this->{meta}->remove( 'PREFERENCE', 'ALLOWTOPICCOMMENT' );
-        } else {
-          $this->{meta}->remove( 'PREFERENCE', 'DENYTOPICCOMMENT' );
-          $this->{meta}->putKeyed("PREFERENCE",
-                { name => 'ALLOWTOPICCOMMENT', value => $allowComment }
-          );
+            $this->{meta}->remove( 'PREFERENCE', 'DENYTOPICCOMMENT' );
+            $this->{meta}->remove( 'PREFERENCE', 'DISPLAYCOMMENTS' );
         }
     } else {
-        $this->{meta}->putKeyed("PREFERENCE",
-            { name => 'DISPLAYCOMMENTS', value => 'off' }
-        );
+        my $allowComment = $this->{workflow}->getRow($this, 'allowcomment');
+        $allowComment = $this->expandMacros( $allowComment );
+        if($allowComment) {
+            $this->{meta}->putKeyed("PREFERENCE",
+                { name => 'DISPLAYCOMMENTS', value => 'on' }
+            );
+            if($allowComment =~ m/\bLOGGEDIN\b/) {
+                my $wikiguest = $Foswiki::cfg{DefaultUserWikiName};
+                $this->{meta}->putKeyed("PREFERENCE",
+                    {
+                        name => 'DENYTOPICCOMMENT',
+                        title => 'DENYTOPICCOMMENT',
+                        value => ($allowComment =~ m/\b$wikiguest\b/)?'nobody':$wikiguest
+                    }
+                );
+                $this->{meta}->remove( 'PREFERENCE', 'ALLOWTOPICCOMMENT' );
+            } else {
+              $this->{meta}->remove( 'PREFERENCE', 'DENYTOPICCOMMENT' );
+              $this->{meta}->putKeyed("PREFERENCE",
+                    { name => 'ALLOWTOPICCOMMENT', value => $allowComment }
+              );
+            }
+        } else {
+            $this->{meta}->putKeyed("PREFERENCE",
+                { name => 'DISPLAYCOMMENTS', value => 'off' }
+            );
+        }
     }
 }
 

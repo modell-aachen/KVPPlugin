@@ -151,6 +151,18 @@ sub _WORKFLOWALLOWS {
     my $nocache = ( ($params->{nocache}) ? 1 : undef );
 
     my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev, undef, $nocache );
+
+    if (defined $params->{emptyIs} || defined $params->{nonEmptyIs}) {
+        my $row;
+        if($controlledTopic) {
+            $row = $controlledTopic->getRow($action);
+        } else {
+            $row = $params->{uncontrolled};
+        }
+        return $params->{emptyIs} if ((!defined $row || $row eq '') && defined $params->{emptyIs});
+        return $params->{nonEmptyIs} if (defined $row && $row ne '' && defined $params->{nonEmptyIs});
+    }
+
     return $params->{uncontrolled} unless $controlledTopic;
     return $controlledTopic->isAllowing($action) ? 1 : 0;
 }
@@ -1286,7 +1298,9 @@ sub _restFork {
                 $directToWeb = $newWeb;
                 $directToTopic = $newControlledTopic->{topic}; # might have changed due to AUTOINC
 
+                Foswiki::Func::pushTopicContext($newWeb, $newControlledTopic->{topic}); # have %TOPIC% point to correct location
                 my $mail = $newControlledTopic->changeState($newAction);
+                Foswiki::Func::popTopicContext();
                 local $isStateChange = 1;
                 $newControlledTopic->save(1);
                 local $isStateChange = 0;
@@ -1663,7 +1677,9 @@ sub _XXXCopyTemplateStuffFromCore {
     my @attachments = ();
 
     # Chunk copied from Foswiki::UI::Save::buildNewTopic
-    # changes: not changing text of topicObject
+    # changes:
+    #    * not changing text of topicObject
+    #    * copy metadata after copying attachments and check their existance
 
     my ( $invalidTemplateWeb, $invalidTemplateTopic ) =
       $session->normalizeWebTopicName( $templateWeb, $templateTopic );
@@ -1700,21 +1716,13 @@ sub _XXXCopyTemplateStuffFromCore {
 
     foreach my $k ( keys %$ttom ) {
 
-        # Skip internal fields and TOPICINFO, TOPICMOVED
-        unless ( $k =~ m/^(_|TOPIC|FILEATTACHMENT)/ ) {
-            # copyFrom overwrites old values
-            my @oldMeta = $topicObject->find( $k );
-            if( scalar @oldMeta ) {
-                 my @newMeta = $ttom->find( $k );
-                 $topicObject->putAll( $k, @newMeta, @oldMeta ); # XXX Why do I have to re-put the old values? A simple put will clear them...
-            } else {
-                $topicObject->copyFrom( $ttom, $k );
-            }
-        }
+        # change: Will copy metadata later, because copyAttachment might leak metadata if the save gets abortet
+        # change: check if attachment exists in store, because we do want to avoid an exception
 
         # attachments to be copied later
         if ( $k eq 'FILEATTACHMENT' ) {
             foreach my $a ( @{ $ttom->{$k} } ) {
+                next unless $ttom->hasAttachment($a->{name}); # change: make sure it exists
                 push(
                     @attachments,
                     {
@@ -1754,6 +1762,23 @@ sub _XXXCopyTemplateStuffFromCore {
             };
         }
     }
+
+    # change: do the loop again and really do copy the metadata
+    foreach my $k ( keys %$ttom ) {
+
+        # Skip internal fields and TOPICINFO, TOPICMOVED
+        unless ( $k =~ m/^(_|TOPIC|FILEATTACHMENT)/ ) {
+            # copyFrom overwrites old values
+            my @oldMeta = $topicObject->find( $k );
+            if( scalar @oldMeta ) {
+                my @newMeta = $ttom->find( $k );
+                $topicObject->putAll( $k, @newMeta, @oldMeta ); # XXX Why do I have to re-put the old values? A simple put will clear them...
+            } else {
+                $topicObject->copyFrom( $ttom, $k );
+            }
+        }
+    }
+
 }
 
 # The beforeSaveHandler inspects the request parameters to see if the
@@ -2093,6 +2118,87 @@ sub maintenanceHandler {
                     result => 1,
                     priority => $Foswiki::Plugins::MaintenancePlugin::WARN,
                     solution => "Please change your customization (".join(', ', @files).") to conform with MailTemplatesContrib."
+                }
+            } else {
+                return { result => 0 };
+            }
+        }
+    });
+    Foswiki::Plugins::MaintenancePlugin::registerCheck("KVPPlugin:AlternativeMetaCommentACLs", {
+        name => "Check if alternative MetaCommentPlugin ACLs are used",
+        description => "There is a better alternative ACL check for MetaComments",
+        check => sub {
+            my $isOk = 1;
+            $isOk = 0 unless $Foswiki::cfg{Extensions}{KVPPlugin}{DoNotManageMetaCommentACLs};
+            $isOk = 0 unless $Foswiki::cfg{MetaCommentPlugin}{AlternativeACLCheck};
+            unless($isOk) {
+                return {
+                    result => 1,
+                    priority => $Foswiki::Plugins::MaintenancePlugin::WARN,
+                    solution => "It might be on purpose, but you have not configured the alternative ACL checks for MetaCommentPlugin."
+                        . "<br/>Recommended settings are:"
+                        . "<br/><em>\$Foswiki::cfg{Extensions}{KVPPlugin}{DoNotManageMetaCommentACLs}</em>=<em>enabled</em>"
+                        . "<br/><em>\$Foswiki::cfg{Extensions}{KVPPlugin}{ScrubMetaCommentACLs}</em>=<em>enabled</em> (for legacy installations)"
+                        . "<br/><em>\$Foswiki::cfg{MetaCommentPlugin}{AlternativeACLCheck}</em>=<em>%<nop>WORKFLOWALLOWS{\"allowcomment\" isEmpty=\"0\"}%</em>"
+                }
+            } else {
+                return { result => 0 };
+            }
+        }
+    });
+    Foswiki::Plugins::MaintenancePlugin::registerCheck("KVPPlugin:SkinOrder", {
+        name => "Check if kvp skin is after metacomment skin.",
+        description => "kvp should appear after (left of) metacomment in SKIN.",
+        check => sub {
+
+            # checks text of meta for wrong SKIN setting
+            sub _check {
+                my ( $meta, $failed ) = @_;
+
+                foreach my $line ( split(m#\n#, $meta->text()) ) {
+                    if ($line =~ m#$Foswiki::regex{setVarRegex}#) {
+                        next unless $1 eq 'Set';
+                        next unless $2 eq 'SKIN';
+                        my $skin = $3;
+
+                        if($skin =~ m#(.*,|^)\s*metacomment\s*,(.*)\bkvp\b(.*)#) {
+                            my $pre = $1;
+                            my $sep = $2;
+                            my $tail = $3;
+
+                            $failed->{$meta}->{reason} = $skin;
+                            $failed->{$meta}->{suggestion} = "${pre}${sep}kvp,metacomment$tail";
+                            $failed->{$meta}->{webtopic} = $meta->web().'.'.$meta->topic();
+                        }
+                    }
+                }
+            };
+
+            my $failed = {};
+
+            # SitePreferences
+            (my $meta, undef) = Foswiki::Func::readTopic($Foswiki::cfg{UsersWebName}, 'SitePreferences');
+            _check($meta, $failed);
+
+            # WebPreferences
+            foreach my $web ( Foswiki::Func::getListOfWebs ) {
+                (my $meta, undef) = Foswiki::Func::readTopic($web, $Foswiki::cfg{WebPrefsTopicName});
+                _check($meta, $failed);
+            }
+
+            if (scalar keys %$failed) {
+                my $solution = 'Please put kvp after (left of) metacomment in SKIN variable:'
+                    . '<table><thead><tr><th>Topic</th><th>Current</th><th>Recommended</th></tr><thead><tbody>';
+                foreach my $failure ( sort keys %$failed ) {
+                    my $webtopic = $failed->{$failure}->{webtopic};
+                    $solution .= "<tr><td>[[$webtopic][$webtopic]]</td><td>".$failed->{$failure}->{reason}."</td><td>".$failed->{$failure}{suggestion}."</td></tr>";
+                }
+                $solution .= '</tbody></table>';
+
+                return {
+                    result => 1,
+                    priority => $Foswiki::Plugins::MaintenancePlugin::ERROR,
+                    solution => "$solution"
                 }
             } else {
                 return { result => 0 };
