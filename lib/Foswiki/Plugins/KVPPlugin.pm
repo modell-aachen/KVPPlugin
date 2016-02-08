@@ -159,8 +159,8 @@ sub _WORKFLOWALLOWS {
         } else {
             $row = $params->{uncontrolled};
         }
-        return $params->{emptyIs} if ($row eq '' && defined $params->{emptyIs});
-        return $params->{nonEmptyIs} if ($row ne '' && defined $params->{nonEmptyIs});
+        return $params->{emptyIs} if ((!defined $row || $row eq '') && defined $params->{emptyIs});
+        return $params->{nonEmptyIs} if (defined $row && $row ne '' && defined $params->{nonEmptyIs});
     }
 
     return $params->{uncontrolled} unless $controlledTopic;
