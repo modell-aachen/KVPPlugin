@@ -2146,6 +2146,65 @@ sub maintenanceHandler {
             }
         }
     });
+    Foswiki::Plugins::MaintenancePlugin::registerCheck("KVPPlugin:SkinOrder", {
+        name => "Check if kvp skin is after metacomment skin.",
+        description => "kvp should appear after (left of) metacomment in SKIN.",
+        check => sub {
+
+            # checks text of meta for wrong SKIN setting
+            sub _check {
+                my ( $meta, $failed ) = @_;
+
+                foreach my $line ( split(m#\n#, $meta->text()) ) {
+                    if ($line =~ m#$Foswiki::regex{setVarRegex}#) {
+                        next unless $1 eq 'Set';
+                        next unless $2 eq 'SKIN';
+                        my $skin = $3;
+
+                        if($skin =~ m#(.*,|^)\s*metacomment\s*,(.*)\bkvp\b(.*)#) {
+                            my $pre = $1;
+                            my $sep = $2;
+                            my $tail = $3;
+
+                            $failed->{$meta}->{reason} = $skin;
+                            $failed->{$meta}->{suggestion} = "${pre}${sep}kvp,metacomment$tail";
+                            $failed->{$meta}->{webtopic} = $meta->web().'.'.$meta->topic();
+                        }
+                    }
+                }
+            };
+
+            my $failed = {};
+
+            # SitePreferences
+            (my $meta, undef) = Foswiki::Func::readTopic($Foswiki::cfg{UsersWebName}, 'SitePreferences');
+            _check($meta, $failed);
+
+            # WebPreferences
+            foreach my $web ( Foswiki::Func::getListOfWebs ) {
+                (my $meta, undef) = Foswiki::Func::readTopic($web, $Foswiki::cfg{WebPrefsTopicName});
+                _check($meta, $failed);
+            }
+
+            if (scalar keys %$failed) {
+                my $solution = 'Please put kvp after (left of) metacomment in SKIN variable:'
+                    . '<table><thead><tr><th>Topic</th><th>Current</th><th>Recommended</th></tr><thead><tbody>';
+                foreach my $failure ( sort keys %$failed ) {
+                    my $webtopic = $failed->{$failure}->{webtopic};
+                    $solution .= "<tr><td>[[$webtopic][$webtopic]]</td><td>".$failed->{$failure}->{reason}."</td><td>".$failed->{$failure}{suggestion}."</td></tr>";
+                }
+                $solution .= '</tbody></table>';
+
+                return {
+                    result => 1,
+                    priority => $Foswiki::Plugins::MaintenancePlugin::ERROR,
+                    solution => "$solution"
+                }
+            } else {
+                return { result => 0 };
+            }
+        }
+    });
 }
 
 1;
