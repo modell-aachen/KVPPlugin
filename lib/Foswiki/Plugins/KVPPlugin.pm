@@ -2139,7 +2139,7 @@ sub maintenanceHandler {
                         . "<br/>Recommended settings are:"
                         . "<br/><em>\$Foswiki::cfg{Extensions}{KVPPlugin}{DoNotManageMetaCommentACLs}</em>=<em>enabled</em>"
                         . "<br/><em>\$Foswiki::cfg{Extensions}{KVPPlugin}{ScrubMetaCommentACLs}</em>=<em>enabled</em> (for legacy installations)"
-                        . "<br/><em>\$Foswiki::cfg{MetaCommentPlugin}{AlternativeACLCheck}</em>=<em>%<nop>WORKFLOWALLOWS{\"allowcomment\" isEmpty=\"0\"}%</em>"
+                        . "<br/><em>\$Foswiki::cfg{MetaCommentPlugin}{AlternativeACLCheck}</em>=<em>%<nop>WORKFLOWALLOWS{\"allowcomment\" emptyIs=\"0\"}%</em>"
                 }
             } else {
                 return { result => 0 };
