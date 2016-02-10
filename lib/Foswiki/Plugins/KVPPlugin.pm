@@ -369,14 +369,15 @@ sub afterRenameHandler {
     Foswiki::Func::moveTopic($oldWeb, $oldDiscussion, $newWeb, $newDiscussion);
 }
 
+
 sub _WORKFLOWGETREVFOR {
     my ( $session, $attributes, $topic, $web ) = @_;
 
     # TODO: get rev by version etc.
 
     my $name = $attributes->{name} || $attributes->{_DEFAULT};
-    return '0' unless $name;
-    my $nameRegExp = qr#^(?:$name)$#;
+    my $nameRegExp;
+    my $version;
 
     my $skip = $attributes->{skip} || 0;
 
@@ -389,11 +390,27 @@ sub _WORKFLOWGETREVFOR {
     return ((defined $attributes->{uncontrolled}) ? $attributes->{uncontrolled} : '0') unless $controlledTopic;
 
     unless (defined $rev) {
-        my %info = $controlledTopic->{meta}->getRevisionInfo();
-        $rev = $info{version} || 0;
+        my @info = $controlledTopic->{meta}->getRevisionInfo();
+        $rev = $info[2] || 0;
     }
 
-    while((not $controlledTopic->getState() =~ m#$nameRegExp#) || $skip--) {
+    if($name) {
+        $nameRegExp = qr/^(?:$name)$/;
+    } else {
+        $nameRegExp = qr/.*/;
+    }
+
+    $version = $attributes->{version};
+    if(defined $version) {
+        if($version =~ m#^\s*-(\d+)#) {
+            my $diff = $1;
+            $version = $controlledTopic->getWorkflowMeta( 'Revision' ) - $diff;
+        }
+    } else {
+        $version = 99999;
+    }
+
+    while(((not $controlledTopic->getState() =~ m#$nameRegExp#) || $controlledTopic->getWorkflowMeta( 'Revision' ) > $version) || $skip--) {
         unless(--$rev >= 0) {
             $rev = ((defined $attributes->{notfound}) ? $attributes->{notfound} : 0);
             last;
