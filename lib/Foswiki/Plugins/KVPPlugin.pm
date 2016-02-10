@@ -1496,7 +1496,7 @@ sub beforeEditHandler {
         }
     }
 
-    my $controlledTopic = _initTOPIC( $web, $topic );
+    my $controlledTopic = _initTOPIC( $web, $topic, undef, undef, undef, NOCACHE );
 
     return unless $controlledTopic; # not controlled, so check not required
 
@@ -1526,7 +1526,7 @@ sub beforeUploadHandler {
     my $web = $meta->web();
     my $topic = $meta->topic();
 
-    my $controlledTopic = _initTOPIC( $web, $topic );
+    my $controlledTopic = _initTOPIC( $web, $topic, undef, undef, undef, NOCACHE  );
     return unless $controlledTopic;
 
     unless ( $controlledTopic->canEdit() ) {
