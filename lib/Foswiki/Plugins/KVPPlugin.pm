@@ -866,6 +866,7 @@ sub transitionTopic {
     }
 
     my $appTopic = _getOrigin($topic); # do not fallback on originCache, this might be called from another plugin
+    my $appWeb = $web;
     try {
         $url = Foswiki::Func::getScriptUrl( $web, $topic, 'view' );
 
@@ -874,28 +875,31 @@ sub transitionTopic {
         my $saved;
 
         # Create copy if this is a fork
-        if( !$noFork && $actionAttributes =~ m#(?:\W|^)FORK((?:\((?:".*?")?[^)]*\))?)(?:\W|$)# ) {
+        if( !$noFork && $actionAttributes =~ m#(?:\W|^)(?:SELECTABLE)?FORK((?:\((?:".*?")?[^)]*\))?)(?:\W|$)# ) {
             my $params = $1;
 
             $appTopic .= _WORKFLOWSUFFIX();
             if($params) {
-                if( $params =~ s#"(.*?)"\s*## ) {
+                if( $params =~ s#topic="(.*?)"\s*## ) {
                     $appTopic = $1;
+                }
+                if( $params =~ s#web="(.*?)"\s*## ) {
+                    $appWeb = $1;
                 }
             }
             if($actionAttributes =~ m#SETREV\(\s*version\s*=\s*\"(\d+[.,]?\d*)(?<!\\)\"\s*\)#) {
                 $controlledTopic->setRev( $1 );
             }
 
-            if ( Foswiki::Func::topicExists($web, $appTopic) && $appTopic !~ m#AUTOINC\d+# ) {
-                throw Error::Simple('%MAKETEXT{"Forked topic exists: [_1]" args="'."Rweb.$appTopic".'"}%');
+            if ( Foswiki::Func::topicExists($appWeb, $appTopic) && $appTopic !~ m#AUTOINC\d+# ) {
+                throw Error::Simple('%MAKETEXT{"Forked topic exists: [_1]" args="'."$appWeb.$appTopic".'"}%');
             }
 
             $saved = _pushParams( $params );
-            $controlledTopic = _createForkedCopy($session, $controlledTopic->{meta}, $web, $appTopic);
+            $controlledTopic = _createForkedCopy($session, $controlledTopic->{meta}, $appWeb, $appTopic);
             $appTopic = $controlledTopic->{topic};
 
-            $url = Foswiki::Func::getScriptUrl( $web, $appTopic, 'view' );
+            $url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
         }
 
         if( $actionAttributes =~ m/(?:\W|^)CLEARMETA((?:\((?:".*?")?[^)]*\))?)(?:\W|$)/ ) {
@@ -974,7 +978,7 @@ sub transitionTopic {
                     # We need to rethrow with _this_ transition, or a click on 'transition anyway' will only transition the chained one.
                     throw Foswiki::OopsException(
                         'oopswfplease',
-                        web => $web,
+                        web => $appWeb,
                         topic => $appTopic,
                         params => [$e->{params}->[0], $e->{params}->[1], $e->{params}->[2], $state, $action, $remark, $removeComments ]
                     );
