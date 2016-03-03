@@ -2153,6 +2153,25 @@ sub maintenanceHandler {
             }
         }
     });
+    Foswiki::Plugins::MaintenancePlugin::registerCheck("KVPPlugin:StoreImplementation", {
+        name => "KVPPlugin store compatibility",
+        description => "Check if KVPPlugin supports current store implementation.",
+        check => sub {
+            my $session = $Foswiki::Plugins::SESSION;
+            if (
+                $session->{store}->can('copyTopic') # PlainFileStore
+                || $session->{store}->can('getHandler') # Rcs
+            ) {
+                return { result => 0 };
+            } else {
+                return {
+                    result => 1,
+                    priority => $Foswiki::Plugins::MaintenancePlugin::ERROR,
+                    solution => "Please re-install (Modac version of) PlainFileStoreContrib."
+                }
+            }
+        }
+    });
     Foswiki::Plugins::MaintenancePlugin::registerCheck("KVPPlugin:SkinOrder", {
         name => "Check if kvp skin is after metacomment skin.",
         description => "kvp should appear after (left of) metacomment in SKIN.",
