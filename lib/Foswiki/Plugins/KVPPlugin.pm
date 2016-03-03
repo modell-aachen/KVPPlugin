@@ -880,6 +880,9 @@ sub transitionTopic {
 
             $appTopic .= _WORKFLOWSUFFIX();
             if($params) {
+                if( $params =~ s#^\s*\(\s*"(.*?)"\s*## ) {
+                    $appTopic = $1;
+                }
                 if( $params =~ s#topic="(.*?)"\s*## ) {
                     $appTopic = $1;
                 }
