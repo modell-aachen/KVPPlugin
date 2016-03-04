@@ -557,12 +557,16 @@ sub save {
     if ($this->{forceSaveContext} && !$session->inContext('save')) {
         $saveContextActive = 0;
         $session->enterContext('save', 1);
+        Foswiki::Func::pushTopicContext($this->{web}, $this->{topic});
     }
     Foswiki::Func::saveTopic(
         $this->{web}, $this->{topic}, $this->{meta},
         $this->{meta}->text(), $options
     );
-    $session->leaveContext('save') unless $saveContextActive;
+    unless ($saveContextActive) {
+        $session->leaveContext('save');
+        Foswiki::Func::popTopicContext();
+    }
 }
 
 # Alex: Alle doppelten Werte aus einem Array lschen
