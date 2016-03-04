@@ -949,7 +949,7 @@ sub transitionTopic {
         while( $actionAttributes =~ m/\G.*?(?<!\w)CHAIN\s*\(\s*/g ) {
             my $options = {
                 web => $web,
-                topic => $topic
+                topic => $appTopic
             };
             my ($name, $val);
             while($actionAttributes !~ m/\G\)/gc) {
