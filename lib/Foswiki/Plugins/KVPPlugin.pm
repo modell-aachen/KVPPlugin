@@ -1526,6 +1526,8 @@ sub beforeUploadHandler {
     my $web = $meta->web();
     my $topic = $meta->topic();
 
+    # XXX unfortunately we can not handle KVPSTATECHANGE, because Meta.pm will do a loadVersion afterwards.
+
     my $controlledTopic = _initTOPIC( $web, $topic, undef, undef, undef, NOCACHE  );
     return unless $controlledTopic;
 
