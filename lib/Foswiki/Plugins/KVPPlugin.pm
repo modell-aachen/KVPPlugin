@@ -866,6 +866,7 @@ sub transitionTopic {
     }
 
     my $appTopic = _getOrigin($topic); # do not fallback on originCache, this might be called from another plugin
+    my $appWeb = $web;
     try {
         $url = Foswiki::Func::getScriptUrl( $web, $topic, 'view' );
 
@@ -874,28 +875,34 @@ sub transitionTopic {
         my $saved;
 
         # Create copy if this is a fork
-        if( !$noFork && $actionAttributes =~ m#(?:\W|^)FORK((?:\((?:".*?")?[^)]*\))?)(?:\W|$)# ) {
+        if( !$noFork && $actionAttributes =~ m#(?:\W|^)(?:SELECTABLE)?FORK((?:\((?:".*?")?[^)]*\))?)(?:\W|$)# ) {
             my $params = $1;
 
             $appTopic .= _WORKFLOWSUFFIX();
             if($params) {
-                if( $params =~ s#"(.*?)"\s*## ) {
+                if( $params =~ s#^\s*\(\s*"(.*?)"\s*## ) {
                     $appTopic = $1;
+                }
+                if( $params =~ s#topic="(.*?)"\s*## ) {
+                    $appTopic = $1;
+                }
+                if( $params =~ s#web="(.*?)"\s*## ) {
+                    $appWeb = $1;
                 }
             }
             if($actionAttributes =~ m#SETREV\(\s*version\s*=\s*\"(\d+[.,]?\d*)(?<!\\)\"\s*\)#) {
                 $controlledTopic->setRev( $1 );
             }
 
-            if ( Foswiki::Func::topicExists($web, $appTopic) && $appTopic !~ m#AUTOINC\d+# ) {
-                throw Error::Simple('%MAKETEXT{"Forked topic exists: [_1]" args="'."Rweb.$appTopic".'"}%');
+            if ( Foswiki::Func::topicExists($appWeb, $appTopic) && $appTopic !~ m#AUTOINC\d+# ) {
+                throw Error::Simple('%MAKETEXT{"Forked topic exists: [_1]" args="'."$appWeb.$appTopic".'"}%');
             }
 
             $saved = _pushParams( $params );
-            $controlledTopic = _createForkedCopy($session, $controlledTopic->{meta}, $web, $appTopic);
+            $controlledTopic = _createForkedCopy($session, $controlledTopic->{meta}, $appWeb, $appTopic);
             $appTopic = $controlledTopic->{topic};
 
-            $url = Foswiki::Func::getScriptUrl( $web, $appTopic, 'view' );
+            $url = Foswiki::Func::getScriptUrl( $appWeb, $appTopic, 'view' );
         }
 
         if( $actionAttributes =~ m/(?:\W|^)CLEARMETA((?:\((?:".*?")?[^)]*\))?)(?:\W|$)/ ) {
@@ -942,7 +949,7 @@ sub transitionTopic {
         while( $actionAttributes =~ m/\G.*?(?<!\w)CHAIN\s*\(\s*/g ) {
             my $options = {
                 web => $web,
-                topic => $topic
+                topic => $appTopic
             };
             my ($name, $val);
             while($actionAttributes !~ m/\G\)/gc) {
@@ -974,7 +981,7 @@ sub transitionTopic {
                     # We need to rethrow with _this_ transition, or a click on 'transition anyway' will only transition the chained one.
                     throw Foswiki::OopsException(
                         'oopswfplease',
-                        web => $web,
+                        web => $appWeb,
                         topic => $appTopic,
                         params => [$e->{params}->[0], $e->{params}->[1], $e->{params}->[2], $state, $action, $remark, $removeComments ]
                     );
@@ -1489,7 +1496,7 @@ sub beforeEditHandler {
         }
     }
 
-    my $controlledTopic = _initTOPIC( $web, $topic );
+    my $controlledTopic = _initTOPIC( $web, $topic, undef, undef, undef, NOCACHE );
 
     return unless $controlledTopic; # not controlled, so check not required
 
@@ -1519,7 +1526,9 @@ sub beforeUploadHandler {
     my $web = $meta->web();
     my $topic = $meta->topic();
 
-    my $controlledTopic = _initTOPIC( $web, $topic );
+    # XXX unfortunately we can not handle KVPSTATECHANGE, because Meta.pm will do a loadVersion afterwards.
+
+    my $controlledTopic = _initTOPIC( $web, $topic, undef, undef, undef, NOCACHE  );
     return unless $controlledTopic;
 
     unless ( $controlledTopic->canEdit() ) {
@@ -2143,6 +2152,25 @@ sub maintenanceHandler {
                 }
             } else {
                 return { result => 0 };
+            }
+        }
+    });
+    Foswiki::Plugins::MaintenancePlugin::registerCheck("KVPPlugin:StoreImplementation", {
+        name => "KVPPlugin store compatibility",
+        description => "Check if KVPPlugin supports current store implementation.",
+        check => sub {
+            my $session = $Foswiki::Plugins::SESSION;
+            if (
+                $session->{store}->can('copyTopic') # PlainFileStore
+                || $session->{store}->can('getHandler') # Rcs
+            ) {
+                return { result => 0 };
+            } else {
+                return {
+                    result => 1,
+                    priority => $Foswiki::Plugins::MaintenancePlugin::ERROR,
+                    solution => "Please re-install (Modac version of) PlainFileStoreContrib."
+                }
             }
         }
     });

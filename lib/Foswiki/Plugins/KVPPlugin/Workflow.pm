@@ -183,7 +183,7 @@ sub getActions {
         my $attribute = $row->{attribute} || '';
         if (
                 $row->{state} eq $currentState
-                && $attribute !~ /FORK|NEW|HIDDEN/
+                && $attribute !~ /\b(?:FORK|NEW|HIDDEN)\b/
                 && _isAllowed($topic->expandMacros( $row->{allowed} ))
                 && _isTrue($topic->expandMacros( $row->{condition} ))
                 && $topic->expandMacros( $row->{nextstate} )
