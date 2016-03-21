@@ -135,6 +135,11 @@ use constant R_C_WORKFLOW => <<'WORKFLOW';
    * Set ALLOWTOPICCHANGE=Main.AdminUser
 WORKFLOW
 
+use constant FORM => <<'FORM';
+| *Name* | *Type* | *Size* | *Values* | *Tooltip message* | *Attributes* |
+| Seitenverantwortlicher | text | 30 | | | |
+| FormalerPruefer | text | 30 | | | |
+FORM
 
 sub loadExtraConfig {
     $Foswiki::cfg{Plugins}{KVPPlugin}{Enabled} = 1;
@@ -207,6 +212,10 @@ sub set_up_webs {
         $ps = TRASH;
         $webs->{$ps} = $other->populateNewWeb( $ps, "_default" );
         $webs->{$ps}->finish();
+
+        # Create DokumentenForm
+        my $form = FORM;
+        Foswiki::Func::saveTopic( KVPWEB, 'DokumentenForm', undef, $form );
 
         # Create workflow
         my $standardworkflow = WORKFLOW;
