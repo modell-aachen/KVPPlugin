@@ -172,7 +172,8 @@ sub test_attachToNewTopic {
     $this->assert_equals( '1', $meta->getPreference( 'WorkflowStub' ) );
 
     # now create proper topic and check if transitioned ok and no longer stub
-    Foswiki::Func::saveTopic( $web, $topic, undef, "This is a newly created Topic" );
+    ( $meta, $text ) = Foswiki::Func::readTopic( $web, $topic );
+    Foswiki::Func::saveTopic( $web, $topic, $meta, "This is a newly created Topic" ); # XXX the $meta should be optional, however Foswiki 2.1 will mess up otherwise
     ( $meta, $text ) = Foswiki::Func::readTopic( $web, $topic );
     $this->assert( !$meta->getPreference( 'WorkflowStub' ) );
     $this->assert( $meta->hasAttachment( $attachment ) );
