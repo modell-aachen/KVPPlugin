@@ -166,7 +166,7 @@ TEMPLATE
     $this->setMarker();
     if($ckeditor) {
         $this->waitFor( sub { $this->{selenium}->execute_script('return jQuery(".CKEDITORReady").length'); }, 'CKEditor did not become ready' );
-        $this->{selenium}->find_element('.cke_button__ma-save_icon', 'css')->click();
+        $this->{selenium}->find_element('.cke_button__ma-save_icon,.cke_button__ma-save-color_icon', 'css')->click();
     } else {
         $this->waitFor( sub { try { $this->{selenium}->find_element('save', 'id')->is_displayed(); } otherwise { return 0; }; }, 'Save button did not become ready' );
         $this->{selenium}->find_element('save', 'id')->click();
