@@ -378,7 +378,9 @@ TOPIC
     # suggestdelete - uncheck the box
     $this->WorkflowSelect( "suggestdeletecomment" );
     $this->{selenium}->find_element( 'WORKFLOWchkboxbox', 'id' )->click();
+    $this->setMarker();
     $this->{selenium}->find_element( 'a.KVPChangeStatus', 'css' )->click();
+    $this->waitForPageToLoad();
     $this->assert( $this->hasComment( Helper::NONEW, $topic ) );
     $this->seleniumTransition( 'To allow/suggest delete comments' );
     # nodelete - no attribute
@@ -485,6 +487,7 @@ sub seleniumBringToState {
             $web, $topic, 'view'
         )
     );
+    $this->waitForPageToLoad();
 
     while ($state ne $to) {
         my $transition = shift @transitions;
