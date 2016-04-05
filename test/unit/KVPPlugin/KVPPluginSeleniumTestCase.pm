@@ -530,7 +530,9 @@ sub seleniumTransition {
         if ( $type ) {
             $this->assert ( $type eq 'button' );
         }
-        $element = $this->{selenium}->find_element( $transition, 'link' );
+        # For some reason this does not work on Edge (neither does link_text):
+        # $element = $this->{selenium}->find_element( $transition, 'link' );
+        $element = $this->{selenium}->find_element( "//text()[contains(., '$transition')]/ancestor::a" );
     } else {
         if ( $type ) {
             $this->assert ( $type eq 'select' );
