@@ -332,11 +332,14 @@ sub _initTOPIC {
 
         my $workflowCID = "w:$wfWeb.$workflowName";
         my $workflow = $cache{$workflowCID};
-        if ( not $workflow && Foswiki::Func::topicExists( $wfWeb, $workflowName ) ) {
+        if ( (not $workflow) && Foswiki::Func::topicExists( $wfWeb, $workflowName ) ) {
             $workflow =
               new Foswiki::Plugins::KVPPlugin::Workflow( $wfWeb,
                 $workflowName );
             $cache{$workflowCID} = $workflow;
+        } else {
+            Foswiki::Func::writeWarning("Workflow topic for $web.$topic does not exist: '$wfWeb.$workflowName'");
+            _broadcast('%MAKETEXT{"Workflow topic for [_1] does not exist: &#39;[_2]&#39;" args="'."[[$web.$topic]], $wfWeb.$workflowName".'"}%');
         }
 
         if ($workflow) {
