@@ -377,6 +377,7 @@ TOPIC
     $this->seleniumTransition( 'To allow/suggest delete comments' );
     # suggestdelete - uncheck the box
     $this->WorkflowSelect( "suggestdeletecomment" );
+    $this->xxxScrollToTransitionForm();
     $this->{selenium}->find_element( 'WORKFLOWchkboxbox', 'id' )->click();
     $this->setMarker();
     $this->{selenium}->find_element( 'a.KVPChangeStatus', 'css' )->click();
@@ -391,6 +392,7 @@ TOPIC
     # these should delete the comment
     # allowdelete - check the box
     $this->WorkflowSelect( "allowdeletecomment" );
+    $this->xxxScrollToTransitionForm();
     $this->{selenium}->find_element( 'WORKFLOWchkboxbox', 'id' )->click();
     $this->setMarker();
     $this->{selenium}->find_element( 'a.KVPChangeStatus', 'css' )->click();
@@ -541,6 +543,8 @@ sub seleniumTransition {
         $element = $this->{selenium}->find_element( 'a.KVPChangeStatus', 'css' );
     }
 
+    $this->xxxScrollToTransitionForm();
+
     my $attempts = 3; # On certain browsers in version 9 the click might fail
                       # randomly for no reason.
                       # Because this method is being called a lot it is worth
@@ -559,6 +563,14 @@ sub seleniumTransition {
             }
         };
     }
+}
+
+# This should not be required, since selenium is supposed to scroll there automatically.
+# However on edge this fails.
+sub xxxScrollToTransitionForm {
+    my ($this) = @_;
+
+    $this->{selenium}->execute_script("var p = jQuery('form.KVPTransitionForm:first').closest('table').offset();window.scrollTo(p.left, p.top);");
 }
 
 # Selects an action by value in the workflow menue (via Selenium)
