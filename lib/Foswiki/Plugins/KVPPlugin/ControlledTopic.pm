@@ -103,10 +103,23 @@ sub getAttributes {
 sub getWorkflowMeta {
     my ( $this, $attributes ) = @_;
 
+    # admittingly STATECHANGE and displayname would be more suitable under getWorkflowRow,
+    # however they are usually called as if they were metadata.
+
     if($attributes eq 'STATECHANGE') {
         my $t = $this->{meta}->get( 'KVPSTATECHANGE', 'TRANSITION' );
         return unless $t && $t->{value};
-        return $t->{value};
+        my $language = $Foswiki::Plugins::SESSION->i18n()->language();
+        my ($old, $new) = ($t->{old}, $t->{new});
+        my $oldDisplayName = $this->{workflow}->getRow($old, "displayname$language") || $this->{workflow}->getRow($old, "displayname") || $old;
+        my $newDisplayName = $this->{workflow}->getRow($new, "displayname$language") || $this->{workflow}->getRow($new, "displayname") || $new;
+        return "$oldDisplayName -> $newDisplayName";
+    }
+
+    if($attributes eq 'displayname') {
+        my $language = $Foswiki::Plugins::SESSION->i18n()->language();
+        my $value = $this->{workflow}->getRow($this->{state}->{name}, "displayname$language") || $this->{workflow}->getRow($this->{state}->{name}, "displayname");
+        return $value if defined $value;
     }
 
     return $this->{state}->{$attributes};
@@ -222,7 +235,7 @@ sub setState {
             $this->{meta}->remove( 'PREFERENCE', 'DISPLAYCOMMENTS' );
         }
     } else {
-        my $allowComment = $this->{workflow}->getRow($this, 'allowcomment');
+        my $allowComment = $this->{workflow}->getRow($this->getState(), 'allowcomment');
         $allowComment = $this->expandMacros( $allowComment );
         if($allowComment) {
             $this->{meta}->putKeyed("PREFERENCE",
@@ -367,7 +380,7 @@ sub canFork {
 # Get the contents of the given row for the current topic in it's current state
 sub getRow {
     my ($this, $row) = @_;
-    return $this->{workflow}->getRow($this, $row);
+    return $this->{workflow}->getRow($this->getState(), $row);
 }
 
 # Get task attached to topic

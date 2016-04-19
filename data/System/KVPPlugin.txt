@@ -114,7 +114,7 @@ Soll er in einem Topic deaktiviert werden, so geschieht dies mit
 Mit diesemn Makro kann man Metadaten &uuml;ber den Workflow abfragen.%BR%
 ---++++ Parameter
 | *Parameter* | *Defaultwert* | *Effekt* | *Beispiel* |
-| =_default= | name | Der Name des Workflowdatums, das Sie abfragen wollen (siehe [[#Workflowmetadaten][Workflowmetadaten]]) | %%NOP%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN"}% |
+| =_default= | name | Der Name des Workflowdatums, das Sie abfragen wollen (siehe [[#Workflowmetadaten][Workflowmetadaten]])%BR% Es gibt zwei Sonderf&auml;lle:<dl><dt> =displayname= </dt><dd>Hiermit kann der Statusname in lesbarer, lokalisierter Form abgefragt werden. Dazu muss in der Workflow-Definition die Spalte =Displayname= definiert werden. Sprachen k&ouml;nnen in Spalten mit Sprachsuffix definiert werden, z.B. =Displayname DE= </dd><dt> =STATECHANGE= </dt><dd>Wenn die aktuelle Revision durch eine Transition entstanden ist, wird hier ein lesbarer String daf&uuml;r angezeigt.</dd></dl> | %%NOP%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN"}% |
 | =topic= | _aktuelles Topic_ | Das Topic, dessen Metadaten abgefragt werden. | %%NOP%WORKFLOWMETA{"Revision" topic="WebHome"}% | 
 | =web= | _aktuelles Web_ | Das Web von dem Topic. | %%NOP%WORKFLOWMETA{"Revision" topic="WebHome" web="Prozesse"}% |
 | =ref= | _letzte Revision_ | Die (foswiki) Revision von dem Topic. | Revision 4 wurde freigegeben von: %%NOP%WORKFLOWMETA{"LASTPROCESSOR_FREIGEGEBEN" ref="4"}% |

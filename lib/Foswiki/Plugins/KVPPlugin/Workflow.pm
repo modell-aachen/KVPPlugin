@@ -425,9 +425,8 @@ sub getName {
 
 # Get to contents of the given row (in workflow states) and topic for the current state.
 sub getRow {
-    my ( $this, $topic, $row ) = @_;
+    my ( $this, $state, $row ) = @_;
 
-    my $state = $topic->getState();
     unless( $this->{states}{$state} ) {
         Foswiki::Func::writeWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
         return '';
