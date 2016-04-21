@@ -74,21 +74,21 @@ sub test_suffixTests {
 
     # Fork with default-Suffix
     Helper::createWithState( $this, Helper::KVPWEB, 'SuffixTest', 'FREIGEGEBEN' );
-    $this->createNewFoswikiSession( $user, $query );
+    $this->createNewFoswikiSession( $user, $query, {view => 1} );
     $this->assert( !Foswiki::Func::expandCommonVariables("%IF{\"context KVPHasDiscussion\" then=\"1\" else=\"0\"}%"), "test-topic SuffixTest already has a discussion!" );
     Helper::createDiscussion( $this, Helper::KVPWEB, 'SuffixTest' );
     $this->assert(Foswiki::Func::topicExists( Helper::KVPWEB, 'SuffixTestTALK' ), "Could not find discussion with default suffix!");
-    $this->createNewFoswikiSession( $user, $query );
+    $this->createNewFoswikiSession( $user, $query, {view => 1} );
     $this->assert( Foswiki::Func::expandCommonVariables("%IF{\"context KVPHasDiscussion\" then=\"1\" else=\"0\"}%"), "Discussion with defaultsuffix does not set context!" );
 
     try {
         # Now fork with different suffix
         $Foswiki::cfg{Extensions}{KVPPlugin}{suffix} = 'AndNowForSomethingCompletelyDifferent';
-        $this->createNewFoswikiSession( $user, $query );
+        $this->createNewFoswikiSession( $user, $query, {view => 1} );
         $this->assert( !Foswiki::Func::expandCommonVariables("%IF{\"context KVPHasDiscussion\" then=\"1\" else=\"0\"}%"), "Context still reports discussion with default-suffix altough suffix changed!" );
         Helper::createDiscussion( $this, Helper::KVPWEB, 'SuffixTest' );
         $this->assert(Foswiki::Func::topicExists( Helper::KVPWEB, 'SuffixTestAndNowForSomethingCompletelyDifferent' ), "Could not find discussion with changed suffix!");
-        $this->createNewFoswikiSession( $user, $query );
+        $this->createNewFoswikiSession( $user, $query, {view => 1} );
         $this->assert( Foswiki::Func::expandCommonVariables("%IF{\"context KVPHasDiscussion\" then=\"1\" else=\"0\"}%"), "Context still does not report discussion with changed suffix!" );
     } finally {
         $Foswiki::cfg{Extensions}{KVPPlugin}{suffix} = $defaultSuffix;
@@ -172,7 +172,8 @@ sub test_attachToNewTopic {
     $this->assert_equals( '1', $meta->getPreference( 'WorkflowStub' ) );
 
     # now create proper topic and check if transitioned ok and no longer stub
-    Foswiki::Func::saveTopic( $web, $topic, undef, "This is a newly created Topic" );
+    ( $meta, $text ) = Foswiki::Func::readTopic( $web, $topic );
+    Foswiki::Func::saveTopic( $web, $topic, $meta, "This is a newly created Topic" ); # XXX the $meta should be optional, however Foswiki 2.1 will mess up otherwise
     ( $meta, $text ) = Foswiki::Func::readTopic( $web, $topic );
     $this->assert( !$meta->getPreference( 'WorkflowStub' ) );
     $this->assert( $meta->hasAttachment( $attachment ) );

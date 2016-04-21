@@ -539,6 +539,9 @@ msgstr "Diskussion"
 msgid "Differences to approved version:"
 msgstr "Unterschiede zum freigegebenen Stand:"
 
+msgid "Workflow topic for %1 does not exist: &#39;%2&#39;"
+msgstr "Workflow Seite für %1 existiert nicht: &#39;%2&#39;"
+
 #~ msgid ""
 #~ "The workflow state did not match the current state.\n"
 #~ "\n"
