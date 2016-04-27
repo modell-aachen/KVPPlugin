@@ -58,7 +58,8 @@ sub new {
             transitions        => [],
             transitions_state  => {}, # Lookup transitions by source state
             transitions_action => {}, # Look transitions by tuple source state / action
-            tasks              => []
+            tasks              => [],
+            meta               => $meta
         },
         $class
     );
@@ -176,6 +177,11 @@ sub new {
     return $this;
 }
 
+sub getPreference {
+    my ($this, $key) = @_;
+    return $this->{meta}->getPreference($key);
+}
+
 # All transitions that can follow a given state
 sub getTransitions {
     my ($this, $state) = @_;
@@ -200,7 +206,7 @@ sub getTransitionCell {
 # Get the possible actions with warnings associated with the given state
 # Will not deliver actions with NEW, FORK or HIDDEN
 sub getActions {
-    my ( $this, $topic ) = @_;
+    my ( $this, $topic) = @_;
     my @actions      = ();
     my @warnings     = ();
     my $currentState = $topic->getState();
@@ -253,8 +259,10 @@ sub hasAttribute {
     return ( $attr && $attr =~ /(?:\W|^)$attribute(?:\W|$)/ );
 }
 
-# This returns two lists for a JavaScript with all actions that allow deletion of comments
-# and that suggest deletion of comments
+# This returns lists for a JavaScript with all actions that:
+# * allow deleting comments
+# * suggest deleting comments
+# * have remarks
 # Both lists will start and end with a ',' to make searches easier.
 sub getTransitionAttributes {
     my ( $this, $state ) = @_;

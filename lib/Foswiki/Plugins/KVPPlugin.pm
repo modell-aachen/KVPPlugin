@@ -82,6 +82,8 @@ sub initPlugin {
         'WORKFLOWCANTRANSITION', \&_WORKFLOWCANTRANSITION );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWORIGIN', \&_WORKFLOWORIGIN );
+    Foswiki::Func::registerTagHandler(
+        'WORKFLOWPROPONENTS', \&_WORKFLOWPROPONENTS );
 
     my $context = Foswiki::Func::getContext();
     if($context->{view} || $context->{edit} || $context->{comparing} || $context->{oops}  || $context->{manage} || $context->{KVPPluginSetContextOnInit}) {
@@ -560,20 +562,18 @@ sub _WORKFLOWTRANSITION {
 
     unless ($numberOfActions) {
         return '';
-        return '<span class="foswikiAlert">NO AVAILABLE ACTIONS in state '
-          .$cs.'</span>' if $controlledTopic->debugging();
-        return '';
     }
 
     my @fields = ();
     push( @fields, "<input type='hidden' name='WORKFLOWSTATE' value='$cs' />");
     push( @fields, "<input type='hidden' name='topic' value='$webtopic' />");
 
-    my ($allow, $suggest, $remark) = $controlledTopic->getTransitionAttributes();
+    my ($allow, $suggest, $remark, $alreadyProposed) = $controlledTopic->getTransitionAttributes();
 
-    $transwarn->{WORKFLOW}->{allowOption} = $allow;
-    $transwarn->{WORKFLOW}->{suggestOption} = $suggest;
-    $transwarn->{WORKFLOW}->{remarkOption} = $remark;
+    $transwarn->{WORKFLOW}{allowOption} = $allow;
+    $transwarn->{WORKFLOW}{suggestOption} = $suggest;
+    $transwarn->{WORKFLOW}{remarkOption} = $remark;
+    $transwarn->{WORKFLOW}{alreadyProposed} = $alreadyProposed;
     my $json = to_json($transwarn);
     Foswiki::Func::addToZone('script', 'WORKFLOW::COMMENT', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI');
 <script type="text/json" class="KVPPlugin_WORKFLOW">$json</script>
@@ -616,8 +616,14 @@ SCRIPT
           . "</label></span>"
     );
 
+    push( @fields, '<br style="clear: left;" />' );
+    my $msg = $controlledTopic->getWorkflowPreference('KVP_MESSAGE_ALREADY_PROPOSED') || 'A decision has already been made for your areas of responsibility, either by yourself or by another user.';
     push( @fields,
-        '<br /><div style="display: none" id="KVPRemark">%CLEAR%%MAKETEXT{"Remarks"}%:<br /><textarea name="message" cols="50" rows="3" ></textarea></div>'
+          "<div style=\"display: none;\" id=\"WORKFLOWalreadyProposedLabel\">%MAKETEXT{\"$msg\"}%</div>"
+    );
+
+    push( @fields,
+        '<div style="display: none" id="KVPRemark">%MAKETEXT{"Remarks"}%:<br /><textarea name="message" cols="50" rows="3" ></textarea></div>'
     );
 
 
@@ -711,6 +717,28 @@ sub _GETWORKFLOWROW {
     my $configure = $Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow};
     return '' unless $configure;
     return $configure->{$param} || '';
+}
+
+# Tag handler
+# For a given state, return information about any outstanding
+# (percentage-based) transitions, including who has already signed off on the
+# transition and which of the 'allowed' entries they represent.
+# Information is returned in JSON format.
+sub _WORKFLOWPROPONENTS {
+    my ($session, $params, $topic, $web) = @_;
+    my $state = $params->{state};
+    my $action = $params->{action};
+    my $ptopic = $params->{topic} || $topic;
+    my $pweb = $params->{web} || $web;
+
+    my $controlledTopic = _initTOPIC($pweb, $ptopic);
+    return 'null' unless $controlledTopic;
+    if ($action) {
+        return to_json($controlledTopic->mapProponentsToAllowed($action));
+    }
+    my ($actions) = $controlledTopic->getActions;
+    return to_json({map { $_, $controlledTopic->mapProponentsToAllowed($_) }
+        grep { $controlledTopic->isProposableTransition($_) } @$actions});
 }
 
 # Will find a topic in trashweb to move $web.$topic to by adding a numbered suffix.
@@ -878,6 +906,23 @@ sub transitionTopic {
         my $actionAttributes = $controlledTopic->getAttributes($action) || '';
 
         my $saved;
+
+        if ($actionAttributes =~ m#\bALLOWEDPERCENT\((\d+)\)(?:\W|$)#) {
+            my $percent = $1;
+            $controlledTopic->addTransitionProponent($action); # just hope for the best
+            my @props = $controlledTopic->getTransitionProponents($action);
+            my %allowed2props = %{ $controlledTopic->mapProponentsToAllowed($action) };
+            my $num_allowed = scalar values %allowed2props;
+            my $num_done = scalar grep { defined $_ } values %allowed2props;
+            my $current_percent = $num_done / $num_allowed * 100;
+
+            if ($current_percent < $percent) {
+                $controlledTopic->save(1);
+                return {
+                    url => $url,
+                };
+            }
+        }
 
         # Create copy if this is a fork
         if( !$noFork && $actionAttributes =~ m#(?:\W|^)(?:SELECTABLE)?FORK((?:\((?:".*?")?[^)]*\))?)(?:\W|$)# ) {

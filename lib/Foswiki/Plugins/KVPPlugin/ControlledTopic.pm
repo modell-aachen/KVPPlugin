@@ -89,7 +89,7 @@ sub getState {
 
 # Get the available actions from the current state
 sub getActions {
-    my $this = shift;
+    my ($this) = @_;
     return $this->{workflow}->getActions($this);
 }
 
@@ -125,6 +125,11 @@ sub getWorkflowMeta {
     return $this->{state}->{$attributes};
 }
 
+sub getWorkflowPreference {
+    my ($this, $key) = @_;
+    return $this->{workflow}->getPreference($key);
+}
+
 # Remove LASTTIME_DRAFT etc. from META:WORKFLOW.
 # Do save the topic afterwards.
 # Parameters:
@@ -148,6 +153,102 @@ sub clearWorkflowMeta {
     # Replace workflow-metadata
     $this->{meta}->remove( 'WORKFLOW' ); # XXX sometime putKeyed doesn't replace
     $this->{meta}->putKeyed( "WORKFLOW", $this->{state} );
+}
+
+# Check if this transition needs more than one person's action to be performed
+sub isProposableTransition {
+    my ($this, $action) = @_;
+    return $this->{workflow}->hasAttribute($this->{state}{name}, $action,
+        'ALLOWEDPERCENT');
+}
+
+sub getTransitionProponents {
+    my ($this, $action) = @_;
+    my $state = $this->{state}{name};
+    my $proponents = $this->{meta}->get('WORKFLOWPROPONENTS', "$state:$action");
+    return unless $proponents;
+    return grep /\S/, split(/\s*,\s*/, $proponents->{value});
+}
+
+# Clear proponents for all transitions available from the current state.
+sub clearTransitionProponents {
+    my ($this) = @_;
+    my $state = $this->{state}{name};
+    my @props = grep { $_->{name} =~ /^\Q$state:/ } $this->{meta}->find('WORKFLOWPROPONENTS');
+    $this->{meta}->remove('WORKFLOWPROPONENTS', $_->{name}) foreach @props;
+}
+
+sub addTransitionProponent {
+    my ($this, $action, $user) = @_;
+    $user ||= $Foswiki::Plugins::SESSION->{user};
+    my $state = $this->{state}{name};
+
+    my $v = $this->{meta}->get('WORKFLOWPROPONENTS', "$state:$action");
+    $v = ref($v) ? $v->{value} : '';
+    $v = [split(/\s*,\s*/, $v)];
+    my %props;
+    @props{@$v} = @$v;
+    $props{$user} = 1;
+    $this->{meta}->putKeyed('WORKFLOWPROPONENTS', {
+        name => "$state:$action",
+        value => join(', ', keys %props),
+    });
+}
+
+# Check if a user can still sign as a proponent for a transaction
+# (i.e. none of the 'allowed' entries that can be fulfilled by the user
+# have been signed for yet)
+sub isPotentialProponent {
+    my ($this, $action, $user) = @_;
+    return 1 unless $this->isProposableTransition($action);
+
+    my $attr = $this->getAttributes($action);
+    $user ||= $Foswiki::Plugins::SESSION->{user};
+    my $p2a = $this->mapProponentsToAllowed($action);
+
+    while (my ($allowed, $signer) = each(%$p2a)) {
+        next if defined $signer;
+
+        my $cuid = Foswiki::Func::getCanonicalUserID($allowed);
+        return 1 if $cuid eq $user;
+        next unless Foswiki::Func::isGroup($allowed);
+        my $it = Foswiki::Func::eachGroupMember($allowed);
+        while ($it->hasNext) {
+            my $candidate = Foswiki::Func::getCanonicalUserID($it->next);
+            return 1 if $candidate eq $user;
+        }
+    }
+    return 0;
+}
+
+# Given a list of proponents (by way of current state and desired action),
+# find out which entries from the allowed list each of them represents
+sub mapProponentsToAllowed {
+    my ($this, $action) = @_;
+    my @props = $this->getTransitionProponents($action);
+    my $allowed = $this->{workflow}->getTransitionCell($this->{state}{name}, $action, 'allowed');
+    return {} unless $allowed && $allowed =~ /\S/;
+
+    my @allowed = grep /\S/, split(/\s*,\s*/, $allowed);
+    my $map = {};
+    for my $a (@allowed) {
+        my $user = Foswiki::Func::getCanonicalUserID($a);
+        $map->{$a} = undef;
+        if (grep /^\Q$user\E$/, @props) {
+            $map->{$a} = $user;
+            next;
+        }
+        next unless Foswiki::Func::isGroup($a);
+        my $it = Foswiki::Func::eachGroupMember($a);
+        while ($it->hasNext) {
+            my $candidate = Foswiki::Func::getCanonicalUserID($it->next);
+            if (grep /^\Q$candidate\E$/, @props) {
+                $map->{$a} = $candidate;
+                next;
+            }
+        }
+    }
+    $map;
 }
 
 # Alex: Get the extra Mailinglist (People involved in the Discussion)
@@ -315,7 +416,14 @@ sub isRemovingComments {
 
 sub getTransitionAttributes {
     my ( $this ) = @_;
-    return $this->{workflow}->getTransitionAttributes($this->{state}->{name});
+    my $currentState = $this->{state}{name};
+    my ($allow, $suggest, $comment) = $this->{workflow}->getTransitionAttributes($currentState);
+    my $alreadyProposed = ',';
+    for my $t (@{$this->{workflow}->getTransitions($currentState)}) {
+        next if $this->isPotentialProponent($t->{action});
+        $alreadyProposed .= "$t->{action},";
+    }
+    return ($allow, $suggest, $comment, $alreadyProposed);
 }
 
 # Check if the topic is allowed to fork
@@ -502,6 +610,8 @@ sub changeState {
             $this->{forceSaveContext} = 1;
         }
     }
+
+    $this->clearTransitionProponents;
 
     my $notification;
     # generate mails
