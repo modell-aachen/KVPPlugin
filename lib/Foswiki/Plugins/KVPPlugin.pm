@@ -1975,6 +1975,8 @@ sub _getIndexHash {
                 next if $field =~ m#^(?:approved$|allow|state$)#; # skip those already indexed
                 $indexFields{ "workflowstate_${field}_s" } = Foswiki::Func::expandCommonVariables($fields->{$field});
             }
+            $indexFields{ process_state_s } = $fields->{state} if $fields->{state};
+            $indexFields{ workflow_isapproved_b } = ($fields->{approved})?1:0;
             Foswiki::Func::popTopicContext();
         }
         return %indexFields;
