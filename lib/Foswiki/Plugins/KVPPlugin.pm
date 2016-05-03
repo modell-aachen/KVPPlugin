@@ -770,6 +770,9 @@ sub _changeState {
 
     my $mails = [];
 
+    my $json = $query->param('json');
+    my $response;
+
     try {
         my $web = $query->param('web') || $session->{webName};
         my $topic = $query->param('topic') || $session->{topicName};
@@ -790,21 +793,30 @@ sub _changeState {
             $removeComments,
             $breakLock,
         );
+        foreach my $mail ( @$mails ) {
+            _sendMail($mail);
+        }
+        if ($json) {
+            $response = to_json({status => 'ok'});
+            return;
+        }
+
         my $url = $report->{url};
         if($query->param('redirectto')) {
             my ($redirectWeb, $redirectTopic) = Foswiki::Func::normalizeWebTopicName(undef, $query->param('redirectto'));
             $url = Foswiki::Func::getViewUrl($redirectWeb, $redirectTopic) if Foswiki::Func::topicExists($redirectWeb, $redirectTopic);
         }
         Foswiki::Func::redirectCgiQuery( undef, $url ) if $url;
-        foreach my $mail ( @$mails ) {
-            _sendMail($mail);
-        }
     } catch Foswiki::OopsException with {
         my $e = shift;
+        if ($json) {
+            $response = to_json({status => 'error', data => $e->{json}, msg => $e->stringify});
+            return;
+        }
         $e->generate($session);
     };
 
-    return undef;
+    return $response;
 }
 
 # Will transition a topic.
@@ -851,7 +863,8 @@ sub transitionTopic {
             web => $web,
             topic => $topic,
             def => 'MissingParameter',
-            params => [$state || '', $action || '']
+            params => [$state || '', $action || ''],
+            json => { type => 'MissingParameter' }
         );
     }
     unless ($state eq $controlledTopic->getState()) {
@@ -860,7 +873,8 @@ sub transitionTopic {
             web => $web,
             topic => $topic,
             def => 'WrongState',
-            params => [$state, $controlledTopic->getState()]
+            params => [$state, $controlledTopic->getState()],
+            json => { type => 'WrongState', actual_state => $controlledTopic->getState }
         );
     }
     unless ($controlledTopic->haveNextState($action)) {
@@ -869,7 +883,8 @@ sub transitionTopic {
             web => $web,
             topic => $topic,
             def => 'NoNextState',
-            params => [$state, $action]
+            params => [$state, $action],
+            json => { type => 'NoNextState' }
         );
     }
     $removeComments = '0' unless defined $removeComments;
@@ -892,7 +907,8 @@ sub transitionTopic {
                     'oopswfplease',
                     web => $web,
                     topic => $topic,
-                    params => [Foswiki::Func::getWikiName($locker), "$web.$topic", $t, $state, $action, $remark, $removeComments ]
+                    params => [Foswiki::Func::getWikiName($locker), "$web.$topic", $t, $state, $action, $remark, $removeComments ],
+                    json => { type => 'LeaseOtherUser', locker => $locker, remaining_minutes => $t }
                 );
             }
         }
@@ -1011,7 +1027,8 @@ sub transitionTopic {
                         web => $web,
                         topic => $topic,
                         def => 'WorkflowParseErr',
-                        params => [ $err ]
+                        params => [ $err ],
+                        json => { type => 'WorkflowParseError', error => $err }
                     );
                 }
                 $name = $1;
@@ -1033,7 +1050,8 @@ sub transitionTopic {
                         'oopswfplease',
                         web => $appWeb,
                         topic => $appTopic,
-                        params => [$e->{params}->[0], $e->{params}->[1], $e->{params}->[2], $state, $action, $remark, $removeComments ]
+                        params => [$e->{params}->[0], $e->{params}->[1], $e->{params}->[2], $state, $action, $remark, $removeComments ],
+                        json => { type => 'LeaseOtherUserChained', locker => $e->{params}[0], webtopic => $e->{params}[1], remaining_minutes => $e->{params}[2] }
                     );
                 } else {
                     throw $e;
@@ -1111,7 +1129,8 @@ sub transitionTopic {
             def => 'generic',
             web => $web,
             topic => $topic,
-            params => [ $error || '?' ]
+            params => [ $error || '?' ],
+            json => { type => 'GenericError', error => $error || '?' }
            );
     };
 
