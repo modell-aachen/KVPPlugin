@@ -1961,6 +1961,8 @@ sub _getIndexHash {
 
     my %indexFields = ();
 
+    $indexFields{ workflow_origin_s } = _getOrigin("$web.$topic");
+
     # only index controlled topics, or old metadata will end up in index.
     my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, NOCACHE );
 
