@@ -1,3 +1,19 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-05-12 12:02+0200\n"
+"PO-Revision-Date: 2016-05-12 12:12+0200\n"
+"Last-Translator: Modell Aachen <access@modell-aachen.de>\n"
+"Language-Team: Simplified Chinese <http://translate.modell-"
+"aachen.de/projects/kvpplugin/releasenew-york/zh_CN/>\n"
+"Language: zh-cn\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Weblate 1.9\n"
+
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "%1 edited the topic %2."
 msgstr "%1 编辑了主题%2"
@@ -66,7 +82,7 @@ msgstr "注意"
 
 #: data/System/KvpSkinTransitionsTemplate.txt templates/foswiki.kvp.tmpl
 msgid "Attention, there is a discussion for this topic!\\nDo you really want to continue?"
-msgstr ""
+msgstr "注意, 有关于此主题的讨论!\\n您仍执行该操作吗?"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Cannot execute transition =%1= on =%2= (invalid on source-workflow)."
@@ -102,7 +118,7 @@ msgstr "工作流不能初始化"
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "Could not initialize workflow for %1. Maybe the topic was deleted?"
-msgstr " %1的工作流不能初始化。也许该主题将被删除?"
+msgstr "%1的工作流不能初始化。也许该主题将被删除?"
 
 #: data/System/ExampleSkinTopHeadTemplate.txt
 msgid "Creator"
@@ -187,7 +203,7 @@ msgstr "无效的目标，为了分支: %1"
 
 #: lib/Foswiki/Plugins/KVPPlugin/Workflow.pm
 msgid "Invalid state table in %1"
-msgstr "在%1处无效的状态表格 "
+msgstr "在%1处无效的状态表格"
 
 #: templates/oopsworkflowchanged.tmpl
 msgid "It used to be in %1 but is now in %2"
@@ -199,7 +215,7 @@ msgstr "最后的作者"
 
 #: data/System/KvpSkinTransitionsTemplate.txt
 msgid "Last editing person"
-msgstr "最后的编者 "
+msgstr "最后的编者"
 
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "Link to the page:"
@@ -215,11 +231,11 @@ msgstr "下一步"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "No Suffix defined! Defaulting to %1!"
-msgstr "没有定义后缀! 将被默认设为%1! "
+msgstr "没有定义后缀! 将被默认设为%1!"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "No transition with =FORK= attribute to fork"
-msgstr " 没有转变 =FORK=Attribut ， 为进行分支。"
+msgstr "没有转变 =FORK=Attribut ， 为进行分支。"
 
 #: templates/oopsworkflowchanged.tmpl templates/oopsworkflowerr.tmpl
 #: templates/oopsworkflowfork.tmpl templates/oopsworkflowmoved.tmpl
@@ -271,7 +287,7 @@ msgstr "修订"
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Revision history of "
-msgstr "修订历史"
+msgstr "修订历史 "
 
 #: data/System/KvpSkinWorkflowViewMacrosTemplate.txt
 #: data/System/KvpSkinWorkflowViewTemplate.txt
@@ -364,7 +380,7 @@ msgstr "这是一封自动生成的邮件。请您不要回复该邮件"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This topic is not under any workflow."
-msgstr "该主题不归属于任何工作流 "
+msgstr "该主题不归属于任何工作流"
 
 #: templates/oopsworkflowchanged.tmpl
 msgid "Topic changed"
@@ -432,7 +448,7 @@ msgstr "因必须请 %1 关闭他们的编辑\""
 
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "approved"
-msgstr ""
+msgstr "批准"
 
 #: data/System/KvpSkinSolrSearchViewTemplate.txt
 msgid "contentual revision"
@@ -502,7 +518,7 @@ msgstr "仍在讨论中"
 #: data/System/ExampleSkinTopHeadTemplate.txt
 #: data/System/KvpSkinTopHeadTemplate.txt
 msgid "under&#160;discussion"
-msgstr ""
+msgstr "在&#160"
 
 #: templates/oopshistory.kvp.tmpl
 msgid "view"
