@@ -925,6 +925,11 @@ sub transitionTopic {
 
         if ($actionAttributes =~ m#\bALLOWEDPERCENT\((\d+)\)(?:\W|$)#) {
             my $percent = $1;
+            # TODO: ACL checks are not enforced on proposals, so anyone who
+            # proposes the transaction (e.g. admins) will be added to the
+            # list, though they should still be ignored in the calculations.
+            # We may need to throw an exception here if the user is not a
+            # valid potential proponent.
             $controlledTopic->addTransitionProponent($action); # just hope for the best
             my @props = $controlledTopic->getTransitionProponents($action);
             my %allowed2props = %{ $controlledTopic->mapProponentsToAllowed($action) };

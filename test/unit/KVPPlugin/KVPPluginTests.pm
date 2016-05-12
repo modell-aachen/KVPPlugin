@@ -224,31 +224,7 @@ sub test_condition {
         my $workflowname = 'DocumentApprovalWorkflow';
         my $subwebObject = $this->populateNewWeb( $subweb, "_default" );
         $subwebObject->finish();
-        Foswiki::Func::saveTopic( $subweb, $workflowname, undef, <<'WORKFLOW' );
----++ Defaults
-%EDITTABLE{format="| text, 20 | text, 20 | text, 20 | text, 2 |"}%
-| *State Type* | *Left Tab* | *Right Tab* | *Approved* |
-| approved | Approved Page | Discussion | 1 |
-| discussion | Approved Page | Discussion | 0 |
-| draft | Approved Page | Draft | 0 |
-
----++ States
-%EDITTABLE{format="| text, 20 | text, 30 | text, 30 | text, 50 | text, 30 | text, 15 |"}%
-| *State* | *Allow Edit* | *Allow Move* | *Message* | *Allow Comment* | *State Type* |
-| NEU | LOGGEDIN | Main.KeyUserGroup, %WORKFLOWMETA{LASTPROCESSOR_NEU}% | This document is not yet in CIP. | LOGGEDIN | draft |
-| DOKUMENT | LOGGEDIN | Main.KeyUserGroup, %WORKFLOWMETA{LASTPROCESSOR_NEU}% | This document is a draft. | LOGGEDIN | draft |
-| TEMPLATE | LOGGEDIN | Main.KeyUserGroup, %WORKFLOWMETA{LASTPROCESSOR_NEU}% | This document is a template. | LOGGEDIN | draft |
- 
----++ Transitions
-%EDITTABLE{format="| text, 20 | text, 40 | text, 20 | text, 30 | text, 30 | text, 15 | text, 15 |"}%
-| *State* | *Action* | *Next State* | *Allowed* | *Notify* | *Condition* | *Attribute* |
-| NEU | Create | DOKUMENT | LOGGEDIN, Main.KeyUserGroup | | %IF{"$TOPIC=~'.*Dokument$'" then="1" else="0"}% | NEW |
-| NEU | Create template | TEMPLATE | Main.KeyUserGroup | | %IF{"$TOPIC=~'.*Template$'" then="1" else="0"}% | NEW |
-
-   * Set NOWYSIWYG=1
-   * Set WORKFLOW=
-   * Set ALLOWTOPICCHANGE=Main.AdminUser
-WORKFLOW
+        Foswiki::Func::saveTopic( $subweb, $workflowname, undef, Helper::CONDWORKFLOW );
         my ( $meta, $text ) = Foswiki::Func::readTopic( Helper::KVPWEB, $webPref );
         $text =~ s#(WORKFLOW\h*=\h*).*#$1$subweb.$workflowname#g;
         Foswiki::Func::saveTopic( $subweb, $webPref, undef, $text );
@@ -264,6 +240,89 @@ WORKFLOW
     $this->createNewFoswikiSession( $user, $query );
     $this->assert_equals( 'DOKUMENT', Foswiki::Func::expandCommonVariables("%WORKFLOWMETA{topic=\"$subweb.ConditionTestDokument\"}%") );
     $this->assert_equals( 'TEMPLATE', Foswiki::Func::expandCommonVariables("%WORKFLOWMETA{topic=\"$subweb.ConditionTestTemplate\"}%") );
+}
+
+# Test if...
+# ...transitions that require agreement from multiple users work as intended
+# ...percentages are handled correctly
+# ...groups are handled correctly (only one agreement required for each group listed in 'Allowed')
+sub test_proposed {
+    my ($this) = @_;
+
+    my $user = Helper::becomeAnAdmin($this);
+    my $web = Helper::KVPWEB;
+
+    {
+        my $webPref = $Foswiki::cfg{WebPrefsTopicName};
+        my $workflowname = 'ProposalWorkflow';
+        Foswiki::Func::saveTopic($web, $workflowname, undef, Helper::PROPOSALWORKFLOW);
+        # XXX this has unexpected contents compared to set_up_webs, investigate
+        my ($meta, $text) = Foswiki::Func::readTopic($web, $webPref);
+        $text =~ s#(WORKFLOW\h*=\h*).*#$1$web.$workflowname#g;
+        Foswiki::Func::saveTopic($web, $webPref, undef, $text);
+    }
+    # reload WebPreferences
+    my $query = Unit::Request->new({action=>'view', topic=>"$web"});
+    $this->createNewFoswikiSession($user, $query);
+
+    my $topic = 'ProposedTest1';
+    my $ensureProposed = sub {
+        my $currentState = Foswiki::Func::expandCommonVariables("\%WORKFLOWMETA{topic=\"$web.$topic\"}\%");
+        my $action = shift;
+        my $user = shift || $Foswiki::Plugins::SESSION->{user};
+        my $filter = qr/\b$user\b/;
+        my $value = Foswiki::Func::expandCommonVariables(qq[\%QUERY{"'$web.$topic'/META:WORKFLOWPROPONENTS[name='$currentState:$action'].value"}\%]);
+        my $positive = shift;
+        $positive = 1 unless defined $positive;
+        if ($positive) {
+            $this->assert_matches($filter, $value, "Expected user to be listed as proposer but they're not");
+        } else {
+            $this->assert_does_not_match($filter, $value, "Expected user to not be listed as proposer but they are");
+        }
+    };
+
+    Helper::createWithState($this, $web, $topic);
+    Helper::transition($this, 'DRAFT', 'Propose approval', $web, $topic, 1);
+    Helper::ensureState($this, $web, $topic, 'DRAFT');
+    # SMELL: admins are currently added to the list even if they're not listed
+    # in 'Allowed', but should still be excluded from calculations.
+    #$ensureProposed->('Propose approval', undef, 0);
+
+    # Test the straightforward 100% case with no groups
+
+    $this->createNewFoswikiSession('test1');
+    Helper::transition($this, 'DRAFT', 'Propose approval', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'DRAFT');
+    $ensureProposed->('Propose approval');
+    $this->createNewFoswikiSession('test2');
+    Helper::transition($this, 'DRAFT', 'Propose approval', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'DRAFT');
+    $ensureProposed->('Propose approval');
+    $this->createNewFoswikiSession('qm1');
+    Helper::transition($this, 'DRAFT', 'Propose approval', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+
+    # Test 2/3 case with group, making sure the minimal number of proposals
+    # works
+    Helper::transition($this, 'APPROVED', 'Propose re-draft', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+    $this->createNewFoswikiSession('test2');
+    Helper::transition($this, 'APPROVED', 'Propose re-draft', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'DRAFT');
+
+    # Test 2/3 case with group again, making sure a second proposal for the
+    # same group has no effect on the calculation
+    Helper::becomeAnAdmin($this);
+    Helper::transition($this, 'DRAFT', 'Escape hatch', $web, $topic);
+    $this->createNewFoswikiSession('qm1');
+    Helper::transition($this, 'APPROVED', 'Propose re-draft', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+    $this->createNewFoswikiSession('qm2');
+    Helper::transition($this, 'APPROVED', 'Propose re-draft', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+    $this->createNewFoswikiSession('test1');
+    Helper::transition($this, 'APPROVED', 'Propose re-draft', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'DRAFT');
 }
 
 # Test if...
