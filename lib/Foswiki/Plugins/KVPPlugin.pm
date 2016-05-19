@@ -82,6 +82,8 @@ sub initPlugin {
         'WORKFLOWCANTRANSITION', \&_WORKFLOWCANTRANSITION );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWORIGIN', \&_WORKFLOWORIGIN );
+    Foswiki::Func::registerTagHandler(
+        'WORKFLOWPROPONENTS', \&_WORKFLOWPROPONENTS );
 
     my $context = Foswiki::Func::getContext();
     if($context->{view} || $context->{edit} || $context->{comparing} || $context->{oops}  || $context->{manage} || $context->{KVPPluginSetContextOnInit}) {
@@ -560,20 +562,18 @@ sub _WORKFLOWTRANSITION {
 
     unless ($numberOfActions) {
         return '';
-        return '<span class="foswikiAlert">NO AVAILABLE ACTIONS in state '
-          .$cs.'</span>' if $controlledTopic->debugging();
-        return '';
     }
 
     my @fields = ();
     push( @fields, "<input type='hidden' name='WORKFLOWSTATE' value='$cs' />");
     push( @fields, "<input type='hidden' name='topic' value='$webtopic' />");
 
-    my ($allow, $suggest, $remark) = $controlledTopic->getTransitionAttributes();
+    my ($allow, $suggest, $remark, $alreadyProposed) = $controlledTopic->getTransitionAttributes();
 
-    $transwarn->{WORKFLOW}->{allowOption} = $allow;
-    $transwarn->{WORKFLOW}->{suggestOption} = $suggest;
-    $transwarn->{WORKFLOW}->{remarkOption} = $remark;
+    $transwarn->{WORKFLOW}{allowOption} = $allow;
+    $transwarn->{WORKFLOW}{suggestOption} = $suggest;
+    $transwarn->{WORKFLOW}{remarkOption} = $remark;
+    $transwarn->{WORKFLOW}{alreadyProposed} = $alreadyProposed;
     my $json = to_json($transwarn);
     Foswiki::Func::addToZone('script', 'WORKFLOW::COMMENT', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI');
 <script type="text/json" class="KVPPlugin_WORKFLOW">$json</script>
@@ -616,8 +616,14 @@ SCRIPT
           . "</label></span>"
     );
 
+    push( @fields, '<br style="clear: left;" />' );
+    my $msg = $controlledTopic->getWorkflowPreference('KVP_MESSAGE_ALREADY_PROPOSED') || 'A decision has already been made for your areas of responsibility, either by yourself or by another user.';
     push( @fields,
-        '<br /><div style="display: none" id="KVPRemark">%CLEAR%%MAKETEXT{"Remarks"}%:<br /><textarea name="message" cols="50" rows="3" ></textarea></div>'
+          "<div style=\"display: none;\" id=\"WORKFLOWalreadyProposedLabel\">%MAKETEXT{\"$msg\"}%</div>"
+    );
+
+    push( @fields,
+        '<div style="display: none" id="KVPRemark">%MAKETEXT{"Remarks"}%:<br /><textarea name="message" cols="50" rows="3" ></textarea></div>'
     );
 
 
@@ -713,6 +719,28 @@ sub _GETWORKFLOWROW {
     return $configure->{$param} || '';
 }
 
+# Tag handler
+# For a given state, return information about any outstanding
+# (percentage-based) transitions, including who has already signed off on the
+# transition and which of the 'allowed' entries they represent.
+# Information is returned in JSON format.
+sub _WORKFLOWPROPONENTS {
+    my ($session, $params, $topic, $web) = @_;
+    my $state = $params->{state};
+    my $action = $params->{action};
+    my $ptopic = $params->{topic} || $topic;
+    my $pweb = $params->{web} || $web;
+
+    my $controlledTopic = _initTOPIC($pweb, $ptopic);
+    return 'null' unless $controlledTopic;
+    if ($action) {
+        return to_json($controlledTopic->mapProponentsToAllowed($action));
+    }
+    my ($actions) = $controlledTopic->getActions;
+    return to_json({map { $_, $controlledTopic->mapProponentsToAllowed($_) }
+        grep { $controlledTopic->isProposableTransition($_) } @$actions});
+}
+
 # Will find a topic in trashweb to move $web.$topic to by adding a numbered suffix.
 sub _trashTopic {
     my ($web, $topic) = @_;
@@ -742,6 +770,9 @@ sub _changeState {
 
     my $mails = [];
 
+    my $json = $query->param('json');
+    my $response;
+
     try {
         my $web = $query->param('web') || $session->{webName};
         my $topic = $query->param('topic') || $session->{topicName};
@@ -762,21 +793,30 @@ sub _changeState {
             $removeComments,
             $breakLock,
         );
+        foreach my $mail ( @$mails ) {
+            _sendMail($mail);
+        }
+        if ($json) {
+            $response = to_json({status => 'ok'});
+            return;
+        }
+
         my $url = $report->{url};
         if($query->param('redirectto')) {
             my ($redirectWeb, $redirectTopic) = Foswiki::Func::normalizeWebTopicName(undef, $query->param('redirectto'));
             $url = Foswiki::Func::getViewUrl($redirectWeb, $redirectTopic) if Foswiki::Func::topicExists($redirectWeb, $redirectTopic);
         }
         Foswiki::Func::redirectCgiQuery( undef, $url ) if $url;
-        foreach my $mail ( @$mails ) {
-            _sendMail($mail);
-        }
     } catch Foswiki::OopsException with {
         my $e = shift;
+        if ($json) {
+            $response = to_json({status => 'error', data => $e->{json}, msg => $e->stringify});
+            return;
+        }
         $e->generate($session);
     };
 
-    return undef;
+    return $response;
 }
 
 # Will transition a topic.
@@ -823,7 +863,8 @@ sub transitionTopic {
             web => $web,
             topic => $topic,
             def => 'MissingParameter',
-            params => [$state || '', $action || '']
+            params => [$state || '', $action || ''],
+            json => { type => 'MissingParameter' }
         );
     }
     unless ($state eq $controlledTopic->getState()) {
@@ -832,7 +873,8 @@ sub transitionTopic {
             web => $web,
             topic => $topic,
             def => 'WrongState',
-            params => [$state, $controlledTopic->getState()]
+            params => [$state, $controlledTopic->getState()],
+            json => { type => 'WrongState', actual_state => $controlledTopic->getState }
         );
     }
     unless ($controlledTopic->haveNextState($action)) {
@@ -841,7 +883,8 @@ sub transitionTopic {
             web => $web,
             topic => $topic,
             def => 'NoNextState',
-            params => [$state, $action]
+            params => [$state, $action],
+            json => { type => 'NoNextState' }
         );
     }
     $removeComments = '0' unless defined $removeComments;
@@ -864,7 +907,8 @@ sub transitionTopic {
                     'oopswfplease',
                     web => $web,
                     topic => $topic,
-                    params => [Foswiki::Func::getWikiName($locker), "$web.$topic", $t, $state, $action, $remark, $removeComments ]
+                    params => [Foswiki::Func::getWikiName($locker), "$web.$topic", $t, $state, $action, $remark, $removeComments ],
+                    json => { type => 'LeaseOtherUser', locker => $locker, remaining_minutes => $t }
                 );
             }
         }
@@ -878,6 +922,28 @@ sub transitionTopic {
         my $actionAttributes = $controlledTopic->getAttributes($action) || '';
 
         my $saved;
+
+        if ($actionAttributes =~ m#\bALLOWEDPERCENT\((\d+)\)(?:\W|$)#) {
+            my $percent = $1;
+            # TODO: ACL checks are not enforced on proposals, so anyone who
+            # proposes the transaction (e.g. admins) will be added to the
+            # list, though they should still be ignored in the calculations.
+            # We may need to throw an exception here if the user is not a
+            # valid potential proponent.
+            $controlledTopic->addTransitionProponent($action); # just hope for the best
+            my @props = $controlledTopic->getTransitionProponents($action);
+            my %allowed2props = %{ $controlledTopic->mapProponentsToAllowed($action) };
+            my $num_allowed = scalar values %allowed2props;
+            my $num_done = scalar grep { defined $_ } values %allowed2props;
+            my $current_percent = $num_done / $num_allowed * 100;
+
+            if ($current_percent < $percent) {
+                $controlledTopic->save(1);
+                return {
+                    url => $url,
+                };
+            }
+        }
 
         # Create copy if this is a fork
         if( !$noFork && $actionAttributes =~ m#(?:\W|^)(?:SELECTABLE)?FORK((?:\((?:".*?")?[^)]*\))?)(?:\W|$)# ) {
@@ -966,7 +1032,8 @@ sub transitionTopic {
                         web => $web,
                         topic => $topic,
                         def => 'WorkflowParseErr',
-                        params => [ $err ]
+                        params => [ $err ],
+                        json => { type => 'WorkflowParseError', error => $err }
                     );
                 }
                 $name = $1;
@@ -988,7 +1055,8 @@ sub transitionTopic {
                         'oopswfplease',
                         web => $appWeb,
                         topic => $appTopic,
-                        params => [$e->{params}->[0], $e->{params}->[1], $e->{params}->[2], $state, $action, $remark, $removeComments ]
+                        params => [$e->{params}->[0], $e->{params}->[1], $e->{params}->[2], $state, $action, $remark, $removeComments ],
+                        json => { type => 'LeaseOtherUserChained', locker => $e->{params}[0], webtopic => $e->{params}[1], remaining_minutes => $e->{params}[2] }
                     );
                 } else {
                     throw $e;
@@ -1066,7 +1134,8 @@ sub transitionTopic {
             def => 'generic',
             web => $web,
             topic => $topic,
-            params => [ $error || '?' ]
+            params => [ $error || '?' ],
+            json => { type => 'GenericError', error => $error || '?' }
            );
     };
 
@@ -1961,6 +2030,8 @@ sub _getIndexHash {
 
     my %indexFields = ();
 
+    $indexFields{ workflow_origin_s } = _getOrigin("$web.$topic");
+
     # only index controlled topics, or old metadata will end up in index.
     my $controlledTopic = _initTOPIC( $web, $topic, undef, $meta, NOCACHE );
 
@@ -1975,6 +2046,8 @@ sub _getIndexHash {
                 next if $field =~ m#^(?:approved$|allow|state$)#; # skip those already indexed
                 $indexFields{ "workflowstate_${field}_s" } = Foswiki::Func::expandCommonVariables($fields->{$field});
             }
+            $indexFields{ process_state_s } = $fields->{state} if $fields->{state};
+            $indexFields{ workflow_isapproved_b } = ($fields->{approved})?1:0;
             Foswiki::Func::popTopicContext();
         }
         return %indexFields;

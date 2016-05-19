@@ -52,11 +52,14 @@ sub new {
     }
     my $this = bless(
         {
-            name        => "$web.$topic",
-            preferences => {},
-            states      => {},
-            transitions => [],
-            tasks       => []
+            name               => "$web.$topic",
+            preferences        => {},
+            states             => {},
+            transitions        => [],
+            transitions_state  => {}, # Lookup transitions by source state
+            transitions_action => {}, # Look transitions by tuple source state / action
+            tasks              => [],
+            meta               => $meta
         },
         $class
     );
@@ -134,6 +137,8 @@ sub new {
 
                 if ( $inTable eq 'TRANSITION' ) {
                     push( @{ $this->{transitions} }, \%data );
+                    $this->{transitions_action}{"$data{state}:$data{action}"} = \%data;
+                    push @{ $this->{transitions_state}{ $data{state} } }, \%data;
                 }
                 elsif ( $inTable eq 'STATE' ) {
 
@@ -172,18 +177,43 @@ sub new {
     return $this;
 }
 
+sub getPreference {
+    my ($this, $key) = @_;
+    return $this->{meta}->getPreference($key);
+}
+
+# All transitions that can follow a given state
+sub getTransitions {
+    my ($this, $state) = @_;
+    return $this->{transitions_state}{$state} || [];
+}
+
+# Transition for a specific state/action tuple
+sub getTransition {
+    my ($this, $state, $action) = @_;
+    return $this->{transitions_action}{"$state:$action"};
+}
+
+# Returns a single cell from a transition given state/action/column
+# Returns undef if the transition or column doesn't exist
+sub getTransitionCell {
+    my ($this, $state, $action, $col) = @_;
+    my $t = $this->getTransition($state, $action);
+    return unless $t;
+    return $t->{$col};
+}
+
 # Get the possible actions with warnings associated with the given state
 # Will not deliver actions with NEW, FORK or HIDDEN
 sub getActions {
-    my ( $this, $topic ) = @_;
+    my ( $this, $topic) = @_;
     my @actions      = ();
     my @warnings     = ();
     my $currentState = $topic->getState();
-    foreach my $row ( @{ $this->{transitions} } ) {
+    foreach my $row ( @{ $this->getTransitions($currentState) } ) {
         my $attribute = $row->{attribute} || '';
         if (
-                $row->{state} eq $currentState
-                && $attribute !~ /\b(?:FORK|NEW|HIDDEN)\b/
+                $attribute !~ /\b(?:FORK|NEW|HIDDEN)\b/
                 && _isAllowed($topic->expandMacros( $row->{allowed} ))
                 && _isTrue($topic->expandMacros( $row->{condition} ))
                 && $topic->expandMacros( $row->{nextstate} )
@@ -204,8 +234,8 @@ sub getActionWithAttribute {
         my $suffix = Foswiki::Plugins::KVPPlugin->_WORKFLOWSUFFIX();
         return [ '', '' ] if ( $topic->{topic} =~ m/$suffix$/ ); # forking this would create a ...TalkTalk
     }
-    foreach my $t( @{ $this->{transitions} } ) {
-        if ( $t->{state} && $t->{state} eq $currentState && $t->{attribute} && $t->{attribute} =~ /(?:^|\W)$attribute(?:\W|$)/ ) {
+    foreach my $t( @{ $this->getTransitions($currentState) } ) {
+        if ( $t->{attribute} && $t->{attribute} =~ /(?:^|\W)$attribute(?:\W|$)/ ) {
             my $allowed = $topic->expandMacros( $t->{allowed} );
             if ( _isAllowed($allowed) && _isTrue($topic->expandMacros($t->{condition})) ) {
                 return [ $t->{action}, $t->{warning} ];
@@ -218,35 +248,21 @@ sub getActionWithAttribute {
 # Returns the attributes of the given action for the given state
 sub getAttributes {
     my ( $this, $currentState, $action ) = @_;
-    foreach my $t( @{ $this->{transitions} } ) {
-        if ( $t->{state} && $t->{state} eq $currentState
-                && $t->{action} eq $action
-            )
-        {
-            return $t->{attribute};
-        }
-    }
-    return '';
+    return $this->getTransitionCell($currentState, $action, 'attribute') || '';
 }
 
 # Indicates if a given attribute is set in the 'Attribute' column
 # return '1' if set, '0' otherwise.
 sub hasAttribute {
     my ( $this, $state, $action, $attribute ) = @_;
-    foreach my $t ( @{ $this->{transitions} } ) {
-        if ( $t->{state} eq $state && $t->{action} eq $action ) {
-            if ( $t->{attribute} && $t->{attribute} =~ /(?:\W|^)$attribute(?:\W|$)/ ) {
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-    }
-    return 0;
+    my $attr = $this->getAttributes($state, $action);
+    return ( $attr && $attr =~ /(?:\W|^)$attribute(?:\W|$)/ );
 }
 
-# This returns two lists for a JavaScript with all actions that allow deletion of comments
-# and that suggest deletion of comments
+# This returns lists for a JavaScript with all actions that:
+# * allow deleting comments
+# * suggest deleting comments
+# * have remarks
 # Both lists will start and end with a ',' to make searches easier.
 sub getTransitionAttributes {
     my ( $this, $state ) = @_;
@@ -257,17 +273,16 @@ sub getTransitionAttributes {
 
     return ($allow, $suggest, $comment) unless $state; # This happens when topic has no META:WORKFLOW...
 
-    foreach my $t ( @{ $this->{transitions} } ) {
-        if ($t->{attribute} && $t->{state} eq $state) {
-            if( $t->{attribute} =~ /(?:\W|^)ALLOWDELETECOMMENTS(?:\W|$)/ ) {
-                $allow = $allow.$t->{action}.',';
-            }
-            if( $t->{attribute} =~ /(?:\W|^)SUGGESTDELETECOMMENTS(?:\W|$)/ ) {
-                $suggest = $suggest.$t->{action}.',';
-            }
-            if( $t->{attribute} =~ /(?:\W|^)REMARK(?:\W|$)/ ) {
-                $comment = $comment.$t->{action}.',';
-            }
+    foreach my $t ( @{ $this->getTransitions($state) } ) {
+        next unless $t->{attribute};
+        if( $t->{attribute} =~ /(?:\W|^)ALLOWDELETECOMMENTS(?:\W|$)/ ) {
+            $allow = $allow.$t->{action}.',';
+        }
+        if( $t->{attribute} =~ /(?:\W|^)SUGGESTDELETECOMMENTS(?:\W|$)/ ) {
+            $suggest = $suggest.$t->{action}.',';
+        }
+        if( $t->{attribute} =~ /(?:\W|^)REMARK(?:\W|$)/ ) {
+            $comment = $comment.$t->{action}.',';
         }
     }
 
@@ -281,19 +296,14 @@ sub getNextState {
     my ( $this, $topic, $action ) = @_;
     unless($action) {Foswiki::Func::writeWarning("No action! topic: ".$topic); return undef;} # XXX
     my $currentState = $topic->getState();
-    foreach my $t ( @{ $this->{transitions} } ) {
-        my $allowed = $topic->expandMacros( $t->{allowed} );
-        my $nextState = $topic->expandMacros( $t->{nextstate} );
-        my $condition = $topic->expandMacros( $t->{condition} );
-        if (
-                $t->{state} eq $currentState
-                && $t->{action} eq $action
-                && _isTrue($condition)
-                && _isAllowed($allowed) && $nextState
-            )
-        {
-            return $nextState;
-        }
+
+    my $t = $this->getTransition($currentState, $action);
+    return undef unless $t;
+    my $allowed = $topic->expandMacros( $t->{allowed} );
+    my $nextState = $topic->expandMacros( $t->{nextstate} );
+    my $condition = $topic->expandMacros( $t->{condition} );
+    if ( _isTrue($condition) && _isAllowed($allowed) && $nextState ) {
+        return $nextState;
     }
     return undef;
 }
@@ -319,13 +329,10 @@ sub getTaskForAction {
     my ( $this, $topic, $action ) = @_;
 
     my $currentState = $topic->getState();
-    foreach my $t (@{ $this->{transitions} }) {
+    my $t = $this->getTransition($currentState, $action);
+    if ($t) {
         my $allowed = $topic->expandMacros( $t->{allowed} );
-        if(
-                $t->{state} eq $currentState
-                && $t->{action} eq $action
-                && _isAllowed($allowed)
-        ) {
+        if ( _isAllowed($allowed)) {
             return $t->{task} || '';
         }
     }
@@ -340,17 +347,12 @@ sub getTaskForAction {
 sub getNotifyList {
     my ( $this, $topic, $action ) = @_;
     my $currentState = $topic->getState();
-    foreach my $t ( @{ $this->{transitions} } ) {
-        my $allowed = $topic->expandMacros( $t->{allowed} );
-        if (
-                $t->{state} eq $currentState
-                && $t->{action} eq $action
-                && _isAllowed( $allowed )
-            )
-        {
-            my $notifylist = $topic->expandMacros( $t->{notify} );
-            return $notifylist;
-        }
+    my $t = $this->getTransition($currentState, $action);
+    return unless $t;
+    my $allowed = $topic->expandMacros( $t->{allowed} );
+    if ( _isAllowed( $allowed )) {
+        my $notifylist = $topic->expandMacros( $t->{notify} );
+        return $notifylist;
     }
     return undef;
 }

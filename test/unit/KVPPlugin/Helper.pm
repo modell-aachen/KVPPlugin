@@ -99,6 +99,35 @@ use constant CONDWORKFLOW => <<'WORKFLOW';
    * Set ALLOWTOPICCHANGE=Main.AdminUser
 WORKFLOW
 
+use constant PROPOSALWORKFLOW => <<'WORKFLOW';
+---++ Defaults
+%EDITTABLE{format="| text, 20 | text, 20 | text, 20 | text, 2 |"}%
+| *State Type* | *Left Tab* | *Right Tab* | *Approved* |
+| approved | Approved Page | Discussion | 1 |
+| discussion | Approved Page | Discussion | 0 |
+| draft | Approved Page | Draft | 0 |
+
+---++ States
+%EDITTABLE{format="| text, 20 | text, 30 | text, 30 | text, 50 | text, 30 | text, 15 |"}%
+| *State* | *Allow Edit* | *Allow Move* | *Message* | *Allow Comment* | *State Type* |
+| NEW | LOGGEDIN | Main.KeyUserGroup, %WORKFLOWMETA{LASTPROCESSOR_NEU}% | This document is not yet in CIP. | LOGGEDIN | draft |
+| DRAFT | LOGGEDIN | Main.KeyUserGroup, %WORKFLOWMETA{LASTPROCESSOR_NEU}% | This document is a draft. | LOGGEDIN | draft |
+| APPROVED | LOGGEDIN | Main.KeyUserGroup, %WORKFLOWMETA{LASTPROCESSOR_NEU}% | This document is approved. | LOGGEDIN | approved |
+
+---++ Transitions
+%EDITTABLE{format="| text, 20 | text, 40 | text, 20 | text, 30 | text, 30 | text, 15 | text, 15 |"}%
+| *State* | *Action* | *Next State* | *Allowed* | *Notify* | *Condition* | *Attribute* |
+| NEW | Create | DRAFT | LOGGEDIN, Main.KeyUserGroup | | | NEW |
+| DRAFT | Propose approval | APPROVED | test1, test2, qm1 | | | ALLOWEDPERCENT(100) |
+| DRAFT | Escape hatch | APPROVED | | | | |
+| APPROVED | Propose re-draft | DRAFT | test1, test2, QMGroup | | | ALLOWEDPERCENT(60) |
+| APPROVED | Escape hatch | DRAFT | | | | |
+
+   * Set NOWYSIWYG=1
+   * Set WORKFLOW=
+   * Set ALLOWTOPICCHANGE=Main.AdminUser
+WORKFLOW
+
 use constant R_C_WORKFLOW => <<'WORKFLOW';
 ---++ Defaults
 %EDITTABLE{format="| text, 20 | text, 20 | text, 20 | text, 2 |"}%
@@ -184,8 +213,17 @@ sub set_up_users {
     # Users
     $other->registerUser( 'test1', 'Test', "One", 'testuser1@example.com' );
     $users->{test1} = $other->{session}->{users}->getCanonicalUserID('test1');
+    $other->registerUser( 'test2', 'Test', "Two", 'testuser2@example.com' );
+    $users->{test2} = $other->{session}->{users}->getCanonicalUserID('test2');
     $other->registerUser( 'qm1', 'Quality', "One", 'qm1@example.com' );
     $users->{qm1} = $other->{session}->{users}->getCanonicalUserID('qm1');
+    $other->registerUser( 'qm2', 'Quality', "Two", 'qm2@example.com' );
+    $users->{qm2} = $other->{session}->{users}->getCanonicalUserID('qm2');
+
+    # hack hack hack
+    local $Foswiki::Plugins::SESSION->{user} = 'BaseUserMapping_333';
+    Foswiki::Func::addUserToGroup('qm1', 'QMGroup', 1);
+    Foswiki::Func::addUserToGroup('qm2', 'QMGroup', 1);
 
     return $users;
 }

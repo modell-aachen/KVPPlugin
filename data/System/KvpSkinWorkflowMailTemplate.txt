@@ -4,11 +4,11 @@
 %TMPL:DEF{"From"}%%WIKIWEBMASTERNAME% <%WIKIWEBMASTER%>%TMPL:END%
 
 %{"Set subject:"}%
-%TMPL:DEF{"Subject"}%%MAKETEXT{"[_1] has a new state: [_2]" args="%TMPL:P{"TOPICTITLE"}%, %TARGET_STATE%"}%%TMPL:END%
+%TMPL:DEF{"Subject"}%%MAKETEXT{"[_1] has a new state: [_2]" arg1="%TMPL:P{"TOPICTITLE"}%" arg2="%TARGET_STATE%"}%%TMPL:END%
 
 %{"Body of the mail:"}%
 %TMPL:DEF{"mailContents"}%
-%MAKETEXT{"[_1] edited the topic [_2]." args="%WIKINAME%, %TMPL:P{"TOPICTITLE"}%"}%
+%MAKETEXT{"[_1] edited the topic [_2]." arg1="%WIKINAME%" arg2="%TMPL:P{"TOPICTITLE"}%"}%
 
 %TMPL:P{"Message"}%%TMPL:P{"Remarks"}%
 

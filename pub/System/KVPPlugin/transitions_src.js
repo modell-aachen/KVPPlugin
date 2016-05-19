@@ -48,8 +48,25 @@ jQuery(function($) {
     WORKFLOW.showCheckBox = function() {
         var menu = $('#WORKFLOWmenu');
         var remark = $('#KVPRemark');
+        var box = $('#WORKFLOWchkbox');
+        var alreadyProposedLabel = $('#WORKFLOWalreadyProposedLabel');
         var selection = WORKFLOW.getSelection();
         if(selection === undefined) return;
+
+        if (alreadyProposedLabel !== null) {
+            if (WORKFLOW.alreadyProposed.indexOf(','+selection+',') > -1) {
+                alreadyProposedLabel.show();
+                $('#WORKFLOWbutton').hide();
+                $('.KVPChangeStatus').hide();
+                box.hide();
+                remark.hide();
+                return;
+            } else {
+                alreadyProposedLabel.hide();
+                $('#WORKFLOWbutton').show();
+                $('.KVPChangeStatus').show();
+            }
+        }
         if(remark != null) {
             if(WORKFLOW.remarkOption.indexOf(','+selection+',') > -1) {
                 remark.show();
@@ -57,7 +74,6 @@ jQuery(function($) {
                 remark.hide();
             }
         }
-        var box = $('#WORKFLOWchkbox');
         if (!box.length) return;
         if(WORKFLOW.allowOption.indexOf(','+selection+',') > -1) {
             box.show();
