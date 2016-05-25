@@ -1,6 +1,6 @@
 # KVPPlugin translation for French (français)
-# Translators:
-#   Islem Haddar 2013.
+# # Translators:
+# #   Islem Haddar 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: fr\n"
