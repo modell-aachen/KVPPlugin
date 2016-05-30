@@ -1,0 +1,355 @@
+%TMPL:INCLUDE{"DocumentHead"}%
+%TMPL:DEF{"ma:documenthead:kvp:approved:de"}%
+%VUE%
+%ADDTOZONE{"script" requires="VUEJSPLUGIN,JQUERYPLUGIN" id="VUEJSPLUGIN:TOPHEAD" text="<script type='text/javascript' src='%PUBURLPATH%/%SYSTEMWEB%/FlatSkin/js/flat_tophead.js'></script>"}%
+<div class='patternTop'>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span>
+<div class='documentHead'>
+  <div class='contentTopHead'>
+    <table class='flatHeaderTable'>
+      <tbody>
+        <tr>
+          <td><span class='keyFlatTopHead'>Status</span></td>
+          <td><span class='keyFlatTopHead'>Geltungsbereich</span></td>
+          <td><span class='keyFlatTopHead'>Verantwortlich</span></td>
+          <td><span class='keyFlatTopHead'>Freigegeben durch</span></td>
+          <td><span class='keyFlatTopHead'>Freigabedatum</span></td>
+          <td><span class='keyFlatTopHead'>Letzter Autor</span></td>
+        </tr>
+        <tr>
+          <td><span class='approvedFlatTopHead'>%MAKETEXT{"approved"}%</span></td>
+          <td><span class='valueFlatTopHead'>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</span></td>
+          <td><span class='valueFlatTopHead'>
+            <i class="fa fa-user"></i> %RENDERFORDISPLAY{fields="Responsible" format="$value"}%</span></td>
+          <td><span class='valueFlatTopHead'>
+            <i class="fa fa-user"></i> %RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%" format="$displayName"}%</span></td>
+          <td><span class='valueFlatTopHead'>%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1"}%</span></td>
+          <td><span class='valueFlatTopHead'>
+            <i class="fa fa-user"></i> %RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%" format="$displayName"}%</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div v-if='show' transition='expand' class='expandTopHead'>
+      <table class='flatHeaderTable'>
+        <tbody>
+          <tr>
+            <td><span class='keyFlatTopHead'>Dokumententype</span></td>
+            <td><span class='keyFlatTopHead'>Seitenname</span></td>
+            <td><span class='keyFlatTopHead'>Version</span></td>
+            <td><span class='keyFlatTopHead'>(Seite)</span></td>
+            <td><span class='keyFlatTopHead'>(LOGO)</span></td>
+          </tr>
+          <tr>
+            <td><span class='valueFlatTopHead'>
+              %MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</span></td>
+            <td><span class='valueFlatTopHead'>%QUERY{"TopicTitle"}%</span></td>
+            <td><span class='valueFlatTopHead'>%WORKFLOWMETA{"Revision"}%</span></td>
+            <td><span class='valueFlatTopHead'>%TMPL:P{"modacPageNr"}%</span></td>
+            <td><span class='valueFlatTopHead'>%{<img alt='Logo' src='%WIKILOGOIMG%' />}%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="toggleTopHead" @click='toggle'>
+    <i class="fa fa-angle-down fa-2x" v-if="show"></i>
+    <i class="fa fa-angle-right fa-2x" v-else="show"></i>
+  </div>
+  <div style="clear: both;"></div>
+</div>
+</div><!--/patternTop-->
+%TMPL:END%
+
+%TMPL:DEF{"ma:documenthead:kvp:approved:en"}%
+<div class='patternTop'>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span>
+<div class='documentHead'>
+  <div class='contentTopHead'>
+    <table class='flatHeaderTable'>
+      <tbody>
+        <tr>
+          <td><span class='keyFlatTopHead'>Status</span></td>
+          <td><span class='keyFlatTopHead'>Area of application</span></td>
+          <td><span class='keyFlatTopHead'>Responsible</span></td>
+          <td><span class='keyFlatTopHead'>Approved by</span></td>
+          <td><span class='keyFlatTopHead'>Release date</span></td>
+          <td><span class='keyFlatTopHead'>Last author</span></td>
+        </tr>
+        <tr>
+          <td><span class='approvedFlatTopHead'>%MAKETEXT{"approved"}%</span></td>
+          <td><span class='valueFlatTopHead'>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</span></td>
+          <td><span class='valueFlatTopHead'><i class="fa fa-user"></i> %RENDERFORDISPLAY{fields="Responsible" format="$value"}%</span></td>
+          <td><span class='valueFlatTopHead'>
+            <i class="fa fa-user"></i> %RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%" format="$displayName"}%</span></td>
+          <td><span class='valueFlatTopHead'>%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1"}%</span></td>
+          <td><span class='valueFlatTopHead'>
+            <i class="fa fa-user"></i> %RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%" format="$displayName"}%</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div v-if='show' transition='expand' class='expandTopHead'>
+      <table class='flatHeaderTable'>
+        <tbody>
+          <tr>
+            <td><span class='keyFlatTopHead'>Document type</span></td>
+            <td><span class='keyFlatTopHead'>Topic title</span></td>
+            <td><span class='keyFlatTopHead'>Version</span></td>
+            <td><span class='keyFlatTopHead'>(Page)</span></td>
+            <td><span class='keyFlatTopHead'>(LOGO)</span></td>
+          </tr>
+          <tr>
+            <td><span class='valueFlatTopHead'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</span></td>
+            <td><span class='valueFlatTopHead'>%QUERY{"TopicTitle"}%</span></td>
+            <td><span class='valueFlatTopHead'>%WORKFLOWMETA{"Revision"}%</span></td>
+            <td><span class='valueFlatTopHead'>%TMPL:P{"modacPageNr"}%</span></td>
+            <td><span class='valueFlatTopHead'>%{<img alt='Logo' src='%WIKILOGOIMG%' />}%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="toggleTopHead" @click='toggle'>
+    <i class="fa fa-angle-down fa-2x" v-if="show"></i>
+    <i class="fa fa-angle-right fa-2x" v-else="show"></i>
+  </div>
+  <div style="clear: both;"></div>
+</div>
+</div><!--/patternTop-->
+%TMPL:END%
+
+%TMPL:DEF{"ma:documenthead:kvp:approved:auto"}%
+<div class='patternTop'>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span>
+<div class='documentHead'>
+  <div class='contentTopHead'>
+    <table class='flatHeaderTable'>
+      <tbody>
+        <tr>
+          <td><span class='keyFlatTopHead'>%MAKETEXT{Status}%</span></td>
+          <td><span class='keyFlatTopHead'>%MAKETEXT{Area of application}%</span></td>
+          <td><span class='keyFlatTopHead'>%MAKETEXT{Responsible}%</span></td>
+          <td><span class='keyFlatTopHead'>%MAKETEXT{Approved by}%</span></td>
+          <td><span class='keyFlatTopHead'>%MAKETEXT{Release date}%</span></td>
+          <td><span class='keyFlatTopHead'>%MAKETEXT{Last author}%</span></td>
+        </tr>
+        <tr>
+          <td><span class='approvedFlatTopHead'>%MAKETEXT{"approved"}%</span></td>
+          <td><span class='valueFlatTopHead'>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</span></td>
+          <td><span class='valueFlatTopHead'><i class="fa fa-user"></i> %RENDERFORDISPLAY{fields="Responsible" format="$value"}%</span></td>
+          <td><span class='valueFlatTopHead'>
+            <i class="fa fa-user"></i> %RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%" format="$displayName"}%</span></td>
+          <td><span class='valueFlatTopHead'>%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1"}%</span></td>
+          <td><span class='valueFlatTopHead'>
+            <i class="fa fa-user"></i> %RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%" format="$displayName"}%</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div v-if='show' transition='expand' class='expandTopHead'>
+      <table class='flatHeaderTable'>
+        <tbody>
+          <tr>
+            <td><span class='keyFlatTopHead'>%MAKETEXT{Document type}%</span></td>
+            <td><span class='keyFlatTopHead'>%MAKETEXT{Topic title}%</span></td>
+            <td><span class='keyFlatTopHead'>%MAKETEXT{Version}%</span></td>
+            <td><span class='keyFlatTopHead'>(%MAKETEXT{Page}%)</span></td>
+            <td><span class='keyFlatTopHead'>(LOGO)</span></td>
+          </tr>
+          <tr>
+            <td><span class='valueFlatTopHead'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</span></td>
+            <td><span class='valueFlatTopHead'>%QUERY{"TopicTitle"}%</span></td>
+            <td><span class='valueFlatTopHead'>%WORKFLOWMETA{"Revision"}%</span></td>
+            <td><span class='valueFlatTopHead'>%TMPL:P{"modacPageNr"}%</span></td>
+            <td><span class='valueFlatTopHead'>%{<img alt='Logo' src='%WIKILOGOIMG%' />}%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="toggleTopHead" @click='toggle'>
+    <i class="fa fa-angle-down fa-2x" v-if="show"></i>
+    <i class="fa fa-angle-right fa-2x" v-else="show"></i>
+  </div>
+  <div style="clear: both;"></div>
+</div>
+</div><!--/patternTop-->
+%TMPL:END%
+
+%TMPL:DEF{"ma:documenthead:kvp:discuss:de"}%
+<div class='patternTop'>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span>
+  <div class='patternTop-callout'>Bei diesem Dokument handelt es sich um einen Arbeitsstand.</div>
+<div class='documentHead'>
+  <div class='contentTopHead'>
+    <table class='flatHeaderTable'>
+      <tbody>
+        <tr>
+          <td><span class='keyFlatTopHead'>Status</span></td>
+          <td><span class='keyFlatTopHead'>Geltungsbereich</span></td>
+          <td><span class='keyFlatTopHead'>Verantwortlich</span></td>
+          <td><span class='keyFlatTopHead'>Freigegeben durch</span></td>
+          <td><span class='keyFlatTopHead'>Freigabedatum</span></td>
+          <td><span class='keyFlatTopHead'>Letzter Autor</span></td>
+        </tr>
+        <tr>
+          <td><span class='disFlatTopHead'>diskussion</span></td>
+          <td><span class='valueFlatTopHead'>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</span></td>
+          <td><span class='valueFlatTopHead'><i class="fa fa-user"></i> %RENDERFORDISPLAY{fields="Responsible" format="$value"}%</span></td>
+          <td><span class='disFlatTopHead'><i class="fa fa-user"></i> in Diskussion</span></td>
+          <td><span class='disFlatTopHead'>in Diskussion</span></td>
+          <td><span class='disFlatTopHead'><i class="fa fa-user"></i> in Diskussion</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div v-if='show' transition='expand' class='expandTopHead'>
+      <table class='flatHeaderTable'>
+        <tbody>
+          <tr>
+            <td><span class='keyFlatTopHead'>Dokumententype</span></td>
+            <td><span class='keyFlatTopHead'>Seitenname</span></td>
+            <td><span class='keyFlatTopHead'>Version</span></td>
+            <td><span class='keyFlatTopHead'>(Seite)</span></td>
+            <td><span class='keyFlatTopHead'>(LOGO)</span></td>
+          </tr>
+          <tr>
+            <td><span class='valueFlatTopHead'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</span></td>
+            <td><span class='valueFlatTopHead'>%QUERY{"TopicTitle"}%</span></td>
+            <td><span class='valueFlatTopHead'>%WORKFLOWMETA{"Revision"}%</span></td>
+            <td><span class='valueFlatTopHead'>%TMPL:P{"modacPageNr"}%</span></td>
+            <td><span class='valueFlatTopHead'>%{<img alt='Logo' src='%WIKILOGOIMG%' />}%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="toggleTopHead" @click='toggle'>
+    <i class="fa fa-angle-down fa-2x" v-if="show"></i>
+    <i class="fa fa-angle-right fa-2x" v-else="show"></i>
+  </div>
+  <div style="clear: both;"></div>
+</div>
+</div><!--/patternTop-->
+%TMPL:END%
+
+%TMPL:DEF{"ma:documenthead:kvp:discuss:en"}%
+<div class='patternTop'>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span>
+  <div class='patternTop-callout'>This document is a working state.</div>
+<div class='documentHead'>
+  <div class='contentTopHead'>
+    <table class='flatHeaderTable'>
+      <tbody>
+        <tr>
+          <td><span class='keyFlatTopHead'>Status</span></td>
+          <td><span class='keyFlatTopHead'>Area of application</span></td>
+          <td><span class='keyFlatTopHead'>Responsible</span></td>
+          <td><span class='keyFlatTopHead'>Approved by</span></td>
+          <td><span class='keyFlatTopHead'>Release date</span></td>
+          <td><span class='keyFlatTopHead'>Last author</span></td>
+        </tr>
+        <tr>
+          <td><span class='disFlatTopHead'>discussion</span></td>
+          <td><span class='valueFlatTopHead'>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</span></td>
+          <td><span class='valueFlatTopHead'><i class="fa fa-user"></i> %RENDERFORDISPLAY{fields="Responsible" format="$value"}%</span></td>
+          <td><span class='disFlatTopHead'><i class="fa fa-user"></i> under discussion</span></td>
+          <td><span class='disFlatTopHead'>under discussion</span></td>
+          <td><span class='disFlatTopHead'><i class="fa fa-user"></i> under discussion</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div v-if='show' transition='expand' class='expandTopHead'>
+      <table class='flatHeaderTable'>
+        <tbody>
+          <tr>
+            <td><span class='keyFlatTopHead'>Dokumententype</span></td>
+            <td><span class='keyFlatTopHead'>Seitenname</span></td>
+            <td><span class='keyFlatTopHead'>Version</span></td>
+            <td><span class='keyFlatTopHead'>(Seite)</span></td>
+            <td><span class='keyFlatTopHead'>(LOGO)</span></td>
+          </tr>
+          <tr>
+            <td><span class='valueFlatTopHead'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</span></td>
+            <td><span class='valueFlatTopHead'>%QUERY{"TopicTitle"}%</span></td>
+            <td><span class='valueFlatTopHead'>%WORKFLOWMETA{"Revision"}%</span></td>
+            <td><span class='valueFlatTopHead'>%TMPL:P{"modacPageNr"}%</span></td>
+            <td><span class='valueFlatTopHead'>%{<img alt='Logo' src='%WIKILOGOIMG%' />}%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="toggleTopHead" @click='toggle'>
+    <i class="fa fa-angle-down fa-2x" v-if="show"></i>
+    <i class="fa fa-angle-right fa-2x" v-else="show"></i>
+  </div>
+  <div style="clear: both;"></div>
+</div>
+</div><!--/patternTop-->
+%TMPL:END%
+
+%TMPL:DEF{"ma:documenthead:kvp:discuss:auto"}%
+<div class='patternTop'>
+<span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span>
+<div class='documentHead'>
+  <div class='contentTopHead'>
+    <table class='flatHeaderTable'>
+      <tbody>
+        <tr>
+          <td><span class='keyFlatTopHead'>%MAKETEXT{Status}%</span></td>
+          <td><span class='keyFlatTopHead'>%MAKETEXT{Area of application}%</span></td>
+          <td><span class='keyFlatTopHead'>%MAKETEXT{Responsible}%</span></td>
+          <td><span class='keyFlatTopHead'>%MAKETEXT{Approved by}%</span></td>
+          <td><span class='keyFlatTopHead'>%MAKETEXT{Release date}%</span></td>
+          <td><span class='keyFlatTopHead'>%MAKETEXT{Last author}%</span></td>
+        </tr>
+        <tr>
+          <td><span class='disFlatTopHead'>%MAKETEXT{"discussion"}%</span></td>
+          <td><span class='valueFlatTopHead'>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</span></td>
+          <td><span class='valueFlatTopHead'><i class="fa fa-user"></i> %RENDERFORDISPLAY{fields="Responsible" format="$value"}%</span></td>
+          <td><span class='disFlatTopHead'><i class="fa fa-user"></i> %MAKETEXT{"under&#160;discussion"}%</span></td>
+          <td><span class='disFlatTopHead'>%MAKETEXT{"under&#160;discussion"}%</span></td>
+          <td><span class='disFlatTopHead'><i class="fa fa-user"></i> %MAKETEXT{"under&#160;discussion"}%</span></td>
+        </tr>
+      </tbody>
+    </table>
+    <div v-if='show' transition='expand' class='expandTopHead'>
+      <table class='flatHeaderTable'>
+        <tbody>
+          <tr>
+            <td><span class='keyFlatTopHead'>%MAKETEXT{Document type}%</span></td>
+            <td><span class='keyFlatTopHead'>%MAKETEXT{Topic title}%</span></td>
+            <td><span class='keyFlatTopHead'>%MAKETEXT{Version}%</span></td>
+            <td><span class='keyFlatTopHead'>(%MAKETEXT{Page}%)</span></td>
+            <td><span class='keyFlatTopHead'>(LOGO)</span></td>
+          </tr>
+          <tr>
+            <td><span class='valueFlatTopHead'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</span></td>
+            <td><span class='valueFlatTopHead'>%QUERY{"TopicTitle"}%</span></td>
+            <td><span class='valueFlatTopHead'>%WORKFLOWMETA{"Revision"}%</span></td>
+            <td><span class='valueFlatTopHead'>%TMPL:P{"modacPageNr"}%</span></td>
+            <td><span class='valueFlatTopHead'>%{<img alt='Logo' src='%WIKILOGOIMG%' />}%</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="toggleTopHead" @click='toggle'>
+    <i class="fa fa-angle-down fa-2x" v-if="show"></i>
+    <i class="fa fa-angle-right fa-2x" v-else="show"></i>
+  </div>
+  <div style="clear: both;"></div>
+</div>
+</div><!--/patternTop-->
+%TMPL:END%
+
+%{<verbatim class="tml" />}%
+%TMPL:DEF{"ma:documenthead:kvp:approved"}%%SWITCHTMPL{"%CONTENT_LANGUAGE%" prefix="ma:documenthead:kvp:approved:" defaultTo="auto"}%%TMPL:END%
+%TMPL:DEF{"ma:documenthead:kvp:discuss"}%%SWITCHTMPL{"%CONTENT_LANGUAGE%" prefix="ma:documenthead:kvp:discuss:" defaultTo="auto"}%%TMPL:END%
+%{</verbatim>}%
+
+%{<verbatim class="tml" />}%
+%TMPL:DEF{"ma:documenthead"}%%TMPL:P{context="KVPControlled" then="ma:documenthead:kvp" else="ma:documenthead:std"}%%TMPL:END%
+%{</verbatim>}%
+
+%{<verbatim class="tml" />}%
+%TMPL:DEF{"ma:documenthead:kvp"}%%TMPL:P{context="KVPIsDiscussion" then="ma:documenthead:kvp:discuss" else="ma:documenthead:kvp:approved"}%%TMPL:END%
+%{</verbatim>}%
