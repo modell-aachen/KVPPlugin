@@ -1,24 +1,25 @@
 # Release manifest for KVPPlugin
+data/System/ExampleSkinTopHeadTemplate.txt 0664 Example template for header
 data/System/KVPPlugin.txt 0664 Documentation
 data/System/KVPPluginCommonWords.txt 0664
 data/System/KvpSkinSolrSearchBaseTemplate.txt 0664 Adjustments for SolrSearch
 data/System/KvpSkinSolrSearchViewTemplate.txt 0664 Adjustments for SolrSearch
-data/System/ExampleSkinTopHeadTemplate.txt 0664 Example template for header
 data/System/KvpSkinTopHeadTemplate.txt 0664 Template for header
 data/System/KvpSkinTransitionsTemplate.txt 0664 Template for transitionmenue
 data/System/KvpSkinWorkflowMailTemplate.txt 0664 Customization template for mails
-data/System/KvpSkinWorkflowViewTemplate.txt 0664 ViewTemplate to allow showing macros
 data/System/KvpSkinWorkflowViewMacrosTemplate.txt 0664 ViewTemplate for showing macros
-pub/System/KVPPlugin/transitions.js 0644 Script for transition menue
-pub/System/KVPPlugin/transitions.js.gz 0644 Script for transition menue
-pub/System/KVPPlugin/changewarning.js 0644 Script for transition menue
-pub/System/KVPPlugin/changewarning.js.gz 0644 Script for transition menue
+data/System/KvpSkinWorkflowViewTemplate.txt 0664 ViewTemplate to allow showing macros
+data/System/KvpflatSkinDocumentHeadTemplate.txt 0664 Template for header
 pub/System/KVPPlugin/blockLink.js 0644 Script for blocking links
 pub/System/KVPPlugin/blockLink.js.gz 0644 Script for blocking links
+pub/System/KVPPlugin/changewarning.js 0644 Script for transition menue
+pub/System/KVPPlugin/changewarning.js.gz 0644 Script for transition menue
 pub/System/KVPPlugin/jsi18n.solrkvp.de.js 0644 translations for solr
 pub/System/KVPPlugin/jsi18n.solrkvp.de.js.gz 0644 translations for solr
 pub/System/KVPPlugin/jsi18n.solrkvp.en.js 0644 translations for solr
 pub/System/KVPPlugin/jsi18n.solrkvp.en.js.gz 0644 translations for solr
+pub/System/KVPPlugin/transitions.js 0644 Script for transition menue
+pub/System/KVPPlugin/transitions.js.gz 0644 Script for transition menue
 locale/KVPPlugin/cs.po 0664 Czech translations
 locale/KVPPlugin/de.po 0664 German translations
 locale/KVPPlugin/fr.po 0664 French translations
