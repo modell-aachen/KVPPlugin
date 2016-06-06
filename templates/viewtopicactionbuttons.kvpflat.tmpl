@@ -21,13 +21,13 @@
 %TMPL:DEF{"talktopicactionbutton"}%%TMPL:P{context="KVPIsDiscussion" else="talktopicactionviewinactive" then="talktopicactionviewactive"}%%TMPL:END%
 
 %{ Anzeige im Diskussionsstand Alex: HIER MUSS NEN TAG HINZUKOMMEN}%
-%TMPL:DEF{"talktopicactionviewactive"}%<li class="active"><a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%' rel='nofollow' title='%MAKETEXT{"Discussion about Improvements"}%' >%MAKETEXT{%GETWORKFLOWROW{"righttab"}%}%</a></li>%TMPL:END%
+%TMPL:DEF{"talktopicactionviewactive"}%<li class="active"><a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%' rel='nofollow' title='%MAKETEXT{"Discussion about Improvements"}%' >%MAKETEXT{%GETWORKFLOWROW{"righttab"}%}%%TMPL:P{"modacEdit"}%</a></li>%TMPL:END%
 
 %{ Anzeige im freigegebenen Stand }%
 %TMPL:DEF{"talktopicactionviewinactive"}%<li class="modacActionButtonINACTIVE">%IF{"context KVPHasDiscussion" then="$percntTMPL:P{talktopicactionviewinactivelink}$percnt" else="$percntTMPL:P{talktopicactionviewinactivenew}$percnt"}%</li>%TMPL:END%
 
 %{ Diskussionsstand bearbeiten }%
-%TMPL:DEF{"talktopicactionviewinactivelink"}%<a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%%TMPL:P{talktopic}%' rel='nofollow' title='%MAKETEXT{"Discussion about Improvements"}%' >%MAKETEXT{%GETWORKFLOWROW{"righttab"}%}%</a>%TMPL:END%
+%TMPL:DEF{"talktopicactionviewinactivelink"}%<a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%%TMPL:P{talktopic}%' rel='nofollow' title='%MAKETEXT{"Discussion about Improvements"}%' >%MAKETEXT{%GETWORKFLOWROW{"righttab"}%}%%TMPL:P{"modacEdit"}%</a>%TMPL:END%
 
 %{ Diskussionsstand neu erstellen }%
 %TMPL:DEF{"talktopicactionviewinactivenew"}%%WORKFLOWFORK{label="%MAKETEXT{"Start new Discussion"}%" title="%MAKETEXT{"Discussion about Improvements"}%"}%%TMPL:END%

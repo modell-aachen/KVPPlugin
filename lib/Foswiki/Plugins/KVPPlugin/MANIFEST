@@ -5,6 +5,7 @@ data/System/KVPPluginCommonWords.txt 0664
 data/System/KvpSkinSolrSearchBaseTemplate.txt 0664 Adjustments for SolrSearch
 data/System/KvpSkinSolrSearchViewTemplate.txt 0664 Adjustments for SolrSearch
 data/System/KvpSkinTopHeadTemplate.txt 0664 Template for header
+data/System/KvpflatSkinDocumentHeadTemplate.txt 0664 Template for header
 data/System/KvpSkinTransitionsTemplate.txt 0664 Template for transitionmenue
 data/System/KvpSkinWorkflowMailTemplate.txt 0664 Customization template for mails
 data/System/KvpSkinWorkflowViewMacrosTemplate.txt 0664 ViewTemplate for showing macros
