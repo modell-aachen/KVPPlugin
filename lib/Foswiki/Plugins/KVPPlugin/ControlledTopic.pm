@@ -234,9 +234,11 @@ sub mapProponentsToAllowed {
     for my $a (@allowed) {
         my $user = Foswiki::Func::getCanonicalUserID($a);
         $map->{$a} = undef;
-        if (grep /^\Q$user\E$/, @props) {
-            $map->{$a} = $user;
-            next;
+        if (defined $user) {
+            if (grep /^\Q$user\E$/, @props) {
+                $map->{$a} = $user;
+                next;
+            }
         }
         next unless Foswiki::Func::isGroup($a);
         my $it = Foswiki::Func::eachGroupMember($a);
