@@ -577,7 +577,7 @@ sub _WORKFLOWTRANSITION {
     my $json = to_json($transwarn);
     Foswiki::Func::addToZone('script', 'WORKFLOW::COMMENT', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI');
 <script type="text/json" class="KVPPlugin_WORKFLOW">$json</script>
-<script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/transitions.js"></script>
+<script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/transitions.js?version=$VERSION"></script>
 SCRIPT
 
     if ( $numberOfActions == 1 ) {
@@ -693,7 +693,7 @@ sub _WORKFLOWFORK {
     }
 
     # Add script to prevent double-clicking link
-    my $js = Foswiki::Func::getPubUrlPath()."/$Foswiki::cfg{SystemWebName}/KVPPlugin/blockLink.js";
+    my $js = Foswiki::Func::getPubUrlPath()."/$Foswiki::cfg{SystemWebName}/KVPPlugin/blockLink.js?version=$VERSION";
     Foswiki::Func::addToZone('script', 'WORKFLOW::DISABLE', "<script type=\"text/javascript\" src=\"$js\"></script>", 'JQUERYPLUGIN::FOSWIKI');
     Foswiki::Plugins::JQueryPlugin::createPlugin( 'blockUI', $session );
 
