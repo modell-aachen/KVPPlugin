@@ -1,7 +1,7 @@
 %TMPL:INCLUDE{"WorkflowMail"}%
 
 %{"Set the sender:"}%
-%TMPL:DEF{"From"}%%TMPL:P{"ModacMailFrom"}%%TMPL:END%
+%TMPL:DEF{"From"}%%TMPL:P{"ModacNoReply"}%%TMPL:END%
 
 %{"Set subject:"}%
 %TMPL:DEF{"Subject"}%%MAKETEXT{"[_1] has a new state: [_2]" arg1="%TMPL:P{"TOPICTITLE"}%" arg2="%TARGET_STATE%"}%%TMPL:END%
