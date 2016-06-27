@@ -1,10 +1,10 @@
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "%1 edited the topic %2."
-msgstr ""
+msgstr "%1 editoval téma %2."
 
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "%1 has a new state: %2"
-msgstr ""
+msgstr "%1 má nový status: %2"
 
 #: templates/oopswfplease.tmpl
 msgid "%1 is editing %2, and their lock is still active for another %3"
@@ -13,56 +13,56 @@ msgstr ""
 #: templates/oopsworkflowerr.tmpl templates/oopsworkflowfork.tmpl
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "(workflow error)"
-msgstr ""
+msgstr "(Chyba workflow)"
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Action"
-msgstr ""
+msgstr "Akce"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approve content"
-msgstr ""
+msgstr "Obsah potvrdit"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approve contentual aspects of discussion"
-msgstr ""
+msgstr "Obsahové aspekty diskuse potvrdit"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approve contentual aspects of draft"
-msgstr ""
+msgstr "Obsahové aspekty návrhu potvrdit"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approve formal aspects"
-msgstr ""
+msgstr "Formální aspekty potvrdit"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approve formal aspects of discussion"
-msgstr ""
+msgstr "Formální aspekty diskuse potvrdit"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approve formal aspects of draft"
-msgstr ""
+msgstr "Formální aspekty návrhu potvrdit"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Approved Page"
-msgstr ""
+msgstr "Stranu potvrdit"
 
 #: data/System/ExampleSkinTopHeadTemplate.txt
 #: data/System/KvpSkinTopHeadTemplate.txt
 msgid "Approved by"
-msgstr ""
+msgstr "Schváleno kým"
 
 #: data/System/ExampleSkinTopHeadTemplate.txt
 #: data/System/KvpSkinTopHeadTemplate.txt
 msgid "Area of application"
-msgstr ""
+msgstr "Oblast použití"
 
 #: templates/oopswfplease.tmpl templates/oopsworkflowchanged.tmpl
 #: templates/oopsworkflowerr.tmpl templates/oopsworkflowfork.tmpl
 #: templates/oopsworkflowlink.tmpl templates/oopsworkflowmoved.tmpl
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "Attention"
-msgstr ""
+msgstr "Pozor"
 
 #: data/System/KvpSkinTransitionsTemplate.txt templates/foswiki.kvp.tmpl
 msgid "Attention, there is a discussion for this topic!\\nDo you really want to continue?"
