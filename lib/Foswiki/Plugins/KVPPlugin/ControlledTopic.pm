@@ -176,6 +176,7 @@ sub setState {
     $this->{state}->{"LEAVING_$oldState"} = Foswiki::Func::getWikiUserName() if($oldState);
     $this->{state}->{"LASTTIME_$state"} =
       Foswiki::Time::formatTime( time(), '$day.$mo.$year', 'servertime' );
+    $this->{state}->{"LASTTIME_${state}_DT"} = time();
 
     $this->{state}->{Remark} = $remark || '';
 

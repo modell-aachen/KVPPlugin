@@ -369,14 +369,15 @@ sub afterRenameHandler {
     Foswiki::Func::moveTopic($oldWeb, $oldDiscussion, $newWeb, $newDiscussion);
 }
 
+
 sub _WORKFLOWGETREVFOR {
     my ( $session, $attributes, $topic, $web ) = @_;
 
     # TODO: get rev by version etc.
 
     my $name = $attributes->{name} || $attributes->{_DEFAULT};
-    return '0' unless $name;
-    my $nameRegExp = qr#^(?:$name)$#;
+    my $nameRegExp;
+    my $version;
 
     my $skip = $attributes->{skip} || 0;
 
@@ -389,11 +390,27 @@ sub _WORKFLOWGETREVFOR {
     return ((defined $attributes->{uncontrolled}) ? $attributes->{uncontrolled} : '0') unless $controlledTopic;
 
     unless (defined $rev) {
-        my %info = $controlledTopic->{meta}->getRevisionInfo();
-        $rev = $info{version} || 0;
+        my @info = $controlledTopic->{meta}->getRevisionInfo();
+        $rev = $info[2] || 0;
     }
 
-    while((not $controlledTopic->getState() =~ m#$nameRegExp#) || $skip--) {
+    if($name) {
+        $nameRegExp = qr/^(?:$name)$/;
+    } else {
+        $nameRegExp = qr/.*/;
+    }
+
+    $version = $attributes->{version};
+    if(defined $version) {
+        if($version =~ m#^\s*-(\d+)#) {
+            my $diff = $1;
+            $version = $controlledTopic->getWorkflowMeta( 'Revision' ) - $diff;
+        }
+    } else {
+        $version = 99999;
+    }
+
+    while(((not $controlledTopic->getState() =~ m#$nameRegExp#) || $controlledTopic->getWorkflowMeta( 'Revision' ) > $version) || $skip--) {
         unless(--$rev >= 0) {
             $rev = ((defined $attributes->{notfound}) ? $attributes->{notfound} : 0);
             last;
@@ -1036,7 +1053,7 @@ sub _restLink {
         }
     } else {
         # Try looking for origin
-        my $origin = $originCache;
+        my $origin = _getOrigin( $topic );
         if ( $origin ne $topic && Foswiki::Func::topicExists( $web, $origin ) ) {
             $url = Foswiki::Func::getScriptUrl(
                 $web, $origin, 'oops',
@@ -1324,7 +1341,7 @@ sub beforeEditHandler {
         }
     }
 
-    my $controlledTopic = _initTOPIC( $web, $topic );
+    my $controlledTopic = _initTOPIC( $web, $topic, undef, undef, undef, NOCACHE );
 
     return unless $controlledTopic; # not controlled, so check not required
 
@@ -1353,7 +1370,7 @@ sub beforeUploadHandler {
     my $web = $meta->web();
     my $topic = $meta->topic();
 
-    my $controlledTopic = _initTOPIC( $web, $topic );
+    my $controlledTopic = _initTOPIC( $web, $topic, undef, undef, undef, NOCACHE  );
     return unless $controlledTopic;
 
     unless ( $controlledTopic->canEdit() ) {
@@ -1408,6 +1425,7 @@ sub _onTemplateExpansion {
             $setForm->{value}, $topic, $web, $meta);
         $setForm =~ s#^\s*##g;
         $setForm =~ s#\s*$##g;
+        $meta->remove('FORM');
         $meta->put('FORM', { name => $setForm } );
     }
     # SetField:
@@ -1682,8 +1700,12 @@ sub _getIndexHash {
     for my $key (keys %$workflow) {
         my $lckey = lc($key);
         $indexFields{ "workflowmeta_${lckey}_s" } = $workflow->{$key};
-        if($lckey =~ m#^lasttime_# && $workflow->{$key} =~ m#(\d{1,2})\.(\d{1,2})\.(\d{4})#) {
-            $indexFields{ "workflowmeta_${lckey}_dt" } = "$3-$2-${1}T00:00:00Z";
+        if($workflow->{"${key}_DT"}) {
+            $indexFields{ "workflowmeta_${lckey}_dt" } = Foswiki::Time::formatTime($workflow->{"${key}_DT"}, '$year-$mo-$dayT$hours:$mins:$secondsZ');
+        } else {
+            if($lckey =~ m#^lasttime_# && $workflow->{$key} =~ m#(\d{1,2})\.(\d{1,2})\.(\d{4})#) {
+                $indexFields{ "workflowmeta_${lckey}_dt" } = "$3-$2-${1}T00:00:00Z";
+            }
         }
     }
 
