@@ -1,3 +1,19 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2016-06-27 15:36+0200\n"
+"PO-Revision-Date: 2016-06-27 15:37+0200\n"
+"Last-Translator: Modell Aachen <access@modell-aachen.de>\n"
+"Language-Team: Czech <http://translate.modell-aachen.de/projects/kvpplugin"
+"/releasenew-york/cs/>\n"
+"Language: cs\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
+"X-Generator: Weblate 1.9\n"
+
 #: data/System/KvpSkinWorkflowMailTemplate.txt
 msgid "%1 edited the topic %2."
 msgstr "%1 editoval téma %2."
@@ -8,7 +24,7 @@ msgstr "%1 má nový status: %2"
 
 #: templates/oopswfplease.tmpl
 msgid "%1 is editing %2, and their lock is still active for another %3"
-msgstr ""
+msgstr "%1 zpracuje %2, a jeho blokace je aktivní ještě pro další %3"
 
 #: templates/oopsworkflowerr.tmpl templates/oopsworkflowfork.tmpl
 #: templates/oopswrkflwsaveerr.tmpl
@@ -66,7 +82,7 @@ msgstr "Pozor"
 
 #: data/System/KvpSkinTransitionsTemplate.txt templates/foswiki.kvp.tmpl
 msgid "Attention, there is a discussion for this topic!\\nDo you really want to continue?"
-msgstr ""
+msgstr "Pozor, existuje diskuse k tomuto tématu\\nChcete skutečně pokračovat?"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Cannot execute transition =%1= on =%2= (invalid on source-workflow)."
@@ -177,7 +193,7 @@ msgstr "Opravný postup"
 
 #: templates/oopswfplease.tmpl
 msgid "In an emergency you can transition the topic anyway, by clicking "
-msgstr ""
+msgstr "V nouzi můžete téma přesto převést tím, že kliknete na "
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Info Page"
@@ -396,7 +412,7 @@ msgstr "Téma, od kterého se má odbočit, již neexistuje:"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Tried to fork from a topic, which is not under any workflow:"
-msgstr ""
+msgstr "Došlo k pokusu o odbočení od tématu, které není pod žádným workflow:"
 
 #: templates/oopshistory.kvp.tmpl
 msgid "Username"
@@ -522,7 +538,7 @@ msgstr "je předmětem diskuse"
 #: data/System/ExampleSkinTopHeadTemplate.txt
 #: data/System/KvpSkinTopHeadTemplate.txt
 msgid "under&#160;discussion"
-msgstr ""
+msgstr "je předmětem diskuse"
 
 #: templates/oopshistory.kvp.tmpl
 msgid "view"
