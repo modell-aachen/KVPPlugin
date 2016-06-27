@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-06-27 15:36+0200\n"
-"PO-Revision-Date: 2016-06-27 15:37+0200\n"
+"PO-Revision-Date: 2016-06-27 15:43+0200\n"
 "Last-Translator: Modell Aachen <access@modell-aachen.de>\n"
 "Language-Team: Czech <http://translate.modell-aachen.de/projects/kvpplugin"
 "/releasenew-york/cs/>\n"
@@ -114,7 +114,7 @@ msgstr "Zde pokračovat k tématu:"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Could not initialize workflow for"
-msgstr "Nemohl inicializovat workflow pro "
+msgstr "Nemohl inicializovat workflow pro"
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "Could not initialize workflow for %1. Maybe the topic was deleted?"
@@ -181,7 +181,7 @@ msgstr "Převod přesto vynutit"
 msgid "Found an invalid workflow (there must be none in a newly created topic)."
 msgstr ""
 "Byl nalezen neplatný workflow (v nově vytvořeném tématu nemusí být žádný "
-"workflow)"
+"workflow)."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Give article the accept status"
@@ -272,7 +272,7 @@ msgstr "Poznámky na tento status:"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Request approval"
-msgstr "Vyžádat si potvrzení "
+msgstr "Vyžádat si potvrzení"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Request further revision"
@@ -312,7 +312,7 @@ msgstr "Status"
 msgid "The discussion you clicked is no longer available. You can go to the original topic by clicking OK."
 msgstr ""
 "Diskuse, na kterou jste klikl/a, již není k dispozici. Můžete jít k "
-"původnímu tématu kliknutím na OK"
+"původnímu tématu kliknutím na OK."
 
 #: templates/oopsworkflowlink.tmpl
 msgid "The link you clicked is malformed."
@@ -372,7 +372,7 @@ msgstr "Tento dokument zatím není v CIP."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is waiting for approval by the QM-department."
-msgstr "Tento dokument čeká na potvrzení oddělením zajištění jakosti "
+msgstr "Tento dokument čeká na potvrzení oddělením zajištění jakosti."
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "This document is waiting for approval by the person in charge of the page."
@@ -404,7 +404,7 @@ msgstr "Historie tématu"
 
 #: templates/oopsworkflowmoved.tmpl
 msgid "Topic no longer available"
-msgstr "Téma není již k dispozici."
+msgstr "Téma není již k dispozici"
 
 #: lib/Foswiki/Plugins/KVPPlugin.pm
 msgid "Topic to fork from does not exist:"
@@ -428,11 +428,11 @@ msgstr "Čekat na objednávku"
 
 #: data/System/KVPPluginCommonWords.txt
 msgid "Waiting for QM"
-msgstr "Čekat na management jakosti "
+msgstr "Čekat na management jakosti"
 
 #: templates/oopsworkflowerr.tmpl templates/oopswrkflwsaveerr.tmpl
 msgid "While changing %1 an error occured in the workflow."
-msgstr "Během úpravy %1 se vyskytla chyba ve workflow"
+msgstr "Během úpravy %1 se vyskytla chyba ve workflow."
 
 #: templates/oopsworkflowfork.tmpl
 msgid "While forking %1 an error occured in the workflow."
