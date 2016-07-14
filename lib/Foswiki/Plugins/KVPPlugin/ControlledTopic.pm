@@ -622,32 +622,10 @@ sub changeState {
         # value of the notifees from the topic itself.
         $notify = $this->expandMacros($notify);
 
-        # Set Language
         my $language = $Foswiki::cfg{Extensions}{KVPPlugin}{MailLanguage};
-        if($language) {
-            $language = Foswiki::Func::expandCommonVariables($language);
-            Foswiki::Func::setPreferencesValue( 'LANGUAGE', $language );
-            # Copy/Paste from MailerContrib:
-            if ( $Foswiki::Plugins::SESSION->can('reset_i18n') ) {
-                $Foswiki::Plugins::SESSION->reset_i18n();
-            }
-            elsif ( $Foswiki::Plugins::SESSION->{i18n} ) {
+        $language = Foswiki::Func::expandCommonVariables($language) if $language;
 
-                # Muddy boots.
-                $Foswiki::Plugins::SESSION->i18n->finish();
-                undef $Foswiki::Plugins::SESSION->{i18n};
-            }
-        }
-
-        Foswiki::Func::setPreferencesValue(
-            'TARGET_STATE',
-            $this->getState()
-        );
-        Foswiki::Func::setPreferencesValue(
-            'EMAILTO',
-            $notify
-        );
-        Foswiki::Contrib::MailTemplatesContrib::sendMail('mailworkflowtransition', { IncludeCurrentUser => 1 });
+        Foswiki::Contrib::MailTemplatesContrib::sendMail('mailworkflowtransition', { IncludeCurrentUser => 1 }, { webtopic => "$this->{web}.$this->{topic}", TARGET_STATE => $this->getState(), EMAILTO => $notify, LANGUAGE => $language }, 1);
 
 
         Foswiki::Func::writeWarning("Topic: '$this->{web}.$this->{topic}' Transition: '$action' Notify column: '$notify'") if ($Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails});
