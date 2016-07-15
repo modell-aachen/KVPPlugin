@@ -2319,11 +2319,11 @@ sub maintenanceHandler {
             my $release = $Foswiki::Contrib::MailTemplatesContrib::RELEASE;
             my @minRequired = (1, 0, 0);
 
-            unless( $release =~ m#(\d+)\.(\d+)(?:\.(\d+))?$#) {
+            if ($release !~ m#(\d+)\.(\d+)(?:\.(\d+))?$#) {
                 return {
                     result => 1,
                     priority => $Foswiki::Plugins::MaintenancePlugin::ERROR,
-                    solution => "Could not parse your MailTemplatesContrib version. Probable cause: non-release branch. Please review version. Version: '$$release'."
+                    solution => "Could not parse your MailTemplatesContrib version. Probable cause: non-release branch. Please review version. Version: '$release'."
                 };
             }
             my ($major, $minor, $build) = ($1, $2, $3);
