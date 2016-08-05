@@ -118,7 +118,7 @@ sub getWorkflowMeta {
 
     if($attributes eq 'displayname') {
         my $language = $Foswiki::Plugins::SESSION->i18n()->language();
-        my $value = $this->{workflow}->getRow($this->{state}->{name}, "displayname$language") || $this->{workflow}->getRow($this->{state}->{name}, "displayname");
+        my $value = $this->{workflow}->getRow($this->{state}->{name}, "displayname$language") || $this->{workflow}->getRow($this->{state}->{name}, "displayname") || $this->{state}->{name};
         return $value if defined $value;
     }
 
