@@ -2311,6 +2311,38 @@ sub maintenanceHandler {
             }
         }
     });
+    Foswiki::Plugins::MaintenancePlugin::registerCheck("KVPPlugin:MailTemplatesContrib:Version", {
+        name => "KVPPlugin: MailTemplatesContrib version",
+        description => "Check if MailTemplatesContrib needs to be updated.",
+        check => sub {
+            require Foswiki::Contrib::MailTemplatesContrib;
+            my $release = $Foswiki::Contrib::MailTemplatesContrib::RELEASE;
+            my @minRequired = (1, 0, 0);
+
+            if ($release !~ m#(\d+)\.(\d+)(?:\.(\d+))?$#) {
+                return {
+                    result => 1,
+                    priority => $Foswiki::Plugins::MaintenancePlugin::ERROR,
+                    solution => "Could not parse your MailTemplatesContrib version. Probable cause: non-release branch. Please review version. Version: '$release'."
+                };
+            }
+            my ($major, $minor, $build) = ($1, $2, $3);
+
+            my $ok = { result => 0 };
+            my $error = {
+                result => 1,
+                priority => $Foswiki::Plugins::MaintenancePlugin::ERROR,
+                solution => "Your MailTemplatesContrib version ($release) does not meet the minimum requirements (".join('.', @minRequired)."), please update."
+            };
+
+            return $ok if( $major > $minRequired[0] );
+            return $error if( $major < $minRequired[0] );
+            return $ok if( $minor > $minRequired[1] );
+            return $error if( $minor < $minRequired[1] );
+            return $ok if ( not defined $build ) || $build >= $minRequired[2]; # $build not defined most likely means git repo.
+            return $error;
+        }
+    });
 }
 
 1;
