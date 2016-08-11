@@ -624,7 +624,7 @@ sub changeState {
         my $language = $Foswiki::cfg{Extensions}{KVPPlugin}{MailLanguage};
         $language = Foswiki::Func::expandCommonVariables($language) if $language;
 
-        Foswiki::Contrib::MailTemplatesContrib::sendMail('mailworkflowtransition', { IncludeCurrentUser => 1 }, { webtopic => "$this->{web}.$this->{topic}", TARGET_STATE => $this->getState(), EMAILTO => $notify, LANGUAGE => $language }, 1);
+        Foswiki::Contrib::MailTemplatesContrib::sendMail('mailworkflowtransition', { IncludeCurrentUser => 1, AllowMailsWithoutUser => 1 }, { webtopic => "$this->{web}.$this->{topic}", TARGET_STATE => $this->getState(), EMAILTO => $notify, LANGUAGE => $language }, 1);
 
 
         Foswiki::Func::writeWarning("Topic: '$this->{web}.$this->{topic}' Transition: '$action' Notify column: '$notify'") if ($Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails});
