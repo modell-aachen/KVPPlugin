@@ -144,7 +144,6 @@ sub clearWorkflowMeta {
     } else {
         $reg = qr#^(?:LASTPROCESSOR|LASTTIME|LASTVERSION|LEAVING)_#;
     }
-    Foswiki::Func::writeWarning($reg);
 
     foreach my $key ( keys %{$this->{state}} ) {
         delete $this->{state}->{$key} if $key =~ m#$reg#;
