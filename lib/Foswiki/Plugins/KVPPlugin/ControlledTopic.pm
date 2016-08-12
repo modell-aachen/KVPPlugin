@@ -451,11 +451,7 @@ sub isForkable {
     my $this = shift;
 
     unless (defined $this->{isAllowingFork}) {
-        if($this->foswikiAllowsChange()) {
-            $this->{isAllowingFork} = $this->{workflow}->getActionWithAttribute($this, 'FORK');
-        } else {
-            $this->{isAllowingFork} = [ '', '' ];
-        }
+        $this->{isAllowingFork} = $this->getActionWithAttribute('FORK');
     }
     return $this->{isAllowingFork};
 }
