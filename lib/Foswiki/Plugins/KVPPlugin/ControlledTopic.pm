@@ -433,7 +433,7 @@ sub isForkable {
     my $this = shift;
 
     unless (defined $this->{isAllowingFork}) {
-        $this->{isAllowingFork} = $this->{workflow}->getActionWithAttribute($this, 'FORK');
+        $this->{isAllowingFork} = $this->getActionWithAttribute('FORK');
     }
     return $this->{isAllowingFork};
 }
