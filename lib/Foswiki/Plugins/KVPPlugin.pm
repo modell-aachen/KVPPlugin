@@ -1480,6 +1480,10 @@ sub _requestSolrUpdate {
     Foswiki::Plugins::TaskDaemonPlugin::send($topic, 'update_topic', 'SolrPlugin');
 }
 
+sub isStateChange() {
+    return $isStateChange;
+}
+
 # XXX requires changes in lib/Foswiki/Meta.pm
 # Will check if the workflow permits the user to move topics and rename attachments.
 #
