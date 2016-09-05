@@ -1,0 +1,426 @@
+%TMPL:INCLUDE{"DocumentHead"}%
+%TMPL:DEF{"ma:documenthead:approved:de"}%
+<div class='ma-documenthead'>
+	<div class='ma-documenthead-container left'>
+		<table class='ma-documenthead-table'>
+			<tbody>
+				<tr>
+					<td><span class='ma-documenthead-content'>
+						Status</span></td>
+					<td><span class='ma-documenthead-content'>
+						Geltungsbereich</span></td>
+					<td><span class='ma-documenthead-content'>
+						Verantwortlich</span></td>
+					<td><span class='ma-documenthead-content'>
+						Freigegeben durch</span></td>
+					<td><span class='ma-documenthead-content'>
+						Freigabedatum</span></td>
+					<td><span class='ma-documenthead-content'>
+						Letzter Autor</span></td>
+				</tr>
+				<tr>
+					<td><span class='ma-documenthead-content approved'>
+						%MAKETEXT{"approved"}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						<i class="fa fa-user"></i> %RENDERFORDISPLAY{fields="Responsible" format="$value"}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						<i class="fa fa-user"></i> %RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%" format="$displayName"}%</span></td>
+					<td><span class='ma-documenthead-content value'>%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1"}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						<i class="fa fa-user"></i> %RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%" format="$displayName"}%</span></td>
+				</tr>
+			</tbody>
+		</table>
+		<div v-if='show' transition='expand' class='expandTopHead'>
+			<table class='ma-documenthead-table'>
+				<tbody>
+					<tr>
+						<td><span class='ma-documenthead-content'>
+							Dokumententype</span></td>
+						<td><span class='ma-documenthead-content'>
+							Seitenname</span></td>
+						<td><span class='ma-documenthead-content'>
+							Version</span></td>
+						<td><span class='ma-documenthead-content'>
+							%IF{"$'URLPARAM{cover}'" then="Seite"}%</span></td>
+					</tr>
+					<tr>
+						<td><span class='ma-documenthead-content value'>
+							%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</span></td>
+						<td><span class='ma-documenthead-content value'>
+							%QUERY{"TopicTitle"}%</span></td>
+						<td><span class='ma-documenthead-content value'>%WORKFLOWMETA{"Revision"}%</span></td>
+						<td><span class='ma-documenthead-content value'>
+							%TMPL:P{"modacPageNr"}%</span></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="ma-documenthead-container toggle" @click='toggle'>
+		<i class="fa fa-angle-down fa-2x" v-if="show"></i>
+		<i class="fa fa-angle-right fa-2x" v-else="show"></i>
+	</div>
+	<div style="clear: both;"></div>
+</div>
+%TMPL:END%
+
+%TMPL:DEF{"ma:documenthead:approved:en"}%
+<div class='ma-documenthead'>
+	<div class='ma-documenthead-container left'>
+		<table class='ma-documenthead-table'>
+			<tbody>
+				<tr>
+					<td><span class='ma-documenthead-content'>
+						Status</span></td>
+					<td><span class='ma-documenthead-content'>
+						Area of application</span></td>
+					<td><span class='ma-documenthead-content'>
+						Responsible</span></td>
+					<td><span class='ma-documenthead-content'>
+						Approved by</span></td>
+					<td><span class='ma-documenthead-content'>
+						Release date</span></td>
+					<td><span class='ma-documenthead-content'>
+						Last author</span></td>
+				</tr>
+				<tr>
+					<td><span class='ma-documenthead-content approved'>
+						%MAKETEXT{"approved"}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						<i class="fa fa-user"></i> %RENDERFORDISPLAY{fields="Responsible" format="$value"}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						<i class="fa fa-user"></i> %RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%" format="$displayName"}%</span></td>
+					<td><span class='ma-documenthead-content value'>%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1"}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						<i class="fa fa-user"></i> %RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%" format="$displayName"}%</span></td>
+				</tr>
+			</tbody>
+		</table>
+		<div v-if='show' transition='expand' class='expandTopHead'>
+			<table class='ma-documenthead-table'>
+				<tbody>
+					<tr>
+						<td><span class='ma-documenthead-content'>
+							Document type</span></td>
+						<td><span class='ma-documenthead-content'>
+							Topic title</span></td>
+						<td><span class='ma-documenthead-content'>
+							Version</span></td>
+						<td><span class='ma-documenthead-content'>
+							%IF{"$'URLPARAM{cover}'" then="Page"}%</span></td>
+					</tr>
+					<tr>
+						<td><span class='ma-documenthead-content value'>
+							%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</span></td>
+						<td><span class='ma-documenthead-content value'>
+							%QUERY{"TopicTitle"}%</span></td>
+						<td><span class='ma-documenthead-content value'>%WORKFLOWMETA{"Revision"}%</span></td>
+						<td><span class='ma-documenthead-content value'>
+							%TMPL:P{"modacPageNr"}%</span></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="ma-documenthead-container toggle" @click='toggle'>
+		<i class="fa fa-angle-down fa-2x" v-if="show"></i>
+		<i class="fa fa-angle-right fa-2x" v-else="show"></i>
+	</div>
+	<div style="clear: both;"></div>
+</div>
+%TMPL:END%
+
+%TMPL:DEF{"ma:documenthead:approved:auto"}%
+<div class='ma-documenthead'>
+	<div class='ma-documenthead-container left'>
+		<table class='ma-documenthead-table'>
+			<tbody>
+				<tr>
+					<td><span class='ma-documenthead-content'>
+						%MAKETEXT{Status}%</span></td>
+					<td><span class='ma-documenthead-content'>
+						%MAKETEXT{Area of application}%</span></td>
+					<td><span class='ma-documenthead-content'>
+						%MAKETEXT{Responsible}%</span></td>
+					<td><span class='ma-documenthead-content'>
+						%MAKETEXT{Approved by}%</span></td>
+					<td><span class='ma-documenthead-content'>
+						%MAKETEXT{Release date}%</span></td>
+					<td><span class='ma-documenthead-content'>
+						%MAKETEXT{Last author}%</span></td>
+				</tr>
+				<tr>
+					<td><span class='ma-documenthead-content approved'>
+						%MAKETEXT{"approved"}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						<i class="fa fa-user"></i> %RENDERFORDISPLAY{fields="Responsible" format="$value"}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						<i class="fa fa-user"></i> %RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1"}%" format="$displayName"}%</span></td>
+					<td><span class='ma-documenthead-content value'>%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1"}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						<i class="fa fa-user"></i> %RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1"}%" format="$displayName"}%</span></td>
+				</tr>
+			</tbody>
+		</table>
+		<div v-if='show' transition='expand' class='expandTopHead'>
+			<table class='ma-documenthead-table'>
+				<tbody>
+					<tr>
+						<td><span class='ma-documenthead-content'>
+							%MAKETEXT{Document type}%</span></td>
+						<td><span class='ma-documenthead-content'>
+							%MAKETEXT{Topic title}%</span></td>
+						<td><span class='ma-documenthead-content'>
+							%MAKETEXT{Version}%</span></td>
+						<td><span class='ma-documenthead-content'>
+							%IF{"$'URLPARAM{cover}'" then="%MAKETEXT{Page}%"}%</span></td>
+					</tr>
+					<tr>
+						<td><span class='ma-documenthead-content value'>
+							%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</span></td>
+						<td><span class='ma-documenthead-content value'>
+							%QUERY{"TopicTitle"}%</span></td>
+						<td><span class='ma-documenthead-content value'>%WORKFLOWMETA{"Revision"}%</span></td>
+						<td><span class='ma-documenthead-content value'>
+							%TMPL:P{"modacPageNr"}%</span></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="ma-documenthead-container toggle" @click='toggle'>
+		<i class="fa fa-angle-down fa-2x" v-if="show"></i>
+		<i class="fa fa-angle-right fa-2x" v-else="show"></i>
+	</div>
+	<div style="clear: both;"></div>
+</div>
+%TMPL:END%
+
+%TMPL:DEF{"ma:documenthead:discussion:de"}%
+<div class='patternTop-callout'>Bei diesem Dokument handelt es sich um einen Arbeitsstand.</div>
+<div class='ma-documenthead'>
+	<div class='ma-documenthead-container left'>
+		<table class='ma-documenthead-table'>
+			<tbody>
+				<tr>
+					<td><span class='ma-documenthead-content'>
+						Status</span></td>
+					<td><span class='ma-documenthead-content'>
+						Geltungsbereich</span></td>
+					<td><span class='ma-documenthead-content'>
+						Verantwortlich</span></td>
+					<td><span class='ma-documenthead-content'>
+						Freigegeben durch</span></td>
+					<td><span class='ma-documenthead-content'>
+						Freigabedatum</span></td>
+					<td><span class='ma-documenthead-content'>
+						Letzter Autor</span></td>
+				</tr>
+				<tr>
+					<td><span class='ma-documenthead-content discussion'>
+						diskussion</span></td>
+					<td><span class='ma-documenthead-content value'>
+						%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						<i class="fa fa-user"></i> %RENDERFORDISPLAY{fields="Responsible" format="$value"}%</span></td>
+					<td><span class='ma-documenthead-content discussion'>
+						<i class="fa fa-user"></i> in Diskussion</span></td>
+					<td><span class='ma-documenthead-content discussion'>
+						in Diskussion</span></td>
+					<td><span class='ma-documenthead-content discussion'>
+						<i class="fa fa-user"></i> in Diskussion</span></td>
+				</tr>
+			</tbody>
+		</table>
+		<div v-if='show' transition='expand' class='expandTopHead'>
+			<table class='ma-documenthead-table'>
+				<tbody>
+					<tr>
+						<td><span class='ma-documenthead-content'>
+							Dokumententype</span></td>
+						<td><span class='ma-documenthead-content'>
+							Seitenname</span></td>
+						<td><span class='ma-documenthead-content'>
+							Version</span></td>
+						<td><span class='ma-documenthead-content'>
+							%IF{"$'URLPARAM{cover}'" then="Seite"}%</span></td>
+					</tr>
+					<tr>
+						<td><span class='ma-documenthead-content value'>
+							%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</span></td>
+						<td><span class='ma-documenthead-content value'>
+							%QUERY{"TopicTitle"}%</span></td>
+						<td><span class='ma-documenthead-content value'>%WORKFLOWMETA{"Revision"}%</span></td>
+						<td><span class='ma-documenthead-content value'>
+							%TMPL:P{"modacPageNr"}%</span></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="ma-documenthead-container toggle" @click='toggle'>
+		<i class="fa fa-angle-down fa-2x" v-if="show"></i>
+		<i class="fa fa-angle-right fa-2x" v-else="show"></i>
+	</div>
+	<div style="clear: both;"></div>
+</div>
+%TMPL:END%
+
+%TMPL:DEF{"ma:documenthead:discussion:en"}%
+<div class='patternTop-callout'>This document is a working state.</div>
+<div class='ma-documenthead'>
+	<div class='ma-documenthead-container left'>
+		<table class='ma-documenthead-table'>
+			<tbody>
+				<tr>
+					<td><span class='ma-documenthead-content'>
+						Status</span></td>
+					<td><span class='ma-documenthead-content'>
+						Area of application</span></td>
+					<td><span class='ma-documenthead-content'>
+						Responsible</span></td>
+					<td><span class='ma-documenthead-content'>
+						Approved by</span></td>
+					<td><span class='ma-documenthead-content'>
+						Release date</span></td>
+					<td><span class='ma-documenthead-content'>
+						Last author</span></td>
+				</tr>
+				<tr>
+					<td><span class='ma-documenthead-content discussion'>
+						discussion</span></td>
+					<td><span class='ma-documenthead-content value'>
+						%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						<i class="fa fa-user"></i> %RENDERFORDISPLAY{fields="Responsible" format="$value"}%</span></td>
+					<td><span class='ma-documenthead-content discussion'>
+						<i class="fa fa-user"></i> under discussion</span></td>
+					<td><span class='ma-documenthead-content discussion'>
+						under discussion</span></td>
+					<td><span class='ma-documenthead-content discussion'>
+						<i class="fa fa-user"></i> under discussion</span></td>
+				</tr>
+			</tbody>
+		</table>
+		<div v-if='show' transition='expand' class='expandTopHead'>
+			<table class='ma-documenthead-table'>
+				<tbody>
+					<tr>
+						<td><span class='ma-documenthead-content'>
+							Dokumententype</span></td>
+						<td><span class='ma-documenthead-content'>
+							Seitenname</span></td>
+						<td><span class='ma-documenthead-content'>
+							Version</span></td>
+						<td><span class='ma-documenthead-content'>
+							%IF{"$'URLPARAM{cover}'" then="Page"}%</span></td>
+					</tr>
+					<tr>
+						<td><span class='ma-documenthead-content value'>
+							%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</span></td>
+						<td><span class='ma-documenthead-content value'>
+							%QUERY{"TopicTitle"}%</span></td>
+						<td><span class='ma-documenthead-content value'>%WORKFLOWMETA{"Revision"}%</span></td>
+						<td><span class='ma-documenthead-content value'>
+							%TMPL:P{"modacPageNr"}%</span></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="ma-documenthead-container toggle" @click='toggle'>
+		<i class="fa fa-angle-down fa-2x" v-if="show"></i>
+		<i class="fa fa-angle-right fa-2x" v-else="show"></i>
+	</div>
+	<div style="clear: both;"></div>
+</div>
+%TMPL:END%
+
+%TMPL:DEF{"ma:documenthead:discussion:auto"}%
+<div class='ma-documenthead'>
+	<div class='ma-documenthead-container left'>
+		<table class='ma-documenthead-table'>
+			<tbody>
+				<tr>
+					<td><span class='ma-documenthead-content'>
+						%MAKETEXT{Status}%</span></td>
+					<td><span class='ma-documenthead-content'>
+						%MAKETEXT{Area of application}%</span></td>
+					<td><span class='ma-documenthead-content'>
+						%MAKETEXT{Responsible}%</span></td>
+					<td><span class='ma-documenthead-content'>
+						%MAKETEXT{Approved by}%</span></td>
+					<td><span class='ma-documenthead-content'>
+						%MAKETEXT{Release date}%</span></td>
+					<td><span class='ma-documenthead-content'>
+						%MAKETEXT{Last author}%</span></td>
+				</tr>
+				<tr>
+					<td><span class='ma-documenthead-content discussion'>
+						%MAKETEXT{"discussion"}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</span></td>
+					<td><span class='ma-documenthead-content value'>
+						<i class="fa fa-user"></i> %RENDERFORDISPLAY{fields="Responsible" format="$value"}%</span></td>
+					<td><span class='ma-documenthead-content discussion'>
+						<i class="fa fa-user"></i> %MAKETEXT{"under&#160;discussion"}%</span></td>
+					<td><span class='ma-documenthead-content discussion'>
+						%MAKETEXT{"under&#160;discussion"}%</span></td>
+					<td><span class='ma-documenthead-content discussion'>
+						<i class="fa fa-user"></i> %MAKETEXT{"under&#160;discussion"}%</span></td>
+				</tr>
+			</tbody>
+		</table>
+		<div v-if='show' transition='expand' class='expandTopHead'>
+			<table class='ma-documenthead-table'>
+				<tbody>
+					<tr>
+						<td><span class='ma-documenthead-content'>
+							%MAKETEXT{Document type}%</span></td>
+						<td><span class='ma-documenthead-content'>
+							%MAKETEXT{Topic title}%</span></td>
+						<td><span class='ma-documenthead-content'>
+							%MAKETEXT{Version}%</span></td>
+						<td><span class='ma-documenthead-content'>
+							%IF{"$'URLPARAM{cover}'" then="%MAKETEXT{Page}%"}%</span></td>
+					</tr>
+					<tr>
+						<td><span class='ma-documenthead-content value'>
+							%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</span></td>
+						<td><span class='ma-documenthead-content value'>
+							%QUERY{"TopicTitle"}%</span></td>
+						<td><span class='ma-documenthead-content value'>%WORKFLOWMETA{"Revision"}%</span></td>
+						<td><span class='ma-documenthead-content value'>
+							%TMPL:P{"modacPageNr"}%</span></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="ma-documenthead-container toggle" @click='toggle'>
+		<i class="fa fa-angle-down fa-2x" v-if="show"></i>
+		<i class="fa fa-angle-right fa-2x" v-else="show"></i>
+	</div>
+	<div style="clear: both;"></div>
+</div>
+%TMPL:END%
+
+%{<verbatim class="tml" />}%
+%TMPL:DEF{"ma:documenthead:approved"}%%SWITCHTMPL{"%CONTENT_LANGUAGE%" prefix="ma:documenthead:approved:" defaultTo="auto"}%%TMPL:END%
+%TMPL:DEF{"ma:documenthead:discussion"}%%SWITCHTMPL{"%CONTENT_LANGUAGE%" prefix="ma:documenthead:discussion:" defaultTo="auto"}%%TMPL:END%
+%{</verbatim>}%
+
+%{<verbatim class="tml" />}%
+%TMPL:DEF{"ma:documenthead"}%%TMPL:P{context="KVPControlled" then="ma:documenthead:kvp" else="ma:documenthead:std"}%%TMPL:END%
+%{</verbatim>}%
+
+%{<verbatim class="tml" />}%
+%TMPL:DEF{"ma:documenthead:kvp"}%%VUE%%TMPL:P{context="KVPIsDiscussion" then="ma:documenthead:discussion" else="ma:documenthead:approved"}%%TMPL:END%
+%{</verbatim>}%
