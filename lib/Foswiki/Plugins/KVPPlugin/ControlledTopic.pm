@@ -90,6 +90,9 @@ sub getState {
 # Get the available actions from the current state
 sub getActions {
     my ($this) = @_;
+
+    return ( [], [] ) unless $this->foswikiAllowsChange();
+
     return $this->{workflow}->getActions($this);
 }
 
@@ -144,7 +147,6 @@ sub clearWorkflowMeta {
     } else {
         $reg = qr#^(?:LASTPROCESSOR|LASTTIME|LASTVERSION|LEAVING)_#;
     }
-    Foswiki::Func::writeWarning($reg);
 
     foreach my $key ( keys %{$this->{state}} ) {
         delete $this->{state}->{$key} if $key =~ m#$reg#;
@@ -379,7 +381,23 @@ sub getHistoryText {
 # Return true if a new state is available using this action
 sub haveNextState {
     my ( $this, $action ) = @_;
+
+    return 0 unless $this->foswikiAllowsChange();
+
     return $this->{workflow}->getNextState( $this, $action );
+}
+
+sub foswikiAllowsChange {
+    my $this = shift;
+
+    unless (defined $this->{foswikiAllowsChange}) {
+        $this->{foswikiAllowsChange} = Foswiki::Func::checkAccessPermission(
+            'CHANGE', $Foswiki::Plugins::SESSION->{user},
+            $this->{meta}->text(), $this->{topic}, $this->{web},
+            $this->{meta}
+        );
+    }
+    return $this->{foswikiAllowsChange};
 }
 
 # Some day we may handle the can... functions indepedently. For now,
@@ -387,18 +405,13 @@ sub haveNextState {
 sub isModifyable {
     my $this = shift;
 
-    return $this->{isEditable} if defined $this->{isEditable};
-
     # See if the workflow allows an edit
     unless (defined $this->{isEditable}) {
         $this->{isEditable} = (
             # Does the workflow permit editing?
             $this->{workflow}->allowEdit($this)
             # Does Foswiki permit editing?
-            && Foswiki::Func::checkAccessPermission(
-                'CHANGE', $Foswiki::Plugins::SESSION->{user},
-                $this->{meta}->text(), $this->{topic}, $this->{web},
-                $this->{meta})
+            && $this->foswikiAllowsChange()
         ) ? 1 : 0;
     }
     return $this->{isEditable};
@@ -407,6 +420,9 @@ sub isModifyable {
 # Get (first) action that leads to a fork
 sub getActionWithAttribute {
     my ( $this, $attribute ) = @_;
+
+    return [ '', '' ] unless $this->foswikiAllowsChange();
+
     return $this->{workflow}->getActionWithAttribute($this, $attribute);
 }
 
@@ -434,7 +450,7 @@ sub isForkable {
     my $this = shift;
 
     unless (defined $this->{isAllowingFork}) {
-        $this->{isAllowingFork} = $this->{workflow}->getActionWithAttribute($this, 'FORK');
+        $this->{isAllowingFork} = $this->getActionWithAttribute('FORK');
     }
     return $this->{isAllowingFork};
 }
@@ -625,10 +641,12 @@ sub changeState {
         my $language = $Foswiki::cfg{Extensions}{KVPPlugin}{MailLanguage};
         $language = Foswiki::Func::expandCommonVariables($language) if $language;
 
-        Foswiki::Contrib::MailTemplatesContrib::sendMail('mailworkflowtransition', { IncludeCurrentUser => 1 }, { webtopic => "$this->{web}.$this->{topic}", TARGET_STATE => $this->getState(), EMAILTO => $notify, LANGUAGE => $language }, 1);
-
-
-        Foswiki::Func::writeWarning("Topic: '$this->{web}.$this->{topic}' Transition: '$action' Notify column: '$notify'") if ($Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails});
+        $notification = {
+            template => 'mailworkflowtransition',
+            options => { IncludeCurrentUser => 1, AllowMailsWithoutUser => 1 },
+            settings => { webtopic => "$this->{web}.$this->{topic}", TARGET_STATE => $this->getState(), EMAILTO => $notify, LANGUAGE => $language },
+            extra => { action => $action, ncolumn => $notify },
+        };
     } else {
         Foswiki::Func::writeWarning("Topic: '$this->{web}.$this->{topic}' Transition: '$action' Notify column: empty") if ($Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails});
     }

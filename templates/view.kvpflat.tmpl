@@ -1,0 +1,14 @@
+%TMPL:INCLUDE{"view"}%
+%TMPL:INCLUDE{"Transitions"}%
+
+%TMPL:DEF{"comments"}% %IF{
+  "%WORKFLOWALLOWS{"allowcomment" emptyIs="0" nonEmptyIs="1"}% and not context save and not context preview and not context edit"
+  then="<div>$percntTMPL:P{\"metacomments\"}$percnt</div>"
+  else="<!-- -->"
+}%<!-- -->
+%TMPL:P{"metacomments::init"}%<!-- -->
+<!-- -->%TMPL:END%
+
+%TMPL:DEF{"TransitionMsg"}%%ADDTOZONE{"head" id="TEXT_BLOCKUI_KVP" text="<meta name=$quotTEXT_BLOCKUI_KVP$quot content=$quot%MESSAGE%$quot />"}%%TMPL:END%
+
+%TMPL:DEF{"ma:main"}%%TMPL:PREV%%TMPL:P{"kvpaction"}%%TMPL:END%
