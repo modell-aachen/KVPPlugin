@@ -20,6 +20,8 @@ use Foswiki::Plugins::KVPPlugin::ControlledTopic ();
 use Foswiki::OopsException ();
 use Foswiki::Sandbox ();
 
+use Foswiki::Contrib::MailTemplatesContrib;
+
 use HTML::Entities;
 use JSON;
 

@@ -26,8 +26,6 @@ use strict;
 use Foswiki (); # for regexes
 use Foswiki::Func ();
 
-use Foswiki::Contrib::MailTemplatesContrib;
-
 # Constructor
 sub new {
     my ( $class, $workflow, $web, $topic, $meta ) = @_;
