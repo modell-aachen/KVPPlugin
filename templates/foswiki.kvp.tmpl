@@ -2,6 +2,8 @@
 
 %TMPL:DEF{"script"}%%TMPL:PREV%%TMPL:P{"KVP::changewarning"}%%TMPL:END%
 
+%TMPL:DEF{"windowtitleconfig"}%%TOPICTITLE%%IF{"context KVPIsDiscussion" then=" (%MAKETEXT{"Discussion"}%) "}%%TMPL:END%
+
 %TMPL:DEF{"KVP::changewarning"}%%IF{"context KVPHasDiscussion" then="$percentADDTOZONE{\"script\" id=\"KVPPluginChangeWarning\" requires=\"JQUERYPLUGIN\" text=\"<script type='text/javascript' src='%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/changewarning.js?version=%QUERYVERSION{"KVPPlugin" default=""}%'></script>\"}$percent
 $percentADDTOZONE{\"head\" id=\"KVPPluginChangeWarningText\" text=\"<meta name=$dollarquotTEXT_KVPDiscussionMessage$dollarquot content=$dollarquot$percentTMPL:P{KVPDiscussionWarning}$percent$dollarquot />\"}$percent"}%%TMPL:END%
 
