@@ -5,7 +5,7 @@
 %TMPL:DEF{"KVPDiscussionWarning"}%%MAKETEXT{"Attention, there is a discussion for this topic!\nDo you really want to continue?"}%%TMPL:END%
 
 %{"Overload this definition, if you want to influence when the menu is beeing shown."}%
-%TMPL:DEF{"kvpaction"}%%TMPL:P{context="KVPIsDiscussion" then="kvptransitions"}%%TMPL:END%
+%TMPL:DEF{"kvpaction"}%%TMPL:P{context="KVPShowMenue" then="kvptransitions"}%%TMPL:END%
 
 %{"If you want to customize the transition-blockUI, you should add a TMPL:P{"TransitionMsg" MESSAGE="your message"} to kvptransitions. Please escape quotations (") with &quot; }%
 %TMPL:DEF{"kvptransitions"}%

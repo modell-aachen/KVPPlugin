@@ -79,6 +79,12 @@ sub debugging {
     return $this->{workflow}->{preferences}->{WORKFLOWDEBUG};
 }
 
+# Return 'Set' preference defined in workflow topic.
+sub getWorkflowPref {
+    my ($this, $pref) = @_;
+    return $this->{workflow}->{preferences}->{$pref};
+}
+
 # Get the current state of the workflow in this topic
 sub getState {
     my $this = shift;

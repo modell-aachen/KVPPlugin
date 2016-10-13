@@ -107,6 +107,7 @@ sub initPlugin {
             }
             if ($controlledTopic->getRow( 'approved' )) {
                 my $suffix = _WORKFLOWSUFFIX();
+                $context->{'KVPShowMenue'} = 1 if $controlledTopic->getWorkflowPref('AlwaysShowMenue');
                 if (Foswiki::Func::topicExists($web, "$topic$suffix")) {
                     $context->{'KVPHasDiscussion'} = 1;
                     $context->{'KVPIsApproved'} = 1;
@@ -122,6 +123,7 @@ sub initPlugin {
                     $context->{'KVPIsForkedDiscussion'} = 1;
                 }
                 $context->{'KVPIsDiscussion'} = 1; # for backwards compatibility
+                $context->{'KVPShowMenue'} = 1;
                 $context->{'KVPIsNotApproved'} = 1;
             }
         }
