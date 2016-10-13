@@ -90,6 +90,7 @@ sub initPlugin {
     my $context = Foswiki::Func::getContext();
     if($context->{view} || $context->{edit} || $context->{comparing} || $context->{oops}  || $context->{manage} || $context->{KVPPluginSetContextOnInit}) {
         # init the displayed topic to set according contexts for skin
+        $originCache = _getOrigin( $topic );
         $context->{'KVPContextsSet'} = 1;
         my $controlledTopic = _initTOPIC( $web, $topic );
         if ($controlledTopic) {
@@ -108,12 +109,22 @@ sub initPlugin {
                 my $suffix = _WORKFLOWSUFFIX();
                 if (Foswiki::Func::topicExists($web, "$topic$suffix")) {
                     $context->{'KVPHasDiscussion'} = 1;
+                    $context->{'KVPIsApproved'} = 1;
                 }
             } else {
-                $context->{'KVPIsDiscussion'} = 1;
+                if($originCache eq $topic) {
+                    $context->{'KVPIsDraft'} = 1;
+                } else {
+                    # Hmpf, KVPIsDiscussion was used for all non-approved
+                    # topics, even drafts. Because it is widely used I can not
+                    # simply change it's meaning here, so I have to introduce
+                    # this strangely named thing.
+                    $context->{'KVPIsForkedDiscussion'} = 1;
+                }
+                $context->{'KVPIsDiscussion'} = 1; # for backwards compatibility
+                $context->{'KVPIsNotApproved'} = 1;
             }
         }
-        $originCache = _getOrigin( $topic );
     } else {
         undef $originCache;
     }
