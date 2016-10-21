@@ -6,7 +6,7 @@
 	<tbody>
 		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev AND $'URLPARAM{rev}'!='%REVINFO{"$rev" rev="-1"}%'" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
 				%{Nummer: <strong>ProzentQUERY{"Number"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
@@ -43,7 +43,7 @@
 	<tbody>
 		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%QUERY{"DocumentType"}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%QUERY{"DocumentType"}%%IF{"defined rev AND $'URLPARAM{rev}'!='%REVINFO{"$rev" rev="-1"}%'" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
 				%{Number:<strong> ProzentQUERY{"Number"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
@@ -80,7 +80,7 @@
 	<tbody>
 		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev AND $'URLPARAM{rev}'!='%REVINFO{"$rev" rev="-1"}%'" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
 				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Number"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
@@ -117,7 +117,7 @@
 	<tbody>
 		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev AND $'URLPARAM{rev}'!='%REVINFO{"$rev" rev="-1"}%'" then="$percentRED$percent (alte Revision)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
 				%{Nummer: <strong>ProzentQUERY{"Number"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
@@ -154,7 +154,7 @@
 	<tbody>
 		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%QUERY{"DocumentType"}%%IF{"defined rev" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%QUERY{"DocumentType"}%%IF{"defined rev AND $'URLPARAM{rev}'!='%REVINFO{"$rev" rev="-1"}%'" then="$percentRED$percent (old revision)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
 				%{Number: <strong>ProzentQUERY{"Number"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
@@ -191,7 +191,7 @@
 	<tbody>
 		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev AND $'URLPARAM{rev}'!='%REVINFO{"$rev" rev="-1"}%'" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
 			<td width='35%' style='text-align: center;'>
 				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>

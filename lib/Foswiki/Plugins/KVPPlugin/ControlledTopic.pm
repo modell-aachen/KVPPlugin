@@ -26,8 +26,6 @@ use strict;
 use Foswiki (); # for regexes
 use Foswiki::Func ();
 
-use Foswiki::Contrib::MailTemplatesContrib;
-
 # Constructor
 sub new {
     my ( $class, $workflow, $web, $topic, $meta ) = @_;
@@ -79,6 +77,12 @@ sub getFields {
 sub debugging {
     my $this = shift;
     return $this->{workflow}->{preferences}->{WORKFLOWDEBUG};
+}
+
+# Return 'Set' preference defined in workflow topic.
+sub getWorkflowPref {
+    my ($this, $pref) = @_;
+    return $this->{workflow}->{preferences}->{$pref};
 }
 
 # Get the current state of the workflow in this topic
@@ -643,8 +647,8 @@ sub changeState {
 
         $notification = {
             template => 'mailworkflowtransition',
-            options => { IncludeCurrentUser => 1, AllowMailsWithoutUser => 1 },
-            settings => { webtopic => "$this->{web}.$this->{topic}", TARGET_STATE => $this->getState(), EMAILTO => $notify, LANGUAGE => $language },
+            options => { IncludeCurrentUser => 1, AllowMailsWithoutUser => 1, webtopic => "$this->{web}.$this->{topic}" },
+            settings => { TARGET_STATE => $this->getState(), EMAILTO => $notify, LANGUAGE => $language },
             extra => { action => $action, ncolumn => $notify },
         };
     } else {

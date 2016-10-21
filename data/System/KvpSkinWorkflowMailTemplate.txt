@@ -8,7 +8,7 @@
 
 %{"Body of the mail:"}%
 %TMPL:DEF{"mailContents"}%
-%MAKETEXT{"[_1] edited the topic [_2]." arg1="%WIKINAME%" arg2="%TMPL:P{"TOPICTITLE"}%"}%
+%MAKETEXT{"[_1] edited the topic [_2]." arg1="%RENDERUSER{"%WIKINAME%" convert="1"}%" arg2="%TMPL:P{"TOPICTITLE"}%"}%
 
 %TMPL:P{"Message"}%%TMPL:P{"Remarks"}%
 
