@@ -1989,7 +1989,7 @@ sub beforeSaveHandler {
                 return;
             }
 
-            my $oldMeta = $controlledTopic->{meta};
+            my $oldMeta = $oldControlledTopic->{meta};
             my $oldState = $oldMeta->get( 'WORKFLOW' );
             unless($newStateName[0]->{name} eq $oldState->{name}) {
                 my $message = Foswiki::Func::expandCommonVariables("%MAKETEXT{\"The workflow state did not match the current state.\n\nA common reason is an old article in the browser cache. Please edit the article again via the wiki frontend.\n\n(stored state: [_1], new state: [_2])\" args=\"".($oldState->{name} || 'none').','.($newStateName[0]->{name} || 'none').'"}%', $topic, $web, $meta);
