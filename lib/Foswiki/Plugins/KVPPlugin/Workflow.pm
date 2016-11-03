@@ -86,7 +86,7 @@ sub new {
         {
 
             # Transition table header
-            @fields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
+            @fields = map { _cleanField($_) } split( /\s*\|\s*/, $line );
 
             $inTable = 'TRANSITION';
         }
@@ -97,7 +97,7 @@ sub new {
         {
 
             # State table header
-            @fields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
+            @fields = map { _cleanField($_) } split( /\s*\|\s*/, $line );
 
             $inTable = 'STATE';
         }
@@ -111,14 +111,14 @@ sub new {
         {
             $inTable = 'DEFAULT';
             $defaultCol = 'statetype'; # XXX
-            @defaultfields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
+            @defaultfields = map { _cleanField($_) } split( /\s*\|\s*/, $line );
         }
         elsif (
             $line =~ s/^\s*\|([\s*]*Task[\s*]*\|.*)\|\s*$/$1/ix
         )
         {
             $inTable = 'TASK';
-            @fields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
+            @fields = map { _cleanField($_) } split( /\s*\|\s*/, $line );
         }
         elsif ( defined($inTable) && $line =~ s/^\s*\|\s*(.*?)\s*\|\s*$/$1/ ) {
 
@@ -501,6 +501,7 @@ sub _isTrue {
 sub _cleanField {
     my ($text) = @_;
     $text ||= '';
+    $text = lc($text);
     $text =~ s/[^\w.]//gi;
     return $text;
 }
