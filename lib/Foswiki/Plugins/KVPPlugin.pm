@@ -86,6 +86,8 @@ sub initPlugin {
         'WORKFLOWORIGIN', \&_WORKFLOWORIGIN );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWPROPONENTS', \&_WORKFLOWPROPONENTS );
+    Foswiki::Func::registerTagHandler(
+        'WORKFLOWDENIEDFIELDS', \&_WORKFLOWDENIEDFIELDS );
 
     my $context = Foswiki::Func::getContext();
     if($context->{view} || $context->{edit} || $context->{comparing} || $context->{oops}  || $context->{manage} || $context->{KVPPluginSetContextOnInit}) {
@@ -154,6 +156,20 @@ sub _broadcast {
     unless ($oldMessage =~ m/\Q$message\E/) {
         Foswiki::Func::setPreferencesValue( 'BROADCASTMESSAGE', "$oldMessage<p>$message</p>" );
     }
+}
+
+sub _WORKFLOWDENIEDFIELDS {
+    my ( $session, $params, $topic, $web ) = @_;
+
+    my $rev = $params->{rev};
+    $web = $params->{web} || $web;
+    $topic = $params->{topic} || $topic;
+    my $nocache = ( ($params->{nocache}) ? 1 : undef );
+
+    my $controlledTopic = _initTOPIC( $web, $topic, $rev, undef, $nocache );
+    return '' unless $controlledTopic;
+
+    return join(', ', $controlledTopic->getDeniedFields());
 }
 
 # Tag handler for WORKFLOWALLOWS
@@ -2007,6 +2023,27 @@ sub beforeSaveHandler {
 #                $meta->putKeyed('COMMENT', $comment);
 #            }
 
+            # check 'Allow Field ...'
+            my @deniedFields = ();
+            foreach my $field ( $controlledTopic->getDeniedFields() ) {
+                my $oldHash = $oldMeta->get('FIELD', $field);
+                my $oldValue = ($oldHash)?$oldHash->{value}:'';
+                my $newHash = $meta->get('FIELD', $field);
+                my $newValue = ($newHash)?$newHash->{value}:'';
+                unless ( $oldValue eq $newValue ) {
+                   push(@deniedFields, Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not allowed to change formfield [_1] from \"[_2]\" to \"[_3]\""'." arg1=\"$field\" arg2=\"$oldValue\" arg3=\"$newValue\"}%"));
+               }
+            }
+            if(@deniedFields) {
+                throw Foswiki::OopsException(
+                        'workflowerr',
+                        def   => 'topic_access',
+                        web   => $_[2],
+                        topic => $_[1],
+                        params => join("\n\n", @deniedFields),
+                );
+            }
+
             # perform AUTO actions
             my ($autoAction, undef) = @{$controlledTopic->getActionWithAttribute('AUTO')};
             if($autoAction) {
@@ -2043,6 +2080,25 @@ sub beforeSaveHandler {
                         params => $message
                     );
                 }
+
+                # check 'Allow Field ...'
+                my @deniedFields = ();
+                foreach my $field ( $controlledTopic->getDeniedFields() ) {
+                    my $newHash = $meta->get('FIELD', $field);
+                    if ( $newHash && $newHash->{value} ) {
+                        push(@deniedFields, Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not allowed to fill formfield [_1]"." args="'."$field\"}%"));
+                    }
+                }
+                if(@deniedFields) {
+                    throw Foswiki::OopsException(
+                            'workflowerr',
+                            def   => 'topic_access',
+                            web   => $_[2],
+                            topic => $_[1],
+                            params => join("\n\n", @deniedFields),
+                    );
+                }
+
         }
     }
 

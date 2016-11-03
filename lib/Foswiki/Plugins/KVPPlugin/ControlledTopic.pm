@@ -137,6 +137,21 @@ sub getWorkflowPreference {
     return $this->{workflow}->getPreference($key);
 }
 
+sub getDeniedFields {
+    my ($this) = @_;
+    my @columns = $this->{workflow}->getAllowFieldColumns($this->{state}->{name});
+    my @denied = ();
+
+    foreach my $column ( @columns ) {
+        unless($this->{workflow}->_topicAllows($this, $column)) {
+            my $fieldlc = $column =~ s#allowfield##r;
+            my @fields = grep { lc($_) eq $fieldlc } @{$this->{workflow}->{allow_fields}};
+            push @denied, @fields;
+        }
+    }
+    return @denied;
+}
+
 # Remove LASTTIME_DRAFT etc. from META:WORKFLOW.
 # Do save the topic afterwards.
 # Parameters:
