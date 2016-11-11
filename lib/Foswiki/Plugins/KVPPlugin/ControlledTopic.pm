@@ -673,6 +673,15 @@ sub changeState {
     return $notification;
 }
 
+# Move the controlled topic and update internal state
+sub moveTopic {
+    my ( $this, $newWeb, $newTopic) = @_;
+
+    Foswiki::Func::moveTopic( $this->{web}, $this->{topic}, $newWeb, $newTopic );
+    $this->{web} = $newWeb;
+    $this->{topic} = $newTopic;
+}
+
 sub expandHistory {
     my ( $this, $text ) = @_;
 

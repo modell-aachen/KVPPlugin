@@ -1044,11 +1044,6 @@ sub transitionTopic {
 
         # Do the actual transition
         my $mail = $controlledTopic->changeState($action, $remark);
-        if($mails) {
-            push(@$mails, $mail);
-        } else {
-            sendKVPMail($mail);
-        }
 
         _popParams( $saved ) if $saved;
 
@@ -1155,7 +1150,10 @@ sub transitionTopic {
                 _trashTopic($web, $appTopic);
                 # Save now that I know i can move it afterwards
                 $controlledTopic->save(1);
-                Foswiki::Func::moveTopic( $web, $topic, $web, $appTopic );
+                $controlledTopic->moveTopic( $web, $appTopic );
+
+                # update mail
+                $mail->{options}->{webtopic} = "$web.$appTopic"; # XXX this should be handled by ControlledTopic
             }
         }
         else{
@@ -1163,6 +1161,14 @@ sub transitionTopic {
             $controlledTopic->save(1);
         }
         local $isStateChange = 0;
+
+        # Add mails to stack, after CHAINed transitions have been executed and topics
+        # have been moved.
+        if($mails) {
+            unshift(@$mails, $mail);
+        } else {
+            sendKVPMail($mail);
+        }
     } catch Error::Simple with {
         my $error = shift;
         throw Foswiki::OopsException(
