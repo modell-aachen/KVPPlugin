@@ -5,7 +5,7 @@
 %TMPL:DEF{"talktopic"}%%WORKFLOWSUFFIX%%TMPL:END%
 %TMPL:DEF{talktopiccreatetemplate}%?topicparent=%WEB%.%TOPIC%;onlynewtopic=1%IF{"defined TALKTOPICTEMPLATE" then=";templatetopic=%TALKTOPICTEMPLATE%"}%%IF{"defined TALKTOPICFORMTEMPLATE" then=";formtemplate=%TALKTOPICFORMTEMPLATE%"}%%TMPL:END%
 
-%TMPL:DEF{"modacButtonsLEFT"}%<li>%TMPL:P{"topictabaction"}%</li><li>%TMPL:P{"talktopicactionbutton"}%</li>%TMPL:END%
+%TMPL:DEF{"modacButtonsLEFT"}%<li class="%IF{"context KVPHasDiscussion" then="kvpApprovedExists" else="kvpApprovedDoesNotExist"}%">%TMPL:P{"topictabaction"}%</li><li class="%IF{"context KVPHasDiscussion" then="kvpDiscussionExists" else="kvpDiscussionDoesNotExist"}%">%TMPL:P{"talktopicactionbutton"}%</li>%TMPL:END%
 
 %{ Talk Buttons definieren }%
 %TMPL:DEF{"topictabaction"}%%TMPL:P{context="KVPIsDiscussion" else="approvedtopicactionbuttonactive" then="approvedtopicactionbuttoninactive"}%%TMPL:END%
