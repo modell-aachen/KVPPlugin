@@ -2251,7 +2251,7 @@ sub sendKVPMail {
 
     Foswiki::Contrib::MailTemplatesContrib::sendMail($mail->{template}, $mail->{options}, $mail->{settings}, 1);
 
-    Foswiki::Func::writeWarning("Topic: '$mail->{settings}{webtopic}' Transition: '$mail->{extra}{action}' Notify column: '$mail->{extra}{ncolumn}'") if $Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails};
+    Foswiki::Func::writeWarning("Topic: '$mail->{options}{webtopic}' Transition: '$mail->{extra}{action}' Notify column: '$mail->{extra}{ncolumn}'") if $Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails};
 }
 
 sub maintenanceHandler {
