@@ -108,15 +108,15 @@ sub getAttributes {
 }
 
 sub getWorkflowMeta {
-    my ( $this, $attributes ) = @_;
+    my ( $this, $attributes, $languageOverwrite ) = @_;
 
     # admittingly STATECHANGE and displayname would be more suitable under getWorkflowRow,
     # however they are usually called as if they were metadata.
 
+    my $language = $languageOverwrite || $Foswiki::Plugins::SESSION->i18n()->language();
     if($attributes eq 'STATECHANGE') {
         my $t = $this->{meta}->get( 'KVPSTATECHANGE', 'TRANSITION' );
         return unless $t && $t->{value};
-        my $language = $Foswiki::Plugins::SESSION->i18n()->language();
         my ($old, $new) = ($t->{old}, $t->{new});
         my $oldDisplayName = $this->{workflow}->getRow($old, "displayname$language") || $this->{workflow}->getRow($old, "displayname") || $old;
         my $newDisplayName = $this->{workflow}->getRow($new, "displayname$language") || $this->{workflow}->getRow($new, "displayname") || $new;
@@ -124,7 +124,6 @@ sub getWorkflowMeta {
     }
 
     if($attributes eq 'displayname') {
-        my $language = $Foswiki::Plugins::SESSION->i18n()->language();
         my $value = $this->{workflow}->getRow($this->{state}->{name}, "displayname$language") || $this->{workflow}->getRow($this->{state}->{name}, "displayname") || $this->{state}->{name};
         return $value if defined $value;
     }
@@ -657,13 +656,13 @@ sub changeState {
         # value of the notifees from the topic itself.
         $notify = $this->expandMacros($notify);
 
-        my $language = $Foswiki::cfg{Extensions}{KVPPlugin}{MailLanguage};
+        my $language = $Foswiki::cfg{Extensions}{KVPPlugin}{MailLanguage} || $Foswiki::Plugins::SESSION->i18n()->language();
         $language = Foswiki::Func::expandCommonVariables($language) if $language;
 
         $notification = {
             template => 'mailworkflowtransition',
             options => { IncludeCurrentUser => 1, AllowMailsWithoutUser => 1, webtopic => "$this->{web}.$this->{topic}" },
-            settings => { TARGET_STATE => $this->getState(), EMAILTO => $notify, LANGUAGE => $language },
+            settings => { TARGET_STATE => $this->getWorkflowMeta('displayname', $language), EMAILTO => $notify, LANGUAGE => $language },
             extra => { action => $action, ncolumn => $notify },
         };
     } else {
