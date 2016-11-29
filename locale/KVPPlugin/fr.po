@@ -330,7 +330,7 @@ msgstr "Le sujet que vous avez cliqué a changé d'état depuis ce lien a été 
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "The transition was not possible because the state of the topic (%1) did not match the state of the action (%2). Maybe someone else already transitioned the topic?"
-msgstr "La transition n'a pas été possible en raison de l'état du sujet (% 1) n'a pascorrespondu à l'état de l'action (% 2). Peut-être que quelqu'un d'autre a déjà fait la transitiondu sujet ?"
+msgstr "La transition n'a pas été possible en raison de l'état du sujet (%1) n'a pascorrespondu à l'état de l'action (%2). Peut-être que quelqu'un d'autre a déjà fait la transitiondu sujet ?"
 
 #: templates/oopswrkflwsaveerr.tmpl
 msgid "The transition was not possible, because %1 in state '%2' can not be transitioned with '%3'."
