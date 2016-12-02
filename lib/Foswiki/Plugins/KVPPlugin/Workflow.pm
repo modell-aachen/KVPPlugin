@@ -55,6 +55,7 @@ sub new {
             name               => "$web.$topic",
             preferences        => {},
             states             => {},
+            allow_fields       => undef,
             transitions        => [],
             transitions_state  => {}, # Lookup transitions by source state
             transitions_action => {}, # Look transitions by tuple source state / action
@@ -86,7 +87,7 @@ sub new {
         {
 
             # Transition table header
-            @fields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
+            @fields = map { _cleanField($_) } split( /\s*\|\s*/, $line );
 
             $inTable = 'TRANSITION';
         }
@@ -97,7 +98,11 @@ sub new {
         {
 
             # State table header
-            @fields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
+            @fields = map { _cleanField($_) } split( /\s*\|\s*/, $line );
+
+            # remember original 'allow field ...' columns
+            my @allowfields = map { $_ =~ s#^\s*##; $_ =~ s#\s*$##; $_ =~ s#\*##g; $_ =~ s#^allow\s+field\s*##i; $_ } grep { $_ =~ m#^\s*\*?allow\s+field\s*#i } split(/\|/, $line );
+            $this->{allow_fields} = \@allowfields;
 
             $inTable = 'STATE';
         }
@@ -111,14 +116,14 @@ sub new {
         {
             $inTable = 'DEFAULT';
             $defaultCol = 'statetype'; # XXX
-            @defaultfields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
+            @defaultfields = map { _cleanField($_) } split( /\s*\|\s*/, $line );
         }
         elsif (
             $line =~ s/^\s*\|([\s*]*Task[\s*]*\|.*)\|\s*$/$1/ix
         )
         {
             $inTable = 'TASK';
-            @fields = map { _cleanField($_) } split( /\s*\|\s*/, lc($line) );
+            @fields = map { _cleanField($_) } split( /\s*\|\s*/, $line );
         }
         elsif ( defined($inTable) && $line =~ s/^\s*\|\s*(.*?)\s*\|\s*$/$1/ ) {
 
@@ -175,6 +180,14 @@ sub new {
     }
 
     return $this;
+}
+
+sub getAllowFieldColumns {
+    my ($this, $state) = @_;
+
+    my $stateTable = $this->{states}->{$state};
+
+    return grep { $_ =~ m#^allowfield# } keys %$stateTable;
 }
 
 sub getPreference {
@@ -501,6 +514,7 @@ sub _isTrue {
 sub _cleanField {
     my ($text) = @_;
     $text ||= '';
+    $text = lc($text);
     $text =~ s/[^\w.]//gi;
     return $text;
 }

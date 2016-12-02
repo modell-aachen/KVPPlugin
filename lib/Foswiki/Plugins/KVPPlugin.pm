@@ -86,6 +86,8 @@ sub initPlugin {
         'WORKFLOWORIGIN', \&_WORKFLOWORIGIN );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWPROPONENTS', \&_WORKFLOWPROPONENTS );
+    Foswiki::Func::registerTagHandler(
+        'WORKFLOWDENIEDFIELDS', \&_WORKFLOWDENIEDFIELDS );
 
     my $context = Foswiki::Func::getContext();
     if($context->{view} || $context->{edit} || $context->{comparing} || $context->{oops}  || $context->{manage} || $context->{KVPPluginSetContextOnInit}) {
@@ -154,6 +156,20 @@ sub _broadcast {
     unless ($oldMessage =~ m/\Q$message\E/) {
         Foswiki::Func::setPreferencesValue( 'BROADCASTMESSAGE', "$oldMessage<p>$message</p>" );
     }
+}
+
+sub _WORKFLOWDENIEDFIELDS {
+    my ( $session, $params, $topic, $web ) = @_;
+
+    my $rev = $params->{rev};
+    $web = $params->{web} || $web;
+    $topic = $params->{topic} || $topic;
+    my $nocache = ( ($params->{nocache}) ? 1 : undef );
+
+    my $controlledTopic = _initTOPIC( $web, $topic, $rev, undef, $nocache );
+    return '' unless $controlledTopic;
+
+    return join(', ', $controlledTopic->getDeniedFields());
 }
 
 # Tag handler for WORKFLOWALLOWS
@@ -1028,11 +1044,6 @@ sub transitionTopic {
 
         # Do the actual transition
         my $mail = $controlledTopic->changeState($action, $remark);
-        if($mails) {
-            push(@$mails, $mail);
-        } else {
-            sendKVPMail($mail);
-        }
 
         _popParams( $saved ) if $saved;
 
@@ -1139,7 +1150,10 @@ sub transitionTopic {
                 _trashTopic($web, $appTopic);
                 # Save now that I know i can move it afterwards
                 $controlledTopic->save(1);
-                Foswiki::Func::moveTopic( $web, $topic, $web, $appTopic );
+                $controlledTopic->moveTopic( $web, $appTopic );
+
+                # update mail
+                $mail->{options}->{webtopic} = "$web.$appTopic"; # XXX this should be handled by ControlledTopic
             }
         }
         else{
@@ -1147,6 +1161,14 @@ sub transitionTopic {
             $controlledTopic->save(1);
         }
         local $isStateChange = 0;
+
+        # Add mails to stack, after CHAINed transitions have been executed and topics
+        # have been moved.
+        if($mails) {
+            unshift(@$mails, $mail);
+        } else {
+            sendKVPMail($mail);
+        }
     } catch Error::Simple with {
         my $error = shift;
         throw Foswiki::OopsException(
@@ -1989,7 +2011,7 @@ sub beforeSaveHandler {
                 return;
             }
 
-            my $oldMeta = $controlledTopic->{meta};
+            my $oldMeta = $oldControlledTopic->{meta};
             my $oldState = $oldMeta->get( 'WORKFLOW' );
             unless($newStateName[0]->{name} eq $oldState->{name}) {
                 my $message = Foswiki::Func::expandCommonVariables("%MAKETEXT{\"The workflow state did not match the current state.\n\nA common reason is an old article in the browser cache. Please edit the article again via the wiki frontend.\n\n(stored state: [_1], new state: [_2])\" args=\"".($oldState->{name} || 'none').','.($newStateName[0]->{name} || 'none').'"}%', $topic, $web, $meta);
@@ -2006,6 +2028,27 @@ sub beforeSaveHandler {
 #            foreach my $comment ($oldMeta->find( 'COMMENT' )) {
 #                $meta->putKeyed('COMMENT', $comment);
 #            }
+
+            # check 'Allow Field ...'
+            my @deniedFields = ();
+            foreach my $field ( $controlledTopic->getDeniedFields() ) {
+                my $oldHash = $oldMeta->get('FIELD', $field);
+                my $oldValue = ($oldHash)?$oldHash->{value}:'';
+                my $newHash = $meta->get('FIELD', $field);
+                my $newValue = ($newHash)?$newHash->{value}:'';
+                unless ( $oldValue eq $newValue ) {
+                   push(@deniedFields, Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not allowed to change formfield [_1] from \"[_2]\" to \"[_3]\""'." arg1=\"$field\" arg2=\"$oldValue\" arg3=\"$newValue\"}%"));
+               }
+            }
+            if(@deniedFields) {
+                throw Foswiki::OopsException(
+                        'workflowerr',
+                        def   => 'topic_access',
+                        web   => $_[2],
+                        topic => $_[1],
+                        params => join("\n\n", @deniedFields),
+                );
+            }
 
             # perform AUTO actions
             my ($autoAction, undef) = @{$controlledTopic->getActionWithAttribute('AUTO')};
@@ -2043,6 +2086,25 @@ sub beforeSaveHandler {
                         params => $message
                     );
                 }
+
+                # check 'Allow Field ...'
+                my @deniedFields = ();
+                foreach my $field ( $controlledTopic->getDeniedFields() ) {
+                    my $newHash = $meta->get('FIELD', $field);
+                    if ( $newHash && $newHash->{value} ) {
+                        push(@deniedFields, Foswiki::Func::expandCommonVariables('%MAKETEXT{"You are not allowed to fill formfield [_1]"." args="'."$field\"}%"));
+                    }
+                }
+                if(@deniedFields) {
+                    throw Foswiki::OopsException(
+                            'workflowerr',
+                            def   => 'topic_access',
+                            web   => $_[2],
+                            topic => $_[1],
+                            params => join("\n\n", @deniedFields),
+                    );
+                }
+
         }
     }
 
@@ -2189,7 +2251,7 @@ sub sendKVPMail {
 
     Foswiki::Contrib::MailTemplatesContrib::sendMail($mail->{template}, $mail->{options}, $mail->{settings}, 1);
 
-    Foswiki::Func::writeWarning("Topic: '$mail->{settings}{webtopic}' Transition: '$mail->{extra}{action}' Notify column: '$mail->{extra}{ncolumn}'") if $Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails};
+    Foswiki::Func::writeWarning("Topic: '$mail->{options}{webtopic}' Transition: '$mail->{extra}{action}' Notify column: '$mail->{extra}{ncolumn}'") if $Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails};
 }
 
 sub maintenanceHandler {

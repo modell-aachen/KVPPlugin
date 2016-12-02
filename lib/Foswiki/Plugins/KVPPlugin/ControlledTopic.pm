@@ -108,15 +108,15 @@ sub getAttributes {
 }
 
 sub getWorkflowMeta {
-    my ( $this, $attributes ) = @_;
+    my ( $this, $attributes, $languageOverwrite ) = @_;
 
     # admittingly STATECHANGE and displayname would be more suitable under getWorkflowRow,
     # however they are usually called as if they were metadata.
 
+    my $language = $languageOverwrite || $Foswiki::Plugins::SESSION->i18n()->language();
     if($attributes eq 'STATECHANGE') {
         my $t = $this->{meta}->get( 'KVPSTATECHANGE', 'TRANSITION' );
         return unless $t && $t->{value};
-        my $language = $Foswiki::Plugins::SESSION->i18n()->language();
         my ($old, $new) = ($t->{old}, $t->{new});
         my $oldDisplayName = $this->{workflow}->getRow($old, "displayname$language") || $this->{workflow}->getRow($old, "displayname") || $old;
         my $newDisplayName = $this->{workflow}->getRow($new, "displayname$language") || $this->{workflow}->getRow($new, "displayname") || $new;
@@ -124,7 +124,6 @@ sub getWorkflowMeta {
     }
 
     if($attributes eq 'displayname') {
-        my $language = $Foswiki::Plugins::SESSION->i18n()->language();
         my $value = $this->{workflow}->getRow($this->{state}->{name}, "displayname$language") || $this->{workflow}->getRow($this->{state}->{name}, "displayname") || $this->{state}->{name};
         return $value if defined $value;
     }
@@ -135,6 +134,21 @@ sub getWorkflowMeta {
 sub getWorkflowPreference {
     my ($this, $key) = @_;
     return $this->{workflow}->getPreference($key);
+}
+
+sub getDeniedFields {
+    my ($this) = @_;
+    my @columns = $this->{workflow}->getAllowFieldColumns($this->{state}->{name});
+    my @denied = ();
+
+    foreach my $column ( @columns ) {
+        unless($this->{workflow}->_topicAllows($this, $column)) {
+            my $fieldlc = $column =~ s#allowfield##r;
+            my @fields = grep { lc($_) eq $fieldlc } @{$this->{workflow}->{allow_fields}};
+            push @denied, @fields;
+        }
+    }
+    return @denied;
 }
 
 # Remove LASTTIME_DRAFT etc. from META:WORKFLOW.
@@ -642,13 +656,13 @@ sub changeState {
         # value of the notifees from the topic itself.
         $notify = $this->expandMacros($notify);
 
-        my $language = $Foswiki::cfg{Extensions}{KVPPlugin}{MailLanguage};
+        my $language = $Foswiki::cfg{Extensions}{KVPPlugin}{MailLanguage} || $Foswiki::Plugins::SESSION->i18n()->language();
         $language = Foswiki::Func::expandCommonVariables($language) if $language;
 
         $notification = {
             template => 'mailworkflowtransition',
             options => { IncludeCurrentUser => 1, AllowMailsWithoutUser => 1, webtopic => "$this->{web}.$this->{topic}" },
-            settings => { TARGET_STATE => $this->getState(), EMAILTO => $notify, LANGUAGE => $language },
+            settings => { TARGET_STATE => $this->getState(), TARGET_STATE_DISPLAY => $this->getWorkflowMeta('displayname', $language), EMAILTO => $notify, LANGUAGE => $language },
             extra => { action => $action, ncolumn => $notify },
         };
     } else {
@@ -656,6 +670,15 @@ sub changeState {
     }
 
     return $notification;
+}
+
+# Move the controlled topic and update internal state
+sub moveTopic {
+    my ( $this, $newWeb, $newTopic) = @_;
+
+    Foswiki::Func::moveTopic( $this->{web}, $this->{topic}, $newWeb, $newTopic );
+    $this->{web} = $newWeb;
+    $this->{topic} = $newTopic;
 }
 
 sub expandHistory {
