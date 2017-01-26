@@ -1,4 +1,4 @@
-jsi18n.add('solr', {
+jsi18n.add('solrkvp', {
     "not approved": "nicht freigegeben",
     "state not defined": "Status nicht definiert",
     "APPROVED": "Freigegeben",

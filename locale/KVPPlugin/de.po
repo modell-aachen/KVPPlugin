@@ -297,6 +297,10 @@ msgstr "Revisionsgeschichte von "
 msgid "Show macros"
 msgstr "Macros anzeigen"
 
+#: data/System/KvpSkinWorkflowViewMacrosTemplate.txt
+msgid "Hide macros"
+msgstr "Macros verbergen"
+
 #: data/System/KVPPluginCommonWords.txt
 msgid "Start discussion"
 msgstr "Diskussion starten"
