@@ -339,6 +339,19 @@ sub _initTOPIC {
 
     return undef unless Foswiki::Func::isValidTopicName( $topic, 1 );
 
+    if($Foswiki::Plugins::SESSION->{store}->can('isVirtualTopic')) {
+        my $isVirtual;
+        if($meta) {
+            $isVirtual = $Foswiki::Plugins::SESSION->{store}->isVirtualTopic($meta->web(), $meta->topic());
+        } else {
+            $isVirtual = $Foswiki::Plugins::SESSION->{store}->isVirtualTopic($web, $topic);
+        }
+        if($isVirtual) {
+            $cache{$controlledTopicCID} = '_undef';
+            return undef;
+        }
+    }
+
     my $workflowName;
     if ( $meta ) {
         # $meta->getPreference('WORKFLOW') does not necessarily do what I want,
