@@ -191,6 +191,10 @@ Bei der Expansion von Templates können Einstellungen ver&auml;ndert werden. Das
 | =SetField= %BR% =EarlySetField= | "Feldname1 = Wert1", "Feldname2 = Wert2", ... | Setzt ein Formfeld auf den gegebenen Wert. | _Prozesseigner_ und _Verantwortlich_ auf anlegenden Nutzer setzen:<verbatim>   * Set EarlySetField = "Prozesseigner = %USERNAME%", "Verantwortlich = %USERNAME%"</verbatim>%BR% _Prozesseigner_ und _Verantwortlich_ auf anlegenden Nutzer setzen, ohne dass er etwas daran tun kann:<verbatim>   * Set SetField = "Prozesseigner = %USERNAME%", "Verantwortlich = %USERNAME%"</verbatim> | |
 | =SetMeta= %BR% =SetEarlyMeta= | "Metadatum = key1=Wert, key2=Wert2", "Metadatum2 = key=Wert", ... | Setzt Metadaten auf den angegebenen Wert. Schl&uuml;ssel m&uuml;ssen durch Kommas getrennt werden. Soll ein Wert ein Komma enthalten, kann es mit $comma escaped werden. | <verbatim>   * Set SetMeta = "MYMETA = name=MyMeta, attributes=, title=My Meta, value=For me$commaFor you"</verbatim> | |
 
+---++ Virtual topics
+
+Virtual topics will always be treated as _not under any workflow_, regardless of any =WORKFLOW= settings.
+
 %$INSTALL_INSTRUCTIONS%
 
 ---++ Info

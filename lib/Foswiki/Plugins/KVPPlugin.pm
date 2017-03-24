@@ -27,6 +27,7 @@ use JSON;
 
 use constant FORCENEW => 1;
 use constant NOCACHE => 2;
+use constant MAXREV => 99999;
 
 our $VERSION = '2.0';
 our $RELEASE = "2.0";
@@ -321,7 +322,7 @@ sub _initTOPIC {
     my $exceptions = $Foswiki::cfg{Extensions}{KVPPlugin}{except};
     return undef if $exceptions && $topic =~ /$exceptions/;
 
-    $rev ||= 99999;    # latest
+    $rev ||= MAXREV;    # latest
 
     ( $web, $topic ) = Foswiki::Func::normalizeWebTopicName( $web, $topic );
     return undef unless(Foswiki::Func::isValidWebName( $web ));
@@ -338,6 +339,19 @@ sub _initTOPIC {
     }
 
     return undef unless Foswiki::Func::isValidTopicName( $topic, 1 );
+
+    if($Foswiki::Plugins::SESSION->{store}->can('isVirtualTopic')) {
+        my $isVirtual;
+        if($meta) {
+            $isVirtual = $Foswiki::Plugins::SESSION->{store}->isVirtualTopic($meta->web(), $meta->topic());
+        } else {
+            $isVirtual = $Foswiki::Plugins::SESSION->{store}->isVirtualTopic($web, $topic);
+        }
+        if($isVirtual) {
+            $cache{$controlledTopicCID} = '_undef';
+            return undef;
+        }
+    }
 
     my $workflowName;
     if ( $meta ) {
@@ -383,7 +397,7 @@ sub _initTOPIC {
                   Foswiki::Func::readTopic( $web, $topic, $rev );
 
                 # Disable the lazy loader, omitting this may results in erroneous forked topics:
-                $meta->loadVersion( ($rev ne 99999) ? $rev : undef ) unless $meta->getLoadedRev();
+                $meta->loadVersion( ($rev ne MAXREV) ? $rev : undef ) unless $meta->getLoadedRev();
             } else {
                 $meta->loadVersion() unless $meta->getLoadedRev(); # XXX Why do I have to loadVersion when I get a meta from beforeSaveHandler?
                                                                    # When omitting: Will get 2 %META:WORKFLOW{...}%
@@ -1150,6 +1164,12 @@ sub transitionTopic {
                 _trashTopic($web, $appTopic);
                 # Save now that I know i can move it afterwards
                 $controlledTopic->save(1);
+
+                # clear cached approved version
+                my $rev = MAXREV;
+                my $controlledTopicCID = "$web.$appTopic.$rev";
+                undef $cache{$controlledTopicCID};
+
                 $controlledTopic->moveTopic( $web, $appTopic );
 
                 # update mail
