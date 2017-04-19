@@ -193,7 +193,7 @@ Bei der Expansion von Templates können Einstellungen ver&auml;ndert werden. Das
 
 ---++ Emails
 The langauge in which tansition emails are sent is configurable via different settings (listed from highest to lowest priority).
-   * By setting the *KVP_MAIL_LANGUAGE* preference to a language code (e.g. on WebPreferences to define the language for transitions in one web)
+   * By setting the *MAIL_LANGUAGE* preference to a language code (e.g. on WebPreferences to define the language for transitions in one web)
    * By setting the language code in configure: *{Extensions}{KVPPlugin}{MailLanguage}*
    * If none of these are set then emails will be sent in the browser language of the user who triggered the email.
 

@@ -656,7 +656,7 @@ sub changeState {
         # value of the notifees from the topic itself.
         $notify = $this->expandMacros($notify);
 
-        my $language = Foswiki::Func::getPreferencesValue('KVP_MAIL_LANGUAGE') || $Foswiki::cfg{Extensions}{KVPPlugin}{MailLanguage} || $Foswiki::Plugins::SESSION->i18n()->language();
+        my $language = Foswiki::Func::getPreferencesValue('MAIL_LANGUAGE') || $Foswiki::cfg{Extensions}{KVPPlugin}{MailLanguage} || $Foswiki::Plugins::SESSION->i18n()->language();
         $language = Foswiki::Func::expandCommonVariables($language) if $language;
 
         $notification = {
