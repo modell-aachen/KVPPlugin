@@ -2184,6 +2184,18 @@ sub _getIndexHash {
         }
     }
 
+    # alias to workflowmeta_..._currentstate_..
+    for my $key (keys %$workflow) {
+        next unless $key =~ m#$state$#;
+        my $keycopy = $key;
+        $keycopy =~ s#$state$#currentstate#;
+        my $lckey = lc($keycopy);
+        $indexFields{ "workflowmeta_${lckey}_s" } = $workflow->{$key};
+        if($lckey =~ m#^lasttime_# && $workflow->{$key} =~ m#(\d{1,2})\.(\d{1,2})\.(\d{4})#) {
+            $indexFields{ "workflowmeta_${lckey}_dt" } = "$3-$2-${1}T00:00:00Z";
+        }
+    }
+
     # provide all state info
     { # scope
         my $fields = $controlledTopic->getFields();
