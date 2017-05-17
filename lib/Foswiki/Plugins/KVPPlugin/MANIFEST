@@ -52,3 +52,4 @@ test/unit/KVPPlugin/KVPPluginSeleniumTestCase.pm 0644
 test/unit/KVPPlugin/KVPPluginSuite.pm 0644
 test/unit/KVPPlugin/KVPPluginTests.pm 0644
 test/unit/KVPPlugin/qwikitest 0644
+tools/update_workflow_displayedTab.pl 0644

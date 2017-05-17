@@ -89,6 +89,8 @@ sub initPlugin {
         'WORKFLOWPROPONENTS', \&_WORKFLOWPROPONENTS );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWDENIEDFIELDS', \&_WORKFLOWDENIEDFIELDS );
+    Foswiki::Func::registerTagHandler(
+        'WORKFLOWDISPLAYTABS', \&_WORKFLOWDISPLAYTABS );
 
     my $context = Foswiki::Func::getContext();
     if($context->{view} || $context->{edit} || $context->{comparing} || $context->{oops}  || $context->{manage} || $context->{KVPPluginSetContextOnInit}) {
@@ -171,6 +173,26 @@ sub _WORKFLOWDENIEDFIELDS {
     return '' unless $controlledTopic;
 
     return join(', ', $controlledTopic->getDeniedFields());
+}
+
+sub _WORKFLOWDISPLAYTABS {
+    my($session, $params) = @_;
+    return '' unless $params->{web} && $params->{workflowname};
+    my $workflow = new Foswiki::Plugins::KVPPlugin::Workflow( $params->{web}, $params->{workflowname} );
+    return '' unless $workflow;
+    if($params->{renderTabMacro} && $params->{renderTabMacro} eq "true") {
+        my $formattedString = "";
+        for my $tabeName ($workflow->getDisplayTabs()) {
+            my $renderTab = '%TAB{"%MAKETEXT{"%1"}%"}% %TMPL:P{"searchgrid_tabs" extraquery="workflowstate_displayedtab_s:\"%1\""}% %ENDTAB%';
+            my $find = '%1';
+            $renderTab =~ s/$find/$tabeName/g; 
+            $formattedString = $formattedString . $renderTab;
+        }
+        return $formattedString;    
+    }
+    else {
+        return join(", ", $workflow->getDisplayTabs());
+    }
 }
 
 # Tag handler for WORKFLOWALLOWS
