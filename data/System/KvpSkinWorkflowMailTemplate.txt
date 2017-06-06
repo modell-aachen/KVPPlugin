@@ -12,13 +12,13 @@
 
 %TMPL:P{"Message"}%%TMPL:P{"Remarks"}%
 
-%MAKETEXT{"Link to the page:"}% %TMPL:P{"LinkToPage"}%%IF{
+%IF{"'%TARGET_STATE%' != 'DISCARDED'" then="%MAKETEXT{"Link to the page:"}% $percentTMPL:P{\"LinkToPage\"}$percent
+%IF{
   "$TOPIC != $'WORKFLOWORIGIN{%TOPIC%}' and $'GETWORKFLOWROW{approved}' != 1"
   then="
-
 %MAKETEXT{"Differences to approved version:"}% $percentTMPL:P{LinkToComparePage}$percent"
 }%
-
+"}%
 %MAKETEXT{"This is an automatically generated message. Please do not reply to this email."}%
 
 %MAKETEXT{"For questions, please refer to:"}%
