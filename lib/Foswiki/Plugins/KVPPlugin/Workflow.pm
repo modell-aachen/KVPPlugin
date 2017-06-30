@@ -182,6 +182,16 @@ sub new {
     return $this;
 }
 
+sub getDisplayTabs {
+    my ($this) = @_;
+    my @tabs = ();   
+    foreach my $state (keys %{$this->{states}}) {
+        next unless $this->{states}{$state}->{displayedtab} && !grep{$_ =~ m#$this->{states}{$state}->{displayedtab}#} @tabs;
+        push(@tabs, $this->{states}{$state}->{displayedtab});
+    }
+    return sort @tabs;
+}
+
 sub getAllowFieldColumns {
     my ($this, $state) = @_;
 
