@@ -34,7 +34,7 @@
 			<td style='text-align: center;'>
 				%MAKETEXT{"Responsible"}%:<strong><br />%RENDERFORDISPLAY{fields="Responsible" format="$value" revision="%URLPARAM{"rev"}%"}%</strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Approved by"}%:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1" rev="%URLPARAM{"rev"}%"}%" format="$displayName"}%</strong></td>
+				%MAKETEXT{"Approved by"}%:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED_DRAFT" nousersweb="1" rev="%URLPARAM{"rev"}%"}%" format="$displayName"}%</strong></td>
 			<td style='text-align: center;'>
 				%MAKETEXT{"Release date"}%:<strong><br />%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1" rev="%URLPARAM{"rev"}%"}%</strong></td>
 			<td style='text-align: center;'>
