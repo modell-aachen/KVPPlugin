@@ -2095,7 +2095,8 @@ sub beforeSaveHandler {
             # perform AUTO actions
             my ($autoAction, undef) = @{$controlledTopic->getActionWithAttribute('AUTO')};
             if($autoAction) {
-                $controlledTopic->changeState($autoAction);
+                my $mail = $controlledTopic->changeState($autoAction);
+		sendKVPMail($mail);
             }
         } else {
             # This topic is now no longer a stub.
