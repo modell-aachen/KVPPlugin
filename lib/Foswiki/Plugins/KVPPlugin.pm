@@ -21,6 +21,7 @@ use Foswiki::OopsException ();
 use Foswiki::Sandbox ();
 
 use Foswiki::Contrib::MailTemplatesContrib;
+use Foswiki::UI::Rename;
 
 use HTML::Entities;
 use JSON;
@@ -1167,6 +1168,37 @@ sub transitionTopic {
                 $url = Foswiki::Func::getViewUrl($parentWeb, $parent);
             }
         }
+        elsif(my $destinationWeb = _extractDestinationWebFromMoveAttribute($actionAttributes)){
+            my ($appTopicMeta, undef) = Foswiki::Func::readTopic($appWeb, $appTopic);
+            my $localReferringTopics = Foswiki::UI::Rename::_getReferringTopics($session, $appTopicMeta, 0);
+            my $globalReferringTopics = Foswiki::UI::Rename::_getReferringTopics($session, $appTopicMeta, 1);
+            my %allReferringTopics = (%$localReferringTopics, %$globalReferringTopics);
+            my @allReferringTopicNames = keys(%allReferringTopics);
+
+            my $updateLinkOptions = {
+                oldWeb => $web,
+                oldTopic => $appTopic,
+                newWeb => $destinationWeb,
+                newTopic => $appTopic,
+                inWeb => $destinationWeb,
+                fullPaths => 0,
+                noautolink => 1,
+                in_pre => 0,
+                in_noautolink => 0,
+                in_literal => 0,
+
+            };
+
+            Foswiki::UI::Rename::_updateReferringTopics( $session, \@allReferringTopicNames, \&Foswiki::UI::Rename::_replaceTopicReferences,
+            $updateLinkOptions );
+
+            if($appTopic ne $controlledTopic->{topic}){
+                Foswiki::Func::moveTopic($controlledTopic->{web}, $appTopic, $destinationWeb, $appTopic);
+            }
+            $controlledTopic->moveTopic($destinationWeb, $controlledTopic->{topic});
+            $controlledTopic->save(1);
+            $url = Foswiki::Func::getViewUrl($controlledTopic->{web}, $controlledTopic->{topic});
+        }
         # Check if discussion is beeing accepted
         elsif (!$oldIsApproved && $controlledTopic->getRow("approved") && $actionAttributes !~ m#(?:\W|^)FORK(?:\W|$)#) {
             # transfer ACLs from old document to new
@@ -1224,6 +1256,13 @@ sub transitionTopic {
     };
 
     return { url => $url, webAfterTransition => $web, topicAfterTransition => $appTopic };
+}
+
+sub _extractDestinationWebFromMoveAttribute {
+    my $attributes = shift;
+    my ($destinationWeb) = ($attributes =~ /\bMOVE\((.+)\)(?:\W|$)/);
+
+    return $destinationWeb;
 }
 
 # Forces write permission
