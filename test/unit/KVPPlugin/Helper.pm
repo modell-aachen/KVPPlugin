@@ -43,7 +43,9 @@ use constant WORKFLOW => <<'WORKFLOW';
 | FORMALE_PRUEFUNG_ENTWURF | Main.QMGroup, Main.KeyUserGroup | QMGroup, Main.KeyUserGroup | This document is waiting for approval by the QM-department. | QMGroup, Main.KeyUserGroup | draft |
 | INHALTLICHE_PRUEFUNG | %META{"formfield" name="Seitenverantwortlicher"}%, Main.KeyUserGroup | | This document is waiting for approval by the person in charge of the page. | %META{"formfield" name="Seitenverantwortlicher"}% | discussion |
 | INHALTLICHE_PRUEFUNG_ENTWURF | %META{"formfield" name="Seitenverantwortlicher"}%, Main.KeyUserGroup | %META{"formfield" name="Seitenverantwortlicher"}%, Main.KeyUserGroup | This document is waiting for approval by the person in charge of the page. | %META{"formfield" name="Seitenverantwortlicher"}% | draft |
- 
+| ARCHIVIERT | Main.KeyUserGroup | Main.KeyUserGroup | This document is archived | | discussion |
+
+
 ---++ Transitions
 %EDITTABLE{format="| text, 20 | text, 40 | text, 20 | text, 30 | text, 30 | text, 15 | text, 15 |"}%
 | *State* | *Action* | *Next State* | *Allowed* | *Notify* | *Condition* | *Attribute* |
@@ -67,6 +69,8 @@ use constant WORKFLOW => <<'WORKFLOW';
 | INHALTLICHE_PRUEFUNG_ENTWURF | Request further revision | ENTWURF | %META{"formfield" name="Seitenverantwortlicher"}%, Main.KeyUserGroup, LOGGEDIN | | | REMARK |
 | INHALTLICHE_PRUEFUNG_ENTWURF | Discard draft | VERWORFEN | %META{"formfield" name="Seitenverantwortlicher"}%, Main.KeyUserGroup, LOGGEDIN | | | DISCARD |
 | VERWORFEN | Give article the accept status | FREIGEGEBEN | Main.KeyUserGroup | | | |
+| DISKUSSIONSSTAND | Archive | ARCHIVIERT | Main.KeyUserGroup | | | MOVE(TemporaryKVPTestWebTrash) |
+| ARCHIVIERT | Restore | DISKUSSIONSSTAND | Main.KeyUserGroup | | | MOVE(TemporaryKVPTestWeb) |
 
    * Set NOWYSIWYG=1
    * Set WORKFLOW=

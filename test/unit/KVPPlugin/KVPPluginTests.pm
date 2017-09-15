@@ -563,6 +563,29 @@ sub test_discard {
     $this->assert_equals( 'This is version A3', $text, "Third discussion was not trashed correctly!" );
 }
 
+sub test_move_attribute_moves_topics {
+    my ( $this ) = @_;
+
+    my $topic = 'TestMoveTopic';
+    my $talkTopic = 'TestMoveTopicTALK';
+    my $web = Helper::KVPWEB;
+    my $destinationWeb = Helper::TRASH;
+
+    my $user = Helper::becomeAnAdmin($this);
+
+    Helper::createWithState( $this, $web, $topic, 'FREIGEGEBEN', "Approved version" );
+    Helper::createDiscussion($this, $web, $topic);
+
+    Helper::transition( $this, 'DISKUSSIONSSTAND', 'Archive', $web, $talkTopic, 1);
+
+    $this->assert(!Foswiki::Func::topicExists($web, $topic), "Approved topic was not removed from its original web");
+    $this->assert(Foswiki::Func::topicExists($destinationWeb, $topic), "Approved topic was not moved to the destination web");
+    $this->assert(!Foswiki::Func::topicExists($web, $talkTopic), "Talk topic was not removed from its original web");
+    $this->assert(Foswiki::Func::topicExists($destinationWeb, $talkTopic), "Talk topic was not moved to the destination web");
+
+    return;
+}
+
 1;
 __END__
 Foswiki - The Free and Open Source Wiki, http://foswiki.org/
