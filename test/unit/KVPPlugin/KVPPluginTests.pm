@@ -696,6 +696,33 @@ sub test_move_attribute_moves_topics {
     return;
 }
 
+sub test_move_attribute_updates_topic_references {
+    my ( $this ) = @_;
+
+    my $topic = 'TestMoveTopic';
+    my $talkTopic = 'TestMoveTopicTALK';
+    my $web = Helper::KVPWEB;
+    my $destinationWeb = Helper::TRASH;
+
+    my $user = Helper::becomeAnAdmin($this);
+
+    my $calledUpdateTopicLinks = 0;
+    undef *Foswiki::Contrib::ModacHelpersContrib::updateTopicLinks;
+    *Foswiki::Contrib::ModacHelpersContrib::updateTopicLinks = sub {
+        $calledUpdateTopicLinks = 1;
+        return;
+    };
+
+    Helper::createWithState( $this, $web, $topic, 'FREIGEGEBEN', "[[$web.$topic][$topic]]" );
+    Helper::createDiscussion($this, $web, $topic);
+
+    Helper::transition( $this, 'DISKUSSIONSSTAND', 'Archive', $web, $talkTopic, 1);
+
+    $this->assert($calledUpdateTopicLinks, "Did not trigger updateTopicLinks.");
+
+    return;
+}
+
 1;
 __END__
 Foswiki - The Free and Open Source Wiki, http://foswiki.org/
