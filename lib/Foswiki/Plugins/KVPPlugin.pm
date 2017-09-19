@@ -1004,7 +1004,7 @@ sub transitionTopic {
             my %allowed2props = %{ $controlledTopic->mapProponentsToAllowed($action) };
             my $num_allowed = scalar values %allowed2props;
             my $num_done = scalar grep { defined $_ } values %allowed2props;
-            my $current_percent = $num_done / $num_allowed * 100;
+            my $current_percent = $num_allowed ? $num_done / $num_allowed * 100 : 100; # when the column is empty ($num_allowed == 0), everyone should be able to do the transition ($current_percent = 100)
 
             if ($current_percent < $percent) {
                 $controlledTopic->save(1);

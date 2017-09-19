@@ -123,6 +123,14 @@ use constant PROPOSALWORKFLOW => <<'WORKFLOW';
 | *State* | *Action* | *Next State* | *Allowed* | *Notify* | *Condition* | *Attribute* |
 | NEW | Create | DRAFT | LOGGEDIN, Main.KeyUserGroup | | | NEW |
 | DRAFT | Propose approval | APPROVED | test1, test2, qm1 | | | ALLOWEDPERCENT(100) |
+| DRAFT | Propose approval 1 | APPROVED | test1 | | | ALLOWEDPERCENT(50) |
+| DRAFT | Propose approval 2 | APPROVED | test1, test2 | | | ALLOWEDPERCENT(50) |
+| DRAFT | Propose approval 3 | APPROVED | test1, test2, test3 | | | ALLOWEDPERCENT(50) |
+| DRAFT | Propose approval 4 | APPROVED | test1, QMGroup | | | ALLOWEDPERCENT(50) |
+| DRAFT | Propose approval 5 | APPROVED | QMGroup | | | ALLOWEDPERCENT(50) |
+| DRAFT | Propose approval 6 | APPROVED | %QUERY{"Seitenverantwortlicher"}% | | | ALLOWEDPERCENT(50) |
+| DRAFT | Propose approval 7 | APPROVED | %QUERY{"Seitenverantwortlicher"}%, %QUERY{"FormalerPruefer"}% | | | ALLOWEDPERCENT(50) |
+| DRAFT | Propose approval 8 | APPROVED | %QUERY{"Seitenverantwortlicher"}%, test2 | | | ALLOWEDPERCENT(50) |
 | DRAFT | Escape hatch | APPROVED | | | | |
 | APPROVED | Propose re-draft | DRAFT | test1, test2, QMGroup | | | ALLOWEDPERCENT(60) |
 | APPROVED | Escape hatch | DRAFT | | | | |
@@ -219,6 +227,8 @@ sub set_up_users {
     $users->{test1} = $other->{session}->{users}->getCanonicalUserID('test1');
     $other->registerUser( 'test2', 'Test', "Two", 'testuser2@example.com' );
     $users->{test2} = $other->{session}->{users}->getCanonicalUserID('test2');
+    $other->registerUser( 'test3', 'Test', "Three", 'testuser3@example.com' );
+    $users->{test3} = $other->{session}->{users}->getCanonicalUserID('test3');
     $other->registerUser( 'qm1', 'Quality', "One", 'qm1@example.com' );
     $users->{qm1} = $other->{session}->{users}->getCanonicalUserID('qm1');
     $other->registerUser( 'qm2', 'Quality', "Two", 'qm2@example.com' );
@@ -404,7 +414,7 @@ sub createWithState {
 This is a temporary UnitTest article and can be safely removed.
 TEXT
 
-    if ($processowner) {
+    if (defined $processowner) {
         $qm = $processowner unless defined $qm;
         $text .= <<FORM;
 
