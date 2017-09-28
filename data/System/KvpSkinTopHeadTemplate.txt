@@ -24,7 +24,7 @@
 		</tr>
 		<tr style='height: 24px;'>
 			<td colspan='3' style='text-align: center;'>
-				<strong><font size='3'>%QUERY{"Number" default=""}% %TOPICTITLE%</font></strong></td>
+				<strong><font size='3'>%QUERY{"DocumentNumber" default=""}% %TOPICTITLE%</font></strong></td>
 			<td colspan='2' style='text-align: center;'>
 				%MAKETEXT{"Area of application"}%&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
 		</tr>
@@ -70,7 +70,7 @@
 		</tr>
 		<tr style='height: 24px;'>
 			<td colspan='3' style='text-align: center;'>
-				<strong><font size='3'>%QUERY{"Number" default=""}% %TOPICTITLE%</font></strong></td>
+				<strong><font size='3'>%QUERY{"DocumentNumber" default=""}% %TOPICTITLE%</font></strong></td>
 			<td colspan='2' style='text-align: center;'>
 				%MAKETEXT{"Area of application"}%&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
 		</tr>
