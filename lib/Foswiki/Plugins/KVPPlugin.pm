@@ -783,7 +783,7 @@ sub _GETWORKFLOWROW {
 
     # Not cotrolled get row from values in configure
     my $configure = $Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow};
-    return '' unless $configure;
+    return '' unless ref($configure) eq 'HASH';
     return $configure->{$param} || '';
 }
 
