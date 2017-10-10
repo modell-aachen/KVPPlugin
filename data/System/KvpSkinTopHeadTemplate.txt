@@ -15,7 +15,8 @@
 	<tbody>
 		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev AND $'URLPARAM{rev}'!='%REVINFO{"$rev" rev="-1"}%'" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%IF{"'%QUERY{"DocumentType"}%' != ''" then="$percntMAKETEXT{$percntQUERY{\"DocumentType\"}$percnt}$percnt$percntIF{\"defined rev AND $'URLPARAM{rev}'!='$percntREVINFO{\"$rev\" rev=\"-1\"}$percnt'\" then=\"$percentRED$percent ($percntMAKETEXT{\"old revision\"}$percnt)$percentENDCOLOR$percent\"}$percnt"}%
+				</font></strong></td>
 			<td width='35%' style='text-align: center;'> </td>
 			<td width='12%' style='text-align: center;'>
 				%MAKETEXT{"Version"}%&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
@@ -25,8 +26,8 @@
 		<tr style='height: 24px;'>
 			<td colspan='3' style='text-align: center;'>
 				<strong><font size='3'>%QUERY{"DocumentNumber" default=""}% %TOPICTITLE%</font></strong></td>
-			<td colspan='2' style='text-align: center;'>
-				%MAKETEXT{"Area of application"}%&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
+			<td colspan='2' style='text-align: center;'>%IF{"'%QUERY{"AreaOfApplication"}%' != ''" then="$percntMAKETEXT{\"Area of application\"}$percnt&#58; <strong>$percntMAKETEXT{$percntQUERY{\"AreaOfApplication\"}$percnt}$percnt</strong>"}%
+				</td>
 		</tr>
 		<tr style='height: 24px;'>
 			<td style='text-align: center;'>
@@ -60,7 +61,8 @@
 	<tbody>
 		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev AND $'URLPARAM{rev}'!='%REVINFO{"$rev" rev="-1"}%'" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%IF{"'%QUERY{"DocumentType"}%' != ''" then="$percntMAKETEXT{$percntQUERY{\"DocumentType\"}$percnt}$percnt$percntIF{\"defined rev AND $'URLPARAM{rev}'!='$percntREVINFO{\"$rev\" rev=\"-1\"}$percnt'\" then=\"$percentRED$percent ($percntMAKETEXT{\"old revision\"}$percnt)$percentENDCOLOR$percent\"}$percnt"}%
+				</font></strong></td>
 			<td width='35%' style='text-align: center;'>
 				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
@@ -71,8 +73,8 @@
 		<tr style='height: 24px;'>
 			<td colspan='3' style='text-align: center;'>
 				<strong><font size='3'>%QUERY{"DocumentNumber" default=""}% %TOPICTITLE%</font></strong></td>
-			<td colspan='2' style='text-align: center;'>
-				%MAKETEXT{"Area of application"}%&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
+			<td colspan='2' style='text-align: center;'>%IF{"'%QUERY{"AreaOfApplication"}%' != ''" then="$percntMAKETEXT{\"Area of application\"}$percnt&#58; <strong>$percntMAKETEXT{$percntQUERY{\"AreaOfApplication\"}$percnt}$percnt</strong>"}%
+				</td>
 		</tr>
 		<tr style='height: 24px;'>
 			<td style='text-align: center;'>
