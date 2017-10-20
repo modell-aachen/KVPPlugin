@@ -31,7 +31,7 @@
 		</tr>
 		<tr style='height: 24px;'>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Last author"}%:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1" rev="%URLPARAM{"rev"}%" usericon="1"}%" format="$displayName"}%</strong></td>
+				%MAKETEXT{"Last author"}%:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1" rev="%URLPARAM{"rev"}%"}%" format="$displayName" usericon="1"}%</strong></td>
 			<td style='text-align: center;'>
 				%MAKETEXT{"Responsible"}%:<strong><br />%RENDERFORDISPLAY{fields="Responsible" format="$value" revision="%URLPARAM{"rev"}%" usericon="1"}%</strong></td>
 			<td style='text-align: center;'>
