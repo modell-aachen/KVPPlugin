@@ -11,11 +11,14 @@
 %TMPL:DEF{"topictabaction"}%%TMPL:P{context="KVPIsDiscussion" else="approvedtopicactionbuttonactive" then="approvedtopicactionbuttoninactive"}%%TMPL:END%
 
 %{ Link zum freigegebenen Stand je nach aktivem Bearbeitungsstand ausgeben }%
-%TMPL:DEF{approvedtopicactionbuttoninactive}%%IF{"$TOPIC = '%WORKFLOWORIGIN%' OR NOT istopic '%WEB%.%WORKFLOWORIGIN%'" then="<a><strike>%MAKETEXT{%GETWORKFLOWROW{lefttab}%}%</strike></a>" else="<a href='$percentSCRIPTURLPATH{$quotview$quot}$percent/$percentWEB$percent/$percentWORKFLOWORIGIN$percent' rel='nofollow' title='$percentMAKETEXT{$percentGETWORKFLOWROW{lefttab}$percent}$percent' >$percentMAKETEXT{$percentGETWORKFLOWROW{lefttab}$percent}$percent</a>"}%%TMPL:END%
-%TMPL:DEF{approvedtopicactionbuttonactive}%<div class="modacActionButtonACTIVE"><a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%' rel='nofollow' title='%MAKETEXT{%GETWORKFLOWROW{lefttab}%}%' >%MAKETEXT{%GETWORKFLOWROW{lefttab}%}%</a></div>%TMPL:END%
+%TMPL:DEF{approvedtopicactionbuttoninactive}%%IF{"$TOPIC = '%WORKFLOWORIGIN%' OR NOT istopic '%WEB%.%WORKFLOWORIGIN%'" then="<a><strike>%KVPPluginLeftTab%</strike></a>" else="<a href='$percentSCRIPTURLPATH{$quotview$quot}$percent/$percentWEB$percent/$percentWORKFLOWORIGIN$percent' rel='nofollow' title='$percentKVPPluginLeftTab$percent' >$percentKVPPluginLeftTab$percent</a>"}%%TMPL:END%
+%TMPL:DEF{approvedtopicactionbuttonactive}%<div class="modacActionButtonACTIVE"><a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%' rel='nofollow' title='%KVPPluginLeftTab%' >%KVPPluginLeftTab%</a></div>%TMPL:END%
 
-%{ Diskussionsstand je nach Bearbeitungsstand ausgeben }%
-%TMPL:DEF{"talktopicactionbutton"}%%TMPL:P{context="KVPIsDiscussion" else="talktopicactionviewinactive" then="talktopicactionviewactive"}%%TMPL:END%
+%{
+    Diskussionsstand je nach Bearbeitungsstand ausgeben.
+    This will also set the label for the left tab (active or inactive).
+ }%
+%TMPL:DEF{"talktopicactionbutton"}%%SET{"KVPPluginLeftTab" value="%IF{"context KVPControlled or not '%TOPIC%'/DocumentType" then="$percentMAKETEXT{$percentGETWORKFLOWROW{lefttab}$percent}$percent" else="$percentRENDERFORDISPLAY{include=\"DocumentType\" format=\"$value\"}$percent"}%"}%%TMPL:P{context="KVPIsDiscussion" else="talktopicactionviewinactive" then="talktopicactionviewactive"}%%TMPL:END%
 
 %{ Anzeige im Diskussionsstand Alex: HIER MUSS NEN TAG HINZUKOMMEN}%
 %TMPL:DEF{"talktopicactionviewactive"}%<div class="modacActionButtonACTIVE"><a href='%SCRIPTURLPATH{"view"}%/%WEB%/%TOPIC%' rel='nofollow' title='%MAKETEXT{"Discussion about Improvements"}%' >%MAKETEXT{%GETWORKFLOWROW{"righttab"}%}%</a></div>%TMPL:END%

@@ -15,7 +15,8 @@
 	<tbody>
 		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev AND $'URLPARAM{rev}'!='%REVINFO{"$rev" rev="-1"}%'" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%IF{"'%QUERY{"DocumentType"}%' != ''" then="$percntMAKETEXT{$percntQUERY{\"DocumentType\"}$percnt}$percnt$percntIF{\"defined rev AND $'URLPARAM{rev}'!='$percntREVINFO{\"$rev\" rev=\"-1\"}$percnt'\" then=\"$percentRED$percent ($percntMAKETEXT{\"old revision\"}$percnt)$percentENDCOLOR$percent\"}$percnt"}%
+				</font></strong></td>
 			<td width='35%' style='text-align: center;'> </td>
 			<td width='12%' style='text-align: center;'>
 				%MAKETEXT{"Version"}%&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
@@ -24,17 +25,17 @@
 		</tr>
 		<tr style='height: 24px;'>
 			<td colspan='3' style='text-align: center;'>
-				<strong><font size='3'>%QUERY{"Number" default=""}% %TOPICTITLE%</font></strong></td>
-			<td colspan='2' style='text-align: center;'>
-				%MAKETEXT{"Area of application"}%&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
+				<strong><font size='3'>%QUERY{"DocumentNumber" default=""}% %TOPICTITLE%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>%IF{"'%QUERY{"AreaOfApplication"}%' != ''" then="$percntMAKETEXT{\"Area of application\"}$percnt&#58; <strong>$percntMAKETEXT{$percntQUERY{\"AreaOfApplication\"}$percnt}$percnt</strong>"}%
+				</td>
 		</tr>
 		<tr style='height: 24px;'>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Last author"}%:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1" rev="%URLPARAM{"rev"}%"}%" format="$displayName"}%</strong></td>
+				%MAKETEXT{"Last author"}%:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_CONTENT_REVIEW" or="LASTPROCESSOR_CONTENT_REVIEW_DRAFT" nousersweb="1" rev="%URLPARAM{"rev"}%"}%" format="$displayName" usericon="1"}%</strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Responsible"}%:<strong><br />%RENDERFORDISPLAY{fields="Responsible" format="$value" revision="%URLPARAM{"rev"}%"}%</strong></td>
+				%MAKETEXT{"Responsible"}%:<strong><br />%RENDERFORDISPLAY{fields="Responsible" format="$value" revision="%URLPARAM{"rev"}%" usericon="1"}%</strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Approved by"}%:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED" nousersweb="1" rev="%URLPARAM{"rev"}%"}%" format="$displayName"}%</strong></td>
+				%MAKETEXT{"Approved by"}%:<strong><br />%RENDERUSER{"%WORKFLOWMETA{"LASTPROCESSOR_APPROVED" or="LASTPROCESSOR_APPROVED_DRAFT" nousersweb="1" rev="%URLPARAM{"rev"}%"}%" format="$displayName" usericon="1"}%</strong></td>
 			<td style='text-align: center;'>
 				%MAKETEXT{"Release date"}%:<strong><br />%WORKFLOWMETA{"LASTTIME_APPROVED" or="LASTTIME_APPROVED" nousersweb="1" rev="%URLPARAM{"rev"}%"}%</strong></td>
 			<td style='text-align: center;'>
@@ -60,7 +61,8 @@
 	<tbody>
 		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%MAKETEXT{%QUERY{"DocumentType"}%}%%IF{"defined rev AND $'URLPARAM{rev}'!='%REVINFO{"$rev" rev="-1"}%'" then="$percentRED$percent (%MAKETEXT{"old revision"}%)$percentENDCOLOR$percent"}%</font></strong></td>
+				<strong><font size='4'>%IF{"'%QUERY{"DocumentType"}%' != ''" then="$percntMAKETEXT{$percntQUERY{\"DocumentType\"}$percnt}$percnt$percntIF{\"defined rev AND $'URLPARAM{rev}'!='$percntREVINFO{\"$rev\" rev=\"-1\"}$percnt'\" then=\"$percentRED$percent ($percntMAKETEXT{\"old revision\"}$percnt)$percentENDCOLOR$percent\"}$percnt"}%
+				</font></strong></td>
 			<td width='35%' style='text-align: center;'>
 				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
@@ -70,15 +72,15 @@
 		</tr>
 		<tr style='height: 24px;'>
 			<td colspan='3' style='text-align: center;'>
-				<strong><font size='3'>%QUERY{"Number" default=""}% %TOPICTITLE%</font></strong></td>
-			<td colspan='2' style='text-align: center;'>
-				%MAKETEXT{"Area of application"}%&#58; <strong>%MAKETEXT{%QUERY{"AreaOfApplication"}%}%</strong></td>
+				<strong><font size='3'>%QUERY{"DocumentNumber" default=""}% %TOPICTITLE%</font></strong></td>
+			<td colspan='2' style='text-align: center;'>%IF{"'%QUERY{"AreaOfApplication"}%' != ''" then="$percntMAKETEXT{\"Area of application\"}$percnt&#58; <strong>$percntMAKETEXT{$percntQUERY{\"AreaOfApplication\"}$percnt}$percnt</strong>"}%
+				</td>
 		</tr>
 		<tr style='height: 24px;'>
 			<td style='text-align: center;'>
 				%MAKETEXT{"Last author"}%:<strong><br /><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Responsible"}%:<strong><br />%RENDERFORDISPLAY{fields="Responsible" format="$value" revision="%URLPARAM{"rev"}%}%</strong></td>
+				%MAKETEXT{"Responsible"}%:<strong><br />%RENDERFORDISPLAY{fields="Responsible" format="$value" revision="%URLPARAM{"rev"}%" usericon="1"}%</strong></td>
 			<td style='text-align: center;'>
 				%MAKETEXT{"Approved by"}%:<strong><br /><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
 			<td style='text-align: center;'>

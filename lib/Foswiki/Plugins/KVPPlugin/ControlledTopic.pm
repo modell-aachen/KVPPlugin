@@ -230,7 +230,7 @@ sub isPotentialProponent {
         next if defined $signer;
 
         my $cuid = Foswiki::Func::getCanonicalUserID($allowed);
-        return 1 if $cuid eq $user;
+        return 1 if defined $cuid && $cuid eq $user;
         next unless Foswiki::Func::isGroup($allowed);
         my $it = Foswiki::Func::eachGroupMember($allowed);
         while ($it->hasNext) {
@@ -247,7 +247,11 @@ sub mapProponentsToAllowed {
     my ($this, $action) = @_;
     my @props = $this->getTransitionProponents($action);
     my $allowed = $this->{workflow}->getTransitionCell($this->{state}{name}, $action, 'allowed');
-    return {} unless $allowed && $allowed =~ /\S/;
+    return {} unless defined $allowed;
+
+    $allowed = $this->expandMacros($allowed);
+    $allowed =~ s#^\s+##;
+    $allowed =~ s#\s+$##;
 
     my @allowed = grep /\S/, split(/\s*,\s*/, $allowed);
     my $map = {};

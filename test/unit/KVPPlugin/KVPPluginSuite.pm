@@ -9,7 +9,7 @@ our @ISA = 'Unit::TestSuite';
 
 sub name { 'KVPPluginSuite' }
 
-sub include_tests { qw(KVPPluginTests KVPPluginSeleniumTestCase) }
+sub include_tests { qw(KVPPluginTests) }
 
 1;
 __END__

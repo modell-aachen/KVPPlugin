@@ -304,7 +304,7 @@ sub test_proposed {
 
     # Test 2/3 case with group, making sure the minimal number of proposals
     # works
-    Helper::transition($this, 'APPROVED', 'Propose re-draft', $web, $topic);
+    Helper::transition($this, 'APPROVED', 'Propose re-draft', $web, $topic, 1);
     Helper::ensureState($this, $web, $topic, 'APPROVED');
     $this->createNewFoswikiSession('test2');
     Helper::transition($this, 'APPROVED', 'Propose re-draft', $web, $topic);
@@ -323,6 +323,116 @@ sub test_proposed {
     $this->createNewFoswikiSession('test1');
     Helper::transition($this, 'APPROVED', 'Propose re-draft', $web, $topic);
     Helper::ensureState($this, $web, $topic, 'DRAFT');
+
+    # Test 50% cases (as described in TP #3218)
+
+    # test1 -> it is sufficient when test1 approves
+    $topic = 'ProposedTest2';
+    Helper::createWithState($this, $web, $topic);
+    $this->createNewFoswikiSession('test1');
+    Helper::transition($this, 'DRAFT', 'Propose approval 1', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+    Helper::becomeAnAdmin($this);
+    Helper::transition($this, 'APPROVED', 'Propose re-draft', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+
+    # test1, test2 -> It is sufficient when one of them approves
+    $topic = 'ProposedTest3';
+    Helper::createWithState($this, $web, $topic);
+    $this->createNewFoswikiSession('test2');
+    Helper::transition($this, 'DRAFT', 'Propose approval 2', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+
+    # test1, test2, test3 -> Two must approve
+    $topic = 'ProposedTest4';
+    Helper::createWithState($this, $web, $topic);
+    $this->createNewFoswikiSession('test1');
+    Helper::transition($this, 'DRAFT', 'Propose approval 3', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'DRAFT');
+    $this->createNewFoswikiSession('test2');
+    Helper::transition($this, 'DRAFT', 'Propose approval 3', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+
+    # test1, QMGroup -> either test1 or QMGroup can approve
+    # User:
+    $topic = 'ProposedTest5';
+    Helper::createWithState($this, $web, $topic);
+    $this->createNewFoswikiSession('test1');
+    Helper::transition($this, 'DRAFT', 'Propose approval 4', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+    # Group:
+    $topic = 'ProposedTest6';
+    Helper::createWithState($this, $web, $topic);
+    $this->createNewFoswikiSession('qm1');
+    Helper::transition($this, 'DRAFT', 'Propose approval 4', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+
+    # QMGroup -> any member of the QMGroup can approve
+    $topic = 'ProposedTest7';
+    Helper::createWithState($this, $web, $topic);
+    $this->createNewFoswikiSession('qm1');
+    Helper::transition($this, 'DRAFT', 'Propose approval 5', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+
+    # QUERY{MultiUserMandatoryField} -> 50% of the users in the field must approve
+    $topic = 'ProposedTest8';
+    Helper::createWithState($this, $web, $topic, undef, undef, 'test1');
+    $this->createNewFoswikiSession('test1');
+    Helper::transition($this, 'DRAFT', 'Propose approval 6', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+    # again with more users
+    $topic = 'ProposedTest8_2';
+    Helper::createWithState($this, $web, $topic, undef, undef, 'test1, test2, test3');
+    $this->createNewFoswikiSession('test1');
+    Helper::transition($this, 'DRAFT', 'Propose approval 6', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'DRAFT');
+    $this->createNewFoswikiSession('test2');
+    Helper::transition($this, 'DRAFT', 'Propose approval 6', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+
+    # QUERY{MultiUserMandatoryField},QUERY{MultiUserMandatoryField}  -> 50% of the sum of all users must approve
+    $topic = 'ProposedTest9';
+    Helper::createWithState($this, $web, $topic, undef, undef, 'test1, test2, test3', 'qm1, qm2');
+    $this->createNewFoswikiSession('test1');
+    Helper::transition($this, 'DRAFT', 'Propose approval 7', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'DRAFT');
+    $this->createNewFoswikiSession('qm1');
+    Helper::transition($this, 'DRAFT', 'Propose approval 7', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'DRAFT');
+    $this->createNewFoswikiSession('test2');
+    Helper::transition($this, 'DRAFT', 'Propose approval 7', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+
+    # QUERY{UserMandatoryField} -> the one user must approve
+    $topic = 'ProposedTest10';
+    Helper::createWithState($this, $web, $topic, undef, undef, 'test1');
+    $this->createNewFoswikiSession('test1');
+    Helper::transition($this, 'DRAFT', 'Propose approval 6', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+
+    # QUERY{UserMandatoryField} -> when empty, anyone can approve
+    $topic = 'ProposedTest10_2';
+    Helper::createWithState($this, $web, $topic, undef, undef, '');
+    $this->createNewFoswikiSession('test1');
+    Helper::transition($this, 'DRAFT', 'Propose approval 6', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+
+    # QUERY{UserMandatoryField},QUERY{UserMandatoryField} -> either can approve
+    $topic = 'ProposedTest11';
+    Helper::createWithState($this, $web, $topic, undef, undef, 'test1', 'qm1');
+    $this->createNewFoswikiSession('test1');
+    Helper::transition($this, 'DRAFT', 'Propose approval 7', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
+
+    # QUERY{MultiUserMandatoryField},test1 -> 50% of the sum of all users (including test1) must approve
+    $topic = 'ProposedTest12';
+    Helper::createWithState($this, $web, $topic, undef, undef, 'test1, test2, test3');
+    $this->createNewFoswikiSession('test2');
+    Helper::transition($this, 'DRAFT', 'Propose approval 7', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'DRAFT');
+    $this->createNewFoswikiSession('test1');
+    Helper::transition($this, 'DRAFT', 'Propose approval 7', $web, $topic);
+    Helper::ensureState($this, $web, $topic, 'APPROVED');
 }
 
 # Test if...
@@ -561,6 +671,56 @@ sub test_discard {
     $this->assert_equals( 'This is version A2', $text, "Second discussion was not trashed correctly!" );
     ( $meta, $text ) = Foswiki::Func::readTopic( $trash, "$web${talk}_2" );
     $this->assert_equals( 'This is version A3', $text, "Third discussion was not trashed correctly!" );
+}
+
+sub test_move_attribute_moves_topics {
+    my ( $this ) = @_;
+
+    my $topic = 'TestMoveTopic';
+    my $talkTopic = 'TestMoveTopicTALK';
+    my $web = Helper::KVPWEB;
+    my $destinationWeb = Helper::TRASH;
+
+    my $user = Helper::becomeAnAdmin($this);
+
+    Helper::createWithState( $this, $web, $topic, 'FREIGEGEBEN', "Approved version" );
+    Helper::createDiscussion($this, $web, $topic);
+
+    Helper::transition( $this, 'DISKUSSIONSSTAND', 'Archive', $web, $talkTopic, 1);
+
+    $this->assert(!Foswiki::Func::topicExists($web, $topic), "Approved topic was not removed from its original web");
+    $this->assert(Foswiki::Func::topicExists($destinationWeb, $topic), "Approved topic was not moved to the destination web");
+    $this->assert(!Foswiki::Func::topicExists($web, $talkTopic), "Talk topic was not removed from its original web");
+    $this->assert(Foswiki::Func::topicExists($destinationWeb, $talkTopic), "Talk topic was not moved to the destination web");
+
+    return;
+}
+
+sub test_move_attribute_updates_topic_references {
+    my ( $this ) = @_;
+
+    my $topic = 'TestMoveTopic';
+    my $talkTopic = 'TestMoveTopicTALK';
+    my $web = Helper::KVPWEB;
+    my $destinationWeb = Helper::TRASH;
+
+    my $user = Helper::becomeAnAdmin($this);
+
+    my $calledUpdateTopicLinks = 0;
+    undef *Foswiki::Contrib::ModacHelpersContrib::updateTopicLinks;
+    *Foswiki::Contrib::ModacHelpersContrib::updateTopicLinks = sub {
+        $calledUpdateTopicLinks = 1;
+        return;
+    };
+
+    Helper::createWithState( $this, $web, $topic, 'FREIGEGEBEN', "[[$web.$topic][$topic]]" );
+    Helper::createDiscussion($this, $web, $topic);
+
+    Helper::transition( $this, 'DISKUSSIONSSTAND', 'Archive', $web, $talkTopic, 1);
+
+    $this->assert($calledUpdateTopicLinks, "Did not trigger updateTopicLinks.");
+
+    return;
 }
 
 1;

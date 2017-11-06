@@ -21,6 +21,7 @@ use Foswiki::OopsException ();
 use Foswiki::Sandbox ();
 
 use Foswiki::Contrib::MailTemplatesContrib;
+use Foswiki::Contrib::ModacHelpersContrib;
 
 use HTML::Entities;
 use JSON;
@@ -782,7 +783,7 @@ sub _GETWORKFLOWROW {
 
     # Not cotrolled get row from values in configure
     my $configure = $Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow};
-    return '' unless $configure;
+    return '' unless ref($configure) eq 'HASH';
     return $configure->{$param} || '';
 }
 
@@ -1003,7 +1004,7 @@ sub transitionTopic {
             my %allowed2props = %{ $controlledTopic->mapProponentsToAllowed($action) };
             my $num_allowed = scalar values %allowed2props;
             my $num_done = scalar grep { defined $_ } values %allowed2props;
-            my $current_percent = $num_done / $num_allowed * 100;
+            my $current_percent = $num_allowed ? $num_done / $num_allowed * 100 : 100; # when the column is empty ($num_allowed == 0), everyone should be able to do the transition ($current_percent = 100)
 
             if ($current_percent < $percent) {
                 $controlledTopic->save(1);
@@ -1167,6 +1168,17 @@ sub transitionTopic {
                 $url = Foswiki::Func::getViewUrl($parentWeb, $parent);
             }
         }
+        elsif(my $destinationWeb = _extractDestinationWebFromMoveAttribute($actionAttributes)){
+            if($appTopic ne $controlledTopic->{topic}){
+                Foswiki::Func::moveTopic($controlledTopic->{web}, $appTopic, $destinationWeb, $appTopic);
+            }
+            $controlledTopic->moveTopic($destinationWeb, $controlledTopic->{topic});
+            $controlledTopic->save(1);
+
+            Foswiki::Contrib::ModacHelpersContrib::updateTopicLinks($web, $appTopic, $destinationWeb, $appTopic);
+
+            $url = Foswiki::Func::getViewUrl($controlledTopic->{web}, $controlledTopic->{topic});
+        }
         # Check if discussion is beeing accepted
         elsif (!$oldIsApproved && $controlledTopic->getRow("approved") && $actionAttributes !~ m#(?:\W|^)FORK(?:\W|$)#) {
             # transfer ACLs from old document to new
@@ -1224,6 +1236,13 @@ sub transitionTopic {
     };
 
     return { url => $url, webAfterTransition => $web, topicAfterTransition => $appTopic };
+}
+
+sub _extractDestinationWebFromMoveAttribute {
+    my $attributes = shift;
+    my ($destinationWeb) = ($attributes =~ /\bMOVE\((.+)\)(?:\W|$)/);
+
+    return $destinationWeb;
 }
 
 # Forces write permission
@@ -2095,7 +2114,8 @@ sub beforeSaveHandler {
             # perform AUTO actions
             my ($autoAction, undef) = @{$controlledTopic->getActionWithAttribute('AUTO')};
             if($autoAction) {
-                $controlledTopic->changeState($autoAction);
+                my $mail = $controlledTopic->changeState($autoAction);
+		sendKVPMail($mail);
             }
         } else {
             # This topic is now no longer a stub.
