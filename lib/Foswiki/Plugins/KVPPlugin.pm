@@ -71,7 +71,7 @@ sub initPlugin {
     Foswiki::Func::registerTagHandler(
         'WORKFLOWGETREVFOR', \&_WORKFLOWGETREVFOR );
     Foswiki::Func::registerTagHandler(
-        'WORKFLOWMETA', \&_WORKFLOWMETA );
+        'WORKFLOWMETA', \&WORKFLOWMETA );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWSUFFIX', \&_WORKFLOWSUFFIX );
     Foswiki::Func::registerTagHandler(
@@ -533,7 +533,7 @@ sub _WORKFLOWGETREVFOR {
     return $rev;
 }
 
-sub _WORKFLOWMETA {
+sub WORKFLOWMETA {
     my ( $session, $attributes, $topic, $web ) = @_;
 
     my $rWeb = $attributes->{web} || $web;
@@ -564,6 +564,8 @@ sub _WORKFLOWMETA {
         my $tasked = $controlledTopic->getTaskedPeople();
         return '' unless $tasked;
         return join(',', @$tasked );
+    } elsif( $attr =~ m/^(?:LASTPROCESSOR|LEAVING|LASTTIME)$/ ) {
+        $attr = $attr . '_' . $controlledTopic->getWorkflowMeta('name');
     }
 
     my $ret = $controlledTopic->getWorkflowMeta($attr);
