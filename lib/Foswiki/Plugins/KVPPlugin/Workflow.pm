@@ -413,9 +413,7 @@ sub _topicAllows {
         Foswiki::Plugins::KVPPlugin::_broadcast('%MAKETEXT{"Error in Workflow: state [_1] does not exist!" args="'.$state.'"}%');
         $allowed = 'nobody'; # This will empower admins
     } else {
-        Foswiki::Func::pushTopicContext( $topic->{web}, $topic->{topic} );
         $allowed = $topic->expandMacros( $this->{states}->{$state}->{$what} );
-        Foswiki::Func::popTopicContext();
         $allowed = 'nobody' if ($allowed !~ m#\S# && $this->{states}->{$state}->{$what} =~ m#\S#); # eg. formfield is empty
     }
     return _isAllowed($allowed);
