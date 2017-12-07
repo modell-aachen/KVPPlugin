@@ -56,7 +56,7 @@ sub _addDisplayedTabColumn {
             # State table header
             @fields = map { _cleanField($_) } split( /\s*\|\s*/, $line );
 
-            $newText = $newText . "|" . $line . " | *Displayed Tab* |" . "\n";
+            $newText = $newText . "|" . $line . " | *Displayed Tab* | *displayName* | *displayNameDE* |" . "\n";
             $inTable = 'STATE';
         }
         elsif ( defined($inTable) && $line =~ s/^\s*\|\s*(.*?)\s*\|\s*$/$1/ ) {
@@ -69,21 +69,20 @@ sub _addDisplayedTabColumn {
 
                 # If the actual line contains a known status, add displayed tab column
                 if (index($data{state}, "CONTENT_REVIEW") != -1) {
-                    $newText = $newText . "| " . $line . " | Content review |" . "\n";
+                    $newText = $newText . "| " . $line . " | Content review | | |" . "\n";
                 } elsif (index($data{state}, "FORMAL_REVIEW") != -1) {
-                    $newText = $newText . "| " . $line . " | Formal review |" . "\n";
+                    $newText = $newText . "| " . $line . " | Formal review | | |" . "\n";
                 } elsif (index($data{state}, "NEW") != -1) {
-                    $newText = $newText . "| " . $line . " | Drafts & discussions |" . "\n";
+                    $newText = $newText . "| " . $line . " | Drafts & discussions | | |" . "\n";
                 } elsif (index($data{state}, "DRAFT") != -1) {
-                    $newText = $newText . "| " . $line . " | Drafts & discussions |" . "\n";
+                    $newText = $newText . "| " . $line . " | Drafts & discussions | | |" . "\n";
                 } elsif (index($data{state}, "DISCUSSION") != -1) {
-                    $newText = $newText . "| " . $line . " | Drafts & discussions |" . "\n";
+                    $newText = $newText . "| " . $line . " | Drafts & discussions | | |" . "\n";
                 } elsif (index($data{state}, "APPROVED") != -1) {
-                    $newText = $newText . "| " . $line . " | Approved pages |" . "\n";
+                    $newText = $newText . "| " . $line . " | Approved pages | | |" . "\n";
                 } else {
                     $newText = $newText . "| " . $line . "|\n";
                 }
-                
             }
         }
         else {
