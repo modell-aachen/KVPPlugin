@@ -736,7 +736,7 @@ sub expandMacros {
     # Workaround for Item1071
     my $memory = $c->{can_render_meta};
     $c->{can_render_meta} = $this->{meta};
-    my $session = $Foswiki::Plugins::SESSION; # do not use $meta->session(), as this is what pushTopicContext use    s
+    my $session = $Foswiki::Plugins::SESSION; # do not use $meta->session(), as this is what pushTopicContext uses
     my $sameTopicContext = $this->{web} eq $session->{webName} && $this->{topic} eq $session->{topicName};
     Foswiki::Func::pushTopicContext($this->{web}, $this->{topic}) unless $sameTopicContext;
     $text = Foswiki::Func::expandCommonVariables( $text, $this->{topic}, $this->{web}, $this->{meta} );
