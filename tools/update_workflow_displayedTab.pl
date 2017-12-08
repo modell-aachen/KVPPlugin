@@ -81,7 +81,7 @@ sub _addDisplayedTabColumn {
                 } elsif (index($data{state}, "APPROVED") != -1) {
                     $newText = $newText . "| " . $line . " | Approved pages |" . "\n";
                 } else {
-                    $newText = $newText . "| " . $line . "|\n";
+                    $newText = $newText . "| " . $line . "| | | | \n";
                 }
                 
             }
