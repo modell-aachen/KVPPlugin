@@ -10,6 +10,7 @@
 # Copyright 2016 Modell Aachen GmbH
 # License: GPLv2+
 
+use utf8;
 use strict;
 use warnings;
 
@@ -56,7 +57,7 @@ sub _addDisplayedTabColumn {
             # State table header
             @fields = map { _cleanField($_) } split( /\s*\|\s*/, $line );
 
-            $newText = $newText . "|" . $line . " | *Displayed Tab* | *displayName* | *displayNameDE* |" . "\n";
+            $newText = $newText . "|" . $line . " | *displayName* | *displayNameDE* | *Displayed Tab* |" . "\n";
             $inTable = 'STATE';
         }
         elsif ( defined($inTable) && $line =~ s/^\s*\|\s*(.*?)\s*\|\s*$/$1/ ) {
@@ -68,18 +69,24 @@ sub _addDisplayedTabColumn {
                 }
 
                 # If the actual line contains a known status, add displayed tab column
-                if (index($data{state}, "CONTENT_REVIEW") != -1) {
-                    $newText = $newText . "| " . $line . " | Content review | | |" . "\n";
+                if (index($data{state}, "CONTENT_REVIEW_DRAFT") != -1) {
+                    $newText = $newText . "| " . $line . " | Content review (draft) | Inhaltliche Prüfung (Entwurf) | Content review |" . "\n";
+                } elsif (index($data{state}, "CONTENT_REVIEW") != -1) {
+                    $newText = $newText . "| " . $line . " | Content review | Inhaltliche Prüfung | Content review |" . "\n";
+                } elsif (index($data{state}, "FORMAL_REVIEW_DRAFT") != -1) {
+                    $newText = $newText . "| " . $line . " |Formal review (draft) | Formale Prüfung (Entwurf) | Formal review | " . "\n";
                 } elsif (index($data{state}, "FORMAL_REVIEW") != -1) {
-                    $newText = $newText . "| " . $line . " | Formal review | | |" . "\n";
+                    $newText = $newText . "| " . $line . " |Formal review | Formale Prüfung | Formal review | " . "\n";
                 } elsif (index($data{state}, "NEW") != -1) {
-                    $newText = $newText . "| " . $line . " | Drafts & discussions | | |" . "\n";
+                    $newText = $newText . "| " . $line . " | New | Neu | Drafts & discussions |" . "\n";
                 } elsif (index($data{state}, "DRAFT") != -1) {
-                    $newText = $newText . "| " . $line . " | Drafts & discussions | | |" . "\n";
+                    $newText = $newText . "| " . $line . " | Draft | Entwurf | Drafts & discussions |" . "\n";
                 } elsif (index($data{state}, "DISCUSSION") != -1) {
-                    $newText = $newText . "| " . $line . " | Drafts & discussions | | |" . "\n";
+                    $newText = $newText . "| " . $line . " | Discussion | Diskussion | Drafts & discussions |" . "\n";
+                } elsif (index($data{state}, "DISCARDED") != -1) {
+                    $newText = $newText . "| " . $line . " | Discarded | Verworfen | |" . "\n";
                 } elsif (index($data{state}, "APPROVED") != -1) {
-                    $newText = $newText . "| " . $line . " | Approved pages | | |" . "\n";
+                    $newText = $newText . "| " . $line . " | Approved | Freigegeben | Approved pages |" . "\n";
                 } else {
                     $newText = $newText . "| " . $line . "| | | | \n";
                 }
