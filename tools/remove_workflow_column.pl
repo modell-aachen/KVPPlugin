@@ -27,7 +27,6 @@ use Data::GUID;
 use Foswiki ();
 
 my $filename;
-my $found = 0;
 my $table = '';
 my $columnName;
 my $inTable;
@@ -75,18 +74,18 @@ sub convert {
     print "DRY: filename:$filename columnName:$columnName table:$table \n" if $dry;
     my ($filename) = @_;
     open(my $tfh, '<:utf8', $filename) or warn("Can't open $filename: $!") && return;
-    local $/;
-    my $text = <$tfh>;
+    local $/ = "\n";
+    my @text = <$tfh>;
     close($tfh);
-    my $origText = $text;
-    $text = _removeColumn($text,_getCoulmnIndex($text, $columnName));
-    print "DRY: $text" if $dry;
-    if($found){
+    my $columnIndex = _getCoulmnIndex(\@text, $columnName);
+    my $newtext = _removeColumn(\@text,$columnIndex);
+    print "DRY: $newtext" if $dry;
+    if(defined $columnIndex){
         print "Found Column: $columnName \n";
         unless($dry){
             print "NoDry: Write it back into file";
             open($tfh, '>:utf8', $filename) or warn("Can't open $filename for writing: $!") && return;
-            print $tfh $text;
+            print $tfh $newtext;
             close($tfh);
         }
     }else{
@@ -96,21 +95,18 @@ sub convert {
 
 sub _getCoulmnIndex {
     my ($text, $columnName) = @_;
-    foreach my $line ( split( /\n/, $text ) ) {
-        if ($line =~ s/$regExp/$1/ix){
-            # State table header
-            my $i = 1;
+    foreach my $line ( @$text ) {
+        if ($line =~ m/$regExp/ix){
+            my $i = 0;
             foreach my $col ( split( /\s*\|\s*/, $line ) ) {
                 $col =~ s/^\s+|\s+$//g;
                 if($col eq $columnName){
-                    $found = 1;
                     return $i;
                 } else{
                     $i++;
                 }
             }
         }
-
     }
     
 }
@@ -119,28 +115,25 @@ sub _removeColumn {
     my ($text,$columnIndex) = @_;
     my $newText = "";
 
-    foreach my $line ( split( /\n/, $text ) ) {
-        if ($line =~ s/$regExp/$1/ix){
-            my $i = 0;
-            foreach my $col ( split( /\s*\|\s*/, $line ) ) {
-                $i++;
-                next if($i eq $columnIndex);
-                $newText = $newText . " | " . $col;
-            }
-            $newText = $newText . " |\n";
-            $inTable = 'STATE';
+    return unless $columnIndex;
+    foreach my $line ( @$text ) {
+        if ($line =~ m/$regExp/ix){
+            my @columns = split( /\s*\|\s*/, $line);
+            splice @columns, $columnIndex, 1;
+            $newText .= join( " | ", @columns)." |\n";
+            $inTable = $table;
         } elsif ( defined($inTable) && $line =~ s/^\s*\|\s*(.*?)\s*\|\s*$/$1/ ) {
-            if ($inTable eq 'STATE'){
+            if ($inTable eq $table){
                 my $i = 0;
                 foreach my $col ( split( /\s*\|\s*/, $line ) ) {
                     $i++;
-                    next if($i eq $columnIndex);
+                    next if($i == $columnIndex);
                     $newText = $newText . " | " . $col;
                 }
                 $newText = $newText . " |\n";
             }
         } else {
-            $newText = $newText . $line . "\n";
+            $newText = $newText . $line;# . "\n";
             undef $inTable;
         }
     }
