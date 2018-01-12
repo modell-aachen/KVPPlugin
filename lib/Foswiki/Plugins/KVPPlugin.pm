@@ -968,7 +968,7 @@ sub transitionTopic {
             my $locker = Foswiki::Func::getCanonicalUserID($loginName);
             if ($locker ne $currUser) {
                 $t = Foswiki::Time::formatDelta(
-                    $t, $Foswiki::Plugins::SESSION->i18n
+                    $t*60, $Foswiki::Plugins::SESSION->i18n
                 );
                 $remark ||= '';
                 $remark =~ s#"#&quot;#;
