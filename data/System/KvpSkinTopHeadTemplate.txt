@@ -17,7 +17,7 @@
 			<td colspan='3' width='50%' style='text-align: center;'>
 				<strong><font size='4'>
 					%IF{"'%QUERY{"DocumentType"}%' != ''"
-						then="$percntMAKETEXT{\"$percntRENDERFORDISPLAY{fields=\"DocumentType\" format=\"$value\"}$percnt\"}$percnt%{
+						then="$percntRENDERFORDISPLAY{fields=\"DocumentType\" format=\"$value\"}$percnt%{
 							}%$percntIF{\"defined rev AND $'URLPARAM{rev}'!='$percntREVINFO{\"$rev\" rev=\"-1\"}$percnt'\"
 								then=\"$percentRED$percent ($percntMAKETEXT{\"old revision\"}$percnt)$percentENDCOLOR$percent\"
 							}$percnt"
@@ -70,7 +70,7 @@
 			<td colspan='3' width='50%' style='text-align: center;'>
 				<strong><font size='4'>
 					%IF{"'%QUERY{"DocumentType"}%' != ''"
-						then="$percntMAKETEXT{\"$percntRENDERFORDISPLAY{fields=\"DocumentType\" format=\"$value\"}$percnt\"}$percnt%{
+						then="$percntRENDERFORDISPLAY{fields=\"DocumentType\" format=\"$value\"}$percnt%{
 							}%$percntIF{\"defined rev AND $'URLPARAM{rev}'!='$percntREVINFO{\"$rev\" rev=\"-1\"}$percnt'\"
 								then=\"$percentRED$percent ($percntMAKETEXT{\"old revision\"}$percnt)$percentENDCOLOR$percent\"
 							}$percnt"
