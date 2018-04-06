@@ -15,8 +15,15 @@
 	<tbody>
 		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%IF{"'%QUERY{"DocumentType"}%' != ''" then="$percntMAKETEXT{$percntQUERY{\"DocumentType\"}$percnt}$percnt$percntIF{\"defined rev AND $'URLPARAM{rev}'!='$percntREVINFO{\"$rev\" rev=\"-1\"}$percnt'\" then=\"$percentRED$percent ($percntMAKETEXT{\"old revision\"}$percnt)$percentENDCOLOR$percent\"}$percnt"}%
-				</font></strong></td>
+				<strong><font size='4'>
+					%IF{"'%QUERY{"DocumentType"}%' != ''"
+						then="$percntRENDERFORDISPLAY{fields=\"DocumentType\" format=\"$value\"}$percnt%{
+							}%$percntIF{\"defined rev AND $'URLPARAM{rev}'!='$percntREVINFO{\"$rev\" rev=\"-1\"}$percnt'\"
+								then=\"$percentRED$percent ($percntMAKETEXT{\"old revision\"}$percnt)$percentENDCOLOR$percent\"
+							}$percnt"
+					}%
+				</font></strong>
+			</td>
 			<td width='35%' style='text-align: center;'> </td>
 			<td width='12%' style='text-align: center;'>
 				%MAKETEXT{"Version"}%&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
@@ -61,8 +68,15 @@
 	<tbody>
 		<tr style='height: 24px;'>
 			<td colspan='3' width='50%' style='text-align: center;'>
-				<strong><font size='4'>%IF{"'%QUERY{"DocumentType"}%' != ''" then="$percntMAKETEXT{$percntQUERY{\"DocumentType\"}$percnt}$percnt$percntIF{\"defined rev AND $'URLPARAM{rev}'!='$percntREVINFO{\"$rev\" rev=\"-1\"}$percnt'\" then=\"$percentRED$percent ($percntMAKETEXT{\"old revision\"}$percnt)$percentENDCOLOR$percent\"}$percnt"}%
-				</font></strong></td>
+				<strong><font size='4'>
+					%IF{"'%QUERY{"DocumentType"}%' != ''"
+						then="$percntRENDERFORDISPLAY{fields=\"DocumentType\" format=\"$value\"}$percnt%{
+							}%$percntIF{\"defined rev AND $'URLPARAM{rev}'!='$percntREVINFO{\"$rev\" rev=\"-1\"}$percnt'\"
+								then=\"$percentRED$percent ($percntMAKETEXT{\"old revision\"}$percnt)$percentENDCOLOR$percent\"
+							}$percnt"
+					}%
+				</font></strong>
+			</td>
 			<td width='35%' style='text-align: center;'>
 				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
 			<td width='12%' style='text-align: center;'>
