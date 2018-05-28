@@ -2285,7 +2285,21 @@ sub _getIndexHash {
         }
     }
 
+    _addDisplayValuesToIndexHash(\%indexFields);
+
     return %indexFields;
+}
+
+sub _addDisplayValuesToIndexHash {
+    my $indexFields = shift;
+
+    foreach my $indexField (keys(%$indexFields)) {
+        if($indexField =~ m#^(workflowmeta_lastprocessor.*)_s$#) {
+            my $displayValueField = $1.'_dv_s';
+            my $value = $indexFields->{$indexField};
+            $indexFields->{$displayValueField} = Foswiki::Func::expandCommonVariables("%RENDERUSER{\"$value\"}%");
+        }
+    }
 }
 
 sub indexTopicHandler {
