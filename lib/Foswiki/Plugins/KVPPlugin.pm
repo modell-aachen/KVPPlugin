@@ -67,6 +67,8 @@ sub initPlugin {
     Foswiki::Func::registerTagHandler(
         'WORKFLOWTRANSITION', \&_WORKFLOWTRANSITION );
     Foswiki::Func::registerTagHandler(
+        'WORKFLOWTRANSITIONVUE', \&_WORKFLOWTRANSITIONVUE );
+    Foswiki::Func::registerTagHandler(
         'WORKFLOWFORK', \&_WORKFLOWFORK );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWGETREVFOR', \&_WORKFLOWGETREVFOR );
@@ -592,6 +594,35 @@ sub WORKFLOWMETA {
     return  $alt;
 }
 
+sub _WORKFLOWTRANSITIONVUE {
+    my ( $session, $attributes, $topic, $web ) = @_;
+
+    ($web, $topic) = _getTopicName($attributes, $web, $topic);
+    my $controlledTopic = _initTOPIC( $web, $topic );
+    return '' unless $controlledTopic;
+
+    my $transitions = $controlledTopic->getTransitionAttributesArray();
+    foreach my $action ( @$transitions ) {
+        $action->{label} = Foswiki::Func::expandCommonVariables("%MAKETEXT{$action->{action}}%");
+        $action->{warning} = Foswiki::Func::expandCommonVariables("%MAKETEXT{$action->{warning}}%") if($action->{warning});
+    }
+
+    my $data = {
+        web => $web,
+        topic => $topic,
+        current_state => $controlledTopic->getState(),
+        current_state_display => _GETWORKFLOWROW($session, {_DEFAULT => 'message'}, $topic, $web),
+        actions => $transitions,
+        origin => _getOrigin($topic),
+    };
+
+    Foswiki::Func::addToZone('script', 'WORKFLOW::VUE', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI,VUEJSPLUGIN,');
+<script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/vue-transitions.js?version=$VERSION"></script>
+SCRIPT
+
+    return '<div class="KVPPlugin vue-transitions foswikiHidden"><div class="json">' . to_json($data) . '</div><form method="post" name="strikeonedummy"></form></div>';
+}
+
 # Tag handler
 sub _WORKFLOWTRANSITION {
     my ( $session, $attributes, $topic, $web ) = @_;
@@ -1063,13 +1094,16 @@ sub transitionTopic {
         }
 
         # check if deleting comments is allowed if requested
-        { #scope
-            my ($allowRemove, $suggestRemove) = $controlledTopic->getTransitionAttributes();
-            if(
-                    $removeComments eq '1'
-                    && not ($allowRemove =~ /,$action,/ || $suggestRemove =~ /,$action,/)
-                )
-            {
+        if($removeComments eq '1') {
+            my $transitionAttributes = $controlledTopic->getTransitionAttributesArray();
+            my $isAllowed;
+            foreach my $eachTransition ( @$transitionAttributes ) {
+                next unless $eachTransition->{allow_delete_comment} || $eachTransition->{suggest_delete_comment};
+                next unless $eachTransition->{action} eq $action;
+                $isAllowed = 1;
+                last;
+            }
+            unless($isAllowed) {
                 # this can happen by changing the popup-menue after
                 # selecting the checkbox
                 $removeComments = '0';

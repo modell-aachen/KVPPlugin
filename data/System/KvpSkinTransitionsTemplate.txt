@@ -10,10 +10,5 @@
 %{"If you want to customize the transition-blockUI, you should add a TMPL:P{"TransitionMsg" MESSAGE="your message"} to kvptransitions. Please escape quotations (") with &quot; }%
 %TMPL:DEF{"kvptransitions"}%
 %TMPL:P{"TEXT_BLOCKUI"}%
-<div class="modacKVPtable ModacInlineButtons" id="KVPTransitions">
-| *%MAKETEXT{"Improvement Process"}%* ||
-| %MAKETEXT{"State"}% | %MAKETEXT{%GETWORKFLOWROW{message}%}% |
-%IF{"$'WORKFLOWMETA{Remark}'" then="| %MAKETEXT{"Remarks for this state:"}% | <pre>$percentWORKFLOWMETA{Remark}$percent</pre> |$n"}%%IF{"istopic '%WORKFLOWORIGIN%' and not $WORKFLOWORIGIN = '%TOPIC%'" then="| %MAKETEXT{"Difference to approved version"}% | $percentBUTTON{$quot%MAKETEXT{"Compare with approved version"}%$quot href=$quot$percentSCRIPTURL{compare}$percent/%WEB%/%TOPIC%?external=$percentWORKFLOWORIGIN$percent$quot}$percent |$n"}%| %MAKETEXT{"Next step"}% | %WORKFLOWTRANSITION% |
-| %MAKETEXT{"Last editing person"}% | %RENDERUSER{"%REVINFO{format="$username"}%" format="$displayName" usericon="1"}% |
-</div>
+<div class="flatskin-wrapped vue-container">%WORKFLOWTRANSITIONVUE%</div>
 %TMPL:END%
