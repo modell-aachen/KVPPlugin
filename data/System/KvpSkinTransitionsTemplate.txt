@@ -10,5 +10,5 @@
 %{"If you want to customize the transition-blockUI, you should add a TMPL:P{"TransitionMsg" MESSAGE="your message"} to kvptransitions. Please escape quotations (") with &quot; }%
 %TMPL:DEF{"kvptransitions"}%
 %TMPL:P{"TEXT_BLOCKUI"}%
-<div class="flatskin-wrapped vue-container">%WORKFLOWTRANSITIONVUE%</div>
+<div class="flatskin-wrapped">%WORKFLOWTRANSITIONVUE%</div>
 %TMPL:END%
