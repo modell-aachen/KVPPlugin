@@ -3,8 +3,6 @@
         <div class="KVPPlugin TransitionMenue cell">
             <vue-collapsible-frame
                 :item="item"
-                :index="index"
-                :last-opened-item-id="item.id"
                 :collapsible="false"
                 class="cell"
             >
@@ -152,7 +150,6 @@ props: {
                     label: this.$t('cip_header'),
                     id: 1,
                 },
-                index: 0,
             use_action: undefined,
         };
     },
