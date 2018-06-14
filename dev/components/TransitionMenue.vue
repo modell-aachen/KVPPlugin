@@ -1,88 +1,101 @@
 <template>
-    <div class="KVPPlugin TransitionMenue">
-        <vue-collapsible-dad-item
-            :item="dadDummy.item"
-            :index="dadDummy.index"
-            :last-opened-item-id="dadDummy.item.id"
-        >
-            <div class="grid-x">
-                <div class="cell small-2">{{ $t('current_state') }}</div>
-                <div class="cell small-4">{{ current_state_display }}</div>
-            </div>
-            <div
-                v-if="!isOrigin"
-                class="grid-x"
+    <div class="grid-x">
+        <div class="KVPPlugin TransitionMenue cell">
+            <vue-collapsible-frame
+                :item="item"
+                :index="index"
+                :last-opened-item-id="item.id"
+                :collapsible="false"
+                class="cell"
             >
-                <div
-                    class="cell small-2"
-                >
-                    {{ $t('compare') }}
-                </div>
-                <div
-                    class="cell small-4"
-                >
-                    <vue-button
-                        :title="$t('compare_approved')"
-                        :href="compare_href"
-                    />
-                </div>
-            </div>
-            <div
-                v-if="actions.length"
-            >
-                <vue-header ruler/>
-                <div
-                    class="grid-x"
-                >
-                    <div
-                        class="cell small-2"
-                    >
-                        {{ $t('remark') }}
+                <div class="cell xxlarge-4 large-6 medium-6">
+                    <div class="grid-x">
+                        <div class="cell small-4">{{ $t('current_state') }}</div>
+                        <div class="cell small-8">{{ current_state_display }}</div>
                     </div>
                     <div
-                        class="cell small-4"
+                        v-if="!isOrigin"
+                        class="grid-x"
                     >
-                        <textarea
-                            name="message"
-                            rows="3"
+                        <vue-spacer
+                            factor-vertical="2"
+                            factor-horizontal="full"
                         />
-                    </div>
-                </div>
-                <div
-                    class="grid-x"
-                >
-                    <div
-                        class="cell small-2"
-                    >
-                        {{ $t('next_step') }}
-                    </div>
-                    <div
-                        class="cell small-4"
-                    >
-                        <button
-                            v-if="actions.length == 1"
-                            :title="actions[0].label"
-                            @click="doTransition(0)"
-                        />
-                        <splitbutton
-                            :on-main-button-click="function(){doTransition(0);}"
-                            :main-button-title="actions[0].label"
-                            :dropdown-button-title="$t('more')"
+                        <div
+                            class="cell small-4"
                         >
-                            <template slot="dropdown-content">
-                                <li
-                                    v-for="(item, index) in actions.slice(1)"
-                                    :key="index"
-                                    @click="doTransition(index + 1)"
+                            {{ $t('compare') }}
+                        </div>
+                        <div
+                            class="cell small-8"
+                        >
+                            <vue-button
+                                :title="$t('compare_approved')"
+                                :href="compare_href"
+                            />
+                        </div>
+                    </div>
+                    <div
+                        v-if="actions.length"
+                    >
+                        <div
+                            class="grid-x"
+                        >
+                            <div
+                                class="cell small-4"
+                            >
+                                {{ $t('remark') }}
+                            </div>
+                            <div
+                                class="cell small-8"
+                            >
+                                <textarea
+                                    name="message"
+                                    rows="3"
+                                />
+                            </div>
+                        </div>
+                        <vue-spacer
+                            factor-vertical="2"
+                            factor-horizontal="full"
+                        />
+                        <div
+                            class="grid-x"
+                        >
+                            <div
+                                class="cell small-4"
+                            >
+                                {{ $t('next_step') }}
+                            </div>
+                            <div
+                                class="cell small-8"
+                            >
+                                <button
+                                    v-if="actions.length == 1"
+                                    :title="actions[0].label"
+                                    @click="doTransition(0)"
+                                />
+                                <splitbutton
+                                    :on-main-button-click="function(){doTransition(0);}"
+                                    :main-button-title="actions[0].label"
+                                    :dropdown-button-title="$t('more')"
                                 >
-                                    <a>{{ item.label }}</a>
-                                </li>
-                            </template>
-                        </splitbutton>
+                                    <template slot="dropdown-content">
+                                        <li
+                                            v-for="(item, index) in actions.slice(1)"
+                                            :key="index"
+                                            @click="doTransition(index + 1)"
+                                        >
+                                            <a>{{ item.label }}</a>
+                                        </li>
+                                    </template>
+                                </splitbutton>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </vue-collapsible-dad-item>
+            </vue-collapsible-frame>
+        </div>
     </div>
 </template>
 
@@ -128,13 +141,11 @@ props: {
     },
     data: function() {
         return {
-            dadDummy: {
                 item: {
                     label: this.$t('cip_header'),
                     id: 1,
                 },
                 index: 0,
-            },
             use_action: undefined,
         };
     },
@@ -157,10 +168,5 @@ props: {
 </script>
 
 <style lang="scss">
-.KVPPlugin.TransitionMenue {
-    .vddl-handle {
-        display: none;
-    }
-}
 </style>
 
