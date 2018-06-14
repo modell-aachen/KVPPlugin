@@ -10,7 +10,7 @@
             >
                 <div class="cell xxlarge-4 large-6 medium-6">
                     <div class="grid-x">
-                        <div class="cell small-4">{{ $t('current_state') }}</div>
+                        <div class="cell small-4 kvp-label">{{ $t('current_state') }}</div>
                         <div class="cell small-8">{{ current_state_display }}</div>
                     </div>
                     <div
@@ -22,7 +22,7 @@
                             factor-horizontal="full"
                         />
                         <div
-                            class="cell small-4"
+                            class="cell small-4 kvp-label"
                         >
                             {{ $t('compare') }}
                         </div>
@@ -35,6 +35,11 @@
                             />
                         </div>
                     </div>
+                    <vue-spacer
+                        v-else
+                        factor-vertical="2"
+                        factor-horizontal="full"
+                    />
                     <div
                         v-if="actions.length"
                     >
@@ -42,7 +47,7 @@
                             class="grid-x"
                         >
                             <div
-                                class="cell small-4"
+                                class="cell small-4 kvp-label"
                             >
                                 {{ $t('remark') }}
                             </div>
@@ -63,19 +68,21 @@
                             class="grid-x"
                         >
                             <div
-                                class="cell small-4"
+                                class="cell small-4 kvp-label"
                             >
                                 {{ $t('next_step') }}
                             </div>
                             <div
                                 class="cell small-8"
                             >
-                                <button
+                                <vue-button
                                     v-if="actions.length == 1"
                                     :title="actions[0].label"
-                                    @click="doTransition(0)"
+                                    type="primary"
+                                    @click.native="doTransition(0)"
                                 />
                                 <splitbutton
+                                    v-else
                                     :on-main-button-click="function(){doTransition(0);}"
                                     :main-button-title="actions[0].label"
                                     :dropdown-button-title="$t('more')"
@@ -168,5 +175,15 @@ props: {
 </script>
 
 <style lang="scss">
+.KVPPlugin.TransitionMenue{
+    .kvp-label{
+        font-weight: 600;
+    }
+    .ma-splitbutton{
+        a.button{
+            font-size: 14px;
+        }
+    }
+}
 </style>
 

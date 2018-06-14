@@ -1,10 +1,10 @@
 {
     "cip_header": "Improvement process",
-    "compare": "Comparison",
+    "compare": "Comparison:",
     "compare_approved": "Compare with approved version",
-    "current_state": "Status",
+    "current_state": "Status:",
     "more": "more",
-    "next_step": "Next step",
-    "remark": "Remark",
+    "next_step": "Next step:",
+    "remark": "Remark:",
     "dummy": "dummy"
 }
