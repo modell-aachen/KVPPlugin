@@ -1,4 +1,4 @@
-import TransitionMenue from '../components/TransitionMenue.vue'
+import TransitionMenue from '../components/TransitionMenue.vue';
 
 import translationsEn from '../translations/en.json';
 import translationsDe from '../translations/de.json';
