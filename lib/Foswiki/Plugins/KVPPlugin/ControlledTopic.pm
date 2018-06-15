@@ -454,6 +454,12 @@ sub isRemovingComments {
     return $this->{workflow}->hasAttribute($state, $action, 'FORCEDELETECOMMENTS');
 }
 
+sub getTransitionAttributesArray {
+    my ( $this ) = @_;
+
+    return $this->{workflow}->getTransitionAttributesArray($this);
+}
+
 sub getTransitionAttributes {
     my ( $this ) = @_;
     my $currentState = $this->{state}{name};

@@ -282,6 +282,49 @@ sub hasAttribute {
     return ( $attr && $attr =~ /(?:\W|^)$attribute(?:\W|$)/ );
 }
 
+sub getTransitionAttributesArray {
+    my ( $this, $topic, $noChecks ) = @_;
+
+    my $state = $topic->getState();
+
+    return [] unless $state && $topic->foswikiAllowsChange(); # No state happens when topic has no META:WORKFLOW...
+
+    my @transitions = ();
+
+    foreach my $transition ( @{ $this->getTransitions($state) } ) {
+        unless($noChecks) {
+            next if $transition->{attribute} && $transition->{attribute} =~ m/\b(?:FORK|NEW|HIDDEN)\b/;
+            next unless (
+                _isAllowed($topic->expandMacros( $transition->{allowed} ))
+                && _isTrue($topic->expandMacros( $transition->{condition} ))
+                && $topic->expandMacros( $transition->{nextstate} )
+            );
+        }
+        my ($allow, $suggest, $comment);
+        if($transition->{attribute}) {
+            if( $transition->{attribute} =~ /(?:\W|^)ALLOWDELETECOMMENTS(?:\W|$)/ ) {
+                $allow = 1;
+            }
+            if( $transition->{attribute} =~ /(?:\W|^)SUGGESTDELETECOMMENTS(?:\W|$)/ ) {
+                $suggest = 1;
+            }
+            if( $transition->{attribute} =~ /(?:\W|^)REMARK(?:\W|$)/ ) {
+                $comment = 1;
+            }
+        }
+        push @transitions, {
+            action => $transition->{action},
+            warning => $transition->{warning},
+            allow_delete_comments => $allow,
+            suggest_delete_comments => $suggest,
+            remark => $comment,
+            proponent => $topic->isPotentialProponent($transition->{action}),
+        };
+    }
+
+    return \@transitions;
+}
+
 # This returns lists for a JavaScript with all actions that:
 # * allow deleting comments
 # * suggest deleting comments

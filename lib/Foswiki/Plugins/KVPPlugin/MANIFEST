@@ -21,6 +21,10 @@ pub/System/KVPPlugin/jsi18n.solrkvp.en.js 0644 translations for solr
 pub/System/KVPPlugin/jsi18n.solrkvp.en.js.gz 0644 translations for solr
 pub/System/KVPPlugin/transitions.js 0644 Script for transition menue
 pub/System/KVPPlugin/transitions.js.gz 0644 Script for transition menue
+pub/System/KVPPlugin/vue-transitions.js 0644 Script for transition menue (vue)
+pub/System/KVPPlugin/vue-transitions.js.gz 0644 Script for transition menue (vue)
+pub/System/KVPPlugin/vue-transitions.js.map 0644 Script for transition menue (vue)
+pub/System/KVPPlugin/vue-transitions.js.map.gz 0644 Script for transition menue (vue)
 locale/KVPPlugin/cs.po 0664 Czech translations
 locale/KVPPlugin/de.po 0664 German translations
 locale/KVPPlugin/fr.po 0664 French translations
