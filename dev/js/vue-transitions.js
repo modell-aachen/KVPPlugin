@@ -61,14 +61,19 @@ jQuery(function($) {
         let keys = Object.keys(data).filter(key => /^[a-z_-]+$/.test(key)); // do not allow v-on:...
         let props = Array.map(keys, key => `:${key}="${key}"`);
         let $transitionMenue = $(`<transition-menue ${props.join(' ')}></transition-menue>`);
+        //copy attrs for vue-client tokens
+        var attributes = $transitionDiv.prop("attributes");
+        $.each(attributes, function() {
+            if( this.name != 'class') {
+                $transitionMenue.attr(this.name, this.value);
+            }
+        });
+
         let id = 'kvp' + foswiki.getUniqueID();
         $transitionMenue.attr('id', id);
         $transitionDiv.replaceWith($transitionMenue);
 
-        new Vue({
-            el: '#' + id,
-            data,
-        });
+        Vue.instantiateEach( '#' + id, { data } );
     });
 });
 
