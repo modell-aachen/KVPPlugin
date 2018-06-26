@@ -25,7 +25,6 @@ use Foswiki::Contrib::ModacHelpersContrib;
 
 use HTML::Entities;
 use JSON;
-use Digest::MD5 qw(md5_hex);
 
 use constant FORCENEW => 1;
 use constant NOCACHE => 2;
@@ -618,16 +617,17 @@ sub _WORKFLOWTRANSITIONVUE {
     };
 
     Foswiki::Func::addToZone('script', 'WORKFLOW::VUE', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI,VUEJSPLUGIN,');
-<script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/vue-transitions.js?version=$VERSION"></script>
+<script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/vue-transitions.js?v=$RELEASE"></script>
 SCRIPT
 
-    my $clientId = "KVP_Transition_" . substr(md5_hex(rand), -6);
-    my $clientToken = Foswiki::Plugins::VueJSPlugin::registerClient( $clientId );
-    return sprintf(
-        '<div class="KVPPlugin vue-transitions foswikiHidden" data-vue-client-id="%s" data-vue-client-token="%s" ><div class="json">' . to_json($data) . '</div><form method="post" name="strikeonedummy"></form></div>',
-        $clientId,
-        $clientToken
-    );
+    my $clientToken = Foswiki::Plugins::VueJSPlugin::getClientToken();
+    my $json = to_json($data);
+    return <<HTML;
+        <div class="KVPPlugin vue-transitions foswikiHidden" data-vue-client-token="$clientToken">
+            <div class="json">$json</div>
+            <form method="post" name="strikeonedummy"></form>
+        </div>
+HTML
 }
 
 # Tag handler
