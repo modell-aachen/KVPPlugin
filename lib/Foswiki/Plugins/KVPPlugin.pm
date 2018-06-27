@@ -188,10 +188,10 @@ sub _WORKFLOWDISPLAYTABS {
         for my $tabeName ($workflow->getDisplayTabs()) {
             my $renderTab = '%TAB{"%MAKETEXT{"%1"}%"}% %TMPL:P{"searchgrid_tabs" extraquery="workflowstate_displayedtab_s:\"%1\""}% %ENDTAB%';
             my $find = '%1';
-            $renderTab =~ s/$find/$tabeName/g; 
+            $renderTab =~ s/$find/$tabeName/g;
             $formattedString = $formattedString . $renderTab;
         }
-        return $formattedString;    
+        return $formattedString;
     }
     else {
         return join(", ", $workflow->getDisplayTabs());
@@ -617,10 +617,17 @@ sub _WORKFLOWTRANSITIONVUE {
     };
 
     Foswiki::Func::addToZone('script', 'WORKFLOW::VUE', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI,VUEJSPLUGIN,');
-<script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/vue-transitions.js?version=$VERSION"></script>
+<script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/vue-transitions.js?v=$RELEASE"></script>
 SCRIPT
 
-    return '<div class="KVPPlugin vue-transitions foswikiHidden"><div class="json">' . to_json($data) . '</div><form method="post" name="strikeonedummy"></form></div>';
+    my $clientToken = Foswiki::Plugins::VueJSPlugin::getClientToken();
+    my $json = to_json($data);
+    return <<HTML;
+        <div class="KVPPlugin vue-transitions foswikiHidden" data-vue-client-token="$clientToken">
+            <div class="json">$json</div>
+            <form method="post" name="strikeonedummy"></form>
+        </div>
+HTML
 }
 
 # Tag handler
