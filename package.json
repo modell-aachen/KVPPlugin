@@ -24,6 +24,7 @@
     "babel-eslint": "^8.0.3",
     "babel-loader": "^7.1.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-latest": "^6.0.0",
     "compression-webpack-plugin": "^0.4.0",

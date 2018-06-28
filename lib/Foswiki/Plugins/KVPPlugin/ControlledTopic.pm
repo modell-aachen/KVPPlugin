@@ -462,14 +462,21 @@ sub getTransitionAttributesArray {
 
 sub getTransitionAttributes {
     my ( $this ) = @_;
+
     my $currentState = $this->{state}{name};
     my ($allow, $suggest, $comment) = $this->{workflow}->getTransitionAttributes($currentState);
+    my @unsatisfiedMandatoryFields = map{ $_->{mapped_title} } Foswiki::Plugins::ModacHelpersPlugin::getNonSatisfiedFormFields($this->{meta});
+    my $unsatisfiedMandatory = ',';
     my $alreadyProposed = ',';
+
     for my $t (@{$this->{workflow}->getTransitions($currentState)}) {
+        unless($t->{attribute} && $t->{attribute} =~ m#\bIGNOREMANDATORY\b#) {
+            $unsatisfiedMandatory .= $t->{action} . ',';
+        }
         next if $this->isPotentialProponent($t->{action});
         $alreadyProposed .= "$t->{action},";
     }
-    return ($allow, $suggest, $comment, $alreadyProposed);
+    return ($allow, $suggest, $comment, $alreadyProposed, $unsatisfiedMandatory, \@unsatisfiedMandatoryFields);
 }
 
 # Check if the topic is allowed to fork
@@ -658,6 +665,12 @@ sub changeState {
     }
 
     $this->clearTransitionProponents;
+
+    my $formColumn = $this->getRow('form');
+    if(defined $formColumn && $formColumn ne '') {
+        $this->{meta}->remove('FORM');
+        $this->{meta}->put('FORM', { name => $formColumn });
+    }
 
     my $notification;
     # generate mails

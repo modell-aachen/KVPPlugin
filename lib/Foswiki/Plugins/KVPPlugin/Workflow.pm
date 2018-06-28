@@ -25,6 +25,7 @@ use strict;
 
 use Foswiki::Func ();
 use Foswiki::Plugins ();
+use Foswiki::Plugins::ModacHelpersPlugin ();
 
 sub new {
     my ( $class, $web, $topic ) = @_;
@@ -291,6 +292,9 @@ sub getTransitionAttributesArray {
 
     my @transitions = ();
 
+    my @missingMandatory = map{ $_->{mapped_title} } Foswiki::Plugins::ModacHelpersPlugin::getNonSatisfiedFormFields($topic->{meta});
+    my $mandatorySatisfied = 0 == scalar @missingMandatory;
+
     foreach my $transition ( @{ $this->getTransitions($state) } ) {
         unless($noChecks) {
             next if $transition->{attribute} && $transition->{attribute} =~ m/\b(?:FORK|NEW|HIDDEN)\b/;
@@ -300,7 +304,7 @@ sub getTransitionAttributesArray {
                 && $topic->expandMacros( $transition->{nextstate} )
             );
         }
-        my ($allow, $suggest, $comment);
+        my ($allow, $suggest, $comment, $mandatoryNotSatisfied);
         if($transition->{attribute}) {
             if( $transition->{attribute} =~ /(?:\W|^)ALLOWDELETECOMMENTS(?:\W|$)/ ) {
                 $allow = 1;
@@ -312,6 +316,9 @@ sub getTransitionAttributesArray {
                 $comment = 1;
             }
         }
+        unless($mandatorySatisfied || ($transition->{attribute} && $transition->{attribute} =~ m#\bIGNOREMANDATORY\b#)) {
+            $mandatoryNotSatisfied = \@missingMandatory;
+        }
         push @transitions, {
             action => $transition->{action},
             warning => $transition->{warning},
@@ -319,6 +326,7 @@ sub getTransitionAttributesArray {
             suggest_delete_comments => $suggest,
             remark => $comment,
             proponent => $topic->isPotentialProponent($transition->{action}),
+            mandatoryNotSatisfied => $mandatoryNotSatisfied,
         };
     }
 
@@ -365,6 +373,11 @@ sub getNextState {
 
     my $t = $this->getTransition($currentState, $action);
     return undef unless $t;
+
+    unless($t->{attribute} && $t->{attribute} =~ m#\bIGNOREMANDATORY\b#) {
+        return undef if scalar Foswiki::Plugins::ModacHelpersPlugin::getNonSatisfiedFormFields($topic->{meta});
+    }
+
     my $allowed = $topic->expandMacros( $t->{allowed} );
     my $nextState = $topic->expandMacros( $t->{nextstate} );
     my $condition = $topic->expandMacros( $t->{condition} );

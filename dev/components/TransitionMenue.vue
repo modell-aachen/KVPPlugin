@@ -146,6 +146,10 @@ export default {
     methods: {
         doTransition: function(actionNr) {
             let action = this.actions[actionNr];
+            if(action.mandatoryNotSatisfied && action.mandatoryNotSatisfied.length) {
+                alert(this.$t('missing_mandatory') + '\n' + action.mandatoryNotSatisfied.join('\n'));
+                return;
+            }
             this.submit_callback(this.validation_key, this.web, this.topic, action.action, this.current_state);
         }
     },

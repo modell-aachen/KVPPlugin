@@ -15,6 +15,8 @@ pub/System/KVPPlugin/blockLink.js 0644 Script for blocking links
 pub/System/KVPPlugin/blockLink.js.gz 0644 Script for blocking links
 pub/System/KVPPlugin/changewarning.js 0644 Script for transition menue
 pub/System/KVPPlugin/changewarning.js.gz 0644 Script for transition menue
+pub/System/KVPPlugin/jsi18n.transitions.de.js 0644 translations for legacy transitions menue
+pub/System/KVPPlugin/jsi18n.transitions.de.js.gz 0644
 pub/System/KVPPlugin/jsi18n.solrkvp.de.js 0644 translations for solr
 pub/System/KVPPlugin/jsi18n.solrkvp.de.js.gz 0644 translations for solr
 pub/System/KVPPlugin/jsi18n.solrkvp.en.js 0644 translations for solr

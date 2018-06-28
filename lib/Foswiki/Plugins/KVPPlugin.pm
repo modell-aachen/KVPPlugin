@@ -676,13 +676,17 @@ sub _WORKFLOWTRANSITION {
     push( @fields, "<input type='hidden' name='WORKFLOWSTATE' value='$cs' />");
     push( @fields, "<input type='hidden' name='topic' value='$webtopic' />");
 
-    my ($allow, $suggest, $remark, $alreadyProposed) = $controlledTopic->getTransitionAttributes();
+    my ($allow, $suggest, $remark, $alreadyProposed, $unsatisfiedMandatory, $unsatisfiedMandatoryFields) = $controlledTopic->getTransitionAttributes();
 
     $transwarn->{WORKFLOW}{allowOption} = $allow;
     $transwarn->{WORKFLOW}{suggestOption} = $suggest;
     $transwarn->{WORKFLOW}{remarkOption} = $remark;
     $transwarn->{WORKFLOW}{alreadyProposed} = $alreadyProposed;
+    $transwarn->{WORKFLOW}{unsatisfiedMandatory} = $unsatisfiedMandatory;
+    $transwarn->{WORKFLOW}{unsatisfiedMandatoryFields} = $unsatisfiedMandatoryFields;
     my $json = to_json($transwarn);
+
+    Foswiki::Plugins::JSi18nPlugin::JSI18N($session, 'KVPPlugin', 'transitions');
     Foswiki::Func::addToZone('script', 'WORKFLOW::COMMENT', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI');
 <script type="text/json" class="KVPPlugin_WORKFLOW">$json</script>
 <script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/transitions.js?version=$VERSION"></script>

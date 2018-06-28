@@ -49,6 +49,7 @@ Die Tabelle hat folgenden Aufbau:
    Right&nbsp;Tab: Beschriftung des rechten (Diskussions-) tabs in den ActionButtons (versteckt sich normalerweise im =State Type=).
    Displayed&nbsp;Tab: Hier kann f&uuml;r eigens hinzugef&uuml;gte Stati der Tab auf der Workflow Management Seite angegeben werden. Ein Topic des ensprechenden Workflow-Status wird dann unter dem angegebenen Tab angezeigt. Als Werte sind möglich: _Draft_, _Content_Review_, _Formal_Review_, und _Approved_.
    Allow&nbsp;Field&nbsp;fieldname: List of users/groups that may edit _fieldname_ in this state. Defaults to anybody, when left empty. See =WORKFLOWDENIEDFIELDS= for skin adjustments.
+   Form: When this status is reached, the value of this column will be used as the form. Does nothing when empty (you can not clear the form).
    Whatever: Es k&ouml;nnen beliebige Spalten hinzugef&uuml;gt werden und dann mit =%%NOP%GETWORKFLOWROW{"spaltenname"}%= abgefragt werden.%BR%Auch hier ist eine Lokalisierung durch Sprachsuffix (z.B. =Whatever de=) m&ouml;glich.
 
 %X%%ICON{"bomb"}%%X%<a name="HinweisStates">Hinweis:</a> F&uuml;r =Allow Move= sind zur Zeit noch &Auml;nderungen im Core n&ouml;tig!

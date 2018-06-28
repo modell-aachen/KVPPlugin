@@ -3,6 +3,7 @@
     "compare": "Comparison:",
     "compare_approved": "Compare with approved version",
     "current_state": "Status:",
+    "missing_mandatory": "Please fill in the following mandatory fields:",
     "more": "more",
     "next_step": "Next step:",
     "remark": "Remark:",

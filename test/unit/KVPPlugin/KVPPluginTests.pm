@@ -13,7 +13,7 @@ use warnings;
 use Foswiki();
 use Error qw ( :try );
 use Foswiki::Plugins::KVPPlugin();
-use KVPPlugin::Helper qw ( :attachments :webs WRKFLW setup );
+use KVPPlugin::Helper qw ( :attachments :webs WRKFLW FORM_WRKFLW setup STANDARD_FORM MANDATORY_FORM);
 
 my $users;
 my @attachments;
@@ -209,6 +209,121 @@ sub test_forkAndAcceptWithAttachment {
     Helper::bringToState( $this, $web, $topic, 'FREIGEGEBEN' );
     $read = Foswiki::Func::readAttachment( $web, $topic, $attachment );
     $this->assert($read eq $attachments[1]->{text} );
+}
+
+sub _getForm {
+    my ($web, $topic) = @_;
+
+    my ($meta) = Foswiki::Func::readTopic($web, $topic);
+    my $form = $meta->get('FORM');
+    return '' unless $form;
+    return $form->{name};
+}
+
+sub _makeMandatoryWorkflowTopic {
+    my ($this, $textField, $topic) = @_;
+
+    my $web = Helper::KVPWEB;
+    unless ($topic) {
+        $topic = (caller(1))[3];
+        my $wasTest = $topic =~ s#.*::test_##;
+        $this->assert($wasTest, '_makeMandatoryWorkflowTopic was called without $topic param outside of a test_... subroutine: ' . $topic);
+        $topic =~ s#^(.)#uc($1)#e;
+        $this->assert(Foswiki::Func::isValidTopicName($topic), 'Could not generade a valid topic name');
+    }
+    $this->assert(!Foswiki::Func::topicExists($web, $topic), "Could not create test topic, because it already exists: $topic");
+
+    my $workflow = Helper::FORM_WRKFLW;
+
+    my $meta = Foswiki::Meta->new($Foswiki::Plugins::SESSION, $web, $topic);
+    $meta->put('PREFERENCE', { name => 'WORKFLOW', type => 'SET', value => $workflow });
+    $meta->put('FIELD', { name => 'TextField', title => 'TextField', value => $textField }) if defined $textField;
+    Foswiki::Func::saveTopic( $web, $topic, $meta );
+
+    Helper::ensureState($this, $web, $topic, 'DRAFT_NOT_MANDATORY');
+
+    return ($web, $topic);
+}
+
+# Test if...
+# ...the transitions attributes deliver the correct mandatory fields
+sub test_attributesForMandatoryForm {
+    my ( $this ) = @_;
+
+    my $user = Helper::becomeAnAdmin($this);
+    my ($web, $topic) = $this->_makeMandatoryWorkflowTopic('');
+    my $controlledTopic = Foswiki::Plugins::KVPPlugin::_initTOPIC( $web, $topic );
+    my $transitions = $controlledTopic->getTransitionAttributesArray();
+    foreach my $transition (@$transitions) {
+        $this->assert(!$transition->{mandatoryNotSatisfied});
+    }
+
+    Helper::transition($this, 'DRAFT_NOT_MANDATORY', 'Make mandatory', $web, $topic);
+    $controlledTopic = Foswiki::Plugins::KVPPlugin::_initTOPIC( $web, $topic );
+    $transitions = $controlledTopic->getTransitionAttributesArray();
+    $this->assert($transitions->[0]->{mandatoryNotSatisfied}->[0] eq 'TextField');
+    $this->assert($transitions->[1]->{mandatoryNotSatisfied}->[0] eq 'TextField');
+    $this->assert(!$transitions->[2]->{mandatoryNotSatisfied});
+}
+
+# Test if...
+# ...a IGNOREMANDATORY transition will NOT be inhibited, if a mandatory form field is not satisfied
+sub test_ignoremandatoryTransition {
+    my ( $this ) = @_;
+
+    my $user = Helper::becomeAnAdmin($this);
+    my ($web, $topic) = $this->_makeMandatoryWorkflowTopic('');
+
+    Helper::transition($this, 'DRAFT_NOT_MANDATORY', 'Make mandatory', $web, $topic);
+    Helper::transition($this, 'DRAFT_MANDATORY', 'No mandatory change (ignore)', $web, $topic);
+}
+
+# Test if...
+# ...a transition will be inhibited, if a mandatory form field is not satisfied
+sub test_unsatisfiedMandatoryInhibitsTransition {
+    my ( $this ) = @_;
+
+    my $user = Helper::becomeAnAdmin($this);
+    my ($web, $topic) = $this->_makeMandatoryWorkflowTopic('');
+
+    Helper::transition($this, 'DRAFT_NOT_MANDATORY', 'Make mandatory', $web, $topic);
+    Helper::transition($this, 'DRAFT_MANDATORY', 'No mandatory change', $web, $topic, 1);
+    Helper::ensureState($this, $web, $topic, 'DRAFT_MANDATORY');
+}
+
+# Test if...
+# ...a transition will not touch the form, if the column is empty
+sub test_transitionKeepsForm {
+    my ( $this ) = @_;
+
+    my $user = Helper::becomeAnAdmin($this);
+    my ($web, $topic) = $this->_makeMandatoryWorkflowTopic('test');
+
+    $this->assert(_getForm($web, $topic) eq Helper::STANDARD_FORM);
+
+    Helper::transition($this, 'DRAFT_NOT_MANDATORY', 'No mandatory change', $web, $topic);
+    $this->assert(_getForm($web, $topic) eq Helper::STANDARD_FORM);
+
+    Helper::transition($this, 'DRAFT_NO_FORM_CHANGE', 'Make mandatory', $web, $topic);
+    $this->assert(_getForm($web, $topic) eq Helper::MANDATORY_FORM);
+
+    Helper::transition($this, 'DRAFT_MANDATORY', 'No mandatory change', $web, $topic);
+    $this->assert(_getForm($web, $topic) eq Helper::MANDATORY_FORM);
+
+}
+
+# Test if...
+# ...a transition will set the correct form, if the column exists
+sub test_transitionSetsForm {
+    my ( $this ) = @_;
+
+    my $user = Helper::becomeAnAdmin($this);
+    my ($web, $topic) = $this->_makeMandatoryWorkflowTopic();
+
+    $this->assert(_getForm($web, $topic) eq Helper::STANDARD_FORM);
+
+    Helper::transition($this, 'DRAFT_NOT_MANDATORY', 'Make mandatory', $web, $topic);
+    $this->assert(_getForm($web, $topic) eq Helper::MANDATORY_FORM);
 }
 
 # Test if...
