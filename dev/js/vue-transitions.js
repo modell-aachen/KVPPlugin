@@ -62,9 +62,9 @@ jQuery(function($) {
         let props = Array.map(keys, key => `:${key}="${key}"`);
         let $transitionMenue = $(`<transition-menue ${props.join(' ')}></transition-menue>`);
         //copy attrs for vue-client tokens
-        var attributes = $transitionDiv.prop("attributes");
+        let attributes = $transitionDiv.prop("attributes");
         $.each(attributes, function() {
-            if( this.name != 'class') {
+            if( this.name !== 'class') {
                 $transitionMenue.attr(this.name, this.value);
             }
         });
