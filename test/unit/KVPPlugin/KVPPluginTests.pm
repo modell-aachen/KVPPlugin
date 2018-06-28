@@ -707,8 +707,8 @@ sub test_move_attribute_updates_topic_references {
     my $user = Helper::becomeAnAdmin($this);
 
     my $calledUpdateTopicLinks = 0;
-    undef *Foswiki::Contrib::ModacHelpersContrib::updateTopicLinks;
-    *Foswiki::Contrib::ModacHelpersContrib::updateTopicLinks = sub {
+    undef *Foswiki::Plugins::ModacHelpersPlugin::updateTopicLinks;
+    *Foswiki::Plugins::ModacHelpersPlugin::updateTopicLinks = sub {
         $calledUpdateTopicLinks = 1;
         return;
     };

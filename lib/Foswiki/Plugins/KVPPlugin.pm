@@ -21,7 +21,7 @@ use Foswiki::OopsException ();
 use Foswiki::Sandbox ();
 
 use Foswiki::Contrib::MailTemplatesContrib;
-use Foswiki::Contrib::ModacHelpersContrib;
+use Foswiki::Plugins::ModacHelpersPlugin;
 
 use HTML::Entities;
 use JSON;
@@ -1218,7 +1218,7 @@ sub transitionTopic {
             $controlledTopic->moveTopic($destinationWeb, $controlledTopic->{topic});
             $controlledTopic->save(1);
 
-            Foswiki::Contrib::ModacHelpersContrib::updateTopicLinks($web, $appTopic, $destinationWeb, $appTopic);
+            Foswiki::Plugins::ModacHelpersPlugin::updateTopicLinks($web, $appTopic, $destinationWeb, $appTopic);
 
             $url = Foswiki::Func::getViewUrl($controlledTopic->{web}, $controlledTopic->{topic});
         }
