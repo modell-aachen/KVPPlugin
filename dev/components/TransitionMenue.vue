@@ -11,7 +11,7 @@
                         <div class="cell small-8">{{ current_state_display }}</div>
                     </div>
                     <div
-                        v-if="!isOrigin"
+                        v-if="showCompare"
                         class="grid-x">
                         <vue-spacer
                             factor-vertical="2"
@@ -135,8 +135,19 @@ export default {
         };
     },
     computed: {
+        showCompare: function() {
+            if(this.isOrigin) {
+                return false;
+            }
+            let compareUrl = this.$foswiki.getScriptUrlPath('compare');
+            let location = new String(window.location); // window.location does not provide indexOf and the likes
+            if(location.indexOf(compareUrl) > 0) {
+                return false;
+            }
+            return true;
+        },
         compare_href: function() {
-            return this.$foswiki.getScriptUrlPath('compare', this.web, this.topic, { external: this.web + '/' + this.origin });
+            return this.$foswiki.getScriptUrlPath('compare', this.web, this.topic, { external: this.web + '/' + this.origin, allowtransition: 1 });
         },
         isOrigin: function() {
             return this.origin === this.topic;
