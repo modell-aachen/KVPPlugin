@@ -1012,7 +1012,7 @@ sub transitionTopic {
             my $locker = Foswiki::Func::getCanonicalUserID($loginName);
             if ($locker ne $currUser) {
                 $t = Foswiki::Time::formatDelta(
-                    $t, $Foswiki::Plugins::SESSION->i18n
+                    $t*60, $Foswiki::Plugins::SESSION->i18n
                 );
                 $remark ||= '';
                 $remark =~ s#"#&quot;#;
@@ -1195,6 +1195,8 @@ sub transitionTopic {
         }
         # Flag that this is a state change to the beforeSaveHandler (beforeRenameHandler)
         local $isStateChange = 1;
+        # because we disabled the beforeSaveHandler, we must make sure, that there are no stub markers left (this might be a "Put under CIP" transition)
+        $controlledTopic->{meta}->remove('PREFERENCE', 'WorkflowStub');
 
         # Hier Action
         if ($actionAttributes =~ m#(?:\W|^)DISCARD(\W|$)#) {

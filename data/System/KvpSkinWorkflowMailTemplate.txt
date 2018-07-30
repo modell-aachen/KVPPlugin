@@ -45,13 +45,13 @@ $percentWORKFLOWMETA{Remark}$percent"}%%TMPL:END%
 %TMPL:DEF{"Type"}%text/plain%TMPL:END%
 
 %{"Provides a link to transitioned topic, use this instead of %TOPIC%"}%
-%TMPL:DEF{"LinkToPage"}%%SCRIPTURL{"rest"}%/KVPPlugin/link?state=%TARGET_STATE%;webtopic=%WEB%.%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN{%TOPIC%}%"}%%TMPL:END%
+%TMPL:DEF{"LinkToPage"}%%SCRIPTURL{"rest"}%/KVPPlugin/link?state=%TARGET_STATE%;webtopic=%WEB%.%ENCODE{"%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN{%TOPIC%}%"}%"}%%TMPL:END%
 
 %{"Provides a link to a comparison with the approved topic"}%
-%TMPL:DEF{"LinkToComparePage"}%%SCRIPTURL{"rest"}%/KVPPlugin/link?state=%TARGET_STATE%;webtopic=%WEB%.%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN{%TOPIC%}%"}%;compare=1%TMPL:END%
+%TMPL:DEF{"LinkToComparePage"}%%TMPL:P{"LinkToPage"}%;compare=1%TMPL:END%
 
 %{"Provides the name of the transitioned topic:"}%
 %TMPL:DEF{"TOPIC"}%%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN{%TOPIC%}%"}%%TMPL:END%
 
 %{"Provides the topictitle of the transitioned topic:"}%
-%TMPL:DEF{"TOPICTITLE"}%%TOPICTITLE{"%TMPL:P{"TOPIC"}%"}%%TMPL:END%
+%TMPL:DEF{"TOPICTITLE"}%%STARTSUBST{pattern="&" format="&&"}%%TOPICTITLE{"%TMPL:P{"TOPIC"}%"}%%STOPSUBST%%TMPL:END%

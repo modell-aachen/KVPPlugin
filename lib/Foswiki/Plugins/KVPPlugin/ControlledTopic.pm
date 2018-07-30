@@ -684,7 +684,7 @@ sub changeState {
 
         $notification = {
             template => 'mailworkflowtransition',
-            options => { IncludeCurrentUser => 1, AllowMailsWithoutUser => 1, webtopic => "$this->{web}.$this->{topic}" },
+            options => { IncludeCurrentUser => 0, AllowMailsWithoutUser => 1, webtopic => "$this->{web}.$this->{topic}" },
             settings => { TARGET_STATE => $this->getState(), TARGET_STATE_DISPLAY => $this->getWorkflowMeta('displayname', $language), EMAILTO => $notify, LANGUAGE => $language },
             extra => { action => $action, ncolumn => $notify },
         };
@@ -755,9 +755,11 @@ sub expandMacros {
     # Workaround for Item1071
     my $memory = $c->{can_render_meta};
     $c->{can_render_meta} = $this->{meta};
-    $text =
-      Foswiki::Func::expandCommonVariables( $text, $this->{topic}, $this->{web},
-        $this->{meta} );
+    my $session = $Foswiki::Plugins::SESSION; # do not use $meta->session(), as this is what pushTopicContext uses
+    my $sameTopicContext = $this->{web} eq $session->{webName} && $this->{topic} eq $session->{topicName};
+    Foswiki::Func::pushTopicContext($this->{web}, $this->{topic}) unless $sameTopicContext;
+    $text = Foswiki::Func::expandCommonVariables( $text, $this->{topic}, $this->{web}, $this->{meta} );
+    Foswiki::Func::popTopicContext() unless $sameTopicContext;
     $c->{can_render_meta} = $memory;
     return $text;
 }
