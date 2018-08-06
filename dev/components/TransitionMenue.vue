@@ -8,7 +8,9 @@
                 <div class="cell xxlarge-4 large-6 medium-6">
                     <div class="grid-x">
                         <div class="cell small-4 kvp-label">{{ $t('current_state') }}</div>
-                        <div class="cell small-8">{{ current_state_display }}</div>
+                        <div
+                            class="cell small-8"
+                            v-html="message"/>
                     </div>
                     <div
                         v-if="showCompare"
@@ -59,20 +61,20 @@
                                 class="cell small-8">
                                 <vue-button
                                     v-if="actions.length == 1"
-                                    :title="actions[0].label"
+                                    :title="decodeNonAlnumFilter(actions[0].label)"
                                     type="primary"
                                     @click.native="doTransition(0)"/>
                                 <splitbutton
                                     v-else
                                     :on-main-button-click="function(){doTransition(0);}"
-                                    :main-button-title="actions[0].label"
+                                    :main-button-title="decodeNonAlnumFilter(actions[0].label)"
                                     :dropdown-button-title="$t('more')">
                                     <template slot="dropdown-content">
                                         <li
                                             v-for="(item, index) in actions.slice(1)"
                                             :key="index"
                                             @click="doTransition(index + 1)">
-                                            <a>{{ item.label }}</a>
+                                            <a v-html="item.label"/>
                                         </li>
                                     </template>
                                 </splitbutton>
@@ -105,10 +107,17 @@ export default {
         'current_state': {
             required: true,
             type: String,
+            default: 'unknown',
         },
         'current_state_display': {
             required: true,
             type: String,
+            default: '(unknown state)',
+        },
+        message: {
+            reequired: true,
+            type: String,
+            default: 'unknown',
         },
         actions: {
             required: true,
@@ -155,13 +164,38 @@ export default {
         },
     },
     methods: {
+        decodeNonAlnumFilter: function(string) {
+            return string.replace(/&#(\d+);/g, function(match, charCode) {
+                return String.fromCharCode(charCode);
+            });
+        },
         doTransition: function(actionNr) {
             let action = this.actions[actionNr];
             if(action.mandatoryNotSatisfied && action.mandatoryNotSatisfied.length) {
                 alert(this.$t('missing_mandatory') + '\n' + action.mandatoryNotSatisfied.join('\n'));
                 return;
             }
-            this.submit_callback(this.validation_key, this.web, this.topic, action.action, this.current_state);
+            let options = {
+                validation_key: this.validation_key,
+                web: this.web,
+                topic: this.topic,
+                action: action.action,
+                actionDisplayname: action.label,
+                currentState: this.current_state,
+                currentStateDisplayname: this.current_state_display,
+            };
+            if(action.warning) {
+                this.$showAlert({
+                    title: action.warning,
+                    type: 'confirm',
+                    confirmButtonText: this.$t('ok'),
+                    cancelButtonText: this.$t('cancel'),
+                }).then(() => {
+                    this.submit_callback(options);
+                }).catch(this.$showAlert.noop);
+            } else {
+                this.submit_callback(options);
+            }
         }
     },
 };

@@ -138,6 +138,7 @@ sub new {
                 $default{ $data{ $defaultCol } } = \%data;
             } else {
                 foreach my $col ( split( /\s*\|\s*/, $line ) ) {
+                    $col =~ s#\$vbar#|#;
                     $data{ $fields[ $i++ ] } = $col;
                 }
 
@@ -233,6 +234,7 @@ sub getActions {
     my ( $this, $topic) = @_;
     my @actions      = ();
     my @warnings     = ();
+    my @displayActions = ();
     my $currentState = $topic->getState();
     foreach my $row ( @{ $this->getTransitions($currentState) } ) {
         my $attribute = $row->{attribute} || '';
@@ -244,10 +246,15 @@ sub getActions {
             )
         {
             push( @actions, $row->{action} );
-            push( @warnings, $row->{warning} );
+            my $warning = $row->{warning};
+            if($warning) {
+                $warning = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($Foswiki::Plugins::SESSION, {string => $warning, literal => 1});
+                push( @warnings, $warning );
+            }
+            push( @displayActions, _getDisplayName($row) );
         }
     }
-    return (\@actions, \@warnings);
+    return (\@actions, \@warnings, \@displayActions);
 }
 
 # Get first allowed action for this state that has this attribute set in the 'Attribute' column
@@ -262,7 +269,11 @@ sub getActionWithAttribute {
         if ( $t->{attribute} && $t->{attribute} =~ /(?:^|\W)$attribute(?:\W|$)/ ) {
             my $allowed = $topic->expandMacros( $t->{allowed} );
             if ( _isAllowed($allowed) && _isTrue($topic->expandMacros($t->{condition})) ) {
-                return [ $t->{action}, $t->{warning} ];
+                my $warning = $t->{warning};
+                if($warning) {
+                    $warning = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($Foswiki::Plugins::SESSION, {string => $warning, literal => 1});
+                }
+                return [ $t->{action}, $warning ];
             }
         }
     }
@@ -284,7 +295,7 @@ sub hasAttribute {
 }
 
 sub getTransitionAttributesArray {
-    my ( $this, $topic, $noChecks ) = @_;
+    my ( $this, $topic, $noChecks, $displaynames ) = @_;
 
     my $state = $topic->getState();
 
@@ -319,18 +330,45 @@ sub getTransitionAttributesArray {
         unless($mandatorySatisfied || ($transition->{attribute} && $transition->{attribute} =~ m#\bIGNOREMANDATORY\b#)) {
             $mandatoryNotSatisfied = \@missingMandatory;
         }
-        push @transitions, {
+
+        my $attributes = {
             action => $transition->{action},
-            warning => $transition->{warning},
             allow_delete_comments => $allow,
             suggest_delete_comments => $suggest,
             remark => $comment,
             proponent => $topic->isPotentialProponent($transition->{action}),
             mandatoryNotSatisfied => $mandatoryNotSatisfied,
         };
+
+        if($displaynames) {
+            $attributes->{label} = _getDisplayName($transition);
+            my $warning = $transition->{warning};
+            if($warning) {
+                $attributes->{warning} = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($Foswiki::Plugins::SESSION, {string => $warning, literal => 1});
+            }
+        }
+        push @transitions, $attributes;
     }
 
     return \@transitions;
+}
+
+sub _getDisplayName {
+    my ($row) = @_;
+    my $session = $Foswiki::Plugins::SESSION;
+
+    my $displayColumn = 'displayname' .  $session->i18n()->language();
+    my $label = $row->{$displayColumn};
+    if((!$label) && $row->{'displayname'}) {
+        my $displayName = $row->{displayname};
+        $label = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($session, {string => $displayName, literal => 1});
+    }
+    if(!$label) {
+        $label = $row->{action} || $row->{state};
+        $label = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($session, {string => $label, literal => 1});
+    }
+    $label = escapeNonAlnumChars($label);
+    return $label;
 }
 
 # This returns lists for a JavaScript with all actions that:
@@ -513,8 +551,32 @@ sub getRow {
         return '';
     }
     return $this->{states}->{$state}->{$row};
-# XXX to expand or not to expand...
-#    return $topic->expandMacros( $this->{states}->{$state}->{$row} );
+}
+
+sub getDisplayname {
+    my ( $this, $state, $languageOverwrite ) = @_;
+
+    unless( $this->{states}{$state} ) {
+        Foswiki::Func::writeWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
+        return '';
+    }
+
+    my $language = $languageOverwrite || $Foswiki::Plugins::SESSION->i18n()->language();
+    my $displayname = $this->{states}->{$state}->{"displayname$language"};
+    unless($displayname) {
+        $displayname = $this->{states}->{$state}->{"displayname"} || $state;
+        $displayname = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($Foswiki::Plugins::SESSION, {string => $displayname, literal => 1});
+    }
+    return escapeNonAlnumChars($displayname);
+}
+
+# Escape non-alpha-numeric characters in the ascii range, except &#...; entities.
+sub escapeNonAlnumChars {
+    my ($string) = @_;
+
+    $string =~ s/&(?!#\d+;)/&#38;/g;
+    $string =~ s/([\x01-\x1f"\$%'*+,\-<=>\x5b-\x5f{|}])/'&#' . ord($1) . ';'/ge;
+    return $string;
 }
 
 # finds out if the current user is allowed to do something.

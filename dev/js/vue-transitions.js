@@ -14,7 +14,7 @@ jQuery(function($) {
      * This is done outside of vue, so StrikeOne will not mess with vue's
      * stuff.
      */
-    let submitAction = function(validation_key, web, topic, action, current_state) {
+    let submitAction = function({validation_key, web, topic, action, currentState, actionDisplayname, currentStateDisplayname}) {
         let $form = $(`
             <form
                 ref="transitionForm"
@@ -33,10 +33,20 @@ jQuery(function($) {
                     type="hidden"
                     name="WORKFLOWACTION"
                 >
+                <input
+                    type="hidden"
+                    name="action_displayname"
+                >
+                <input
+                    type="hidden"
+                    name="current_state_displayname"
+                >
             </form>`);
         $form.attr('action', foswiki.getScriptUrl('rest', 'KVPPlugin', 'changeState'));
         $form.find('[name="WORKFLOWACTION"]').val(action);
-        $form.find('[name="WORKFLOWSTATE"]').val(current_state);
+        $form.find('[name="WORKFLOWSTATE"]').val(currentState);
+        $form.find('[name="action_displayname"]').val(actionDisplayname);
+        $form.find('[name="current_state_displayname"]').val(currentStateDisplayname);
         $form.find('[name="topic"]').val(web + '.' + topic);
         $('body').append($form);
         if(window.StrikeOne && validation_key) {

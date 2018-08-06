@@ -601,17 +601,14 @@ sub _WORKFLOWTRANSITIONVUE {
     my $controlledTopic = _initTOPIC( $web, $topic );
     return '' unless $controlledTopic;
 
-    my $transitions = $controlledTopic->getTransitionAttributesArray();
-    foreach my $action ( @$transitions ) {
-        $action->{label} = Foswiki::Func::expandCommonVariables("%MAKETEXT{$action->{action}}%");
-        $action->{warning} = Foswiki::Func::expandCommonVariables("%MAKETEXT{$action->{warning}}%") if($action->{warning});
-    }
+    my $transitions = $controlledTopic->getTransitionAttributesArray(1);
 
     my $data = {
         web => $web,
         topic => $topic,
         current_state => $controlledTopic->getState(),
-        current_state_display => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message', localized => '%LANGUAGE%'}, $topic, $web) ),
+        current_state_display => $controlledTopic->getWorkflowMeta('displayname'),
+        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message'}, $topic, $web) ),
         actions => $transitions,
         origin => _getOrigin($topic),
     };
@@ -622,6 +619,7 @@ SCRIPT
 
     my $clientToken = Foswiki::Plugins::VueJSPlugin::getClientToken();
     my $json = to_json($data);
+    $json =~ s/([&<>%])/'&#'.ord($1).';'/ge;
     return <<HTML;
         <div class="KVPPlugin vue-transitions foswikiHidden" data-vue-client-token="$clientToken">
             <div class="json">$json</div>
@@ -644,7 +642,7 @@ sub _WORKFLOWTRANSITION {
     #
     # Build the button to change the current status
     #
-    my @actions;
+    my (@actions, $displayActions);
     my $numberOfActions;
     my $transwarn = {};
     my $cs = encode_entities($controlledTopic->getState(), $unsafe_chars);
@@ -652,7 +650,7 @@ sub _WORKFLOWTRANSITION {
 
     # Get actions and warnings
     { # scope
-        my ( $tmpActions, $tmpWarnings ) = $controlledTopic->getActions();
+        ( my $tmpActions, my $tmpWarnings, $displayActions ) = $controlledTopic->getActions();
         @actions         = @$tmpActions;
         $numberOfActions = scalar(@actions);
         my @warnings     = @$tmpWarnings;
@@ -661,7 +659,8 @@ sub _WORKFLOWTRANSITION {
         for( my $a = $numberOfActions-1; $a >= 0; $a-- ) {
             my $warning = $warnings[$a];
             next unless $warning;
-            $warning = Foswiki::Func::expandCommonVariables("%MAKETEXT{$warning}%");
+            $warning = decode_entities($warning);
+            $warning = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($session, {string => $warning, literal => 1});
             next unless $warning;
             my $action = $actions[$a];
             $transwarn->{WORKFLOW}->{w}->{$action} = $warning;
@@ -685,6 +684,7 @@ sub _WORKFLOWTRANSITION {
     $transwarn->{WORKFLOW}{unsatisfiedMandatory} = $unsatisfiedMandatory;
     $transwarn->{WORKFLOW}{unsatisfiedMandatoryFields} = $unsatisfiedMandatoryFields;
     my $json = to_json($transwarn);
+    $json =~ s#%#<nop>%<nop>#g;
 
     Foswiki::Plugins::JSi18nPlugin::JSI18N($session, 'KVPPlugin', 'transitions');
     Foswiki::Func::addToZone('script', 'WORKFLOW::COMMENT', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI');
@@ -696,24 +696,27 @@ SCRIPT
         my $action = $actions[0];
         $action =~ s#"#&quot;#g;
         $action =~ s#'#&\#39;#g;
+        $action =~ s#%#&\#37;#g;
+        my $displayAction = $displayActions->[0];
         push( @fields,
-              "<input type='hidden' name='WORKFLOWACTION' value='$action' />" );
+            "<input type='hidden' name='WORKFLOWACTION' value='$action' />" );
         push(
             @fields,
-            "<noautolink>%BUTTON{\"%MAKETEXT{$actions[0]}%\" id=\"WORKFLOWbutton\" type=\"submit\"}%</noautolink>"
+            "<noautolink>%BUTTON{\"$displayAction\" id=\"WORKFLOWbutton\" type=\"submit\"}%</noautolink>"
         );
     }
     else {
         push( @fields, "<select name='WORKFLOWACTION' id='WORKFLOWmenu' style='float: left'>");
 
-        my %labels = map{$_ => Foswiki::Func::expandCommonVariables("\%MAKETEXT{\"$_\"}\%")} @actions;
-
         # first one is special, because it must be selected
         my $firstAction = shift @actions;
-        push( @fields, "<option selected='selected' value='" . encode_entities($firstAction, $unsafe_chars) . "'>" . encode_entities(Foswiki::Func::expandCommonVariables("\%MAKETEXT{\"$firstAction\"}\%"), $unsafe_chars) . "</option>" );
+        my $firstActionDisplay = shift @$displayActions;
+        push( @fields, "<option selected='selected' value='" . encode_entities($firstAction, $unsafe_chars) . "'>$firstActionDisplay</option>" );
         # now the rest
-        foreach my $action ( @actions ) {
-            push( @fields, "<option value='" . encode_entities($action, $unsafe_chars) . "'>" . encode_entities(Foswiki::Func::expandCommonVariables("\%MAKETEXT{\"$action\"}\%"), $unsafe_chars) . "</option>" );
+        foreach my $i ( 0 .. $#actions ) {
+            my $action = $actions[$i];
+            my $displayAction = $displayActions->[$i];
+            push( @fields, "<option value='" . encode_entities($action, $unsafe_chars) . "'>$displayAction</option>" );
         };
         push( @fields, "</select>");
         push(
@@ -886,25 +889,18 @@ sub _changeState {
     my $response;
 
     try {
-        my $web = $query->param('web') || $session->{webName};
-        my $topic = $query->param('topic') || $session->{topicName};
-        my $action = $query->param('WORKFLOWACTION');
-        my $state = $query->param('WORKFLOWSTATE');
-        my $message = $query->param('message');
-        my $removeComments = $query->param('removeComments') || '0';
-        my $breakLock = $query->param('breaklock');
-
-        my $report = transitionTopic(
-            $session,
-            $web,
-            $topic,
-            $action,
-            $state,
-            $mails,
-            $message,
-            $removeComments,
-            $breakLock,
-        );
+        my $report = transitionTopic($session, {
+            web => $query->param('web') || $session->{webName},
+            topic => $query->param('topic') || $session->{topicName},
+            action => $query->param('WORKFLOWACTION'),
+            state => $query->param('WORKFLOWSTATE'),
+            mails => $mails,
+            message => $query->param('message'),
+            removeComments => $query->param('removeComments') || '0',
+            breakLock => $query->param('breaklock'),
+            actionDisplayname => $query->param('action_displayname'),
+            currentStateDisplayname => $query->param('current_state_displayname'),
+        });
         foreach my $mail ( @$mails ) {
             sendKVPMail($mail);
         }
@@ -937,6 +933,9 @@ sub _changeState {
 # parent if the topic was discarded).
 #
 # Parameters:
+#    you can pass parameters in a list (depricated) or pass in an options ref:
+#    transitionTopic($sesson, { web => ...})
+#
 #    * web: web of the topic
 #    * topic: topic name
 #    * action: The transition to be performed
@@ -948,7 +947,25 @@ sub _changeState {
 #    * breaklock: set to 1 to clear any lease
 #    * noFork: actions with FORK attribute will not automatically fork if this is true
 sub transitionTopic {
-    my ($session, $web, $topic, $action, $state, $mails, $remark, $removeComments, $breaklock, $noFork) = @_;
+    my $session = shift;
+    my ($web, $topic, $action, $state, $mails, $remark, $removeComments, $breaklock, $noFork, $actionDisplayname, $currentStateDisplayname);
+    if(ref($_[0])) {
+        my $options = $_[0];
+        $web = $options->{web};
+        $topic = $options->{topic};
+        $action = $options->{action};
+        $state = $options->{state};
+        $mails = $options->{mails};
+        $remark = $options->{remark};
+        $removeComments = $options->{removeComments};
+        $breaklock = $options->{breaklock};
+        $noFork = $options->{noFork};
+        $actionDisplayname = $options->{actionDisplayname};
+        $currentStateDisplayname = $options->{currentStateDisplayname};
+    } else {
+        # old style
+        ($web, $topic, $action, $state, $mails, $remark, $removeComments, $breaklock, $noFork) = @_;
+    }
 
     ($web, $topic) =
       Foswiki::Func::normalizeWebTopicName( $web, $topic );
@@ -964,7 +981,7 @@ sub transitionTopic {
             web => $web,
             topic => $topic,
             def => 'TopicNotFound',
-            params => [ $action ]
+            params => [],
         );
     }
 
@@ -981,23 +998,50 @@ sub transitionTopic {
         );
     }
     unless ($state eq $controlledTopic->getState()) {
+        my $assumedStateDisplayname = $currentStateDisplayname || $state;
+
         throw Foswiki::OopsException(
             "oopswrkflwsaveerr",
             web => $web,
             topic => $topic,
             def => 'WrongState',
-            params => [$state, $controlledTopic->getState()],
-            json => { type => 'WrongState', actual_state => $controlledTopic->getState }
+            params => [
+                decode_entities($controlledTopic->getWorkflowMeta('displayname')),
+                decode_entities($assumedStateDisplayname),
+                $controlledTopic->getState(),
+                $state,
+            ],
+            json => {
+                type => 'WrongState',
+                actual_state => $controlledTopic->getState,
+                actual_state_displayname => $controlledTopic->getWorkflowMeta('displayname'),
+                assumed_state => $state,
+                assumed_state_displayname => $assumedStateDisplayname
+            },
         );
     }
     unless ($controlledTopic->haveNextState($action)) {
+        my $displayState = $controlledTopic->getWorkflowMeta('displayname');
+        my $displayAction = $actionDisplayname || $action;
+
         throw Foswiki::OopsException(
             "oopswrkflwsaveerr",
             web => $web,
             topic => $topic,
             def => 'NoNextState',
-            params => [$state, $action],
-            json => { type => 'NoNextState' }
+            params => [
+                decode_entities($displayState),
+                decode_entities($displayAction),
+                $state,
+                $action,
+            ],
+            json => {
+                type => 'NoNextState',
+                state => $state,
+                action => $action ,
+                state_displayname => $displayState,
+                action_displayname => $displayAction
+            },
         );
     }
     $removeComments = '0' unless defined $removeComments;

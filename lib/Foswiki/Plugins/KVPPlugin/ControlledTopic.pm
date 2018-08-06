@@ -95,7 +95,7 @@ sub getState {
 sub getActions {
     my ($this) = @_;
 
-    return ( [], [] ) unless $this->foswikiAllowsChange();
+    return ( [], [], [] ) unless $this->foswikiAllowsChange();
 
     return $this->{workflow}->getActions($this);
 }
@@ -113,19 +113,17 @@ sub getWorkflowMeta {
     # admittingly STATECHANGE and displayname would be more suitable under getWorkflowRow,
     # however they are usually called as if they were metadata.
 
-    my $language = $languageOverwrite || $Foswiki::Plugins::SESSION->i18n()->language();
     if($attributes eq 'STATECHANGE') {
         my $t = $this->{meta}->get( 'KVPSTATECHANGE', 'TRANSITION' );
         return unless $t && $t->{value};
         my ($old, $new) = ($t->{old}, $t->{new});
-        my $oldDisplayName = $this->{workflow}->getRow($old, "displayname$language") || $this->{workflow}->getRow($old, "displayname") || $old;
-        my $newDisplayName = $this->{workflow}->getRow($new, "displayname$language") || $this->{workflow}->getRow($new, "displayname") || $new;
+        my $oldDisplayName = $this->{workflow}->getDisplayname($old, $languageOverwrite);
+        my $newDisplayName = $this->{workflow}->getDisplayname($new, $languageOverwrite);
         return "$oldDisplayName -> $newDisplayName";
     }
 
     if($attributes eq 'displayname') {
-        my $value = $this->{workflow}->getRow($this->{state}->{name}, "displayname$language") || $this->{workflow}->getRow($this->{state}->{name}, "displayname") || $this->{state}->{name};
-        return $value if defined $value;
+        return $this->{workflow}->getDisplayname($this->{state}->{name}, $languageOverwrite);
     }
 
     return $this->{state}->{$attributes};
@@ -455,9 +453,9 @@ sub isRemovingComments {
 }
 
 sub getTransitionAttributesArray {
-    my ( $this ) = @_;
+    my ( $this, $displayname ) = @_;
 
-    return $this->{workflow}->getTransitionAttributesArray($this);
+    return $this->{workflow}->getTransitionAttributesArray($this, 0, $displayname );
 }
 
 sub getTransitionAttributes {
