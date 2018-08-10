@@ -294,6 +294,12 @@ sub hasAttribute {
     return ( $attr && $attr =~ /(?:\W|^)$attribute(?:\W|$)/ );
 }
 
+sub getUnsatisfiedMandatoryFields {
+    my ($topic) = @_;
+
+    return map{ $_ =~ s/&#(\d+);/chr($1)/ger } map{ $_->{mapped_title} } Foswiki::Plugins::ModacHelpersPlugin::getNonSatisfiedFormFields($topic->{meta});
+}
+
 sub getTransitionAttributesArray {
     my ( $this, $topic, $noChecks, $displaynames ) = @_;
 
@@ -303,7 +309,7 @@ sub getTransitionAttributesArray {
 
     my @transitions = ();
 
-    my @missingMandatory = map{ $_->{mapped_title} } Foswiki::Plugins::ModacHelpersPlugin::getNonSatisfiedFormFields($topic->{meta});
+    my @missingMandatory = getUnsatisfiedMandatoryFields($topic);
     my $mandatorySatisfied = 0 == scalar @missingMandatory;
 
     foreach my $transition ( @{ $this->getTransitions($state) } ) {

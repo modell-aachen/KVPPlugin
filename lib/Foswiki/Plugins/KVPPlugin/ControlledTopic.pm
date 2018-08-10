@@ -463,7 +463,7 @@ sub getTransitionAttributes {
 
     my $currentState = $this->{state}{name};
     my ($allow, $suggest, $comment) = $this->{workflow}->getTransitionAttributes($currentState);
-    my @unsatisfiedMandatoryFields = map{ $_->{mapped_title} } Foswiki::Plugins::ModacHelpersPlugin::getNonSatisfiedFormFields($this->{meta});
+    my @unsatisfiedMandatoryFields = Foswiki::Plugins::KVPPlugin::Workflow::getUnsatisfiedMandatoryFields($this);
     my $unsatisfiedMandatory = ',';
     my $alreadyProposed = ',';
 
