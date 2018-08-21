@@ -607,8 +607,8 @@ sub _WORKFLOWTRANSITIONVUE {
         web => $web,
         topic => $topic,
         current_state => $controlledTopic->getState(),
-        current_state_display => $controlledTopic->getWorkflowMeta('displayname'),
-        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message'}, $topic, $web) ),
+        current_state_display => $controlledTopic->getWorkflowMeta('displayname', undef, 1),
+        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message', noEntityEscape => 1}, $topic, $web) ),
         actions => $transitions,
         origin => _getOrigin($topic),
     };

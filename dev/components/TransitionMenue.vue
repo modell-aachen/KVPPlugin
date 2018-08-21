@@ -8,9 +8,9 @@
                 <div class="cell xxlarge-4 large-6 medium-6">
                     <div class="grid-x">
                         <div class="cell small-4 kvp-label">{{ $t('current_state') }}</div>
-                        <div
-                            class="cell small-8"
-                            v-html="message"/>
+                        <div class="cell small-8">
+                            {{ message }}
+                        </div>
                     </div>
                     <div
                         v-if="showCompare"
@@ -74,7 +74,7 @@
                                             v-for="(item, index) in actions.slice(1)"
                                             :key="index"
                                             @click="doTransition(index + 1)">
-                                            <a v-html="item.label"/>
+                                            <a>{{ item.label }}</a>
                                         </li>
                                     </template>
                                 </splitbutton>
@@ -186,7 +186,8 @@ export default {
             };
             if(action.warning) {
                 this.$showAlert({
-                    title: action.warning,
+                    title: this.$t('note'),
+                    text: action.warning,
                     type: 'confirm',
                     confirmButtonText: this.$t('ok'),
                     cancelButtonText: this.$t('cancel'),
