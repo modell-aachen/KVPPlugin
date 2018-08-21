@@ -297,7 +297,7 @@ sub hasAttribute {
 sub getUnsatisfiedMandatoryFields {
     my ($topic) = @_;
 
-    return map{ $_ =~ s/&#(\d+);/chr($1)/ger } map{ $_->{mapped_title} } Foswiki::Plugins::ModacHelpersPlugin::getNonSatisfiedFormFields($topic->{meta});
+    return map{ unescapeEntities($_->{mapped_title}) } Foswiki::Plugins::ModacHelpersPlugin::getNonSatisfiedFormFields($topic->{meta});
 }
 
 sub getTransitionAttributesArray {
@@ -550,17 +550,18 @@ sub getName {
 
 # Get to contents of the given row (in workflow states) and topic for the current state.
 sub getRow {
-    my ( $this, $state, $row ) = @_;
+    my ( $this, $state, $row, $noEntityEscape ) = @_;
 
     unless( $this->{states}{$state} ) {
         Foswiki::Func::writeWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
         return '';
     }
-    return $this->{states}->{$state}->{$row};
+    return $this->{states}->{$state}->{$row} unless $noEntityEscape;
+    return unescapeEntities($this->{states}->{$state}->{$row});
 }
 
 sub getDisplayname {
-    my ( $this, $state, $languageOverwrite ) = @_;
+    my ( $this, $state, $languageOverwrite, $noEntityEscape ) = @_;
 
     unless( $this->{states}{$state} ) {
         Foswiki::Func::writeWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
@@ -573,6 +574,8 @@ sub getDisplayname {
         $displayname = $this->{states}->{$state}->{"displayname"} || $state;
         $displayname = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($Foswiki::Plugins::SESSION, {string => $displayname, literal => 1});
     }
+
+    return unescapeEntities($displayname) if $noEntityEscape;
     return escapeNonAlnumChars($displayname);
 }
 
@@ -583,6 +586,10 @@ sub escapeNonAlnumChars {
     $string =~ s/&(?!#\d+;)/&#38;/g;
     $string =~ s/([\x01-\x1f"\$%'*+,\-<=>\x5b-\x5f{|}])/'&#' . ord($1) . ';'/ge;
     return $string;
+}
+
+sub unescapeEntities {
+    return $_[0] =~ s/&#(\d+);/chr($1)/ger;
 }
 
 # finds out if the current user is allowed to do something.

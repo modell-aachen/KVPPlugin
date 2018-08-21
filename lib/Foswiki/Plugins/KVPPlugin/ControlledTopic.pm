@@ -108,7 +108,7 @@ sub getAttributes {
 }
 
 sub getWorkflowMeta {
-    my ( $this, $attributes, $languageOverwrite ) = @_;
+    my ( $this, $attributes, $languageOverwrite, $noEntityEscape ) = @_;
 
     # admittingly STATECHANGE and displayname would be more suitable under getWorkflowRow,
     # however they are usually called as if they were metadata.
@@ -123,7 +123,7 @@ sub getWorkflowMeta {
     }
 
     if($attributes eq 'displayname') {
-        return $this->{workflow}->getDisplayname($this->{state}->{name}, $languageOverwrite);
+        return $this->{workflow}->getDisplayname($this->{state}->{name}, $languageOverwrite, $noEntityEscape);
     }
 
     return $this->{state}->{$attributes};
@@ -538,8 +538,8 @@ sub canFork {
 
 # Get the contents of the given row for the current topic in it's current state
 sub getRow {
-    my ($this, $row) = @_;
-    return $this->{workflow}->getRow($this->getState(), $row);
+    my ($this, $row, $noEntityEscape) = @_;
+    return $this->{workflow}->getRow($this->getState(), $row, $noEntityEscape);
 }
 
 # Get task attached to topic
@@ -683,7 +683,7 @@ sub changeState {
         $notification = {
             template => 'mailworkflowtransition',
             options => { IncludeCurrentUser => 0, AllowMailsWithoutUser => 1, webtopic => "$this->{web}.$this->{topic}" },
-            settings => { TARGET_STATE => $this->getState(), TARGET_STATE_DISPLAY => $this->getWorkflowMeta('displayname', $language), EMAILTO => $notify, LANGUAGE => $language },
+            settings => { TARGET_STATE => $this->getState(), TARGET_STATE_DISPLAY => $this->getWorkflowMeta('displayname', $language, 1), EMAILTO => $notify, LANGUAGE => $language },
             extra => { action => $action, ncolumn => $notify },
         };
     } else {

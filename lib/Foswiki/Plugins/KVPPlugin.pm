@@ -826,7 +826,7 @@ sub _GETWORKFLOWROW {
     my $aweb = $attributes->{web} || $web;
 
     my $controlledTopic = _initTOPIC ($aweb, $atopic, $rev );
-    return $controlledTopic->getRow( $param ) if $controlledTopic;
+    return $controlledTopic->getRow( $param, $attributes->{noEntityEscape} ) if $controlledTopic;
 
     # Not cotrolled get row from values in configure
     my $configure = $Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow};
@@ -2337,7 +2337,11 @@ sub _getIndexHash {
         if ( $fields ) {
             foreach my $field (keys %$fields) {
                 next if $field =~ m#^(?:approved$|allow|state$)#; # skip those already indexed
-                $indexFields{ "workflowstate_${field}_s" } = $controlledTopic->expandMacros($controlledTopic->getRow($field));
+                if($field =~ m#^displayname(\w*)$#) {
+                    $indexFields{ "workflowstate_${field}_s" } = $controlledTopic->getWorkflowMeta('displayname', $1, 1);
+                } else {
+                    $indexFields{ "workflowstate_${field}_s" } = $controlledTopic->expandMacros($controlledTopic->getRow($field, 1));
+                }
             }
         }
     }
