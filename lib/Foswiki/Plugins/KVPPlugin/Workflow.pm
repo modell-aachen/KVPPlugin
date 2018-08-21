@@ -347,8 +347,8 @@ sub getTransitionAttributesArray {
         };
 
         if($displaynames) {
-            $attributes->{label} = _getDisplayName($transition);
-            my $warning = $transition->{warning};
+            $attributes->{label} = unescapeEntities(_getDisplayName($transition));
+            my $warning = unescapeEntities($transition->{warning});
             if($warning) {
                 $attributes->{warning} = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($Foswiki::Plugins::SESSION, {string => $warning, literal => 1});
             }
