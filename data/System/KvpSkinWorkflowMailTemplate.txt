@@ -54,4 +54,4 @@ $percentWORKFLOWMETA{Remark}$percent"}%%TMPL:END%
 %TMPL:DEF{"TOPIC"}%%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN{%TOPIC%}%"}%%TMPL:END%
 
 %{"Provides the topictitle of the transitioned topic:"}%
-%TMPL:DEF{"TOPICTITLE"}%%STARTSUBST{pattern="&" format="&&"}%%TOPICTITLE{"%TMPL:P{"TOPIC"}%"}%%STOPSUBST%%TMPL:END%
+%TMPL:DEF{"TOPICTITLE"}%%STARTSUBST{pattern="\"" format="\\""}%%STARTSUBST{pattern="&" format="&&"}%%GETTOPICTITLE{"%TMPL:P{"TOPIC"}%"}%%STOPSUBST%%STOPSUBST%%TMPL:END%

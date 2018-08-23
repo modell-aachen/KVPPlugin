@@ -683,7 +683,7 @@ sub changeState {
         $notification = {
             template => 'mailworkflowtransition',
             options => { IncludeCurrentUser => 0, AllowMailsWithoutUser => 1, webtopic => "$this->{web}.$this->{topic}" },
-            settings => { TARGET_STATE => $this->getState(), TARGET_STATE_DISPLAY => $this->getWorkflowMeta('displayname', $language, 1), EMAILTO => $notify, LANGUAGE => $language },
+            settings => { TARGET_STATE => $this->getState(), TARGET_STATE_DISPLAY => $this->getWorkflowMeta('displayname', $language, 1) =~ s#%#<nop>%<nop>#gr, EMAILTO => $notify, LANGUAGE => $language },
             extra => { action => $action, ncolumn => $notify },
         };
     } else {
