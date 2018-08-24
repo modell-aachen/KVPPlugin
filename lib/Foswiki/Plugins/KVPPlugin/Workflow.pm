@@ -552,12 +552,14 @@ sub getName {
 sub getRow {
     my ( $this, $state, $row, $noEntityEscape ) = @_;
 
-    unless( $this->{states}{$state} ) {
+    my $stateDefinition = $this->{states}->{$state};
+    unless( $stateDefinition ) {
         Foswiki::Func::writeWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
         return '';
     }
-    return $this->{states}->{$state}->{$row} unless $noEntityEscape;
-    return unescapeEntities($this->{states}->{$state}->{$row});
+    my $value = $stateDefinition->{$row};
+    $value = unescapeEntities($value) unless $noEntityEscape;
+    return $value;
 }
 
 sub getDisplayname {
@@ -589,7 +591,10 @@ sub escapeNonAlnumChars {
 }
 
 sub unescapeEntities {
-    return $_[0] =~ s/&#(\d+);/chr($1)/ger;
+    my ($string) = @_;
+
+    $string =~ s/&#(\d+);/chr($1)/ge if $string;
+    return $string;
 }
 
 # finds out if the current user is allowed to do something.
