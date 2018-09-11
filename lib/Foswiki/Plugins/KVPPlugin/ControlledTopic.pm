@@ -334,6 +334,7 @@ sub setState {
     my ( $this, $state, $version, $remark ) = @_;
     my $oldState = $this->{state}->{name};
     $this->{state}->{name} = $state;
+    $this->{state}->{previousState} = $oldState;
 
     $this->{state}->{"LASTVERSION_$state"} = $version;
     $this->{state}->{"LASTPROCESSOR_$state"} = Foswiki::Func::getCanonicalUserID();
