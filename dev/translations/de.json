@@ -10,6 +10,9 @@
     "ok": "Ok",
     "cancel": "Abbrechen",
     "note": "Hinweis",
+    "history": "Historie",
+    "action_text": "von <b>{{0}}</b> zu <b>{{1}}</b>",
+    "load_older_entries": "Ältere Änderungen anzeigen",
     "dummy": "dummy"
 }
 

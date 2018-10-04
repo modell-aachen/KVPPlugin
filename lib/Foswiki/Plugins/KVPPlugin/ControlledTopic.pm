@@ -25,6 +25,7 @@ use strict;
 
 use Foswiki (); # for regexes
 use Foswiki::Func ();
+use POSIX qw(strftime);
 
 # Constructor
 sub new {
@@ -107,6 +108,51 @@ sub getAttributes {
     return $this->expandMacros($attribs);
 }
 
+sub changedStateFromLastVersion {
+    my ($this) = @_;
+
+    my ( undef, undef, $version ) = $this->{meta}->getRevisionInfo();
+    my $state = $this->getWorkflowMeta('name');
+    my $lastTransitionVersion = $this->getWorkflowMeta("LASTVERSION_$state");
+    return ($version-1) eq $lastTransitionVersion;
+}
+
+sub getTransitionInfos {
+    my ($this) = @_;
+
+    my %transition;
+    my $action = $this->{state}->{"LASTACTION"};
+    my $previousState = $this->{state}->{previousState};
+    my $previousStateDisplayName = $this->{workflow}->getDisplayname($previousState, undef, 1),
+    my $leavingStateUserId = $this->{state}->{"LEAVING_$previousState"};
+    my $stateDisplayName = $this->getWorkflowMeta('displayname', undef, 1);
+    my $remark = $this->{state}->{Remark};
+    my $icon = $this->{workflow}->getTransitionCell($previousState,$action,"icon");
+    my $attributes = $this->{workflow}->getTransitionCell($previousState,$action,"attribute");
+    my $isCreation = $attributes =~ m/\bNEW\b/ ? 1 : 0;
+    my $isFork = $attributes =~ m/\bFORK\b/ ? 1 : 0;
+    my $lang = $Foswiki::Plugins::SESSION->i18n()->language();
+    if($lang ne 'de') {
+        $lang = 'en';
+    }
+    my $transitionText = $this->{workflow}->getTransitionCell($previousState,$action,"historytext$lang");
+    my ( $revDate, $revUser, $version ) = $this->{meta}->getRevisionInfo();
+    my $leavingStateUser = Foswiki::Func::expandCommonVariables("%RENDERUSER{\"$leavingStateUserId\" format=\"\$displayName\"}%");
+
+    %transition = (
+        state => $stateDisplayName,
+        previousState => $previousStateDisplayName,
+        leavingStateUser => $leavingStateUser,
+        remark => $remark,
+        time => strftime("%a, %d %b %Y %H:%M:%S %z", localtime($revDate)),
+        icon => $icon,
+        description => $transitionText,
+        isCreation => $isCreation,
+        isFork => $isFork,
+        version => $version,
+    );
+    return \%transition;
+}
 sub getWorkflowMeta {
     my ( $this, $attributes, $languageOverwrite, $noEntityEscape ) = @_;
 
@@ -331,7 +377,7 @@ sub setRev {
 # Set the current state in the topic
 # Alex: Bearbeiter hinzu
 sub setState {
-    my ( $this, $state, $version, $remark ) = @_;
+    my ( $this, $state, $version, $remark, $action ) = @_;
     my $oldState = $this->{state}->{name};
     $this->{state}->{name} = $state;
     $this->{state}->{previousState} = $oldState;
@@ -342,6 +388,7 @@ sub setState {
     $this->{state}->{"LASTTIME_$state"} =
       Foswiki::Time::formatTime( time(), '$day.$mo.$year', 'servertime' );
     $this->{state}->{"LASTTIME_${state}_DT"} = time();
+    $this->{state}->{"LASTACTION"} = $action || '';
 
     $this->{state}->{Remark} = $remark || '';
 
@@ -603,7 +650,7 @@ sub changeState {
         $this->{state}->{"TASK_DUE"} = $duedate;
     }
 
-    $this->setState($state, $version, $remark);
+    $this->setState($state, $version, $remark, $action);
 
     my $fmt = Foswiki::Func::getPreferencesValue("WORKFLOWHISTORYFORMAT")
       || '<br />$state -- $date';

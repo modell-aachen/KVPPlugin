@@ -1,4 +1,5 @@
 *.gz
+*.swp
 pub/System/KVPPlugin/changewarning.js
 pub/System/KVPPlugin/transitions.js
 pub/System/KVPPlugin/vue-transitions.js

@@ -1,12 +1,12 @@
-import TransitionMenue from '../dev/components/TransitionMenue.vue';
+import TransitionMenu from '../dev/components/TransitionMenu.vue';
 import TestCase from 'VueJSPlugin/unit-test-dist/frontend-unit-test-library';
 
 
-describe("The TransitionMenue component", () => {
+describe("The TransitionMenu component", () => {
     let wrapper;
     let spy = jasmine.createSpy('callback');
     beforeEach(() => {
-        wrapper = TestCase.mount(TransitionMenue, {
+        wrapper = TestCase.mount(TransitionMenu, {
             propsData: {
                 "web": "DummyWeb",
                 "topic": "DummyTopic",
