@@ -157,9 +157,9 @@ export default {
             isTransitionsListLoading: false,
             remark: '',
             transitions: [],
-            page: 0,
             pageSize: 5,
             hasMoreTransitionEntries: false,
+            lastVersion: undefined,
             icons: {
                 'BACK': 'fa-arrow-circle-left ma-failure-color',
                 'ACCEPTED':'fa-check-circle ma-success-color',
@@ -189,6 +189,9 @@ export default {
 
         },
         displayDataList() {
+            if(! this.transitions) {
+                return;
+            }
             const displayList = this.transitions.map((item) => {
                 if(!item.icon) {
                     item.icon = 'DEFAULT';
@@ -216,7 +219,6 @@ export default {
     },
     methods: {
         loadMore() {
-            this.page = this.page +1;
             this.getTransitionData();
         },
         decodeNonAlnumFilter(string) {
@@ -229,26 +231,12 @@ export default {
         },
         async getTransitionData() {
             this.isTransitionsListLoading = true;
-            let lastVersion;
-            if(this.transitions.length > 0) {
-                lastVersion = this.transitions[this.transitions.length -1].version;
-            }
-            const ajaxReqObj = {
-                dataType: 'json',
-                traditional: true,
-                type: "GET",
-                data: {
-                    topic: Vue.foswiki.getPreference("WEB")+"."+Vue.foswiki.getPreference("TOPIC"),
-                    startFromVersion: lastVersion,
-                    size: this.pageSize,
-                },
-                url: Vue.foswiki.getScriptUrl("rest", "KVPPlugin", "history"),
-            };
             try{
-                let result = await $.ajax(ajaxReqObj);
+                let result = await this.getRemoteData();
                 this.transitions = this.transitions.concat(result.transitions);
                 this.hasMoreTransitionEntries = result.hasMoreEntries;
                 this.isTransitionsListLoading = false;
+                this.lastVersion = this.transitions[this.transitions.length -1].version;
             } catch(error) {
                 this.$showAlert({
                     type: 'error',
@@ -259,6 +247,20 @@ export default {
                 window.console.log(error);
                 this.isTransitionsListLoading = false;
             }
+        },
+        async getRemoteData() {
+            const ajaxReqObj = {
+                dataType: 'json',
+                traditional: true,
+                type: "GET",
+                data: {
+                    topic: Vue.foswiki.getPreference("WEB")+"."+Vue.foswiki.getPreference("TOPIC"),
+                    startFromVersion: this.lastVersion,
+                    size: this.pageSize,
+                },
+                url: Vue.foswiki.getScriptUrl("rest", "KVPPlugin", "history"),
+            };
+            return await $.ajax(ajaxReqObj);
         },
         doTransition(actionNr) {
             let action = this.actions[actionNr];
