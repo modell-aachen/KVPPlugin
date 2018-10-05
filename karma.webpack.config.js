@@ -6,7 +6,8 @@ module.exports = merge(baseConfig, {
   devtool: "inline-source-map",
   plugins: [
     new webpack.ProvidePlugin({
-      moment: "moment"
+      $: "jquery",
+      moment: "moment",
     })
   ]
 });
