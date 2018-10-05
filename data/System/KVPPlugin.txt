@@ -61,12 +61,12 @@ Diese Tabelle muss unterhalb des State Table stehen, sie hat folgenden Aufbau:
 </pre>
 %TWISTY{showimgleft="%ICONURLPATH{"toggleopen"}%" hideimgleft="%ICONURLPATH{"toggleclose"}%" link="Als Foswiki-Tabelle anzeigen" start="hide"}%
 %STARTSECTION{"BeispielTransitions" type="section"}%
-| *State* | *Action* | *Next State* | *Allowed* | *Action de* | *Attribute* |
-| Ohne Freigabe | Create | Neu angelegt | SchreibenGroup | Erstellen | NEW |
-| Ohne Freigabe | Approve | Freigegeben | Mail.PeterMustermann | Freigeben | ALLOWDELETECOMMENTS |
-| Freigegeben | Discuss | Diskussion | LesenGroup | Diskutieren | FORK |
-| Diskussion | Approve | Freigegeben | Main.PeterMustermann | Freigeben | SUGGESTDELETECOMMENTS |
-| Diskussion | Discard | Ohne Freigabe | LesenGroup | Verwerfen | DISCARD, SUGGESTDELETECOMMENTS |
+| *State* | *Action* | *Next State* | *Allowed* | *Action de* | *Attribute* | *HistoryTextEN* | *HistoryTextDE* | Icon |
+| Ohne Freigabe | Create | Neu angelegt | SchreibenGroup | Erstellen | NEW | created the entry | hat das Element angelegt | ADDED |
+| Ohne Freigabe | Approve | Freigegeben | Mail.PeterMustermann | Freigeben | ALLOWDELETECOMMENTS | has approved a release | hat eine Freigabe erteilt | ACCEPTED |
+| Freigegeben | Discuss | Diskussion | LesenGroup | Diskutieren | FORK | started a discussion | hat eine Diskussion gestartet | ADDED |
+| Diskussion | Approve | Freigegeben | Main.PeterMustermann | Freigeben | SUGGESTDELETECOMMENTS | has approved a release | hat eine Freigabe erteilt | ACCEPTED |
+| Diskussion | Discard | Ohne Freigabe | LesenGroup | Verwerfen | DISCARD, SUGGESTDELETECOMMENTS | discarded the discussion | hat die Diskussion verworfen | BACK |
 %ENDSECTION{"BeispielTransitions"}%
 %ENDTWISTY%
    State: In diesem Status muss der Artikel sein, damit die Aktion durchgef&uuml;hrt werden kann
@@ -74,6 +74,10 @@ Diese Tabelle muss unterhalb des State Table stehen, sie hat folgenden Aufbau:
    Next&nbsp;State: In diesen Status wird der Artikel durch die Aktion &uuml;berf&uuml;hrt.
    Allowed: Liste mit Usern/Gruppen, welche diese Aktion durchf&uuml;hren k&ouml;nnen
    Attribute: Liste mit [[%TOPIC%#Attribute][Attributen]] f&uuml;r diese Aktion.
+   HistoryText{EN|DE}: (Optional) String, der im =Zeitstrahl= angezeigt wird. Es wird der Benutzer der die Transition ausgelöst hat mit dem Text angezeigt.
+   Icon: (Optional) Gibt das Icon an, welches im =Zeitstrahl= für die Transition verwendet werden soll. Möglichkeiten: =ADDED=, =ACCEPTED=, =REQUESTED=, =BACK=, =DEFAULT=
+
+%X%<a name="HinweisStates">Hinweis:</a> F&uuml;r den =Zeitstrahl= muss =USE_VUE_TRANSITIONS= aktiviert sein.
 
 ---++++ Attribute
 Jede Aktion kann mehrere Attribute haben.
