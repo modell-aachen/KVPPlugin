@@ -13,5 +13,8 @@
     "history": "History",
     "action_text": "from <b>{{0}}</b> to <b>{{1}}</b>",
     "load_older_entries": "Show older changes",
+    "error": "Error",
+    "loading_error": "The data could not be loaded",
+    "ok": "Ok",
     "dummy": "dummy"
 }

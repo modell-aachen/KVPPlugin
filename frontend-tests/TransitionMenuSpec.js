@@ -1,7 +1,6 @@
 import TransitionMenu from '../dev/components/TransitionMenu.vue';
 import TestCase from 'VueJSPlugin/unit-test-dist/frontend-unit-test-library';
 
-
 describe("The TransitionMenu component", () => {
     let wrapper;
     let spy = jasmine.createSpy('callback');
@@ -13,6 +12,7 @@ describe("The TransitionMenu component", () => {
                 "origin": "DummyTopic",
                 "current_state": "DummyState",
                 "current_state_display": "Dummy state",
+                "message": "State",
                 "submit_callback": spy,
                 "actions": [
                     {

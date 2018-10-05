@@ -125,31 +125,26 @@ export default {
         'current_state': {
             required: true,
             type: String,
-            default: 'unknown',
         },
         'current_state_display': {
             required: true,
             type: String,
-            default: '(unknown state)',
         },
         message: {
-            reequired: true,
+            required: true,
             type: String,
-            default: 'unknown',
         },
         actions: {
             required: true,
             type: Array,
         },
         validation_key: {
-            required: false,
             type: String,
             default: undefined,
         },
         submit_callback: {
             required: true,
             type: Function,
-            default: () => window.console.log('internal error: missing submit_callback'),
         },
     },
     data: function() {
@@ -166,11 +161,11 @@ export default {
             pageSize: 5,
             hasMoreTransitionEntries: false,
             icons: {
-                'BACK': 'fal fa-arrow-circle-left ma-failure-color',
-                'ACCEPTED':'fal fa-check-circle ma-success-color',
-                'REQUESTED': 'fal fa-question-circle ma-warning-color',
-                'ADDED': 'fal fa-plus-circle ma-success-color',
-                'DEFAULT': 'fal fa-circle',
+                'BACK': 'fa-arrow-circle-left ma-failure-color',
+                'ACCEPTED':'fa-check-circle ma-success-color',
+                'REQUESTED': 'fa-question-circle ma-warning-color',
+                'ADDED': 'fa-plus-circle ma-success-color',
+                'DEFAULT': 'fa-circle',
             }
         };
     },
@@ -225,6 +220,9 @@ export default {
             this.getTransitionData();
         },
         decodeNonAlnumFilter(string) {
+            if(! string) {
+                return string;
+            }
             return string.replace(/&#(\d+);/g, function(match, charCode) {
                 return String.fromCharCode(charCode);
             });
@@ -252,12 +250,11 @@ export default {
                 this.hasMoreTransitionEntries = result.hasMoreEntries;
                 this.isTransitionsListLoading = false;
             } catch(error) {
-                //TODO: Texte eintragen
                 this.$showAlert({
                     type: 'error',
-                    title: this.$t('error_message'),
-                    text: this.$t(''),
-                    confirmButtonText: this.$t('')
+                    title: this.$t('error'),
+                    text: this.$t('loading_error'),
+                    confirmButtonText: this.$t('ok')
                 });
                 window.console.log(error);
                 this.isTransitionsListLoading = false;
