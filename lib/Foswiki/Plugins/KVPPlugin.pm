@@ -59,6 +59,9 @@ sub initPlugin {
     Foswiki::Func::registerRESTHandler(
         'link', \&_restLink,
         authenticate => 0, http_allow => 'GET', validate => 0 );
+    Foswiki::Func::registerRESTHandler(
+        'history', \&_restHistory,
+        authenticate => 1, http_allow => 'GET', validate => 0 );
 
     Foswiki::Func::registerTagHandler(
         'WORKFLOWSTATE', \&_WORKFLOWSTATE );
@@ -608,7 +611,7 @@ sub _WORKFLOWTRANSITIONVUE {
         topic => $topic,
         current_state => $controlledTopic->getState(),
         current_state_display => $controlledTopic->getWorkflowMeta('displayname', undef, 1),
-        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message', noEntityEscape => 1}, $topic, $web) ),
+        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message', noEntityEscape => 0}, $topic, $web) ),
         actions => $transitions,
         origin => _getOrigin($topic),
     };
@@ -895,7 +898,7 @@ sub _changeState {
             action => $query->param('WORKFLOWACTION'),
             state => $query->param('WORKFLOWSTATE'),
             mails => $mails,
-            message => $query->param('message'),
+            remark => $query->param('message'),
             removeComments => $query->param('removeComments') || '0',
             breakLock => $query->param('breaklock'),
             actionDisplayname => $query->param('action_displayname'),
@@ -1445,6 +1448,60 @@ sub _popParams {
         $value = '' unless defined $value;
         Foswiki::Func::setPreferencesValue($param, $value);
     }
+}
+
+sub _restHistory {
+    my ($session, $plugin, $verb, $response) = @_;
+    # Update the history in the template topic and the new topic
+    my $result = {};
+    my $query = Foswiki::Func::getCgiQuery();
+    my $webTopic = $query->param('topic');
+    my $startFromVersion = $query->param('startFromVersion');
+    my $pageSize = $query->param('size') || 5;
+    my $restartWithFork = $query->param('restartWithFork') || 1;
+    my ($web, $topic) = Foswiki::Func::normalizeWebTopicName( undef, $webTopic );
+    my @transitions;
+    my $hasMoreEntries = 1;
+
+    if ( Foswiki::Func::topicExists( $web, $topic ) ) {
+        my $controlledTopic = _initTOPIC( $web, $topic );
+        unless($controlledTopic) {
+            $response->status(400);
+            $result = {"message" => "Topic not under any workflow"};
+        }
+        my ( undef, undef, $lastVersion ) = $controlledTopic->{meta}->getRevisionInfo();
+        my $start;
+        if($startFromVersion) {
+            $start = $startFromVersion -1;
+        } else {
+            $start = $lastVersion;
+        }
+        foreach my $version (reverse 1 .. $start) {
+            $controlledTopic = _initTOPIC( $web, $topic, $version );
+            if($controlledTopic->changedStateFromLastVersion()) {
+                my $transition = $controlledTopic->getTransitionInfos();
+                push @transitions, $transition;
+            }
+            if($restartWithFork && @transitions[-1] && @transitions[-1]->{isFork}){
+                $hasMoreEntries = 0;
+                last;
+            }
+            if($version <= 1) {
+                $hasMoreEntries = 0;
+            }
+            if(scalar @transitions >= $pageSize) {
+                last;
+            }
+        }
+        $result = {
+            transitions => \@transitions,
+            hasMoreEntries => $hasMoreEntries,
+        };
+    } else {
+        $response->status(400);
+        $result = {"message" => "Topic does not exists: $webTopic"};
+    }
+    return to_json($result);
 }
 
 sub _restFork {

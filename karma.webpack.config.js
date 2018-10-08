@@ -7,7 +7,7 @@ module.exports = merge(baseConfig, {
   plugins: [
     new webpack.ProvidePlugin({
       $: "jquery",
-      moment: "moment"
+      moment: "moment",
     })
   ]
 });

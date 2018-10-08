@@ -1,4 +1,4 @@
-import TransitionMenue from '../components/TransitionMenue.vue';
+import TransitionMenu from '../components/TransitionMenu.vue';
 
 import translationsEn from '../translations/en.json';
 import translationsDe from '../translations/de.json';
@@ -7,14 +7,14 @@ jQuery(function($) {
     Vue.addTranslation('en', 'KVPPlugin', translationsEn);
     Vue.addTranslation('de', 'KVPPlugin', translationsDe);
 
-    Vue.component(TransitionMenue.name, TransitionMenue);
+    Vue.component(TransitionMenu.name, TransitionMenu);
 
     /**
      * This callback will create a form with the action data and submit it.
      * This is done outside of vue, so StrikeOne will not mess with vue's
      * stuff.
      */
-    let submitAction = function({validation_key, web, topic, action, currentState, actionDisplayname, currentStateDisplayname}) {
+    let submitAction = function({validation_key, web, topic, action, currentState, actionDisplayname, currentStateDisplayname, message}) {
         let $form = $(`
             <form
                 ref="transitionForm"
@@ -35,6 +35,10 @@ jQuery(function($) {
                 >
                 <input
                     type="hidden"
+                    name="message"
+                >
+                <input
+                    type="hidden"
                     name="action_displayname"
                 >
                 <input
@@ -46,6 +50,7 @@ jQuery(function($) {
         $form.find('[name="WORKFLOWACTION"]').val(action);
         $form.find('[name="WORKFLOWSTATE"]').val(currentState);
         $form.find('[name="action_displayname"]').val(actionDisplayname);
+        $form.find('[name="message"]').val(message);
         $form.find('[name="current_state_displayname"]').val(currentStateDisplayname);
         $form.find('[name="topic"]').val(web + '.' + topic);
         $('body').append($form);
@@ -70,18 +75,18 @@ jQuery(function($) {
         data['validation_key'] = $transitionDiv.find('[name="validation_key"]').val();
         let keys = Object.keys(data).filter(key => /^[a-z_-]+$/.test(key)); // do not allow v-on:...
         let props = Array.map(keys, key => `:${key}="${key}"`);
-        let $transitionMenue = $(`<transition-menue ${props.join(' ')}></transition-menue>`);
+        let $transitionMenu = $(`<transition-menu ${props.join(' ')}></transition-menu>`);
         //copy attrs for vue-client tokens
         let attributes = $transitionDiv.prop("attributes");
         $.each(attributes, function() {
             if( this.name !== 'class') {
-                $transitionMenue.attr(this.name, this.value);
+                $transitionMenu.attr(this.name, this.value);
             }
         });
 
         let id = 'kvp' + foswiki.getUniqueID();
-        $transitionMenue.attr('id', id);
-        $transitionDiv.replaceWith($transitionMenue);
+        $transitionMenu.attr('id', id);
+        $transitionDiv.replaceWith($transitionMenu);
 
         Vue.instantiateEach( '#' + id, { data } );
     });
