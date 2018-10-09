@@ -4,7 +4,7 @@
 %TMPL:DEF{"From"}%%TMPL:P{"ModacNoReply"}%%TMPL:END%
 
 %{"Set subject:"}%
-%TMPL:DEF{"Subject"}%%MAKETEXT{"[_1] has a new state: [_2]" arg1="%TMPL:P{"TOPICTITLE"}%" arg2="%TARGET_STATE_DISPLAY%"}%%TMPL:END%
+%TMPL:DEF{"Subject"}%%MAKETEXT{"[_1] has a new state: [_2]" arg1="%TMPL:P{"TOPICTITLE"}%" arg2="%ENCODE{"%TARGET_STATE_DISPLAY%" type="quote"}%"}%%TMPL:END%
 
 %{"Body of the mail:"}%
 %TMPL:DEF{"mailContents"}%
@@ -39,7 +39,7 @@
 $percentWORKFLOWMETA{Remark}$percent"}%%TMPL:END%
 
 %{"Provides the state-message"}%
-%TMPL:DEF{"Message"}%%MAKETEXT{%GETWORKFLOWROW{message}%}%%TMPL:END%
+%TMPL:DEF{"Message"}%%MAKETEXT{%GETWORKFLOWROW{"message" noEntityEscape="1"}%}%%TMPL:END%
 
 %{"Set Content-Type (to ether text/plain or text/html)"}%
 %TMPL:DEF{"Type"}%text/plain%TMPL:END%
@@ -54,4 +54,4 @@ $percentWORKFLOWMETA{Remark}$percent"}%%TMPL:END%
 %TMPL:DEF{"TOPIC"}%%IF{"$'GETWORKFLOWROW{approved}' = 1" else="%TOPIC%" then="%WORKFLOWORIGIN{%TOPIC%}%"}%%TMPL:END%
 
 %{"Provides the topictitle of the transitioned topic:"}%
-%TMPL:DEF{"TOPICTITLE"}%%STARTSUBST{pattern="&" format="&&"}%%TOPICTITLE{"%TMPL:P{"TOPIC"}%"}%%STOPSUBST%%TMPL:END%
+%TMPL:DEF{"TOPICTITLE"}%%STARTSUBST{pattern="\"" format="\\""}%%STARTSUBST{pattern="&" format="&&"}%%GETTOPICTITLE{"%TMPL:P{"TOPIC"}%"}%%STOPSUBST%%STOPSUBST%%TMPL:END%

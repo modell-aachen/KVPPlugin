@@ -1,0 +1,21 @@
+{
+    "cip_header": "Dokumentenlenkung",
+    "compare": "Versionsvergleich:",
+    "compare_approved": "Vergleich mit freigegebenem Stand",
+    "current_state": "Status:",
+    "missing_mandatory": "Bitte füllen Sie die folgenden Pflichtfelder aus:",
+    "more": "mehr",
+    "next_step": "Nächster Schritt:",
+    "remark": "Bemerkungen:",
+    "ok": "Ok",
+    "cancel": "Abbrechen",
+    "note": "Hinweis",
+    "history": "Historie",
+    "action_text": "von <b>{{0}}</b> zu <b>{{1}}</b>",
+    "load_older_entries": "Ältere Änderungen anzeigen",
+    "error": "Fehler",
+    "loading_error": "Daten konnten nicht geladen werden",
+    "ok": "Ok",
+    "dummy": "dummy"
+}
+
