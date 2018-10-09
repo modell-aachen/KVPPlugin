@@ -162,6 +162,7 @@ export default {
             lastVersion: undefined,
             icons: {
                 'BACK': 'fa-arrow-circle-left ma-failure-color',
+                'DISCARDED': 'fa-times-circle-left ma-failure-color',
                 'ACCEPTED':'fa-check-circle ma-success-color',
                 'REQUESTED': 'fa-question-circle ma-warning-color',
                 'ADDED': 'fa-plus-circle ma-success-color',
