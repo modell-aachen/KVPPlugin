@@ -610,8 +610,8 @@ sub _WORKFLOWTRANSITIONVUE {
         web => $web,
         topic => $topic,
         current_state => $controlledTopic->getState(),
-        current_state_display => $controlledTopic->getWorkflowMeta('displayname', undef, 1),
-        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message', noEntityEscape => 0}, $topic, $web) ),
+        current_state_display => $controlledTopic->getWorkflowMeta('displayname', undef, 0),
+        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message', unescapeEntities => 1}, $topic, $web) ),
         actions => $transitions,
         origin => _getOrigin($topic),
     };
@@ -829,7 +829,7 @@ sub _GETWORKFLOWROW {
     my $aweb = $attributes->{web} || $web;
 
     my $controlledTopic = _initTOPIC ($aweb, $atopic, $rev );
-    return $controlledTopic->getRow( $param, $attributes->{noEntityEscape} ) if $controlledTopic;
+    return $controlledTopic->getRow( $param, $attributes->{unescapeEntities} ) if $controlledTopic;
 
     # Not cotrolled get row from values in configure
     my $configure = $Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow};

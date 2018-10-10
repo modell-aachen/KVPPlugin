@@ -550,7 +550,7 @@ sub getName {
 
 # Get to contents of the given row (in workflow states) and topic for the current state.
 sub getRow {
-    my ( $this, $state, $row, $noEntityEscape ) = @_;
+    my ( $this, $state, $row, $unescapeEntities ) = @_;
 
     my $stateDefinition = $this->{states}->{$state};
     unless( $stateDefinition ) {
@@ -558,12 +558,12 @@ sub getRow {
         return '';
     }
     my $value = $stateDefinition->{$row};
-    $value = unescapeEntities($value) unless $noEntityEscape;
+    $value = unescapeEntities($value) if $unescapeEntities;
     return $value;
 }
 
 sub getDisplayname {
-    my ( $this, $state, $languageOverwrite, $noEntityEscape ) = @_;
+    my ( $this, $state, $languageOverwrite, $unescapeEntities ) = @_;
 
     unless( $this->{states}{$state} ) {
         Foswiki::Func::writeWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
@@ -577,7 +577,7 @@ sub getDisplayname {
         $displayname = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($Foswiki::Plugins::SESSION, {string => $displayname, literal => 1});
     }
 
-    return unescapeEntities($displayname) if $noEntityEscape;
+    return unescapeEntities($displayname) if $unescapeEntities;
     return escapeNonAlnumChars($displayname);
 }
 

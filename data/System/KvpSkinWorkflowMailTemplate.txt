@@ -39,7 +39,7 @@
 $percentWORKFLOWMETA{Remark}$percent"}%%TMPL:END%
 
 %{"Provides the state-message"}%
-%TMPL:DEF{"Message"}%%MAKETEXT{%GETWORKFLOWROW{"message" noEntityEscape="1"}%}%%TMPL:END%
+%TMPL:DEF{"Message"}%%MAKETEXT{%GETWORKFLOWROW{"message" unescapeEntities="1"}%}%%TMPL:END%
 
 %{"Set Content-Type (to ether text/plain or text/html)"}%
 %TMPL:DEF{"Type"}%text/plain%TMPL:END%

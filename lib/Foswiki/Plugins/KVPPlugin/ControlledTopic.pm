@@ -154,7 +154,7 @@ sub getTransitionInfos {
     return \%transition;
 }
 sub getWorkflowMeta {
-    my ( $this, $attributes, $languageOverwrite, $noEntityEscape ) = @_;
+    my ( $this, $attributes, $languageOverwrite, $unescapeEntities ) = @_;
 
     # admittingly STATECHANGE and displayname would be more suitable under getWorkflowRow,
     # however they are usually called as if they were metadata.
@@ -169,7 +169,7 @@ sub getWorkflowMeta {
     }
 
     if($attributes eq 'displayname') {
-        return $this->{workflow}->getDisplayname($this->{state}->{name}, $languageOverwrite, $noEntityEscape);
+        return $this->{workflow}->getDisplayname($this->{state}->{name}, $languageOverwrite, $unescapeEntities);
     }
 
     return $this->{state}->{$attributes};
@@ -586,8 +586,8 @@ sub canFork {
 
 # Get the contents of the given row for the current topic in it's current state
 sub getRow {
-    my ($this, $row, $noEntityEscape) = @_;
-    return $this->{workflow}->getRow($this->getState(), $row, $noEntityEscape);
+    my ($this, $row, $unescapeEntities) = @_;
+    return $this->{workflow}->getRow($this->getState(), $row, $unescapeEntities);
 }
 
 # Get task attached to topic
