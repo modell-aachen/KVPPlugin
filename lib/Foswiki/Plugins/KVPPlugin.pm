@@ -1482,7 +1482,7 @@ sub _restHistory {
                 my $transition = $controlledTopic->getTransitionInfos();
                 push @transitions, $transition;
             }
-            if($restartWithFork && @transitions[-1] && @transitions[-1]->{isFork}){
+            if($restartWithFork && $transitions[-1] && $transitions[-1]->{isFork}){
                 $hasMoreEntries = 0;
                 last;
             }
