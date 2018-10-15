@@ -26,6 +26,7 @@ use strict;
 use Foswiki::Func ();
 use Foswiki::Plugins ();
 use Foswiki::Plugins::ModacHelpersPlugin ();
+use Foswiki::Attrs ();
 
 sub new {
     my ( $class, $web, $topic ) = @_;
@@ -616,30 +617,29 @@ sub _isAllowed {
         return 1;
     }
 
-    if (
-            ref( $Foswiki::Plugins::SESSION->{user} )
-            && $Foswiki::Plugins::SESSION->{user}->can("isInList")
-        )
-    {
-        return $Foswiki::Plugins::SESSION->{user}->isInList($allow);
-    }
-    elsif ( defined &Foswiki::Func::isGroup ) {
-        my $thisUser = Foswiki::Func::getWikiName();
-        foreach my $allowed ( split( /\s*,\s*/, $allow ) ) {
-            ( my $waste, $allowed ) =
-              Foswiki::Func::normalizeWebTopicName( undef, $allowed );
-            if ( Foswiki::Func::isGroup($allowed) ) {
-                return 1 if Foswiki::Func::isGroupMember( $allowed, $thisUser );
-            }
-            else {
-                $allowed = Foswiki::Func::getWikiUserName($allowed);
-                $allowed =~ s/^.*\.//;    # strip web
-                return 1 if $thisUser eq $allowed;
-            }
-        }
-    }
+    my @list = split(/,/, $allow =~ s#\s##gr);
+    @list = map{
+        $_ =~ s#\s##g;
+        _initTopicWorkaround($_);
+    } @list;
 
-    return 0;
+    my $cuid = Foswiki::Func::getCanonicalUserID();
+    return $Foswiki::Plugins::SESSION->{users}->isInUserList($cuid, \@list);
+}
+
+sub _initTopicWorkaround {
+    if($_ =~ m#^\%WORKFLOWMETA\{(.*)\}\%#) {
+        # this can happen during initPlugin, the macros are not yet registered
+        # no support for fancy stuff like nested macros or other plugins
+        my $attrs = new Foswiki::Attrs($1, 0);
+        $_ = Foswiki::Plugins::KVPPlugin::WORKFLOWMETA(
+            $Foswiki::Plugins::SESSION,
+            $attrs,
+            $Foswiki::Plugins::SESSION->{topicName},
+            $Foswiki::Plugins::SESSION->{webName},
+        );
+    }
+    return $_;
 }
 
 # Checking Condition in Transition Table
