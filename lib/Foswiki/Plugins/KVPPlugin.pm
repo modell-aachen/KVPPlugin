@@ -895,14 +895,14 @@ sub _changeState {
         my $report = transitionTopic($session, {
             web => $query->param('web') || $session->{webName},
             topic => $query->param('topic') || $session->{topicName},
-            action => $query->param('WORKFLOWACTION'),
-            state => $query->param('WORKFLOWSTATE'),
+            action => $query->param('WORKFLOWACTION') || '',
+            state => $query->param('WORKFLOWSTATE') || '',
             mails => $mails,
-            remark => $query->param('message'),
+            remark => $query->param('message') || '',
             removeComments => $query->param('removeComments') || '0',
-            breakLock => $query->param('breaklock'),
-            actionDisplayname => $query->param('action_displayname'),
-            currentStateDisplayname => $query->param('current_state_displayname'),
+            breakLock => $query->param('breaklock') || 0,
+            actionDisplayname => $query->param('action_displayname') || '',
+            currentStateDisplayname => $query->param('current_state_displayname') || '',
         });
         foreach my $mail ( @$mails ) {
             sendKVPMail($mail);
