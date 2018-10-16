@@ -90,7 +90,8 @@
                         </vue-header3>
                         <vue-history-list
                             :data="displayDataList"
-                            :is-loading="isTransitionsListLoading" />
+                            :is-loading="isTransitionsListLoading"
+                            @item-clicked="loadHistory" />
                         <a
                             v-show="hasMoreTransitionEntries && !isTransitionsListLoading"
                             class="transitionmenu-load-more"
@@ -292,7 +293,29 @@ export default {
             } else {
                 this.submit_callback(options);
             }
-        }
+        },
+        async loadHistory(index) {
+            await this.openHistoryTopic(this.displayDataList[index].key);
+        },
+        async openHistoryTopic(version) {
+            const ajaxReqObj = {
+                dataType: 'json',
+                traditional: true,
+                type: "GET",
+                data: {
+                    topic: Vue.foswiki.getPreference("WEB")+"."+Vue.foswiki.getPreference("TOPIC"),
+                    version: version,
+                },
+                url: Vue.foswiki.getScriptUrl("rest", "ModacHelpersPlugin", "loadHistoryVersion"),
+            };
+            try {
+                const result = await $.ajax(ajaxReqObj);
+                window.open(result.url, '_blank');
+            } catch(e) {
+                alert("could not get history link");
+            }
+            return;
+        },
     },
 };
 </script>
