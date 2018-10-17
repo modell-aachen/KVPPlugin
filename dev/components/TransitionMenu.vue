@@ -297,14 +297,14 @@ export default {
         async loadHistory(index) {
             await this.openHistoryTopic(this.displayDataList[index].key);
         },
-        async openHistoryTopic(version) {
+        async openHistoryTopic(revision) {
             const ajaxReqObj = {
                 dataType: 'json',
                 traditional: true,
                 type: "GET",
                 data: {
                     topic: Vue.foswiki.getPreference("WEB")+"."+Vue.foswiki.getPreference("TOPIC"),
-                    version: version,
+                    revision: revision,
                 },
                 url: Vue.foswiki.getScriptUrl("rest", "ModacHelpersPlugin", "loadHistoryVersion"),
             };
