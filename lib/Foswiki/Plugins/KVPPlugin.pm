@@ -370,12 +370,15 @@ sub _initTOPIC {
 
     if($Foswiki::Plugins::SESSION->{store}->can('isVirtualTopic')) {
         my $isVirtual;
+        my $useVirtualTopics;
         if($meta) {
             $isVirtual = $Foswiki::Plugins::SESSION->{store}->isVirtualTopic($meta->web(), $meta->topic());
+            $useVirtualTopics = Foswiki::Func::getPreferencesValue("KVP_USE_VIRTUAL_TOPIC", $meta->web());
         } else {
             $isVirtual = $Foswiki::Plugins::SESSION->{store}->isVirtualTopic($web, $topic);
+            $useVirtualTopics = Foswiki::Func::getPreferencesValue("KVP_USE_VIRTUAL_TOPIC", $web);
         }
-        if($isVirtual) {
+        if($isVirtual && !$useVirtualTopics) {
             $cache{$controlledTopicCID} = '_undef';
             return undef;
         }
@@ -543,10 +546,14 @@ sub WORKFLOWMETA {
 
     my $rWeb = $attributes->{web} || $web;
     my $rTopic = $attributes->{topic} || $topic;
-    my $rev = $attributes->{rev} || 0;
+    my $rev = $attributes->{rev};
     my $alt = $attributes->{alt} || '';
     my $remove = $attributes->{nousersweb};
     my $timeformat = $attributes->{timeformat};
+    if(!$rev) {
+        my $request = Foswiki::Func::getRequestObject();
+        $rev = $request->param("rev") || 0;
+    }
 
     my $attr;
     my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev );
