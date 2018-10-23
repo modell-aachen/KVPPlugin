@@ -2400,7 +2400,7 @@ sub _getIndexHash {
                 next if $field =~ m#^(?:approved$|allow|state$)#; # skip those already indexed
                 if($field =~ m#^displayname(\w*)$#) {
                     $indexFields{ "workflowstate_${field}_s" } = $controlledTopic->getWorkflowMeta('displayname', $1, 1);
-                    $indexFields{ "previousstate_${field}_s" } = $controlledTopic->{workflow}->getDisplayname($workflow->{previousState}, $1, 1);
+                    $indexFields{ "previousstate_${field}_s" } = $controlledTopic->{workflow}->getDisplayname($workflow->{previousState}, $1, 1) if $workflow->{previousState};
                 } else {
                     $indexFields{ "workflowstate_${field}_s" } = $controlledTopic->expandMacros($controlledTopic->getRow($field, 1));
                 }
