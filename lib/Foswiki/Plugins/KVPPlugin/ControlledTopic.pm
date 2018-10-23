@@ -25,6 +25,7 @@ use strict;
 
 use Foswiki (); # for regexes
 use Foswiki::Func ();
+use POSIX qw(strftime);
 
 # Constructor
 sub new {
@@ -95,7 +96,7 @@ sub getState {
 sub getActions {
     my ($this) = @_;
 
-    return ( [], [] ) unless $this->foswikiAllowsChange();
+    return ( [], [], [] ) unless $this->foswikiAllowsChange();
 
     return $this->{workflow}->getActions($this);
 }
@@ -107,25 +108,68 @@ sub getAttributes {
     return $this->expandMacros($attribs);
 }
 
+sub changedStateFromLastVersion {
+    my ($this) = @_;
+
+    my ( undef, undef, $version ) = $this->{meta}->getRevisionInfo();
+    my $state = $this->getWorkflowMeta('name');
+    my $lastTransitionVersion = $this->getWorkflowMeta("LASTVERSION_$state");
+    return ($version-1) eq $lastTransitionVersion;
+}
+
+sub getTransitionInfos {
+    my ($this) = @_;
+
+    my %transition;
+    my $action = $this->{state}->{"LASTACTION"};
+    my $previousState = $this->{state}->{previousState};
+    my $previousStateDisplayName = $this->{workflow}->getDisplayname($previousState, undef, 1),
+    my $leavingStateUserId = $this->{state}->{"LEAVING_$previousState"};
+    my $stateDisplayName = $this->getWorkflowMeta('displayname', undef, 1);
+    my $remark = $this->{state}->{Remark};
+    my $icon = $this->{workflow}->getTransitionCell($previousState,$action,"icon");
+    my $attributes = $this->{workflow}->getTransitionCell($previousState,$action,"attribute");
+    my $isCreation = $attributes =~ m/\bNEW\b/ ? 1 : 0;
+    my $isFork = $attributes =~ m/\bFORK\b/ ? 1 : 0;
+    my $lang = $Foswiki::Plugins::SESSION->i18n()->language();
+    if($lang ne 'de') {
+        $lang = 'en';
+    }
+    my $transitionText = $this->{workflow}->getTransitionCell($previousState,$action,"historytext$lang");
+    my ( $revDate, $revUser, $version ) = $this->{meta}->getRevisionInfo();
+    my $leavingStateUser = Foswiki::Func::expandCommonVariables("%RENDERUSER{\"$leavingStateUserId\" format=\"\$displayName\"}%");
+
+    %transition = (
+        state => $stateDisplayName,
+        previousState => $previousStateDisplayName,
+        leavingStateUser => $leavingStateUser,
+        remark => $remark,
+        time => strftime("%a, %d %b %Y %H:%M:%S %z", localtime($revDate)),
+        icon => $icon,
+        description => $transitionText,
+        isCreation => $isCreation,
+        isFork => $isFork,
+        version => $version,
+    );
+    return \%transition;
+}
 sub getWorkflowMeta {
-    my ( $this, $attributes, $languageOverwrite ) = @_;
+    my ( $this, $attributes, $languageOverwrite, $unescapeEntities ) = @_;
 
     # admittingly STATECHANGE and displayname would be more suitable under getWorkflowRow,
     # however they are usually called as if they were metadata.
 
-    my $language = $languageOverwrite || $Foswiki::Plugins::SESSION->i18n()->language();
     if($attributes eq 'STATECHANGE') {
         my $t = $this->{meta}->get( 'KVPSTATECHANGE', 'TRANSITION' );
         return unless $t && $t->{value};
         my ($old, $new) = ($t->{old}, $t->{new});
-        my $oldDisplayName = $this->{workflow}->getRow($old, "displayname$language") || $this->{workflow}->getRow($old, "displayname") || $old;
-        my $newDisplayName = $this->{workflow}->getRow($new, "displayname$language") || $this->{workflow}->getRow($new, "displayname") || $new;
+        my $oldDisplayName = $this->{workflow}->getDisplayname($old, $languageOverwrite);
+        my $newDisplayName = $this->{workflow}->getDisplayname($new, $languageOverwrite);
         return "$oldDisplayName -> $newDisplayName";
     }
 
     if($attributes eq 'displayname') {
-        my $value = $this->{workflow}->getRow($this->{state}->{name}, "displayname$language") || $this->{workflow}->getRow($this->{state}->{name}, "displayname") || $this->{state}->{name};
-        return $value if defined $value;
+        return $this->{workflow}->getDisplayname($this->{state}->{name}, $languageOverwrite, $unescapeEntities);
     }
 
     return $this->{state}->{$attributes};
@@ -333,9 +377,10 @@ sub setRev {
 # Set the current state in the topic
 # Alex: Bearbeiter hinzu
 sub setState {
-    my ( $this, $state, $version, $remark ) = @_;
+    my ( $this, $state, $version, $remark, $action ) = @_;
     my $oldState = $this->{state}->{name};
     $this->{state}->{name} = $state;
+    $this->{state}->{previousState} = $oldState;
 
     $this->{state}->{"LASTVERSION_$state"} = $version;
     $this->{state}->{"LASTPROCESSOR_$state"} = Foswiki::Func::getCanonicalUserID();
@@ -343,6 +388,7 @@ sub setState {
     $this->{state}->{"LASTTIME_$state"} =
       Foswiki::Time::formatTime( time(), '$day.$mo.$year', 'servertime' );
     $this->{state}->{"LASTTIME_${state}_DT"} = time();
+    $this->{state}->{"LASTACTION"} = $action || '';
 
     $this->{state}->{Remark} = $remark || '';
 
@@ -454,16 +500,29 @@ sub isRemovingComments {
     return $this->{workflow}->hasAttribute($state, $action, 'FORCEDELETECOMMENTS');
 }
 
+sub getTransitionAttributesArray {
+    my ( $this, $displayname ) = @_;
+
+    return $this->{workflow}->getTransitionAttributesArray($this, 0, $displayname );
+}
+
 sub getTransitionAttributes {
     my ( $this ) = @_;
+
     my $currentState = $this->{state}{name};
     my ($allow, $suggest, $comment) = $this->{workflow}->getTransitionAttributes($currentState);
+    my @unsatisfiedMandatoryFields = Foswiki::Plugins::KVPPlugin::Workflow::getUnsatisfiedMandatoryFields($this);
+    my $unsatisfiedMandatory = ',';
     my $alreadyProposed = ',';
+
     for my $t (@{$this->{workflow}->getTransitions($currentState)}) {
+        unless($t->{attribute} && $t->{attribute} =~ m#\bIGNOREMANDATORY\b#) {
+            $unsatisfiedMandatory .= $t->{action} . ',';
+        }
         next if $this->isPotentialProponent($t->{action});
         $alreadyProposed .= "$t->{action},";
     }
-    return ($allow, $suggest, $comment, $alreadyProposed);
+    return ($allow, $suggest, $comment, $alreadyProposed, $unsatisfiedMandatory, \@unsatisfiedMandatoryFields);
 }
 
 # Check if the topic is allowed to fork
@@ -527,8 +586,8 @@ sub canFork {
 
 # Get the contents of the given row for the current topic in it's current state
 sub getRow {
-    my ($this, $row) = @_;
-    return $this->{workflow}->getRow($this->getState(), $row);
+    my ($this, $row, $unescapeEntities) = @_;
+    return $this->{workflow}->getRow($this->getState(), $row, $unescapeEntities);
 }
 
 # Get task attached to topic
@@ -591,7 +650,7 @@ sub changeState {
         $this->{state}->{"TASK_DUE"} = $duedate;
     }
 
-    $this->setState($state, $version, $remark);
+    $this->setState($state, $version, $remark, $action);
 
     my $fmt = Foswiki::Func::getPreferencesValue("WORKFLOWHISTORYFORMAT")
       || '<br />$state -- $date';
@@ -653,6 +712,12 @@ sub changeState {
 
     $this->clearTransitionProponents;
 
+    my $formColumn = $this->getRow('form');
+    if(defined $formColumn && $formColumn ne '') {
+        $this->{meta}->remove('FORM');
+        $this->{meta}->put('FORM', { name => $formColumn });
+    }
+
     my $notification;
     # generate mails
     if ($notify) {
@@ -666,7 +731,7 @@ sub changeState {
         $notification = {
             template => 'mailworkflowtransition',
             options => { IncludeCurrentUser => 0, AllowMailsWithoutUser => 1, webtopic => "$this->{web}.$this->{topic}" },
-            settings => { TARGET_STATE => $this->getState(), TARGET_STATE_DISPLAY => $this->getWorkflowMeta('displayname', $language), EMAILTO => $notify, LANGUAGE => $language },
+            settings => { TARGET_STATE => $this->getState(), TARGET_STATE_DISPLAY => $this->getWorkflowMeta('displayname', $language, 1) =~ s#%#<nop>%<nop>#gr, EMAILTO => $notify, LANGUAGE => $language },
             extra => { action => $action, ncolumn => $notify },
         };
     } else {

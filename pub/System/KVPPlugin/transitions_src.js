@@ -45,6 +45,18 @@ jQuery(function($) {
         }
     }
 
+    WORKFLOW.checkMandatory = function($form) {
+        if(!(WORKFLOW.unsatisfiedMandatoryFields && WORKFLOW.unsatisfiedMandatoryFields.length)) {
+            return true;
+        }
+        var selection = WORKFLOW.getSelection($form);
+        if(WORKFLOW.unsatisfiedMandatory.indexOf(',' + selection + ',') > -1) {
+        alert(jsi18n.get('kvp_transitions', 'Please fill in the following mandatory fields:') + '\n' + WORKFLOW.unsatisfiedMandatoryFields.join('\n'));
+            return false;
+        }
+        return true;
+    }
+
     WORKFLOW.showCheckBox = function() {
         var menu = $('#WORKFLOWmenu');
         var remark = $('#KVPRemark');
@@ -88,7 +100,7 @@ jQuery(function($) {
     }
     $('select').change(WORKFLOW.showCheckBox);
     $('.KVPTransitionForm').submit(function(ev) {
-        return WORKFLOW.confirm($(this));
+        return WORKFLOW.checkMandatory($(this)) && WORKFLOW.confirm($(this));
     });
     WORKFLOW.showCheckBox();
 });
