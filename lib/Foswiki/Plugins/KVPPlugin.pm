@@ -372,12 +372,12 @@ sub _initTOPIC {
         my $isVirtual;
         my $useVirtualTopics;
         if($meta) {
-            $isVirtual = $Foswiki::Plugins::SESSION->{store}->isVirtualTopic($meta->web(), $meta->topic());
-            $useVirtualTopics = Foswiki::Func::getPreferencesValue("KVP_USE_VIRTUAL_TOPIC", $meta->web());
-        } else {
-            $isVirtual = $Foswiki::Plugins::SESSION->{store}->isVirtualTopic($web, $topic);
-            $useVirtualTopics = Foswiki::Func::getPreferencesValue("KVP_USE_VIRTUAL_TOPIC", $web);
+            $web = $meta->web();
+            $topic = $meta->topic();
         }
+        $isVirtual = $Foswiki::Plugins::SESSION->{store}->isVirtualTopic($web, $topic);
+        $useVirtualTopics =
+            Foswiki::Func::getPreferencesValue("KVP_USE_VIRTUAL_TOPIC", $web);
         if($isVirtual && !$useVirtualTopics) {
             $cache{$controlledTopicCID} = '_undef';
             return undef;

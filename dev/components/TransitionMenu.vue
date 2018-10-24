@@ -313,6 +313,7 @@ export default {
                 window.open(result.url, '_blank');
             } catch(e) {
                 alert("could not get history link");
+                window.console.log(e);
             }
             return;
         },
