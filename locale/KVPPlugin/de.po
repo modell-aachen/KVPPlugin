@@ -554,9 +554,6 @@ msgstr ""
 "wartet derzeit auf weitere Entscheidungen von anderen verantwortlichen "
 "Nutzern."
 
-msgid "Technical data"
-msgstr "Technische Daten"
-
 #~ msgid ""
 #~ "The workflow state did not match the current state.\n"
 #~ "\n"

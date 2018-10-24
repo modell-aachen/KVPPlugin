@@ -10,14 +10,10 @@
 %{"If you want to customize the transition-blockUI, you should add a TMPL:P{"TransitionMsg" MESSAGE="your message"} to kvptransitions. Please escape quotations (") with &quot; }%
 %TMPL:DEF{"kvptransitions"}%
 %TMPL:P{"TEXT_BLOCKUI"}%
-%IF{"$USE_VUE_TRANSITIONS='1'" then="$percentTMPL:P{kvp-vuetransitions}$percent" else="$percentTMPL:P{kvp-tmltransitions}$percent"}%
-%TMPL:END%
-
-%TMPL:DEF{"kvp-vuetransitions"}%<div class="flatskin-wrapped">%WORKFLOWTRANSITIONVUE%</div>%TMPL:END%
-
-%TMPL:DEF{"kvp-tmltransitions"}%<div class="modacKVPtable ModacInlineButtons" id="KVPTransitions">
+<div class="modacKVPtable ModacInlineButtons" id="KVPTransitions">
 | *%MAKETEXT{"Improvement Process"}%* ||
 | %MAKETEXT{"State"}% | %MAKETEXT{%GETWORKFLOWROW{message}%}% |
 %IF{"$'WORKFLOWMETA{Remark}'" then="| %MAKETEXT{"Remarks for this state:"}% | <pre>$percentWORKFLOWMETA{Remark}$percent</pre> |$n"}%%IF{"istopic '%WORKFLOWORIGIN%' and (not $WORKFLOWORIGIN = '%TOPIC%') and context view" then="| %MAKETEXT{"Difference to approved version"}% | $percentBUTTON{$quot%MAKETEXT{"Compare with approved version"}%$quot href=$quot$percentSCRIPTURL{compare}$percent/%WEB%/%TOPIC%?external=$percentWORKFLOWORIGIN$percent&allowtransition=1$quot}$percent |$n"}%| %MAKETEXT{"Next step"}% | %WORKFLOWTRANSITION% |
 | %MAKETEXT{"Last editing person"}% | %RENDERUSER{"%REVINFO{format="$username"}%" convert="on" format="$displayName" usericon="1"}% |
-</div>%TMPL:END%
+</div>
+%TMPL:END%
