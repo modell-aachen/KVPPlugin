@@ -5,7 +5,7 @@ use Exporter 'import';
 
 package Helper;
 
-our @EXPORT_OK = qw ( KVPWEB NONEW TRASH WRKFLW FORM_WRKFLW ATTACHMENTTEXT1 ATTACHMENTTEXT2 WORKFLOW CONDWORKFLOW R_C_WORKFLOW FORM_WORKFLOW_DEF set_up_users set_up_webs set_up_attachments STANDARD_FORM MANDATORY_FORM );
+our @EXPORT_OK = qw ( KVPWEB NONEW TRASH WRKFLW ATTACHMENTTEXT1 ATTACHMENTTEXT2 WORKFLOW CONDWORKFLOW R_C_WORKFLOW set_up_users set_up_webs set_up_attachments );
 our %EXPORT_TAGS = (
     attachments => [ 'set_up_attachments' ],
     webs => [ 'KVPWEB', 'NONEW', 'TRASH' ],
@@ -20,11 +20,8 @@ use constant KVPWEB => 'TemporaryKVPTestWeb';
 use constant NONEW  => KVPWEB.'NoNew';
 use constant TRASH  => KVPWEB.'Trash';
 use constant WRKFLW => 'DocumentApprovalWorkflow';
-use constant FORM_WRKFLW => 'FormWorkflow';
 use constant ATTACHMENTTEXT1 => 'This will be attached in a UnitTest run and can be safely removed.';
 use constant ATTACHMENTTEXT2 => 'This is another file, that will be attached in a UnitTest run and can be safely removed.';
-use constant STANDARD_FORM => 'DocumentForm';
-use constant MANDATORY_FORM => 'MandatoryForm';
 
 use constant WORKFLOW => <<'WORKFLOW';
 ---++ Defaults
@@ -179,50 +176,10 @@ use constant R_C_WORKFLOW => <<'WORKFLOW';
    * Set ALLOWTOPICCHANGE=Main.AdminUser
 WORKFLOW
 
-use constant FORM_WORKFLOW_DEF => <<'WORKFLOW' =~ s#STANDARD_FORM#STANDARD_FORM#ger =~ s#MANDATORY_FORM#MANDATORY_FORM#ger;
----++ Defaults
-%EDITTABLE{format="| text, 20 | text, 20 | text, 20 | text, 2 |"}%
-| *State Type* | *Left Tab* | *Right Tab* | *Approved* |
-| approved | Approved Page | Discussion | 1 |
-| discussion | Approved Page | Discussion | 0 |
-| draft | Approved Page | Draft | 0 |
-
----++ States
-%EDITTABLE{format="| text, 20 | text, 30 | text, 30 | text, 50 | text, 30 | text, 15 |"}%
-| *State* | *Allow Edit* | *Allow Move* | *Message* | *Allow Comment* | *State Type* | *Form* |
-| NEW | LOGGEDIN | LOGGEDIN | This document is not yet in CIP. | LOGGEDIN | draft | |
-| DRAFT_NOT_MANDATORY | LOGGEDIN | LOGGEDIN | This document is a draft. | LOGGEDIN | draft | STANDARD_FORM |
-| DRAFT_NO_FORM_CHANGE | LOGGEDIN | LOGGEDIN | This document is a draft. | LOGGEDIN | draft | |
-| DRAFT_MANDATORY | LOGGEDIN | LOGGEDIN | This document is a draft. | LOGGEDIN | draft | MANDATORY_FORM |
-
----++ Transitions
-%EDITTABLE{format="| text, 20 | text, 40 | text, 20 | text, 30 | text, 30 | text, 15 | text, 15 |"}%
-| *State* | *Action* | *Next State* | *Allowed* | *Notify* | *Condition* | *Attribute* |
-| NEW | Create | DRAFT_NOT_MANDATORY | LOGGEDIN | | | NEW |
-| DRAFT_NOT_MANDATORY | Make mandatory | DRAFT_MANDATORY | LOGGEDIN | | | |
-| DRAFT_NOT_MANDATORY | No mandatory change | DRAFT_NO_FORM_CHANGE | LOGGEDIN | | | |
-| DRAFT_NO_FORM_CHANGE | Make mandatory | DRAFT_MANDATORY | LOGGEDIN | | | |
-| DRAFT_MANDATORY | Make non-mandatory | DRAFT_NOT_MANDATORY | LOGGEDIN | | | |
-| DRAFT_MANDATORY | No mandatory change | DRAFT_NO_FORM_CHANGE | LOGGEDIN | | | |
-| DRAFT_MANDATORY | No mandatory change (ignore) | DRAFT_NO_FORM_CHANGE | LOGGEDIN | | | IGNOREMANDATORY |
-
-   * Set NOWYSIWYG=1
-   * Set WORKFLOW=
-   * Set ALLOWTOPICCHANGE=Main.AdminUser
-WORKFLOW
-
-use constant FORM_DEF => <<'FORM';
+use constant FORM => <<'FORM';
 | *Name* | *Type* | *Size* | *Values* | *Tooltip message* | *Attributes* |
 | Seitenverantwortlicher | text | 30 | | | |
 | FormalerPruefer | text | 30 | | | |
-| TextField | text | 30 | | | |
-FORM
-
-use constant MANDATORY_FORM_DEF => <<'FORM';
-| *Name* | *Type* | *Size* | *Values* | *Tooltip message* | *Attributes* |
-| Seitenverantwortlicher | text | 30 | | | |
-| FormalerPruefer | text | 30 | | | |
-| TextField | text | 30 | | | M |
 FORM
 
 sub loadExtraConfig {
@@ -308,23 +265,18 @@ sub set_up_webs {
         $webs->{$ps} = $other->populateNewWeb( $ps, "_default" );
         $webs->{$ps}->finish();
 
-        # Create DocumentForm
-        my $form = FORM_DEF;
-        Foswiki::Func::saveTopic( KVPWEB, STANDARD_FORM, undef, $form );
-        my $mandatoryForm = MANDATORY_FORM_DEF;
-        Foswiki::Func::saveTopic( KVPWEB, MANDATORY_FORM, undef, $mandatoryForm );
+        # Create DokumentenForm
+        my $form = FORM;
+        Foswiki::Func::saveTopic( KVPWEB, 'DokumentenForm', undef, $form );
 
         # Create workflow
         my $standardworkflow = WORKFLOW;
         Foswiki::Func::saveTopic( KVPWEB, WRKFLW, undef, $standardworkflow);
-        # And a workflow without NEW transition
         my $noNewTransitionWorkflow = $standardworkflow;
+        # And a workflow without NEW transition
         my $nSubsts = $noNewTransitionWorkflow =~ s#^.*\|\h*NEW\h*\|\h*\n##mg;
         $other->assert($nSubsts == 1, 'Not exacly 1 NEW transition removed from standardworklow!');
         Foswiki::Func::saveTopic( NONEW, WRKFLW, undef, $noNewTransitionWorkflow);
-        # And the form workflow
-        my $formworkflow = FORM_WORKFLOW_DEF;
-        Foswiki::Func::saveTopic( KVPWEB, FORM_WRKFLW, undef, $formworkflow);
         # Activate workflow
         { # scope
             my ( $prefMeta, $prefText ) = Foswiki::Func::readTopic( KVPWEB, $Foswiki::cfg{WebPrefsTopicName} );
@@ -464,10 +416,9 @@ TEXT
 
     if (defined $processowner) {
         $qm = $processowner unless defined $qm;
-        my $form = STANDARD_FORM;
         $text .= <<FORM;
 
-%META:FORM{name="$form"}%
+%META:FORM{name="DokumentenForm"}%
 %META:FIELD{name="Seitenverantwortlicher" attributes="" title="Seitenverantwortlicher" value="$processowner"}%
 %META:FIELD{name="FormalerPruefer" attributes="" title="FormalerPruefer" value="$qm"}%
 FORM

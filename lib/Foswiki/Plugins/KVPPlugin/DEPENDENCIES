@@ -5,4 +5,4 @@
 Foswiki::Contrib::MailTemplatesContrib,>=1.0,perl,Required.
 Foswiki::Plugins::SwitchMacroPlugin,>=1.0,perl,Required.
 Foswiki::Plugins::VueJSPlugin,>=0.00_001,perl,Required.
-Foswiki::Plugins::ModacHelpersPlugin,>=1.0,perl,Required.
+Foswiki::Contrib::ModacHelpersContrib,>=1.0,perl,Required.

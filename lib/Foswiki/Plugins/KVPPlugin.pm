@@ -21,7 +21,7 @@ use Foswiki::OopsException ();
 use Foswiki::Sandbox ();
 
 use Foswiki::Contrib::MailTemplatesContrib;
-use Foswiki::Plugins::ModacHelpersPlugin;
+use Foswiki::Contrib::ModacHelpersContrib;
 
 use HTML::Entities;
 use JSON;
@@ -59,9 +59,6 @@ sub initPlugin {
     Foswiki::Func::registerRESTHandler(
         'link', \&_restLink,
         authenticate => 0, http_allow => 'GET', validate => 0 );
-    Foswiki::Func::registerRESTHandler(
-        'history', \&_restHistory,
-        authenticate => 1, http_allow => 'GET', validate => 0 );
 
     Foswiki::Func::registerTagHandler(
         'WORKFLOWSTATE', \&_WORKFLOWSTATE );
@@ -70,13 +67,11 @@ sub initPlugin {
     Foswiki::Func::registerTagHandler(
         'WORKFLOWTRANSITION', \&_WORKFLOWTRANSITION );
     Foswiki::Func::registerTagHandler(
-        'WORKFLOWTRANSITIONVUE', \&_WORKFLOWTRANSITIONVUE );
-    Foswiki::Func::registerTagHandler(
         'WORKFLOWFORK', \&_WORKFLOWFORK );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWGETREVFOR', \&_WORKFLOWGETREVFOR );
     Foswiki::Func::registerTagHandler(
-        'WORKFLOWMETA', \&WORKFLOWMETA );
+        'WORKFLOWMETA', \&_WORKFLOWMETA );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWSUFFIX', \&_WORKFLOWSUFFIX );
     Foswiki::Func::registerTagHandler(
@@ -191,10 +186,10 @@ sub _WORKFLOWDISPLAYTABS {
         for my $tabeName ($workflow->getDisplayTabs()) {
             my $renderTab = '%TAB{"%MAKETEXT{"%1"}%"}% %TMPL:P{"searchgrid_tabs" extraquery="workflowstate_displayedtab_s:\"%1\""}% %ENDTAB%';
             my $find = '%1';
-            $renderTab =~ s/$find/$tabeName/g;
+            $renderTab =~ s/$find/$tabeName/g; 
             $formattedString = $formattedString . $renderTab;
         }
-        return $formattedString;
+        return $formattedString;    
     }
     else {
         return join(", ", $workflow->getDisplayTabs());
@@ -370,15 +365,12 @@ sub _initTOPIC {
 
     if($Foswiki::Plugins::SESSION->{store}->can('isVirtualTopic')) {
         my $isVirtual;
-        my $useVirtualTopics;
         if($meta) {
             $isVirtual = $Foswiki::Plugins::SESSION->{store}->isVirtualTopic($meta->web(), $meta->topic());
-            $useVirtualTopics = Foswiki::Func::getPreferencesValue("KVP_USE_VIRTUAL_TOPIC", $meta->web());
         } else {
             $isVirtual = $Foswiki::Plugins::SESSION->{store}->isVirtualTopic($web, $topic);
-            $useVirtualTopics = Foswiki::Func::getPreferencesValue("KVP_USE_VIRTUAL_TOPIC", $web);
         }
-        if($isVirtual && !$useVirtualTopics) {
+        if($isVirtual) {
             $cache{$controlledTopicCID} = '_undef';
             return undef;
         }
@@ -541,19 +533,15 @@ sub _WORKFLOWGETREVFOR {
     return $rev;
 }
 
-sub WORKFLOWMETA {
+sub _WORKFLOWMETA {
     my ( $session, $attributes, $topic, $web ) = @_;
 
     my $rWeb = $attributes->{web} || $web;
     my $rTopic = $attributes->{topic} || $topic;
-    my $rev = $attributes->{rev};
+    my $rev = $attributes->{rev} || 0;
     my $alt = $attributes->{alt} || '';
     my $remove = $attributes->{nousersweb};
     my $timeformat = $attributes->{timeformat};
-    if(!$rev) {
-        my $request = Foswiki::Func::getRequestObject();
-        $rev = $request->param("rev") || 0;
-    }
 
     my $attr;
     my $controlledTopic = _initTOPIC( $rWeb, $rTopic, $rev );
@@ -576,8 +564,6 @@ sub WORKFLOWMETA {
         my $tasked = $controlledTopic->getTaskedPeople();
         return '' unless $tasked;
         return join(',', @$tasked );
-    } elsif( $attr =~ m/^(?:LASTPROCESSOR|LEAVING|LASTTIME)$/ ) {
-        $attr = $attr . '_' . $controlledTopic->getWorkflowMeta('name');
     }
 
     my $ret = $controlledTopic->getWorkflowMeta($attr);
@@ -604,40 +590,6 @@ sub WORKFLOWMETA {
     return  $alt;
 }
 
-sub _WORKFLOWTRANSITIONVUE {
-    my ( $session, $attributes, $topic, $web ) = @_;
-
-    ($web, $topic) = _getTopicName($attributes, $web, $topic);
-    my $controlledTopic = _initTOPIC( $web, $topic );
-    return '' unless $controlledTopic;
-
-    my $transitions = $controlledTopic->getTransitionAttributesArray(1);
-
-    my $data = {
-        web => $web,
-        topic => $topic,
-        current_state => $controlledTopic->getState(),
-        current_state_display => $controlledTopic->getWorkflowMeta('displayname', undef, 0),
-        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message', unescapeEntities => 1}, $topic, $web) ),
-        actions => $transitions,
-        origin => _getOrigin($topic),
-    };
-
-    Foswiki::Func::addToZone('script', 'WORKFLOW::VUE', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI,VUEJSPLUGIN,');
-<script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/vue-transitions.js?v=$RELEASE"></script>
-SCRIPT
-
-    my $clientToken = Foswiki::Plugins::VueJSPlugin::getClientToken();
-    my $json = to_json($data);
-    $json =~ s/([&<>%])/'&#'.ord($1).';'/ge;
-    return <<HTML;
-        <div class="KVPPlugin vue-transitions foswikiHidden" data-vue-client-token="$clientToken">
-            <div class="json">$json</div>
-            <form method="post" name="strikeonedummy"></form>
-        </div>
-HTML
-}
-
 # Tag handler
 sub _WORKFLOWTRANSITION {
     my ( $session, $attributes, $topic, $web ) = @_;
@@ -652,7 +604,7 @@ sub _WORKFLOWTRANSITION {
     #
     # Build the button to change the current status
     #
-    my (@actions, $displayActions);
+    my @actions;
     my $numberOfActions;
     my $transwarn = {};
     my $cs = encode_entities($controlledTopic->getState(), $unsafe_chars);
@@ -660,7 +612,7 @@ sub _WORKFLOWTRANSITION {
 
     # Get actions and warnings
     { # scope
-        ( my $tmpActions, my $tmpWarnings, $displayActions ) = $controlledTopic->getActions();
+        my ( $tmpActions, $tmpWarnings ) = $controlledTopic->getActions();
         @actions         = @$tmpActions;
         $numberOfActions = scalar(@actions);
         my @warnings     = @$tmpWarnings;
@@ -669,8 +621,7 @@ sub _WORKFLOWTRANSITION {
         for( my $a = $numberOfActions-1; $a >= 0; $a-- ) {
             my $warning = $warnings[$a];
             next unless $warning;
-            $warning = decode_entities($warning);
-            $warning = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($session, {string => $warning, literal => 1});
+            $warning = Foswiki::Func::expandCommonVariables("%MAKETEXT{$warning}%");
             next unless $warning;
             my $action = $actions[$a];
             $transwarn->{WORKFLOW}->{w}->{$action} = $warning;
@@ -685,18 +636,13 @@ sub _WORKFLOWTRANSITION {
     push( @fields, "<input type='hidden' name='WORKFLOWSTATE' value='$cs' />");
     push( @fields, "<input type='hidden' name='topic' value='$webtopic' />");
 
-    my ($allow, $suggest, $remark, $alreadyProposed, $unsatisfiedMandatory, $unsatisfiedMandatoryFields) = $controlledTopic->getTransitionAttributes();
+    my ($allow, $suggest, $remark, $alreadyProposed) = $controlledTopic->getTransitionAttributes();
 
     $transwarn->{WORKFLOW}{allowOption} = $allow;
     $transwarn->{WORKFLOW}{suggestOption} = $suggest;
     $transwarn->{WORKFLOW}{remarkOption} = $remark;
     $transwarn->{WORKFLOW}{alreadyProposed} = $alreadyProposed;
-    $transwarn->{WORKFLOW}{unsatisfiedMandatory} = $unsatisfiedMandatory;
-    $transwarn->{WORKFLOW}{unsatisfiedMandatoryFields} = $unsatisfiedMandatoryFields;
     my $json = to_json($transwarn);
-    $json =~ s#%#<nop>%<nop>#g;
-
-    Foswiki::Plugins::JSi18nPlugin::JSI18N($session, 'KVPPlugin', 'transitions');
     Foswiki::Func::addToZone('script', 'WORKFLOW::COMMENT', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI');
 <script type="text/json" class="KVPPlugin_WORKFLOW">$json</script>
 <script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/transitions.js?version=$VERSION"></script>
@@ -706,27 +652,24 @@ SCRIPT
         my $action = $actions[0];
         $action =~ s#"#&quot;#g;
         $action =~ s#'#&\#39;#g;
-        $action =~ s#%#&\#37;#g;
-        my $displayAction = $displayActions->[0];
         push( @fields,
-            "<input type='hidden' name='WORKFLOWACTION' value='$action' />" );
+              "<input type='hidden' name='WORKFLOWACTION' value='$action' />" );
         push(
             @fields,
-            "<noautolink>%BUTTON{\"$displayAction\" id=\"WORKFLOWbutton\" type=\"submit\"}%</noautolink>"
+            "<noautolink>%BUTTON{\"%MAKETEXT{$actions[0]}%\" id=\"WORKFLOWbutton\" type=\"submit\"}%</noautolink>"
         );
     }
     else {
         push( @fields, "<select name='WORKFLOWACTION' id='WORKFLOWmenu' style='float: left'>");
 
+        my %labels = map{$_ => Foswiki::Func::expandCommonVariables("\%MAKETEXT{\"$_\"}\%")} @actions;
+
         # first one is special, because it must be selected
         my $firstAction = shift @actions;
-        my $firstActionDisplay = shift @$displayActions;
-        push( @fields, "<option selected='selected' value='" . encode_entities($firstAction, $unsafe_chars) . "'>$firstActionDisplay</option>" );
+        push( @fields, "<option selected='selected' value='" . encode_entities($firstAction, $unsafe_chars) . "'>" . encode_entities(Foswiki::Func::expandCommonVariables("\%MAKETEXT{\"$firstAction\"}\%"), $unsafe_chars) . "</option>" );
         # now the rest
-        foreach my $i ( 0 .. $#actions ) {
-            my $action = $actions[$i];
-            my $displayAction = $displayActions->[$i];
-            push( @fields, "<option value='" . encode_entities($action, $unsafe_chars) . "'>$displayAction</option>" );
+        foreach my $action ( @actions ) {
+            push( @fields, "<option value='" . encode_entities($action, $unsafe_chars) . "'>" . encode_entities(Foswiki::Func::expandCommonVariables("\%MAKETEXT{\"$action\"}\%"), $unsafe_chars) . "</option>" );
         };
         push( @fields, "</select>");
         push(
@@ -836,7 +779,7 @@ sub _GETWORKFLOWROW {
     my $aweb = $attributes->{web} || $web;
 
     my $controlledTopic = _initTOPIC ($aweb, $atopic, $rev );
-    return $controlledTopic->getRow( $param, $attributes->{unescapeEntities} ) if $controlledTopic;
+    return $controlledTopic->getRow( $param ) if $controlledTopic;
 
     # Not cotrolled get row from values in configure
     my $configure = $Foswiki::cfg{Extensions}{KVPPlugin}{uncontrolledRow};
@@ -899,18 +842,25 @@ sub _changeState {
     my $response;
 
     try {
-        my $report = transitionTopic($session, {
-            web => $query->param('web') || $session->{webName},
-            topic => $query->param('topic') || $session->{topicName},
-            action => $query->param('WORKFLOWACTION'),
-            state => $query->param('WORKFLOWSTATE'),
-            mails => $mails,
-            remark => $query->param('message'),
-            removeComments => $query->param('removeComments') || '0',
-            breakLock => $query->param('breaklock'),
-            actionDisplayname => $query->param('action_displayname'),
-            currentStateDisplayname => $query->param('current_state_displayname'),
-        });
+        my $web = $query->param('web') || $session->{webName};
+        my $topic = $query->param('topic') || $session->{topicName};
+        my $action = $query->param('WORKFLOWACTION');
+        my $state = $query->param('WORKFLOWSTATE');
+        my $message = $query->param('message');
+        my $removeComments = $query->param('removeComments') || '0';
+        my $breakLock = $query->param('breaklock');
+
+        my $report = transitionTopic(
+            $session,
+            $web,
+            $topic,
+            $action,
+            $state,
+            $mails,
+            $message,
+            $removeComments,
+            $breakLock,
+        );
         foreach my $mail ( @$mails ) {
             sendKVPMail($mail);
         }
@@ -943,9 +893,6 @@ sub _changeState {
 # parent if the topic was discarded).
 #
 # Parameters:
-#    you can pass parameters in a list (depricated) or pass in an options ref:
-#    transitionTopic($sesson, { web => ...})
-#
 #    * web: web of the topic
 #    * topic: topic name
 #    * action: The transition to be performed
@@ -957,25 +904,7 @@ sub _changeState {
 #    * breaklock: set to 1 to clear any lease
 #    * noFork: actions with FORK attribute will not automatically fork if this is true
 sub transitionTopic {
-    my $session = shift;
-    my ($web, $topic, $action, $state, $mails, $remark, $removeComments, $breaklock, $noFork, $actionDisplayname, $currentStateDisplayname);
-    if(ref($_[0])) {
-        my $options = $_[0];
-        $web = $options->{web};
-        $topic = $options->{topic};
-        $action = $options->{action};
-        $state = $options->{state};
-        $mails = $options->{mails};
-        $remark = $options->{remark};
-        $removeComments = $options->{removeComments};
-        $breaklock = $options->{breaklock};
-        $noFork = $options->{noFork};
-        $actionDisplayname = $options->{actionDisplayname};
-        $currentStateDisplayname = $options->{currentStateDisplayname};
-    } else {
-        # old style
-        ($web, $topic, $action, $state, $mails, $remark, $removeComments, $breaklock, $noFork) = @_;
-    }
+    my ($session, $web, $topic, $action, $state, $mails, $remark, $removeComments, $breaklock, $noFork) = @_;
 
     ($web, $topic) =
       Foswiki::Func::normalizeWebTopicName( $web, $topic );
@@ -991,7 +920,7 @@ sub transitionTopic {
             web => $web,
             topic => $topic,
             def => 'TopicNotFound',
-            params => [],
+            params => [ $action ]
         );
     }
 
@@ -1008,50 +937,23 @@ sub transitionTopic {
         );
     }
     unless ($state eq $controlledTopic->getState()) {
-        my $assumedStateDisplayname = $currentStateDisplayname || $state;
-
         throw Foswiki::OopsException(
             "oopswrkflwsaveerr",
             web => $web,
             topic => $topic,
             def => 'WrongState',
-            params => [
-                decode_entities($controlledTopic->getWorkflowMeta('displayname')),
-                decode_entities($assumedStateDisplayname),
-                $controlledTopic->getState(),
-                $state,
-            ],
-            json => {
-                type => 'WrongState',
-                actual_state => $controlledTopic->getState,
-                actual_state_displayname => $controlledTopic->getWorkflowMeta('displayname'),
-                assumed_state => $state,
-                assumed_state_displayname => $assumedStateDisplayname
-            },
+            params => [$state, $controlledTopic->getState()],
+            json => { type => 'WrongState', actual_state => $controlledTopic->getState }
         );
     }
     unless ($controlledTopic->haveNextState($action)) {
-        my $displayState = $controlledTopic->getWorkflowMeta('displayname');
-        my $displayAction = $actionDisplayname || $action;
-
         throw Foswiki::OopsException(
             "oopswrkflwsaveerr",
             web => $web,
             topic => $topic,
             def => 'NoNextState',
-            params => [
-                decode_entities($displayState),
-                decode_entities($displayAction),
-                $state,
-                $action,
-            ],
-            json => {
-                type => 'NoNextState',
-                state => $state,
-                action => $action ,
-                state_displayname => $displayState,
-                action_displayname => $displayAction
-            },
+            params => [$state, $action],
+            json => { type => 'NoNextState' }
         );
     }
     $removeComments = '0' unless defined $removeComments;
@@ -1159,16 +1061,13 @@ sub transitionTopic {
         }
 
         # check if deleting comments is allowed if requested
-        if($removeComments eq '1') {
-            my $transitionAttributes = $controlledTopic->getTransitionAttributesArray();
-            my $isAllowed;
-            foreach my $eachTransition ( @$transitionAttributes ) {
-                next unless $eachTransition->{allow_delete_comment} || $eachTransition->{suggest_delete_comment};
-                next unless $eachTransition->{action} eq $action;
-                $isAllowed = 1;
-                last;
-            }
-            unless($isAllowed) {
+        { #scope
+            my ($allowRemove, $suggestRemove) = $controlledTopic->getTransitionAttributes();
+            if(
+                    $removeComments eq '1'
+                    && not ($allowRemove =~ /,$action,/ || $suggestRemove =~ /,$action,/)
+                )
+            {
                 # this can happen by changing the popup-menue after
                 # selecting the checkbox
                 $removeComments = '0';
@@ -1278,7 +1177,7 @@ sub transitionTopic {
             $controlledTopic->moveTopic($destinationWeb, $controlledTopic->{topic});
             $controlledTopic->save(1);
 
-            Foswiki::Plugins::ModacHelpersPlugin::updateTopicLinks($web, $appTopic, $destinationWeb, $appTopic);
+            Foswiki::Contrib::ModacHelpersContrib::updateTopicLinks($web, $appTopic, $destinationWeb, $appTopic);
 
             $url = Foswiki::Func::getViewUrl($controlledTopic->{web}, $controlledTopic->{topic});
         }
@@ -1455,60 +1354,6 @@ sub _popParams {
         $value = '' unless defined $value;
         Foswiki::Func::setPreferencesValue($param, $value);
     }
-}
-
-sub _restHistory {
-    my ($session, $plugin, $verb, $response) = @_;
-    # Update the history in the template topic and the new topic
-    my $result = {};
-    my $query = Foswiki::Func::getCgiQuery();
-    my $webTopic = $query->param('topic');
-    my $startFromVersion = $query->param('startFromVersion');
-    my $pageSize = $query->param('size') || 5;
-    my $restartWithFork = $query->param('restartWithFork') || 1;
-    my ($web, $topic) = Foswiki::Func::normalizeWebTopicName( undef, $webTopic );
-    my @transitions;
-    my $hasMoreEntries = 1;
-
-    if ( Foswiki::Func::topicExists( $web, $topic ) ) {
-        my $controlledTopic = _initTOPIC( $web, $topic );
-        unless($controlledTopic) {
-            $response->status(400);
-            $result = {"message" => "Topic not under any workflow"};
-        }
-        my ( undef, undef, $lastVersion ) = $controlledTopic->{meta}->getRevisionInfo();
-        my $start;
-        if($startFromVersion) {
-            $start = $startFromVersion -1;
-        } else {
-            $start = $lastVersion;
-        }
-        foreach my $version (reverse 1 .. $start) {
-            $controlledTopic = _initTOPIC( $web, $topic, $version );
-            if($controlledTopic->changedStateFromLastVersion()) {
-                my $transition = $controlledTopic->getTransitionInfos();
-                push @transitions, $transition;
-            }
-            if($restartWithFork && $transitions[-1] && $transitions[-1]->{isFork}){
-                $hasMoreEntries = 0;
-                last;
-            }
-            if($version <= 1) {
-                $hasMoreEntries = 0;
-            }
-            if(scalar @transitions >= $pageSize) {
-                last;
-            }
-        }
-        $result = {
-            transitions => \@transitions,
-            hasMoreEntries => $hasMoreEntries,
-        };
-    } else {
-        $response->status(400);
-        $result = {"message" => "Topic does not exists: $webTopic"};
-    }
-    return to_json($result);
 }
 
 sub _restFork {
@@ -2401,12 +2246,7 @@ sub _getIndexHash {
         if ( $fields ) {
             foreach my $field (keys %$fields) {
                 next if $field =~ m#^(?:approved$|allow|state$)#; # skip those already indexed
-                if($field =~ m#^displayname(\w*)$#) {
-                    $indexFields{ "workflowstate_${field}_s" } = $controlledTopic->getWorkflowMeta('displayname', $1, 1);
-                    $indexFields{ "previousstate_${field}_s" } = $controlledTopic->{workflow}->getDisplayname($workflow->{previousState}, $1, 1);
-                } else {
-                    $indexFields{ "workflowstate_${field}_s" } = $controlledTopic->expandMacros($controlledTopic->getRow($field, 1));
-                }
+                $indexFields{ "workflowstate_${field}_s" } = $controlledTopic->expandMacros($controlledTopic->getRow($field));
             }
         }
     }
@@ -2445,21 +2285,7 @@ sub _getIndexHash {
         }
     }
 
-    _addDisplayValuesToIndexHash(\%indexFields);
-
     return %indexFields;
-}
-
-sub _addDisplayValuesToIndexHash {
-    my $indexFields = shift;
-
-    foreach my $indexField (keys(%$indexFields)) {
-        if($indexField =~ m#^(workflowmeta_lastprocessor.*)_s$#) {
-            my $displayValueField = $1.'_dv_s';
-            my $value = $indexFields->{$indexField};
-            $indexFields->{$displayValueField} = Foswiki::Func::expandCommonVariables("%RENDERUSER{\"$value\"}%");
-        }
-    }
 }
 
 sub indexTopicHandler {
