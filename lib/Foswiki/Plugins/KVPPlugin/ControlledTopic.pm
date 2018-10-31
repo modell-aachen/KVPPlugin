@@ -378,17 +378,29 @@ sub setRev {
 # Alex: Bearbeiter hinzu
 sub setState {
     my ( $this, $state, $version, $remark, $action ) = @_;
+
+    my $time = time();
+    my $formattedTime = Foswiki::Time::formatTime( $time, '$day.$mo.$year', 'servertime' );
+    my $processor = Foswiki::Func::getCanonicalUserID();
+
     my $oldState = $this->{state}->{name};
+    my $oldStateType = $this->{workflow}->getRow($this->{state}->{name}, 'statetype') || '';
+    my $newStateType = $this->{workflow}->getRow($state, 'statetype') || '';
+
     $this->{state}->{name} = $state;
     $this->{state}->{previousState} = $oldState;
 
     $this->{state}->{"LASTVERSION_$state"} = $version;
-    $this->{state}->{"LASTPROCESSOR_$state"} = Foswiki::Func::getCanonicalUserID();
-    $this->{state}->{"LEAVING_$oldState"} = Foswiki::Func::getCanonicalUserID() if($oldState);
-    $this->{state}->{"LASTTIME_$state"} =
-      Foswiki::Time::formatTime( time(), '$day.$mo.$year', 'servertime' );
-    $this->{state}->{"LASTTIME_${state}_DT"} = time();
+    $this->{state}->{"LASTPROCESSOR_$state"} = $processor;
+    $this->{state}->{"LEAVING_$oldState"} = $processor if($oldState);
+    $this->{state}->{"LASTTIME_$state"} = $formattedTime;
+    $this->{state}->{"LASTTIME_${state}_DT"} = $time;
     $this->{state}->{"LASTACTION"} = $action || '';
+    if($oldStateType ne $newStateType || !exists $this->{state}->{"LASTTIMESTATETYPE_$newStateType"}) {
+        $this->{state}->{"LASTTIMESTATETYPE_$newStateType"} = $formattedTime;
+        $this->{state}->{"LASTTIMESTATETYPE_{$newStateType}_DT"} = $time;
+        $this->{state}->{"LASTPROCESSORTATETYPE_$newStateType"} = $processor;
+    }
 
     $this->{state}->{Remark} = $remark || '';
 
