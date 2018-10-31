@@ -2251,6 +2251,19 @@ sub _getIndexHash {
         }
     }
 
+    # fallback for old topics
+    my $statetype = lc($controlledTopic->getRow('statetype'));
+    if(!exists $indexFields{"workflowmeta_lasttimestatetype_${statetype}_dt"} && exists $indexFields{"workflowmeta_lasttime_${statetype}_dt"}) {
+        $indexFields{"workflowmeta_lasttimestatetype_${statetype}_s"} = $indexFields{"workflowmeta_lasttime_${statetype}_s"};
+        $indexFields{"workflowmeta_lasttimestatetype_${statetype}_dt"} = $indexFields{"workflowmeta_lasttime_${statetype}_dt"};
+        $indexFields{"workflowmeta_lastprocessorstatetype_${statetype}_s"} = $indexFields{"workflowmeta_lastprocessor_${statetype}_s"};
+    }
+    if(exists $indexFields{"workflowmeta_lasttimestatetype_${statetype}_dt"}) {
+        $indexFields{"workflowmeta_lasttimecurrentstatetype_s"} = $indexFields{"workflowmeta_lasttimestatetype_${statetype}_s"};
+        $indexFields{"workflowmeta_lasttimecurrentstatetype_dt"} = $indexFields{"workflowmeta_lasttimestatetype_${statetype}_dt"};
+        $indexFields{"workflowmeta_lastprocessorcurrentstatetype_s"} = $indexFields{"workflowmeta_lastprocessorstatetype_${statetype}_s"};
+    }
+
     # Contributors
     my @cHashes = $controlledTopic->{meta}->find('WRKFLWCONTRIBUTORS');
     foreach my $contis (@cHashes) {
