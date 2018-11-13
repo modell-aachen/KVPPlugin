@@ -74,7 +74,7 @@ jQuery(function($) {
         data['submit_callback'] = submitAction;
         data['validation_key'] = $transitionDiv.find('[name="validation_key"]').val();
         let keys = Object.keys(data).filter(key => /^[a-z_-]+$/.test(key)); // do not allow v-on:...
-        let props = Array.map(keys, key => `:${key}="${key}"`);
+        let props = keys.map(key => `:${key}="${key}"`);
         let $transitionMenu = $(`<transition-menu ${props.join(' ')}></transition-menu>`);
         //copy attrs for vue-client tokens
         let attributes = $transitionDiv.prop("attributes");
