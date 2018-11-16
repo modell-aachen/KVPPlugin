@@ -64,7 +64,7 @@ sub initPlugin {
         authenticate => 1, http_allow => 'GET', validate => 0 );
 
     Foswiki::Func::registerTagHandler(
-        'WORKFLOWSTATE', \&_WORKFLOWSTATE );
+        'WORKFLOWSTATE', \&WORKFLOWSTATE );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWHISTORY', \&_WORKFLOWHISTORY );
     Foswiki::Func::registerTagHandler(
@@ -764,7 +764,7 @@ SCRIPT
 
 # Tag handler
 # Returns the state of the current topic.
-sub _WORKFLOWSTATE {
+sub WORKFLOWSTATE {
     my ( $session, $attributes, $topic, $web ) = @_;
 
     ($web, $topic) = _getTopicName($attributes, $web, $topic);
