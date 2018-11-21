@@ -85,9 +85,16 @@
                         </div>
                     </div>
                     <div class="cell xxlarge-6 large-6 medium-6">
-                        <vue-header3 class="transitionmenu-header">
-                            {{ $t('history') }}
-                        </vue-header3>
+                        <div class="transitionmenu-header">
+                            <vue-header3>
+                                {{ $t('history') }}
+                            </vue-header3>
+                            <vue-check-item
+                                v-model="showTransitionsOnly"
+                                class="">
+                                {{ $t('history_list_show_transitions_only') }}
+                            </vue-check-item>
+                        </div>
                         <vue-history-list
                             :data="displayDataList"
                             :is-loading="isTransitionsListLoading"
@@ -161,6 +168,7 @@ export default {
             pageSize: 5,
             hasMoreTransitionEntries: false,
             lastVersion: undefined,
+            showTransitionsOnly: true,
             icons: {
                 'BACK': 'fa-arrow-circle-left ma-failure-color',
                 'DISCARDED': 'fa-times-circle ma-failure-color',
@@ -199,6 +207,9 @@ export default {
                     item.icon = 'DEFAULT';
                 }
                 let action = this.$t('action_text', [item.previousState, item.state]);
+                if(item.type === "save") {
+                    action = this.$t('history_list_save_entry', [item.state]);
+                }
                 if(item.isCreation || item.isFork) {
                     item.icon = 'ADDED';
                     action = '';
@@ -216,11 +227,19 @@ export default {
             return displayList;
         },
     },
+    watch: {
+        showTransitionsOnly() {
+            this.lastVersion = undefined;
+            this.transitions = [];
+            this.getTransitionData();
+        }
+    },
     async created() {
         this.getTransitionData();
     },
     methods: {
         loadMore() {
+            this.lastVersion = this.transitions[this.transitions.length -1].version;
             this.getTransitionData();
         },
         decodeNonAlnumFilter(string) {
@@ -237,8 +256,6 @@ export default {
                 let result = await this.getRemoteData();
                 this.transitions = this.transitions.concat(result.transitions);
                 this.hasMoreTransitionEntries = result.hasMoreEntries;
-                this.isTransitionsListLoading = false;
-                this.lastVersion = this.transitions[this.transitions.length -1].version;
             } catch(error) {
                 this.$showAlert({
                     type: 'error',
@@ -247,8 +264,8 @@ export default {
                     confirmButtonText: this.$t('ok')
                 });
                 window.console.log(error);
-                this.isTransitionsListLoading = false;
             }
+            this.isTransitionsListLoading = false;
         },
         async getRemoteData() {
             const ajaxReqObj = {
@@ -259,6 +276,7 @@ export default {
                     topic: Vue.foswiki.getPreference("WEB")+"."+Vue.foswiki.getPreference("TOPIC"),
                     startFromVersion: this.lastVersion,
                     size: this.pageSize,
+                    onlyIncludeTransitions: this.showTransitionsOnly,
                 },
                 url: Vue.foswiki.getScriptUrl("rest", "KVPPlugin", "history"),
             };
@@ -337,7 +355,7 @@ export default {
     .transitionmenu-load-more {
         margin-left: 16px;
     }
-    .vue-header.transitionmenu-header{
+    .transitionmenu-header{
         margin-top: 0;
         margin-left: 16px;
         margin-bottom: 16px;

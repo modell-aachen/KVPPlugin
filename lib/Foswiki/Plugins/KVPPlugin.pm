@@ -1459,13 +1459,15 @@ sub _popParams {
 
 sub _restHistory {
     my ($session, $plugin, $verb, $response) = @_;
-    # Update the history in the template topic and the new topic
+
     my $result = {};
     my $query = Foswiki::Func::getCgiQuery();
     my $webTopic = $query->param('topic');
     my $startFromVersion = $query->param('startFromVersion');
     my $pageSize = $query->param('size') || 5;
     my $restartWithFork = $query->param('restartWithFork') || 1;
+    my $onlyIncludeTransitions = Foswiki::Func::isTrue($query->param('onlyIncludeTransitions'));
+
     my ($web, $topic) = Foswiki::Func::normalizeWebTopicName( undef, $webTopic );
     my @transitions;
     my $hasMoreEntries = 1;
@@ -1487,6 +1489,11 @@ sub _restHistory {
             $controlledTopic = _initTOPIC( $web, $topic, $version );
             if($controlledTopic->changedStateFromLastVersion()) {
                 my $transition = $controlledTopic->getTransitionInfos();
+                $transition->{type} = "transition";
+                push @transitions, $transition;
+            } elsif(!$onlyIncludeTransitions) {
+                my $transition = $controlledTopic->getTransitionInfos();
+                $transition->{type} = "save";
                 push @transitions, $transition;
             }
             if($restartWithFork && $transitions[-1] && $transitions[-1]->{isFork}){

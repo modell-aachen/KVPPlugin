@@ -147,7 +147,8 @@ describe("The TransitionMenu component", () => {
         });
         it("upadtes last version to get correct new page", async () => {
             expect(wrapper.vm.lastVersion).toEqual(undefined);
-            await wrapper.vm.getTransitionData();
+            await Vue.nextTick();
+            await wrapper.vm.loadMore();
             expect(wrapper.vm.lastVersion).toEqual('8');
         });
     });
