@@ -1469,7 +1469,7 @@ sub _restHistory {
     my $onlyIncludeTransitions = Foswiki::Func::isTrue($query->param('onlyIncludeTransitions'));
 
     my ($web, $topic) = Foswiki::Func::normalizeWebTopicName( undef, $webTopic );
-    my @transitions;
+    my @historyEntries;
     my $hasMoreEntries = 1;
 
     if ( Foswiki::Func::topicExists( $web, $topic ) ) {
@@ -1490,30 +1490,30 @@ sub _restHistory {
             if($controlledTopic->changedStateFromLastVersion()) {
                 my $transition = $controlledTopic->getTransitionInfos();
                 $transition->{type} = "transition";
-                push @transitions, $transition;
+                push @historyEntries, $transition;
             } elsif(!$onlyIncludeTransitions) {
                 my $transition = $controlledTopic->getTransitionInfos();
                 $transition->{type} = "save";
-                push @transitions, $transition;
+                push @historyEntries, $transition;
             }
-            if($restartWithFork && $transitions[-1] && $transitions[-1]->{isFork}){
+            if($restartWithFork && $historyEntries[-1] && $historyEntries[-1]->{isFork}){
                 $hasMoreEntries = 0;
                 last;
             }
             if($version <= 1) {
                 $hasMoreEntries = 0;
             }
-            if(scalar @transitions >= $pageSize) {
+            if(scalar @historyEntries >= $pageSize) {
                 last;
             }
         }
         $result = {
-            transitions => \@transitions,
+            historyEntries => \@historyEntries,
             hasMoreEntries => $hasMoreEntries,
         };
     } else {
         $response->status(400);
-        $result = {"message" => "Topic does not exists: $webTopic"};
+        $result = {"message" => "Topic does not exist: $webTopic"};
     }
     return to_json($result);
 }

@@ -85,27 +85,7 @@
                         </div>
                     </div>
                     <div class="cell xxlarge-6 large-6 medium-6">
-                        <div class="transitionmenu-header">
-                            <vue-header3>
-                                {{ $t('history') }}
-                            </vue-header3>
-                            <vue-check-item
-                                v-model="showTransitionsOnly"
-                                class="">
-                                {{ $t('history_list_show_transitions_only') }}
-                            </vue-check-item>
-                        </div>
-                        <vue-history-list
-                            :data="displayDataList"
-                            :is-loading="isTransitionsListLoading"
-                            @item-clicked="loadHistory" />
-                        <a
-                            v-show="hasMoreTransitionEntries && !isTransitionsListLoading"
-                            class="transitionmenu-load-more"
-                            href="#"
-                            @click.prevent="loadMore()">
-                            {{ $t('load_older_entries') }}
-                        </a>
+                        <workflow-history />
                     </div>
                 </div>
             </vue-collapsible-frame>
@@ -114,9 +94,14 @@
 </template>
 
 <script>
+import WorkflowHistory from "./WorkflowHistory.vue";
+
 export default {
-    name: 'TransitionMenu',
-    i18nextNamespace: 'KVPPlugin',
+    name: "TransitionMenu",
+    i18nextNamespace: "KVPPlugin",
+    components: {
+        WorkflowHistory,
+    },
     props: {
         web: {
             required: true,
@@ -130,11 +115,11 @@ export default {
             required: true,
             type: String,
         },
-        'current_state': {
+        current_state: {
             required: true,
             type: String,
         },
-        'current_state_display': {
+        current_state_display: {
             required: true,
             type: String,
         },
@@ -158,134 +143,59 @@ export default {
     data: function() {
         return {
             item: {
-                label: this.$t('cip_header'),
+                label: this.$t("cip_header"),
                 id: 1,
             },
             use_action: undefined,
-            isTransitionsListLoading: false,
-            remark: '',
-            transitions: [],
-            pageSize: 5,
-            hasMoreTransitionEntries: false,
-            lastVersion: undefined,
-            showTransitionsOnly: true,
-            icons: {
-                'BACK': 'fa-arrow-circle-left ma-failure-color',
-                'DISCARDED': 'fa-times-circle ma-failure-color',
-                'ACCEPTED':'fa-check-circle ma-success-color',
-                'REQUESTED': 'fa-question-circle ma-warning-color',
-                'ADDED': 'fa-plus-circle ma-success-color',
-                'DEFAULT': 'fa-circle',
-            }
+            isHistoryListLoading: false,
+            remark: "",
         };
     },
     computed: {
         showCompare() {
-            if(this.isOrigin) {
+            if (this.isOrigin) {
                 return false;
             }
-            let compareUrl = this.$foswiki.getScriptUrlPath('compare');
+            let compareUrl = this.$foswiki.getScriptUrlPath("compare");
             let location = new String(window.location); // window.location does not provide indexOf and the likes
-            if(location.indexOf(compareUrl) > 0) {
+            if (location.indexOf(compareUrl) > 0) {
                 return false;
             }
             return true;
         },
         compare_href() {
-            return this.$foswiki.getScriptUrlPath('compare', this.web, this.topic, { external: this.web + '/' + this.origin, allowtransition: 1 });
+            return this.$foswiki.getScriptUrlPath(
+                "compare",
+                this.web,
+                this.topic,
+                { external: this.web + "/" + this.origin, allowtransition: 1 }
+            );
         },
         isOrigin() {
             return this.origin === this.topic;
-
         },
-        displayDataList() {
-            if(! this.transitions) {
-                return;
-            }
-            const displayList = this.transitions.map((item) => {
-                if(!item.icon) {
-                    item.icon = 'DEFAULT';
-                }
-                let action = this.$t('action_text', [item.previousState, item.state]);
-                if(item.type === "save") {
-                    action = this.$t('history_list_save_entry', [item.state]);
-                }
-                if(item.isCreation || item.isFork) {
-                    item.icon = 'ADDED';
-                    action = '';
-                }
-                return {
-                    actor: item.leavingStateUser,
-                    date: this.$moment(item.time).format("D.MM.YYYY, H:mm"),
-                    action,
-                    comment: item.remark,
-                    icon: this.icons[item.icon],
-                    description: item.description,
-                    key: item.version,
-                };
-            });
-            return displayList;
-        },
-    },
-    watch: {
-        showTransitionsOnly() {
-            this.lastVersion = undefined;
-            this.transitions = [];
-            this.getTransitionData();
-        }
-    },
-    async created() {
-        this.getTransitionData();
     },
     methods: {
-        loadMore() {
-            this.lastVersion = this.transitions[this.transitions.length -1].version;
-            this.getTransitionData();
-        },
         decodeNonAlnumFilter(string) {
-            if(! string) {
+            if (!string) {
                 return string;
             }
             return string.replace(/&#(\d+);/g, function(match, charCode) {
                 return String.fromCharCode(charCode);
             });
         },
-        async getTransitionData() {
-            this.isTransitionsListLoading = true;
-            try{
-                let result = await this.getRemoteData();
-                this.transitions = this.transitions.concat(result.transitions);
-                this.hasMoreTransitionEntries = result.hasMoreEntries;
-            } catch(error) {
-                this.$showAlert({
-                    type: 'error',
-                    title: this.$t('error'),
-                    text: this.$t('loading_error'),
-                    confirmButtonText: this.$t('ok')
-                });
-                window.console.log(error);
-            }
-            this.isTransitionsListLoading = false;
-        },
-        async getRemoteData() {
-            const ajaxReqObj = {
-                dataType: 'json',
-                traditional: true,
-                type: "GET",
-                data: {
-                    topic: Vue.foswiki.getPreference("WEB")+"."+Vue.foswiki.getPreference("TOPIC"),
-                    startFromVersion: this.lastVersion,
-                    size: this.pageSize,
-                    onlyIncludeTransitions: this.showTransitionsOnly,
-                },
-                url: Vue.foswiki.getScriptUrl("rest", "KVPPlugin", "history"),
-            };
-            return await $.ajax(ajaxReqObj);
-        },
+
         doTransition(actionNr) {
             let action = this.actions[actionNr];
-            if(action.mandatoryNotSatisfied && action.mandatoryNotSatisfied.length) {
-                alert(this.$t('missing_mandatory') + '\n' + action.mandatoryNotSatisfied.join('\n'));
+            if (
+                action.mandatoryNotSatisfied &&
+                action.mandatoryNotSatisfied.length
+            ) {
+                alert(
+                    this.$t("missing_mandatory") +
+                        "\n" +
+                        action.mandatoryNotSatisfied.join("\n")
+                );
                 return;
             }
             let options = {
@@ -298,54 +208,33 @@ export default {
                 currentState: this.current_state,
                 currentStateDisplayname: this.current_state_display,
             };
-            if(action.warning) {
+            if (action.warning) {
                 this.$showAlert({
-                    title: this.$t('note'),
+                    title: this.$t("note"),
                     text: action.warning,
-                    type: 'confirm',
-                    confirmButtonText: this.$t('ok'),
-                    cancelButtonText: this.$t('cancel'),
-                }).then(() => {
-                    this.submit_callback(options);
-                }).catch(this.$showAlert.noop);
+                    type: "confirm",
+                    confirmButtonText: this.$t("ok"),
+                    cancelButtonText: this.$t("cancel"),
+                })
+                    .then(() => {
+                        this.submit_callback(options);
+                    })
+                    .catch(this.$showAlert.noop);
             } else {
                 this.submit_callback(options);
             }
-        },
-        async loadHistory(index) {
-            await this.openHistoryTopic(this.displayDataList[index].key);
-        },
-        async openHistoryTopic(revision) {
-            const ajaxReqObj = {
-                dataType: 'json',
-                traditional: true,
-                type: "GET",
-                data: {
-                    topic: Vue.foswiki.getPreference("WEB")+"."+Vue.foswiki.getPreference("TOPIC"),
-                    revision: revision,
-                },
-                url: Vue.foswiki.getScriptUrl("rest", "ModacHelpersPlugin", "loadHistoryVersion"),
-            };
-            try {
-                const result = await $.ajax(ajaxReqObj);
-                window.open(result.url, '_blank');
-            } catch(e) {
-                alert("could not get history link");
-                window.console.log(e);
-            }
-            return;
         },
     },
 };
 </script>
 
 <style lang="scss">
-.KVPPlugin.TransitionMenu{
-    .kvp-label{
+.KVPPlugin.TransitionMenu {
+    .kvp-label {
         font-weight: 600;
     }
-    .ma-splitbutton{
-        a.button{
+    .ma-splitbutton {
+        a.button {
             font-size: 14px;
         }
     }
@@ -355,7 +244,7 @@ export default {
     .transitionmenu-load-more {
         margin-left: 16px;
     }
-    .transitionmenu-header{
+    .transitionmenu-header {
         margin-top: 0;
         margin-left: 16px;
         margin-bottom: 16px;
