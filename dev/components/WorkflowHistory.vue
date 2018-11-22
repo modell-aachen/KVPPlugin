@@ -6,7 +6,7 @@
             </vue-header3>
             <vue-check-item
                 v-model="showTransitionsOnly"
-                class="">
+                class="show-transitions-only-checkbox">
                 {{ $t('history_list_show_transitions_only') }}
             </vue-check-item>
         </div>
@@ -116,19 +116,23 @@ export default {
             this.getHistoryData();
         },
         async getRemoteData() {
+            const parameters = {
+                topic:
+                    Vue.foswiki.getPreference("WEB") +
+                    "." +
+                    Vue.foswiki.getPreference("TOPIC"),
+                startFromVersion: this.lastVersion,
+                size: this.pageSize,
+                onlyIncludeTransitions: this.showTransitionsOnly,
+            };
+            return await this.performHistoryRequest(parameters);
+        },
+        async performHistoryRequest(parameters) {
             const ajaxReqObj = {
                 dataType: "json",
                 traditional: true,
                 type: "GET",
-                data: {
-                    topic:
-                        Vue.foswiki.getPreference("WEB") +
-                        "." +
-                        Vue.foswiki.getPreference("TOPIC"),
-                    startFromVersion: this.lastVersion,
-                    size: this.pageSize,
-                    onlyIncludeTransitions: this.showTransitionsOnly,
-                },
+                data: parameters,
                 url: Vue.foswiki.getScriptUrl("rest", "KVPPlugin", "history"),
             };
             return await $.ajax(ajaxReqObj);

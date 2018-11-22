@@ -3,9 +3,7 @@ import TestCase from "VueJSPlugin/unit-test-dist/frontend-unit-test-library";
 
 describe("The WorkflowHistory component", () => {
     let wrapper;
-    const getRemoteDataSub = async () => {
-        return ajaxReturn;
-    };
+    let getRemoteDataSub;
     const ajaxReturn = {
         hasMoreEntries: 1,
         historyEntries: [
@@ -76,40 +74,63 @@ describe("The WorkflowHistory component", () => {
             },
         ],
     };
-    describe("history menu", () => {
-        beforeEach(() => {
-            wrapper = TestCase.mount(WorkflowHistory, {
-                methods: {
-                    getRemoteData: getRemoteDataSub,
-                },
-                stubs: ['vue-history-list'],
-            });
+
+    beforeEach(() => {
+        getRemoteDataSub = jasmine.createSpy().and.callFake(async () => {
+            return ajaxReturn;
         });
-        it("transition is mapped correctly", async () => {
-            await wrapper.vm.getHistoryData();
-            const mappedTransition = {
-                actor: "Internal Admin User",
-                date: "4.10.2018, 9:26",
-                action: "action_text",
-                comment: "",
-                icon: "fa-circle",
-                description: null,
-                key: "11",
-            };
-            expect(wrapper.vm.displayDataList[1]).toEqual(mappedTransition);
+        wrapper = TestCase.mount(WorkflowHistory, {
+            methods: {
+                performHistoryRequest: getRemoteDataSub,
+            },
+            stubs: ["vue-history-list"],
+            sync: false,
         });
-        it("creation transition is mapped correctly", async () => {
-            await wrapper.vm.getHistoryData();
-            expect(wrapper.vm.displayDataList[4].action).toEqual("");
-            expect(wrapper.vm.displayDataList[4].icon).toEqual(
-                "fa-plus-circle ma-success-color"
-            );
-        });
-        it("upadtes last version to get correct new page", async () => {
-            expect(wrapper.vm.lastVersion).toEqual(undefined);
-            await Vue.nextTick();
-            await wrapper.vm.loadMore();
-            expect(wrapper.vm.lastVersion).toEqual("8");
-        });
+    });
+    it("transition is mapped correctly", async () => {
+        await wrapper.vm.getHistoryData();
+        const mappedTransition = {
+            actor: "Internal Admin User",
+            date: "4.10.2018, 9:26",
+            action: "action_text",
+            comment: "",
+            icon: "fa-circle",
+            description: null,
+            key: "11",
+        };
+        expect(wrapper.vm.displayDataList[1]).toEqual(mappedTransition);
+    });
+    it("creation transition is mapped correctly", async () => {
+        await wrapper.vm.getHistoryData();
+        expect(wrapper.vm.displayDataList[4].action).toEqual("");
+        expect(wrapper.vm.displayDataList[4].icon).toEqual(
+            "fa-plus-circle ma-success-color"
+        );
+    });
+    it("upadtes last version to get correct new page", async () => {
+        expect(wrapper.vm.lastVersion).toEqual(undefined);
+        await Vue.nextTick();
+        await wrapper.vm.loadMore();
+        expect(wrapper.vm.lastVersion).toEqual("8");
+    });
+
+    it("only shows transition history entries by default", async () => {
+        const value = wrapper.find(".show-transitions-only-checkbox input")
+            .element.checked;
+
+        expect(value).toBe(true);
+    });
+
+    it("loads history elements after creation", async () => {
+        expect(getRemoteDataSub).toHaveBeenCalled();
+    });
+
+    it("reloads elements when switching 'show only transitions' toggle", async () => {
+        wrapper.find(".show-transitions-only-checkbox input").setChecked(false);
+        await Vue.nextTick();
+
+        expect(
+            getRemoteDataSub.calls.mostRecent().args[0].onlyIncludeTransitions
+        ).toBe(false);
     });
 });
