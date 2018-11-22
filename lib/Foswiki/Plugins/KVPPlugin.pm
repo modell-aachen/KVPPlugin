@@ -1469,52 +1469,65 @@ sub _restHistory {
     my $onlyIncludeTransitions = Foswiki::Func::isTrue($query->param('onlyIncludeTransitions'));
 
     my ($web, $topic) = Foswiki::Func::normalizeWebTopicName( undef, $webTopic );
+
+    if ( !Foswiki::Func::topicExists( $web, $topic ) ) {
+        $response->status(400);
+        $result = {"message" => "Topic does not exist: $webTopic"};
+        return to_json($result);
+    }
+
+    my $currentUserWikiName = Foswiki::Func::getWikiName();
+    if(!Foswiki::Func::checkAccessPermission('VIEW', $currentUserWikiName, undef, $topic, $web)) {
+        $response->status(400);
+        $result = {"message" => "User not allowed to view history"};
+        return to_json($result);
+    }
+
+    my $controlledTopic = _initTOPIC( $web, $topic );
+    if(!$controlledTopic) {
+        $response->status(400);
+        $result = {"message" => "Topic not under any workflow"};
+        return to_json($result);
+    }
+
     my @historyEntries;
     my $hasMoreEntries = 1;
 
-    if ( Foswiki::Func::topicExists( $web, $topic ) ) {
-        my $controlledTopic = _initTOPIC( $web, $topic );
-        unless($controlledTopic) {
-            $response->status(400);
-            $result = {"message" => "Topic not under any workflow"};
-        }
-        my ( undef, undef, $lastVersion ) = $controlledTopic->{meta}->getRevisionInfo();
-        my $start;
-        if($startFromVersion) {
-            $start = $startFromVersion -1;
-        } else {
-            $start = $lastVersion;
-        }
-        foreach my $version (reverse 1 .. $start) {
-            $controlledTopic = _initTOPIC( $web, $topic, $version );
-            if($controlledTopic->changedStateFromLastVersion()) {
-                my $transition = $controlledTopic->getTransitionInfos();
-                $transition->{type} = "transition";
-                push @historyEntries, $transition;
-            } elsif(!$onlyIncludeTransitions) {
-                my $transition = $controlledTopic->getTransitionInfos();
-                $transition->{type} = "save";
-                push @historyEntries, $transition;
-            }
-            if($restartWithFork && $historyEntries[-1] && $historyEntries[-1]->{isFork}){
-                $hasMoreEntries = 0;
-                last;
-            }
-            if($version <= 1) {
-                $hasMoreEntries = 0;
-            }
-            if(scalar @historyEntries >= $pageSize) {
-                last;
-            }
-        }
-        $result = {
-            historyEntries => \@historyEntries,
-            hasMoreEntries => $hasMoreEntries,
-        };
+    my ( undef, undef, $lastVersion ) = $controlledTopic->{meta}->getRevisionInfo();
+    my $start;
+    if($startFromVersion) {
+        $start = $startFromVersion -1;
     } else {
-        $response->status(400);
-        $result = {"message" => "Topic does not exist: $webTopic"};
+        $start = $lastVersion;
     }
+    foreach my $version (reverse 1 .. $start) {
+        $controlledTopic = _initTOPIC( $web, $topic, $version );
+        if($controlledTopic->changedStateFromLastVersion()) {
+            my $transition = $controlledTopic->getTransitionInfos();
+            $transition->{type} = "transition";
+            push @historyEntries, $transition;
+        } elsif(!$onlyIncludeTransitions) {
+            my $transition = $controlledTopic->getTransitionInfos();
+            $transition->{type} = "save";
+            push @historyEntries, $transition;
+        }
+        if($restartWithFork && $historyEntries[-1] && $historyEntries[-1]->{isFork}){
+            $hasMoreEntries = 0;
+            last;
+        }
+        if($version <= 1) {
+            $hasMoreEntries = 0;
+        }
+        if(scalar @historyEntries >= $pageSize) {
+            last;
+        }
+    }
+
+    $result = {
+        historyEntries => \@historyEntries,
+        hasMoreEntries => $hasMoreEntries,
+    };
+
     return to_json($result);
 }
 
