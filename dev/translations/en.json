@@ -12,6 +12,8 @@
     "note": "Note",
     "history": "History",
     "action_text": "from <b>{{0}}</b> to <b>{{1}}</b>",
+    "history_list_save_entry": "edited in <b>{{0}}</b>",
+    "history_list_show_transitions_only": "Only show changes of the state",
     "load_older_entries": "Show older changes",
     "error": "Error",
     "loading_error": "The data could not be loaded",

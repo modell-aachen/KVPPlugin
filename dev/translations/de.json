@@ -12,6 +12,8 @@
     "note": "Hinweis",
     "history": "Historie",
     "action_text": "von <b>{{0}}</b> zu <b>{{1}}</b>",
+    "history_list_save_entry": "bearbeitet in <b>{{0}}</b>",
+    "history_list_show_transitions_only": "Nur Status-Wechsel anzeigen",
     "load_older_entries": "Ältere Änderungen anzeigen",
     "error": "Fehler",
     "loading_error": "Daten konnten nicht geladen werden",
