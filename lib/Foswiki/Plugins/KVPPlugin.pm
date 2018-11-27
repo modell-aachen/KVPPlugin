@@ -1502,15 +1502,15 @@ sub _restHistory {
     }
     foreach my $version (reverse 1 .. $start) {
         $controlledTopic = _initTOPIC( $web, $topic, $version );
+        my $transition = $controlledTopic->getTransitionInfos();
         if($controlledTopic->changedStateFromLastVersion()) {
-            my $transition = $controlledTopic->getTransitionInfos();
             $transition->{type} = "transition";
             push @historyEntries, $transition;
         } elsif(!$onlyIncludeTransitions) {
-            my $transition = $controlledTopic->getTransitionInfos();
             $transition->{type} = "save";
             push @historyEntries, $transition;
         }
+        $transition->{url} = Foswiki::Plugins::ModacHelpersPlugin::getLinkToTopicHistory($webTopic, $version);
         if($restartWithFork && $historyEntries[-1] && $historyEntries[-1]->{isFork}){
             $hasMoreEntries = 0;
             last;
