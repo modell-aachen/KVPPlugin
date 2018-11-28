@@ -12,8 +12,7 @@
         </div>
         <vue-history-list
             :data="displayDataList"
-            :is-loading="isHistoryListLoading"
-            @item-clicked="loadHistory" />
+            :is-loading="isHistoryListLoading" />
         <a
             v-show="hasMoreTransitionEntries && !isHistoryListLoading"
             class="transitionmenu-load-more"
@@ -74,6 +73,7 @@ export default {
                     icon: this.icons[item.icon],
                     description: item.description,
                     key: item.version,
+                    actionUrl: item.url,
                 };
             });
             return displayList;
@@ -139,33 +139,6 @@ export default {
         },
         async loadHistory(index) {
             await this.openHistoryTopic(this.displayDataList[index].key);
-        },
-        async openHistoryTopic(revision) {
-            const ajaxReqObj = {
-                dataType: "json",
-                traditional: true,
-                type: "GET",
-                data: {
-                    topic:
-                        Vue.foswiki.getPreference("WEB") +
-                        "." +
-                        Vue.foswiki.getPreference("TOPIC"),
-                    revision: revision,
-                },
-                url: Vue.foswiki.getScriptUrl(
-                    "rest",
-                    "ModacHelpersPlugin",
-                    "loadHistoryVersion"
-                ),
-            };
-            try {
-                const result = await $.ajax(ajaxReqObj);
-                window.open(result.url, "_blank");
-            } catch (e) {
-                alert("could not get history link");
-                window.console.log(e);
-            }
-            return;
         },
         isCreationHistoryEntry(entry) {
             return entry.type === 'transition' && (entry.isCreation || entry.isFork);
