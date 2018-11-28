@@ -14,7 +14,7 @@ jQuery(function($) {
      * This is done outside of vue, so StrikeOne will not mess with vue's
      * stuff.
      */
-    let submitAction = function({validation_key, web, topic, action, currentState, actionDisplayname, currentStateDisplayname, message}) {
+    let submitAction = function({validation_key, web, topic, action, currentState, actionDisplayname, currentStateDisplayname, message, deleteComments}) {
         let $form = $(`
             <form
                 ref="transitionForm"
@@ -39,6 +39,10 @@ jQuery(function($) {
                 >
                 <input
                     type="hidden"
+                    name="remove_comments"
+                >
+                <input
+                    type="hidden"
                     name="action_displayname"
                 >
                 <input
@@ -51,6 +55,7 @@ jQuery(function($) {
         $form.find('[name="WORKFLOWSTATE"]').val(currentState);
         $form.find('[name="action_displayname"]').val(actionDisplayname);
         $form.find('[name="message"]').val(message);
+        $form.find('[name="remove_comments"]').val(deleteComments);
         $form.find('[name="current_state_displayname"]').val(currentStateDisplayname);
         $form.find('[name="topic"]').val(web + '.' + topic);
         $('body').append($form);

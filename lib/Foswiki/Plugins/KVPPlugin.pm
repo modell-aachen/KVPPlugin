@@ -906,7 +906,7 @@ sub _changeState {
             state => $query->param('WORKFLOWSTATE') || '',
             mails => $mails,
             remark => $query->param('message') || '',
-            removeComments => $query->param('removeComments') || '0',
+            removeComments => $query->param('remove_comments') || '0',
             breakLock => $query->param('breaklock') || 0,
             actionDisplayname => $query->param('action_displayname') || '',
             currentStateDisplayname => $query->param('current_state_displayname') || '',
@@ -1159,11 +1159,11 @@ sub transitionTopic {
         }
 
         # check if deleting comments is allowed if requested
-        if($removeComments eq '1') {
+        if($removeComments) {
             my $transitionAttributes = $controlledTopic->getTransitionAttributesArray();
             my $isAllowed;
             foreach my $eachTransition ( @$transitionAttributes ) {
-                next unless $eachTransition->{allow_delete_comment} || $eachTransition->{suggest_delete_comment};
+                next unless $eachTransition->{allow_delete_comments} || $eachTransition->{suggest_delete_comments};
                 next unless $eachTransition->{action} eq $action;
                 $isAllowed = 1;
                 last;
@@ -1508,6 +1508,7 @@ sub _restHistory {
             push @historyEntries, $transition;
         } elsif(!$onlyIncludeTransitions) {
             my $transition = $controlledTopic->getTransitionInfos();
+            delete $transition->{icon};
             $transition->{type} = "save";
             push @historyEntries, $transition;
         }

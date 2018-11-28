@@ -13,27 +13,26 @@
                                 {{ message }}
                             </div>
                         </div>
+                        <vue-spacer
+                            factor-vertical="2"
+                            factor-horizontal="full"/>
                         <div
                             v-if="showCompare"
                             class="grid-x">
-                            <vue-spacer
-                                factor-vertical="2"
-                                factor-horizontal="full"/>
                             <div
                                 class="cell small-4 kvp-label">
                                 {{ $t('compare') }}
                             </div>
                             <div
                                 class="cell small-8">
-                                <vue-button
-                                    :title="$t('compare_approved')"
-                                    :href="compare_href"/>
+                                <a :href="compare_href">
+                                    {{ $t('compare_approved') }}
+                                </a>
                             </div>
+                            <vue-spacer
+                                factor-vertical="2"
+                                factor-horizontal="full"/>
                         </div>
-                        <vue-spacer
-                            v-else
-                            factor-vertical="2"
-                            factor-horizontal="full"/>
                         <div
                             v-if="actions.length">
                             <div
@@ -61,25 +60,37 @@
                                 </div>
                                 <div
                                     class="cell small-8">
+                                    <vue-select
+                                        v-model="selectedActionValue"
+                                        :initial-options="actionsList"
+                                        :sort-slot-options="false"/>
+                                </div>
+                            </div>
+                            <div class="grid-x">
+                                <div class="cell">
+                                    <vue-text-block
+                                        v-if="!selectedAction.proponent"
+                                        is-full-width
+                                        type="secondary">
+                                        {{ $t('proponent_already_signed') }}
+                                    </vue-text-block>
+                                    <vue-spacer
+                                        v-if="!selectedAction.proponent && offerDeleteComments"
+                                        factor-vertical="2"/>
+                                    <vue-check-item
+                                        v-if="offerDeleteComments"
+                                        v-model="deleteComments"
+                                        checked>{{ $t('delete_comments') }}
+                                    </vue-check-item>
+                                    <vue-spacer
+                                        v-if="!selectedAction.proponent || offerDeleteComments"
+                                        factor-vertical="2"/>
+                                    <vue-spacer factor-vertical="1"/>
                                     <vue-button
-                                        v-if="actions.length == 1"
-                                        :title="decodeNonAlnumFilter(actions[0].label)"
-                                        type="primary"
-                                        @click.native="doTransition(0)"/>
-                                    <splitbutton
-                                        v-else
-                                        :on-main-button-click="function(){doTransition(0);}"
-                                        :main-button-title="decodeNonAlnumFilter(actions[0].label)"
-                                        :dropdown-button-title="$t('more')">
-                                        <template slot="dropdown-content">
-                                            <li
-                                                v-for="(item, index) in actions.slice(1)"
-                                                :key="index"
-                                                @click="doTransition(index + 1)">
-                                                <a>{{ item.label }}</a>
-                                            </li>
-                                        </template>
-                                    </splitbutton>
+                                        :title="$t('submit_change_status')"
+                                        :on-click="doTransition"
+                                        :is-disabled="!selectedAction.proponent"
+                                        type="primary" />
                                 </div>
                             </div>
                         </div>
@@ -146,12 +157,29 @@ export default {
                 label: this.$t("cip_header"),
                 id: 1,
             },
-            use_action: undefined,
             isHistoryListLoading: false,
             remark: "",
+            selectedActionValue: [],
+            deleteComments: false,
         };
     },
     computed: {
+        offerDeleteComments() {
+            return this.selectedAction.allow_delete_comments || this.selectedAction.suggest_delete_comments;
+        },
+        selectedAction() {
+            if(this.selectedActionValue[0]) {
+                return this.actions[this.selectedActionValue[0].value];
+            }
+        },
+        actionsList() {
+            return this.actions.map( (action, index) => {
+                return {
+                    label: this.decodeNonAlnumFilter(action.label),
+                    value: index,
+                };
+            });
+        },
         showCompare() {
             if (this.isOrigin) {
                 return false;
@@ -175,6 +203,9 @@ export default {
             return this.origin === this.topic;
         },
     },
+    created: function() {
+        this.selectedActionValue.push(this.actionsList[0]);
+    },
     methods: {
         decodeNonAlnumFilter(string) {
             if (!string) {
@@ -185,8 +216,8 @@ export default {
             });
         },
 
-        doTransition(actionNr) {
-            let action = this.actions[actionNr];
+        doTransition() {
+            let action = this.selectedAction;
             if (
                 action.mandatoryNotSatisfied &&
                 action.mandatoryNotSatisfied.length
@@ -205,6 +236,7 @@ export default {
                 message: this.remark,
                 action: action.action,
                 actionDisplayname: action.label,
+                deleteComments: this.deleteComments ? 1 : 0,
                 currentState: this.current_state,
                 currentStateDisplayname: this.current_state_display,
             };
