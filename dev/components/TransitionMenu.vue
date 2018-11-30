@@ -203,6 +203,11 @@ export default {
             return this.origin === this.topic;
         },
     },
+    watch: {
+        selectedAction(newAction) {
+            this.deleteComments = newAction.suggest_delete_comments ? true : false;
+        }
+    },
     created: function() {
         this.selectedActionValue.push(this.actionsList[0]);
     },
