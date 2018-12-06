@@ -2091,6 +2091,7 @@ sub _XXXCopyTemplateStuffFromCore {
         if ( $k eq 'FILEATTACHMENT' ) {
             foreach my $a ( @{ $ttom->{$k} } ) {
                 next unless $ttom->hasAttachment($a->{name}); # change: make sure it exists
+                next if $topicObject->hasAttachment($a->{name}); # change: happens when edited while creating
                 push(
                     @attachments,
                     {
