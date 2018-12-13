@@ -398,7 +398,7 @@ sub setState {
     $this->{state}->{"LASTACTION"} = $action || '';
     if($oldStateType ne $newStateType || !exists $this->{state}->{"LASTTIMESTATETYPE_$newStateType"}) {
         $this->{state}->{"LASTTIMESTATETYPE_$newStateType"} = $formattedTime;
-        $this->{state}->{"LASTTIMESTATETYPE_{$newStateType}_DT"} = $time;
+        $this->{state}->{"LASTTIMESTATETYPE_${newStateType}_DT"} = $time;
         $this->{state}->{"LASTPROCESSORTATETYPE_$newStateType"} = $processor;
     }
 
