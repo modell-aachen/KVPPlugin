@@ -22,10 +22,20 @@
 
 %TMPL:DEF{"WrongState"}%
 %MAKETEXT{"The transition was not possible because the state of the topic ([_1]) did not match the state of the action ([_2]). Maybe someone else already transitioned the topic?" args="%PARAM1%,%PARAM2%"}%
+
+---++++ %MAKETEXT{"Technical data"}%
+<pre>assumed state: '%PARAM3%'
+actual state: '%PARAM4%'
+</pre>
 %TMPL:END%
 
 %TMPL:DEF{"NoNextState"}%
 %MAKETEXT{"The transition was not possible, because [_1] in state '[_2]' can not be transitioned with '[_3]'." args="<nop>%WEB%.<nop>%TOPIC%, %PARAM1%, %PARAM2%"}%
+
+---++++ %MAKETEXT{"Technical data"}%
+<pre>state: '%PARAM3%'
+action: '%PARAM4%'
+</pre>
 %TMPL:END%
 
 %TMPL:DEF{"WorkflowParseErr"}%

@@ -1,0 +1,25 @@
+{
+    "action_text": "von <b>{{0}}</b> zu <b>{{1}}</b>",
+    "cancel": "Abbrechen",
+    "cip_header": "Dokumentenlenkung",
+    "compare": "Versionsvergleich:",
+    "compare_approved": "Vergleich mit freigegebenem Stand",
+    "current_state": "Status:",
+    "delete_comments": "Kommentare löschen",
+    "error": "Fehler",
+    "history": "Historie",
+    "history_list_save_entry": "bearbeitet in <b>{{0}}</b>",
+    "history_list_show_transitions_only": "Nur Status-Wechsel anzeigen",
+    "load_older_entries": "Ältere Änderungen anzeigen",
+    "loading_error": "Daten konnten nicht geladen werden",
+    "missing_mandatory": "Bitte füllen Sie die folgenden Pflichtfelder aus:",
+    "more": "mehr",
+    "next_step": "Nächster Schritt:",
+    "note": "Hinweis",
+    "ok": "Ok",
+    "proponent_already_signed": "Sie oder ein Vertreter hat bereits eine Entscheidung getroffen. Die Freigabe wartet derzeit auf weitere Entscheidungen von anderen verantwortlichen Nutzern.",
+    "remark": "Bemerkungen:",
+    "submit_change_status": "Status ändern",
+    "dummy": "dummy"
+}
+

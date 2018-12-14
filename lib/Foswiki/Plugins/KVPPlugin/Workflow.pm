@@ -25,6 +25,8 @@ use strict;
 
 use Foswiki::Func ();
 use Foswiki::Plugins ();
+use Foswiki::Plugins::ModacHelpersPlugin ();
+use Foswiki::Attrs ();
 
 sub new {
     my ( $class, $web, $topic ) = @_;
@@ -137,6 +139,7 @@ sub new {
                 $default{ $data{ $defaultCol } } = \%data;
             } else {
                 foreach my $col ( split( /\s*\|\s*/, $line ) ) {
+                    $col =~ s#\$vbar#|#;
                     $data{ $fields[ $i++ ] } = $col;
                 }
 
@@ -232,6 +235,7 @@ sub getActions {
     my ( $this, $topic) = @_;
     my @actions      = ();
     my @warnings     = ();
+    my @displayActions = ();
     my $currentState = $topic->getState();
     foreach my $row ( @{ $this->getTransitions($currentState) } ) {
         my $attribute = $row->{attribute} || '';
@@ -243,10 +247,15 @@ sub getActions {
             )
         {
             push( @actions, $row->{action} );
-            push( @warnings, $row->{warning} );
+            my $warning = $row->{warning};
+            if($warning) {
+                $warning = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($Foswiki::Plugins::SESSION, {string => $warning, literal => 1});
+                push( @warnings, $warning );
+            }
+            push( @displayActions, _getDisplayName($row) );
         }
     }
-    return (\@actions, \@warnings);
+    return (\@actions, \@warnings, \@displayActions);
 }
 
 # Get first allowed action for this state that has this attribute set in the 'Attribute' column
@@ -261,7 +270,11 @@ sub getActionWithAttribute {
         if ( $t->{attribute} && $t->{attribute} =~ /(?:^|\W)$attribute(?:\W|$)/ ) {
             my $allowed = $topic->expandMacros( $t->{allowed} );
             if ( _isAllowed($allowed) && _isTrue($topic->expandMacros($t->{condition})) ) {
-                return [ $t->{action}, $t->{warning} ];
+                my $warning = $t->{warning};
+                if($warning) {
+                    $warning = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($Foswiki::Plugins::SESSION, {string => $warning, literal => 1});
+                }
+                return [ $t->{action}, $warning ];
             }
         }
     }
@@ -280,6 +293,89 @@ sub hasAttribute {
     my ( $this, $state, $action, $attribute ) = @_;
     my $attr = $this->getAttributes($state, $action);
     return ( $attr && $attr =~ /(?:\W|^)$attribute(?:\W|$)/ );
+}
+
+sub getUnsatisfiedMandatoryFields {
+    my ($topic) = @_;
+
+    return map{ unescapeEntities($_->{mapped_title}) } Foswiki::Plugins::ModacHelpersPlugin::getNonSatisfiedFormFields($topic->{meta});
+}
+
+sub getTransitionAttributesArray {
+    my ( $this, $topic, $noChecks, $displaynames ) = @_;
+
+    my $state = $topic->getState();
+
+    return [] unless $state && $topic->foswikiAllowsChange(); # No state happens when topic has no META:WORKFLOW...
+
+    my @transitions = ();
+
+    my @missingMandatory = getUnsatisfiedMandatoryFields($topic);
+    my $mandatorySatisfied = 0 == scalar @missingMandatory;
+
+    foreach my $transition ( @{ $this->getTransitions($state) } ) {
+        unless($noChecks) {
+            next if $transition->{attribute} && $transition->{attribute} =~ m/\b(?:FORK|NEW|HIDDEN)\b/;
+            next unless (
+                _isAllowed($topic->expandMacros( $transition->{allowed} ))
+                && _isTrue($topic->expandMacros( $transition->{condition} ))
+                && $topic->expandMacros( $transition->{nextstate} )
+            );
+        }
+        my ($allow, $suggest, $comment, $mandatoryNotSatisfied);
+        if($transition->{attribute}) {
+            if( $transition->{attribute} =~ /(?:\W|^)ALLOWDELETECOMMENTS(?:\W|$)/ ) {
+                $allow = 1;
+            }
+            if( $transition->{attribute} =~ /(?:\W|^)SUGGESTDELETECOMMENTS(?:\W|$)/ ) {
+                $suggest = 1;
+            }
+            if( $transition->{attribute} =~ /(?:\W|^)REMARK(?:\W|$)/ ) {
+                $comment = 1;
+            }
+        }
+        unless($mandatorySatisfied || ($transition->{attribute} && $transition->{attribute} =~ m#\bIGNOREMANDATORY\b#)) {
+            $mandatoryNotSatisfied = \@missingMandatory;
+        }
+
+        my $attributes = {
+            action => $transition->{action},
+            allow_delete_comments => $allow,
+            suggest_delete_comments => $suggest,
+            remark => $comment,
+            proponent => $topic->isPotentialProponent($transition->{action}),
+            mandatoryNotSatisfied => $mandatoryNotSatisfied,
+        };
+
+        if($displaynames) {
+            $attributes->{label} = unescapeEntities(_getDisplayName($transition));
+            my $warning = unescapeEntities($transition->{warning});
+            if($warning) {
+                $attributes->{warning} = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($Foswiki::Plugins::SESSION, {string => $warning, literal => 1});
+            }
+        }
+        push @transitions, $attributes;
+    }
+
+    return \@transitions;
+}
+
+sub _getDisplayName {
+    my ($row) = @_;
+    my $session = $Foswiki::Plugins::SESSION;
+
+    my $displayColumn = 'displayname' .  $session->i18n()->language();
+    my $label = $row->{$displayColumn};
+    if((!$label) && $row->{'displayname'}) {
+        my $displayName = $row->{displayname};
+        $label = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($session, {string => $displayName, literal => 1});
+    }
+    if(!$label) {
+        $label = $row->{action} || $row->{state};
+        $label = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($session, {string => $label, literal => 1});
+    }
+    $label = escapeNonAlnumChars($label);
+    return $label;
 }
 
 # This returns lists for a JavaScript with all actions that:
@@ -322,6 +418,11 @@ sub getNextState {
 
     my $t = $this->getTransition($currentState, $action);
     return undef unless $t;
+
+    unless($t->{attribute} && $t->{attribute} =~ m#\bIGNOREMANDATORY\b#) {
+        return undef if scalar Foswiki::Plugins::ModacHelpersPlugin::getNonSatisfiedFormFields($topic->{meta});
+    }
+
     my $allowed = $topic->expandMacros( $t->{allowed} );
     my $nextState = $topic->expandMacros( $t->{nextstate} );
     my $condition = $topic->expandMacros( $t->{condition} );
@@ -450,15 +551,51 @@ sub getName {
 
 # Get to contents of the given row (in workflow states) and topic for the current state.
 sub getRow {
-    my ( $this, $state, $row ) = @_;
+    my ( $this, $state, $row, $unescapeEntities ) = @_;
+
+    my $stateDefinition = $this->{states}->{$state};
+    unless( $stateDefinition ) {
+        Foswiki::Func::writeWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
+        return '';
+    }
+    my $value = $stateDefinition->{$row};
+    $value = unescapeEntities($value) if $unescapeEntities;
+    return $value;
+}
+
+sub getDisplayname {
+    my ( $this, $state, $languageOverwrite, $unescapeEntities ) = @_;
 
     unless( $this->{states}{$state} ) {
         Foswiki::Func::writeWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
         return '';
     }
-    return $this->{states}->{$state}->{$row};
-# XXX to expand or not to expand...
-#    return $topic->expandMacros( $this->{states}->{$state}->{$row} );
+
+    my $language = $languageOverwrite || $Foswiki::Plugins::SESSION->i18n()->language();
+    my $displayname = $this->{states}->{$state}->{"displayname$language"};
+    unless($displayname) {
+        $displayname = $this->{states}->{$state}->{"displayname"} || $state;
+        $displayname = Foswiki::Plugins::JSi18nPlugin::MAKETEXT($Foswiki::Plugins::SESSION, {string => $displayname, literal => 1});
+    }
+
+    return unescapeEntities($displayname) if $unescapeEntities;
+    return escapeNonAlnumChars($displayname);
+}
+
+# Escape non-alpha-numeric characters in the ascii range, except &#...; entities.
+sub escapeNonAlnumChars {
+    my ($string) = @_;
+
+    $string =~ s/&(?!#\d+;)/&#38;/g;
+    $string =~ s/([\x01-\x1f"\$%'*+,\-<=>\x5b-\x5f{|}])/'&#' . ord($1) . ';'/ge;
+    return $string;
+}
+
+sub unescapeEntities {
+    my ($string) = @_;
+
+    $string =~ s/&#(\d+);/chr($1)/ge if $string;
+    return $string;
 }
 
 # finds out if the current user is allowed to do something.
@@ -480,30 +617,29 @@ sub _isAllowed {
         return 1;
     }
 
-    if (
-            ref( $Foswiki::Plugins::SESSION->{user} )
-            && $Foswiki::Plugins::SESSION->{user}->can("isInList")
-        )
-    {
-        return $Foswiki::Plugins::SESSION->{user}->isInList($allow);
-    }
-    elsif ( defined &Foswiki::Func::isGroup ) {
-        my $thisUser = Foswiki::Func::getWikiName();
-        foreach my $allowed ( split( /\s*,\s*/, $allow ) ) {
-            ( my $waste, $allowed ) =
-              Foswiki::Func::normalizeWebTopicName( undef, $allowed );
-            if ( Foswiki::Func::isGroup($allowed) ) {
-                return 1 if Foswiki::Func::isGroupMember( $allowed, $thisUser );
-            }
-            else {
-                $allowed = Foswiki::Func::getWikiUserName($allowed);
-                $allowed =~ s/^.*\.//;    # strip web
-                return 1 if $thisUser eq $allowed;
-            }
-        }
-    }
+    my @list = split(/,/, $allow =~ s#\s##gr);
+    @list = map{
+        $_ =~ s#\s##g;
+        _initTopicWorkaround($_);
+    } @list;
 
-    return 0;
+    my $cuid = Foswiki::Func::getCanonicalUserID();
+    return $Foswiki::Plugins::SESSION->{users}->isInUserList($cuid, \@list);
+}
+
+sub _initTopicWorkaround {
+    if($_ =~ m#^\%WORKFLOWMETA\{(.*)\}\%#) {
+        # this can happen during initPlugin, the macros are not yet registered
+        # no support for fancy stuff like nested macros or other plugins
+        my $attrs = new Foswiki::Attrs($1, 0);
+        $_ = Foswiki::Plugins::KVPPlugin::WORKFLOWMETA(
+            $Foswiki::Plugins::SESSION,
+            $attrs,
+            $Foswiki::Plugins::SESSION->{topicName},
+            $Foswiki::Plugins::SESSION->{webName},
+        );
+    }
+    return $_;
 }
 
 # Checking Condition in Transition Table
