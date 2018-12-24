@@ -161,6 +161,7 @@ sub getTransitionInfos {
     } else {
         $leavingStateUser = '';
     }
+    my $currentUser = Foswiki::Func::expandCommonVariables("%RENDERUSER{\"$revUser\" format=\"\$displayName\"}%");
 
     %transition = (
         state => $stateDisplayName,
@@ -173,6 +174,7 @@ sub getTransitionInfos {
         isCreation => $isCreation,
         isFork => $isFork,
         version => $version,
+        currentUser => $currentUser,
     );
     return \%transition;
 }
