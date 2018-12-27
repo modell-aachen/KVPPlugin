@@ -25,6 +25,7 @@ use strict;
 
 use Foswiki (); # for regexes
 use Foswiki::Func ();
+use Foswiki::Plugins::KVPPlugin;
 use POSIX qw(strftime);
 
 # Constructor
@@ -117,12 +118,29 @@ sub changedStateFromLastVersion {
     return ($version-1) eq $lastTransitionVersion;
 }
 
+sub _getPreviousState {
+    my ($this) = @_;
+
+    my $previousState = $this->{state}->{previousState};
+    unless($previousState) {
+        my ( $revDate, $revUser, $version ) = $this->{meta}->getRevisionInfo();
+        if($version > 1) {
+            my $previousVersion = $version - 1;
+            my $previousControlledTopic = Foswiki::Plugins::KVPPlugin::_initTOPIC( $this->{web}, $this->{topic}, $previousVersion );
+            $previousState = $previousControlledTopic->getState();
+        } else {
+            $previousState = $this->{workflow}->getDefaultState();
+        }
+    }
+    return $previousState;
+}
+
 sub getTransitionInfos {
     my ($this) = @_;
 
     my %transition;
-    my $action = $this->{state}->{"LASTACTION"};
-    my $previousState = $this->{state}->{previousState};
+    my $action = $this->{state}->{"LASTACTION"} || '';
+    my $previousState = $this->_getPreviousState();
     my $previousStateDisplayName = $this->{workflow}->getDisplayname($previousState, undef, 1),
     my $leavingStateUserId = $this->{state}->{"LEAVING_$previousState"};
     my $stateDisplayName = $this->getWorkflowMeta('displayname', undef, 1);
@@ -137,7 +155,13 @@ sub getTransitionInfos {
     }
     my $transitionText = $this->{workflow}->getTransitionCell($previousState,$action,"historytext$lang");
     my ( $revDate, $revUser, $version ) = $this->{meta}->getRevisionInfo();
-    my $leavingStateUser = Foswiki::Func::expandCommonVariables("%RENDERUSER{\"$leavingStateUserId\" format=\"\$displayName\"}%");
+    my $leavingStateUser;
+    if($leavingStateUserId) {
+        $leavingStateUser = Foswiki::Func::expandCommonVariables("%RENDERUSER{\"$leavingStateUserId\" format=\"\$displayName\"}%");
+    } else {
+        $leavingStateUser = '';
+    }
+    my $currentUser = Foswiki::Func::expandCommonVariables("%RENDERUSER{\"$revUser\" format=\"\$displayName\"}%");
 
     %transition = (
         state => $stateDisplayName,
@@ -150,6 +174,7 @@ sub getTransitionInfos {
         isCreation => $isCreation,
         isFork => $isFork,
         version => $version,
+        currentUser => $currentUser,
     );
     return \%transition;
 }

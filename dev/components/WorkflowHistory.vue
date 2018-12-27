@@ -58,15 +58,17 @@ export default {
                     item.previousState,
                     item.state,
                 ]);
+                let actor = item.leavingStateUser;
                 if (item.type === "save") {
                     action = this.$t("history_list_save_entry", [item.state]);
+                    actor = item.currentUser;
                 }
                 if (this.isCreationHistoryEntry(item)) {
                     item.icon = "ADDED";
                     action = "";
                 }
                 return {
-                    actor: item.leavingStateUser,
+                    actor,
                     date: this.$moment(item.time).format("D.MM.YYYY, H:mm"),
                     action,
                     comment: item.remark,

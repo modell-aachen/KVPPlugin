@@ -1508,6 +1508,7 @@ sub _restHistory {
             push @historyEntries, $transition;
         } elsif(!$onlyIncludeTransitions) {
             delete $transition->{icon};
+            delete $transition->{description};
             $transition->{type} = "save";
             push @historyEntries, $transition;
         }
