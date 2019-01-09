@@ -106,6 +106,7 @@
 
 <script>
 import WorkflowHistory from "./WorkflowHistory.vue";
+import { mapState } from 'vuex';
 
 export default {
     name: "TransitionMenu",
@@ -114,34 +115,6 @@ export default {
         WorkflowHistory,
     },
     props: {
-        web: {
-            required: true,
-            type: String,
-        },
-        topic: {
-            required: true,
-            type: String,
-        },
-        origin: {
-            required: true,
-            type: String,
-        },
-        current_state: {
-            required: true,
-            type: String,
-        },
-        current_state_display: {
-            required: true,
-            type: String,
-        },
-        message: {
-            required: true,
-            type: String,
-        },
-        actions: {
-            required: true,
-            type: Array,
-        },
         validation_key: {
             type: String,
             default: undefined,
@@ -164,6 +137,23 @@ export default {
         };
     },
     computed: {
+        ...mapState({
+            web: state => state.Qwiki.Document.web,
+            topic: state => state.Qwiki.Document.topic,
+            origin: state => state.Qwiki.Document.WorkflowMetadata.origin,
+            current_state: state => state.Qwiki.Document.WorkflowMetadata.status,
+            actions: state => state.Qwiki.Document.WorkflowMetadata.possibleTransitions,
+        }),
+        current_state_object() {
+            return this.$store.state.Qwiki.Workflow.states[this.current_state];
+        },
+
+        current_state_display() {
+            return this.current_state_object.displayName;
+        },
+        message() {
+            return this.current_state_object.message;
+        },
         offerDeleteComments() {
             return this.selectedAction.allow_delete_comments || this.selectedAction.suggest_delete_comments;
         },

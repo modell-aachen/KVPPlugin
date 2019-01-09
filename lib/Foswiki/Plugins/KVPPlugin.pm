@@ -613,26 +613,26 @@ sub _WORKFLOWTRANSITIONVUE {
 
     my $transitions = $controlledTopic->getTransitionAttributesArray(1);
 
-    my $data = {
-        web => $web,
-        topic => $topic,
-        current_state => $controlledTopic->getState(),
-        current_state_display => $controlledTopic->getWorkflowMeta('displayname', undef, 0),
-        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message', unescapeEntities => 1}, $topic, $web) ),
-        actions => $transitions,
+    my $currentStatus = $controlledTopic->getState();
+    Foswiki::Plugins::VueJSPlugin::pushToStore('Qwiki/Document/WorkflowMetadata/setMetadata', {
+        status => $currentStatus,
         origin => _getOrigin($topic),
-    };
+        possibleTransitions => $transitions,
+    });
+
+    Foswiki::Plugins::VueJSPlugin::pushToStore('Qwiki/Workflow/setStatus', {
+        status => $currentStatus,
+        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message', unescapeEntities => 1}, $topic, $     web) ),
+        displayName => $controlledTopic->getWorkflowMeta('displayname', undef, 0),
+    });
 
     Foswiki::Func::addToZone('script', 'WORKFLOW::VUE', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI,VUEJSPLUGIN,');
 <script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/vue-transitions.js?v=$RELEASE"></script>
 SCRIPT
 
     my $clientToken = Foswiki::Plugins::VueJSPlugin::getClientToken();
-    my $json = to_json($data);
-    $json =~ s/([&<>%])/'&#'.ord($1).';'/ge;
     return <<HTML;
         <div class="KVPPlugin vue-transitions foswikiHidden" data-vue-client-token="$clientToken">
-            <div class="json">$json</div>
             <form method="post" name="strikeonedummy"></form>
         </div>
 HTML

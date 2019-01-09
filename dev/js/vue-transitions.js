@@ -1,4 +1,6 @@
-import TransitionMenu from '../components/TransitionMenu.vue';
+import TransitionMenu from '../components/TransitionMenu';
+import MetadataStore from './MetadataStore';
+import WorkflowStore from './WorkflowStore';
 
 import translationsEn from '../translations/en.json';
 import translationsDe from '../translations/de.json';
@@ -67,17 +69,11 @@ jQuery(function($) {
     };
 
     $('div.KVPPlugin.vue-transitions').each(function() {
-        let data;
         let $transitionDiv = $(this);
-        try {
-            let json = $transitionDiv.find(".json").text();
-            data = JSON.parse(json);
-        } catch(e) {
-            window.console && window.console.log('Could not initialize KVPPlugin vue transition', e);
-            return;
-        }
-        data['submit_callback'] = submitAction;
-        data['validation_key'] = $transitionDiv.find('[name="validation_key"]').val();
+        let data = {
+            'submit_callback': submitAction,
+            'validation_key': $transitionDiv.find('[name="validation_key"]').val(),
+        };
         let keys = Object.keys(data).filter(key => /^[a-z_-]+$/.test(key)); // do not allow v-on:...
         let props = keys.map(key => `:${key}="${key}"`);
         let $transitionMenu = $(`<transition-menu ${props.join(' ')}></transition-menu>`);
@@ -93,6 +89,8 @@ jQuery(function($) {
         $transitionMenu.attr('id', id);
         $transitionDiv.replaceWith($transitionMenu);
 
+        Vue.registerStoreModule(['Qwiki', 'Document', 'WorkflowMetadata'], MetadataStore);
+        Vue.registerStoreModule(['Qwiki', 'Workflow'], WorkflowStore);
         Vue.instantiateEach( '#' + id, { data } );
     });
 });
