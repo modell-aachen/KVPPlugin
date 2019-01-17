@@ -35,6 +35,7 @@ locale/KVPPlugin/it.po 0664 Italian translations
 locale/KVPPlugin/zh-cn.po 0664 Chinese translations
 lib/Foswiki/Plugins/KVPPlugin.pm 0444
 lib/Foswiki/Plugins/KVPPlugin/ControlledTopic.pm 0444
+lib/Foswiki/Plugins/KVPPlugin/ReferenceService.pm 0444
 lib/Foswiki/Plugins/KVPPlugin/Workflow.pm 0444
 lib/Foswiki/Plugins/KVPPlugin/Config.spec 0444 Configuration
 lib/Foswiki/Plugins/SafeWikiPlugin/Signatures/KVPPlugin.pm 0444 Signatures
