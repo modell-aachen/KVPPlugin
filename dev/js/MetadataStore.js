@@ -3,6 +3,7 @@ const module = {
     state: {
         status: '',
         origin: '',
+        selectedTransition: {},
         possibleTransitions: [],
     },
     mutations: {
@@ -10,6 +11,10 @@ const module = {
             state.status = status;
             state.origin = origin;
             state.possibleTransitions = possibleTransitions;
+            state.selectedTransition = possibleTransitions[0];
+        },
+        setSelectedTransition(state, selectedTransition) {
+            state.selectedTransition = selectedTransition;
         },
     },
     getters: {
@@ -17,4 +22,3 @@ const module = {
 };
 
 export default module;
-

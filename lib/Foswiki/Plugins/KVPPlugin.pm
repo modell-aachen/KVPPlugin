@@ -70,6 +70,8 @@ sub initPlugin {
     Foswiki::Func::registerTagHandler(
         'WORKFLOWTRANSITION', \&_WORKFLOWTRANSITION );
     Foswiki::Func::registerTagHandler(
+        'WORKFLOWTRANSITIONDATA', \&_WORKFLOWTRANSITIONDATA );
+    Foswiki::Func::registerTagHandler(
         'WORKFLOWTRANSITIONVUE', \&_WORKFLOWTRANSITIONVUE );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWFORK', \&_WORKFLOWFORK );
@@ -604,7 +606,7 @@ sub WORKFLOWMETA {
     return  $alt;
 }
 
-sub _WORKFLOWTRANSITIONVUE {
+sub _WORKFLOWTRANSITIONDATA {
     my ( $session, $attributes, $topic, $web ) = @_;
 
     ($web, $topic) = _getTopicName($attributes, $web, $topic);
@@ -622,7 +624,7 @@ sub _WORKFLOWTRANSITIONVUE {
 
     Foswiki::Plugins::VueJSPlugin::pushToStore('Qwiki/Workflow/setStatus', {
         status => $currentStatus,
-        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message', unescapeEntities => 1}, $topic, $     web) ),
+        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message', unescapeEntities => 1}, $topic, $web) ),
         displayName => $controlledTopic->getWorkflowMeta('displayname', undef, 0),
     });
 
@@ -630,10 +632,16 @@ sub _WORKFLOWTRANSITIONVUE {
 <script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/vue-transitions.js?v=$RELEASE"></script>
 SCRIPT
 
+    return '';
+}
+
+sub _WORKFLOWTRANSITIONVUE {
+    my ( $session, $attributes, $topic, $web ) = @_;
+
     my $clientToken = Foswiki::Plugins::VueJSPlugin::getClientToken();
     return <<HTML;
-        <div class="KVPPlugin vue-transitions foswikiHidden" data-vue-client-token="$clientToken">
-            <form method="post" name="strikeonedummy"></form>
+        <div class="workflow-vue" data-vue-client-token="$clientToken">
+            <transition-menu></transition-menu>
         </div>
 HTML
 }
@@ -915,7 +923,10 @@ sub _changeState {
             sendKVPMail($mail);
         }
         if ($json) {
-            $response = to_json({status => 'ok'});
+            $response = to_json({
+                status => 'ok',
+                redirect => $report->{url},
+            });
             return;
         }
 

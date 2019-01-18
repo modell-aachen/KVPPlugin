@@ -61,21 +61,22 @@
                                 <div
                                     class="cell small-8">
                                     <vue-select
-                                        v-model="selectedActionValue"
+                                        v-model="selectedActionForSelect"
                                         :initial-options="actionsList"
                                         :sort-slot-options="false"/>
+                                    <slot name="transition-info" />
                                 </div>
                             </div>
                             <div class="grid-x">
                                 <div class="cell">
                                     <vue-text-block
-                                        v-if="!selectedAction.proponent"
+                                        v-if="selectedAction && !selectedAction.proponent"
                                         is-full-width
                                         type="secondary">
                                         {{ $t('proponent_already_signed') }}
                                     </vue-text-block>
                                     <vue-spacer
-                                        v-if="!selectedAction.proponent && offerDeleteComments"
+                                        v-if="selectedAction && !selectedAction.proponent && offerDeleteComments"
                                         factor-vertical="2"/>
                                     <vue-check-item
                                         v-if="offerDeleteComments"
@@ -83,13 +84,13 @@
                                         checked>{{ $t('delete_comments') }}
                                     </vue-check-item>
                                     <vue-spacer
-                                        v-if="!selectedAction.proponent || offerDeleteComments"
+                                        v-if="(selectedAction && !selectedAction.proponent) || offerDeleteComments"
                                         factor-vertical="2"/>
                                     <vue-spacer factor-vertical="1"/>
                                     <vue-button
                                         :title="$t('submit_change_status')"
                                         :on-click="doTransition"
-                                        :is-disabled="!selectedAction.proponent"
+                                        :is-disabled="selectedAction && !selectedAction.proponent"
                                         type="primary" />
                                 </div>
                             </div>
@@ -114,16 +115,6 @@ export default {
     components: {
         WorkflowHistory,
     },
-    props: {
-        validation_key: {
-            type: String,
-            default: undefined,
-        },
-        submit_callback: {
-            required: true,
-            type: Function,
-        },
-    },
     data: function() {
         return {
             item: {
@@ -132,7 +123,6 @@ export default {
             },
             isHistoryListLoading: false,
             remark: "",
-            selectedActionValue: [],
             deleteComments: false,
         };
     },
@@ -155,12 +145,28 @@ export default {
             return this.current_state_object.message;
         },
         offerDeleteComments() {
-            return this.selectedAction.allow_delete_comments || this.selectedAction.suggest_delete_comments;
-        },
-        selectedAction() {
-            if(this.selectedActionValue[0]) {
-                return this.actions[this.selectedActionValue[0].value];
+            if(this.selectedAction) {
+                return this.selectedAction.allow_delete_comments || this.selectedAction.suggest_delete_comments;
             }
+        },
+        selectedActionForSelect: {
+            get() {
+                return [this.selectedAction || ""];
+            },
+            set(newValue) {
+                this.selectedAction = newValue[0];
+            },
+        },
+        selectedAction: {
+            set(newSelectedTransitionFromSelect) {
+                const newSelectedTransition = this.actions[newSelectedTransitionFromSelect.value];
+                if(newSelectedTransition) {
+                    this.$store.commit('Qwiki/Document/WorkflowMetadata/setSelectedTransition', newSelectedTransition);
+                }
+            },
+            get() {
+                return this.$store.state.Qwiki.Document.WorkflowMetadata.selectedTransition;
+            },
         },
         actionsList() {
             return this.actions.map( (action, index) => {
@@ -193,14 +199,6 @@ export default {
             return this.origin === this.topic;
         },
     },
-    watch: {
-        selectedAction(newAction) {
-            this.deleteComments = newAction.suggest_delete_comments ? true : false;
-        }
-    },
-    created: function() {
-        this.selectedActionValue.push(this.actionsList[0]);
-    },
     methods: {
         decodeNonAlnumFilter(string) {
             if (!string) {
@@ -224,17 +222,6 @@ export default {
                 );
                 return;
             }
-            let options = {
-                validation_key: this.validation_key,
-                web: this.web,
-                topic: this.topic,
-                message: this.remark,
-                action: action.action,
-                actionDisplayname: action.label,
-                deleteComments: this.deleteComments ? 1 : 0,
-                currentState: this.current_state,
-                currentStateDisplayname: this.current_state_display,
-            };
             if (action.warning) {
                 this.$showAlert({
                     title: this.$t("note"),
@@ -244,12 +231,38 @@ export default {
                     cancelButtonText: this.$t("cancel"),
                 })
                     .then(() => {
-                        this.submit_callback(options);
+                        this.requestTransitionChange();
                     })
                     .catch(this.$showAlert.noop);
             } else {
-                this.submit_callback(options);
+                this.requestTransitionChange();
             }
+        },
+        async requestTransitionChange() {
+            let options = {
+                web: this.web,
+                topic: this.web+'.'+this.topic,
+                message: this.remark,
+                WORKFLOWACTION: this.selectedAction.action,
+                actionDisplayname: this.selectedAction.label,
+                remove_comments: this.deleteComments ? 1 : 0,
+                WORKFLOWSTATE: this.current_state,
+                current_state_displayname: this.current_state_display,
+                validation_key: await this.$getStrikeOneToken(),
+                json: 1,
+            };
+            $.ajax({
+                url: Vue.foswiki.getScriptUrl("rest", "KVPPlugin", "changeState"),
+                data: options,
+                type: "POST",
+                traditional: true,
+                dataType: 'json',
+            }).then((response) => {
+                if (response.redirect) {
+                    window.location.href = response.redirect;
+                }
+            });
+
         },
     },
 };
