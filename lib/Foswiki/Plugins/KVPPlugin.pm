@@ -17,6 +17,7 @@ use Assert;
 use Foswiki::Func ();
 use Foswiki::Plugins::KVPPlugin::Workflow ();
 use Foswiki::Plugins::KVPPlugin::ControlledTopic ();
+use Foswiki::Plugins::KVPPlugin::ReferenceService ();
 use Foswiki::OopsException ();
 use Foswiki::Sandbox ();
 
@@ -465,24 +466,137 @@ sub _WORKFLOWHISTORY {
     return $controlledTopic->getHistoryText();
 }
 
-# When approved article is beeing renamed, rename talks as well.
 sub afterRenameHandler {
     my ( $oldWeb, $oldTopic, $oldAttachment,
          $newWeb, $newTopic, $newAttachment ) = @_;
 
-    return unless $oldTopic; # don't handle webs
-    return if $oldAttachment; # nor attachments
+    if($oldTopic) {
+        if($oldAttachment) {
+            _storeAttachmentRenames($oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment);
+            Foswiki::Plugins::KVPPlugin::ReferenceService::replaceLocalAttachmentLinks($Foswiki::Plugins::SESSION, $oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment);
+            _replaceReferencingAttachmentLinks($oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment);
+        } else {
+            _approvedRenameCatchup($oldWeb, $oldTopic, $newWeb, $newTopic);
+            _handleDiscussionRename($oldWeb, $oldTopic, $newWeb, $newTopic);
+            _updateAttachmentMoves($oldWeb, $oldTopic, $newWeb, $newTopic);
+        }
+    }
+}
+
+sub _storeAttachmentRenames {
+    my ($oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment) = @_;
 
     my $suffix = _WORKFLOWSUFFIX();
-    return unless $suffix;
-
-    if($oldTopic ne _getOrigin($oldTopic)) {
-        # index workflow_hasdiscussion_b change
-        _requestSolrUpdate("$oldWeb." . _getOrigin($oldTopic));
+    if($oldTopic =~ m#$suffix$#) {
+        my $time = time();
+        my ($meta) = Foswiki::Func::readTopic($oldWeb, $oldTopic);
+        $meta->putKeyed('WORKFLOWATTACHMENTMOVE', {
+            name => "$time " . rand(),
+            date => $time,
+            fromName => $oldAttachment,
+            value => Foswiki::Plugins::KVPPlugin::ReferenceService::encodeAttachmentData($newWeb, $newTopic, $newAttachment),
+        });
+        $meta->save(minor => 1, dontlog => 1);
     }
+}
+
+sub _handleDiscussionRename {
+    my ($oldWeb, $oldTopic, $newWeb, $newTopic) = @_;
+
+    my $origin = _getOrigin($oldTopic);
+    if($oldTopic ne _getOrigin($oldTopic) && ($newTopic ne $origin && $oldWeb ne $newWeb)) {
+        # index workflow_hasdiscussion_b change
+        _requestSolrUpdate("$oldWeb.$origin");
+    }
+}
+sub _updateAttachmentMoves {
+    my ($oldWeb, $oldTopic, $newWeb, $newTopic) = @_;
+
+    my $json = to_json({
+        user => 'BaseUserMapping_Migration',
+        webtopic => "$newWeb.$newTopic",
+        callback => "Foswiki::Plugins::KVPPlugin",
+        oldWeb => $oldWeb,
+        oldTopic => $oldTopic,
+        newWeb => $newWeb,
+        newTopic => $newTopic,
+    });
+    Foswiki::Plugins::TaskDaemonPlugin::send($json, 'updateAttachmentMoves', 'TaskDaemonPlugin', 0);
+}
+
+sub _replaceReferencingAttachmentLinks {
+    my ($oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment) = @_;
+
+    my $json = to_json({
+        user => 'BaseUserMapping_Migration',
+        webtopic => "$newWeb.$newTopic",
+        callback => "Foswiki::Plugins::KVPPlugin",
+        oldWeb => $oldWeb,
+        oldTopic => $oldTopic,
+        oldAttachment => $oldAttachment,
+        newWeb => $newWeb,
+        newTopic => $newTopic,
+        newAttachment => $newAttachment,
+    });
+    Foswiki::Plugins::TaskDaemonPlugin::send($json, 'replaceReferencingAttachmentLinks', 'TaskDaemonPlugin', 0);
+}
+
+sub _handleReferencingAttachmentsOnApproval {
+    my ($fromWeb, $discussionTopic, $appTopic, $attachmentMoves, $attachments) = @_;
+
+    my $json = to_json({
+        user => 'BaseUserMapping_Migration',
+        webtopic => "$fromWeb.$appTopic",
+        callback => "Foswiki::Plugins::KVPPlugin",
+        fromWeb => $fromWeb,
+        discussionTopic => $discussionTopic,
+        appTopic => $appTopic,
+        attachmentMoves => $attachmentMoves,
+        attachments => $attachments,
+    });
+    Foswiki::Plugins::TaskDaemonPlugin::send($json, 'handleReferencingAttachmentsOnApproval', 'TaskDaemonPlugin', 0);
+}
+
+sub grinder {
+    my ($department, $session, $type, $json, $caches) = @_;
+
+    my $data = from_json($json);
+    if ($type eq 'replaceReferencingAttachmentLinks') {
+        Foswiki::Plugins::KVPPlugin::ReferenceService::replaceOtherReferencingAttachmentLinks(
+            $data->{oldWeb},
+            $data->{oldTopic},
+            $data->{oldAttachment},
+            $data->{newWeb},
+            $data->{newTopic},
+            $data->{newAttachment}
+        );
+    } elsif ($type eq 'updateAttachmentMoves') {
+        Foswiki::Plugins::KVPPlugin::ReferenceService::updateAttachmentMoves(
+            $data->{oldWeb},
+            $data->{oldTopic},
+            $data->{newWeb},
+            $data->{newTopic},
+        );
+    } elsif ($type eq 'handleReferencingAttachmentsOnApproval') {
+        Foswiki::Plugins::KVPPlugin::ReferenceService::handleReferencingAttachmentsOnApproval(
+            $data->{fromWeb},
+            $data->{discussionTopic},
+            $data->{appTopic},
+            $data->{attachmentMoves},
+            $data->{attachments},
+        );
+    } else {
+        Foswiki::Func::writeWarning("Unknown message for grinder: $type");
+    }
+}
+
+sub _approvedRenameCatchup {
+    my ($oldWeb, $oldTopic, $newWeb, $newTopic) = @_;
 
     return if $isStateChange;
 
+    my $suffix = _WORKFLOWSUFFIX();
+    return unless $suffix;
     my $oldDiscussion = "$oldTopic$suffix";
     return unless Foswiki::Func::topicExists($oldWeb, $oldDiscussion);
 
@@ -1292,11 +1406,16 @@ sub transitionTopic {
 
             $url = Foswiki::Func::getScriptUrl( $web, $appTopic, 'view' );
 
+            my @renamedAttachments = $controlledTopic->{meta}->find('WORKFLOWATTACHMENTMOVE');
+            $controlledTopic->{meta}->remove('WORKFLOWATTACHMENTMOVE');
+
             #Alex: Force new Revision, damit Aenderungen auf jeden Fall in der History sichtbar werden
             # only move topic if it has a talk suffix
             if($appTopic eq $topic) {
                 $controlledTopic->save(1);
             } else {
+                _cleanPubUrlLinks($controlledTopic);
+
                 #Zuerst kommt das alte Topic in den Muell, dann wird das neue verschoben
                 _trashTopic($web, $appTopic);
                 # Save now that I know i can move it afterwards
@@ -1312,6 +1431,9 @@ sub transitionTopic {
                 # update mail
                 $mail->{options}->{webtopic} = "$web.$appTopic"; # XXX this should be handled by ControlledTopic
             }
+
+            my @attachments = $controlledTopic->{meta}->find('FILEATTACHMENT');
+            _handleReferencingAttachmentsOnApproval($web, $topic, $appTopic, \@renamedAttachments, \@attachments);
         }
         else{
             $controlledTopic->nextRev() if $actionAttributes =~ m#NEXTREV#;
@@ -1339,6 +1461,19 @@ sub transitionTopic {
     };
 
     return { url => $url, webAfterTransition => $web, topicAfterTransition => $appTopic };
+}
+
+sub _cleanPubUrlLinks {
+    my ($controlledTopic) = @_;
+
+    my $meta = $controlledTopic->{meta};
+    my $web = $meta->web();
+    my $topic = $meta->topic();
+    my $pubUrl = Foswiki::Func::getPubUrlPath($web, $topic, undef, absolute => 1);
+    my $pubUrlPath = Foswiki::Func::getPubUrlPath($web, $topic);
+    my $text = $meta->text();
+    $text =~ s#(?:\%PUBURL(?:PATH)?\%/(?:$web|\%WEB\%)|\Q$pubUrl\E|\Q$pubUrlPath\E)/$topic/#%ATTACHURLPATH%/#gm;
+    $meta->text($text);
 }
 
 sub _extractDestinationWebFromMoveAttribute {
@@ -2509,6 +2644,9 @@ sub indexTopicHandler {
     our %indexFields = _getIndexHash( $web, $topic, $meta );
 
     $doc->add_fields( %indexFields );
+
+    my @attachmentMoves = map{$_->{value}} $meta->find('WORKFLOWATTACHMENTMOVE');
+    $doc->add_fields( WORKFLOW_ATTACHMENTMOVE_lst => \@attachmentMoves ) if scalar @attachmentMoves;
 }
 
 sub indexAttachmentHandler {
