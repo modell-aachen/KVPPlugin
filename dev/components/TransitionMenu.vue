@@ -209,7 +209,7 @@ export default {
             });
         },
 
-        doTransition() {
+        async doTransition() {
             let action = this.selectedAction;
             if (
                 action.mandatoryNotSatisfied &&
@@ -230,12 +230,12 @@ export default {
                     confirmButtonText: this.$t("ok"),
                     cancelButtonText: this.$t("cancel"),
                 })
-                    .then(() => {
-                        this.requestTransitionChange();
+                    .then(async () => {
+                        await this.requestTransitionChange();
                     })
                     .catch(this.$showAlert.noop);
             } else {
-                this.requestTransitionChange();
+                await this.requestTransitionChange();
             }
         },
         async requestTransitionChange() {
@@ -251,18 +251,33 @@ export default {
                 validation_key: await this.$getStrikeOneToken(),
                 json: 1,
             };
-            $.ajax({
+            try {
+                let result = await this.performChangeStateRequest(options);
+                if(result.redirect) {
+                    this.redirect(result.redirect);
+                }
+            } catch (error) {
+                this.$showAlert({
+                    type: "error",
+                    title: this.$t("error"),
+                    text: this.$t("loading_error"),
+                    confirmButtonText: this.$t("ok"),
+                });
+                window.console.log(error);
+            }
+        },
+        async performChangeStateRequest(options) {
+            const ajaxOptions = {
                 url: Vue.foswiki.getScriptUrl("rest", "KVPPlugin", "changeState"),
                 data: options,
                 type: "POST",
                 traditional: true,
                 dataType: 'json',
-            }).then((response) => {
-                if (response.redirect) {
-                    window.location.href = response.redirect;
-                }
-            });
-
+            };
+            return await $.ajax(ajaxOptions);
+        },
+        redirect(target) {
+            window.location.href = target;
         },
     },
 };
