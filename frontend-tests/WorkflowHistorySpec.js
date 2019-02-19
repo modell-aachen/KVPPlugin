@@ -97,6 +97,7 @@ describe("The WorkflowHistory component", () => {
             icon: "fa-circle",
             description: null,
             key: "11",
+            actionUrl: undefined,
         };
         expect(wrapper.vm.displayDataList[1]).toEqual(mappedTransition);
     });

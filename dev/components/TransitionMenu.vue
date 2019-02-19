@@ -161,6 +161,7 @@ export default {
             remark: "",
             selectedActionValue: [],
             deleteComments: false,
+            isTransitioning: false,
         };
     },
     computed: {
@@ -222,6 +223,10 @@ export default {
         },
 
         doTransition() {
+            if(this.isTransitioning) {
+                window.console.log('Transition already in progress -> cancelling request');
+                return;
+            }
             let action = this.selectedAction;
             if (
                 action.mandatoryNotSatisfied &&
@@ -254,10 +259,12 @@ export default {
                     cancelButtonText: this.$t("cancel"),
                 })
                     .then(() => {
+                        this.isTransitioning = true;
                         this.submit_callback(options);
                     })
                     .catch(this.$showAlert.noop);
             } else {
+                this.isTransitioning = true;
                 this.submit_callback(options);
             }
         },

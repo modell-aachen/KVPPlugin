@@ -39,6 +39,7 @@ describe("action menu", () => {
         ],
     };
     beforeEach(() => {
+        spy.calls.reset();
         wrapper = TestCase.mount(TransitionMenu, {
             propsData,
             methods: {
@@ -58,6 +59,20 @@ describe("action menu", () => {
         wrapper.vm.doTransition();
         expect(window.alert).not.toHaveBeenCalled();
         expect(spy).toHaveBeenCalled();
+    });
+    it("calls the callback only once", () => {
+        spyOn(window.console, 'log');
+        wrapper.setData({selectedActionValue: [wrapper.vm.actionsList[1]]});
+        wrapper.vm.doTransition();
+        wrapper.vm.doTransition();
+        expect(spy.calls.count()).toEqual(1);
+    });
+    it("gives a debug warning when attempting to transition multiple times", () => {
+        spyOn(window.console, 'log');
+        wrapper.setData({selectedActionValue: [wrapper.vm.actionsList[1]]});
+        wrapper.vm.doTransition();
+        wrapper.vm.doTransition();
+        expect(window.console.log).toHaveBeenCalled();
     });
     it("call action with correct args", () => {
         wrapper.setData({selectedActionValue: [wrapper.vm.actionsList[1]]});
