@@ -71,6 +71,8 @@ sub initPlugin {
     Foswiki::Func::registerTagHandler(
         'WORKFLOWTRANSITION', \&_WORKFLOWTRANSITION );
     Foswiki::Func::registerTagHandler(
+        'WORKFLOWTRANSITIONDATA', \&_WORKFLOWTRANSITIONDATA );
+    Foswiki::Func::registerTagHandler(
         'WORKFLOWTRANSITIONVUE', \&_WORKFLOWTRANSITIONVUE );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWFORK', \&_WORKFLOWFORK );
@@ -718,7 +720,7 @@ sub WORKFLOWMETA {
     return  $alt;
 }
 
-sub _WORKFLOWTRANSITIONVUE {
+sub _WORKFLOWTRANSITIONDATA {
     my ( $session, $attributes, $topic, $web ) = @_;
 
     ($web, $topic) = _getTopicName($attributes, $web, $topic);
@@ -727,27 +729,33 @@ sub _WORKFLOWTRANSITIONVUE {
 
     my $transitions = $controlledTopic->getTransitionAttributesArray(1);
 
-    my $data = {
-        web => $web,
-        topic => $topic,
-        current_state => $controlledTopic->getState(),
-        current_state_display => $controlledTopic->getWorkflowMeta('displayname', undef, 0),
-        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message', unescapeEntities => 1}, $topic, $web) ),
-        actions => $transitions,
+    my $currentStatus = $controlledTopic->getState();
+    Foswiki::Plugins::VueJSPlugin::pushToStore('Qwiki/Document/WorkflowMetadata/setMetadata', {
+        status => $currentStatus,
         origin => _getOrigin($topic),
-    };
+        possibleTransitions => $transitions,
+    });
+
+    Foswiki::Plugins::VueJSPlugin::pushToStore('Qwiki/Workflow/setStatus', {
+        status => $currentStatus,
+        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message', unescapeEntities => 1}, $topic, $web) ),
+        displayName => $controlledTopic->getWorkflowMeta('displayname', undef, 0),
+    });
 
     Foswiki::Func::addToZone('script', 'WORKFLOW::VUE', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI,VUEJSPLUGIN,');
 <script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/vue-transitions.js?v=$RELEASE"></script>
 SCRIPT
 
+    return '';
+}
+
+sub _WORKFLOWTRANSITIONVUE {
+    my ( $session, $attributes, $topic, $web ) = @_;
+
     my $clientToken = Foswiki::Plugins::VueJSPlugin::getClientToken();
-    my $json = to_json($data);
-    $json =~ s/([&<>%])/'&#'.ord($1).';'/ge;
     return <<HTML;
-        <div class="KVPPlugin vue-transitions foswikiHidden" data-vue-client-token="$clientToken">
-            <div class="json">$json</div>
-            <form method="post" name="strikeonedummy"></form>
+        <div class="workflow-vue" data-vue-client-token="$clientToken">
+            <transition-menu></transition-menu>
         </div>
 HTML
 }
@@ -1029,7 +1037,10 @@ sub _changeState {
             sendKVPMail($mail);
         }
         if ($json) {
-            $response = to_json({status => 'ok'});
+            $response = to_json({
+                status => 'ok',
+                redirect => $report->{url},
+            });
             return;
         }
 
