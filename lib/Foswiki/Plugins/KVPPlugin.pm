@@ -474,9 +474,11 @@ sub afterRenameHandler {
 
     if($oldTopic) {
         if($oldAttachment) {
-            _storeAttachmentRenames($oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment);
-            Foswiki::Plugins::KVPPlugin::ReferenceService::replaceLocalAttachmentLinks($Foswiki::Plugins::SESSION, $oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment);
-            _replaceReferencingAttachmentLinks($oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment);
+            unless($newWeb =~ /$Foswiki::cfg{TrashWebName}/) {
+                _storeAttachmentRenames($oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment);
+                Foswiki::Plugins::KVPPlugin::ReferenceService::replaceLocalAttachmentLinks($Foswiki::Plugins::SESSION, $oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment);
+                _replaceReferencingAttachmentLinks($oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment);
+            }
         } else {
             _approvedRenameCatchup($oldWeb, $oldTopic, $newWeb, $newTopic);
             _handleDiscussionRename($oldWeb, $oldTopic, $newWeb, $newTopic);
