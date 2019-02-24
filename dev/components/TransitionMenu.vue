@@ -9,7 +9,9 @@
                     <div class="cell medium-6 transitionmenu-left">
                         <div class="grid-x">
                             <div class="cell small-4 kvp-label">{{ $t('current_state') }}</div>
-                            <div class="cell small-8">
+                            <div
+                                class="cell small-8"
+                                data-test="kvpCurrentState">
                                 {{ message }}
                             </div>
                         </div>
