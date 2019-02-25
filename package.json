@@ -9,19 +9,20 @@
   "scripts": {
     "postinstall": "webpack -p --config webpack.config.js",
     "watch": "webpack -d --watch --progress --config webpack.config.js",
-    "test": "karma start --single-run",
-    "test:watch": "karma start",
+    "test": "jest",
     "lint": "eslint --ext .js,.vue dev/ tests/",
     "lint:watch": "watch --color 'eslint --color --ext .js,.vue dev/ tests/'"
   },
   "author": "Modell Aachen GmbH",
   "license": "GPL-3.0",
   "devDependencies": {
-    "VueJSPlugin": "git://github.com/modell-aachen/VueJSPlugin.git#feature/WorkflowApp",
+    "@babel/core": "^7.3.3",
+    "@babel/preset-env": "^7.3.1",
+    "VueJSPlugin": "git://github.com/modell-aachen/VueJSPlugin.git#bd3c64700f5308bc1275f784734a971b3df03d3f",
     "ajv": "^5.5.0",
     "ajv-keywords": "^2.1.1",
-    "babel-core": "^6.26.0",
     "babel-eslint": "^8.0.3",
+    "babel-jest": "^24.1.0",
     "babel-loader": "^7.1.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-polyfill": "^6.26.0",
@@ -39,17 +40,12 @@
     "file-loader": "^0.9.0",
     "jasmine": "^2.8.0",
     "jasmine-core": "^2.8.0",
+    "jest": "^24.1.0",
     "jquery": "^3.3.1",
-    "karma": "^1.7.1",
-    "karma-babel-preprocessor": "^7.0.0",
-    "karma-jasmine": "^1.1.1",
-    "karma-phantomjs-launcher": "^1.0.4",
-    "karma-sourcemap-loader": "^0.3.7",
-    "karma-webpack": "^2.0.6",
     "node-sass": "^4.7.2",
-    "phantomjs-prebuilt": "^2.1.16",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.19.0",
+    "vue-jest": "^3.0.3",
     "vue-loader": "^12.0.0",
     "vue-style-loader": "^3.0.3",
     "vue-template-compiler": "^2.5.9",
@@ -59,8 +55,8 @@
   },
   "main": "webpack.config.js",
   "dependencies": {
-    "jsdom": "^11.10.0",
-    "karma-jsdom-launcher": "^6.1.3"
+    "babel-core": "7.0.0-bridge.0",
+    "jsdom": "^11.10.0"
   },
   "keywords": []
 }

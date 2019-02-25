@@ -1,10 +1,10 @@
-import {buildComponent, mount} from "VueJSPlugin/unit-test-dist/frontend-unit-test-library";
+import {buildVue, mount} from "VueJSPlugin/unit-test-dist/frontend-unit-test-library";
 import WorkflowMetadataStore from '../dev/js/MetadataStore';
 import WorkflowStore from '../dev/js/WorkflowStore';
 import {WorkflowMetadataState, StatusState} from './assets/StoreStates';
 
 const buildEnvironment = (component, options = {}) => {
-    let vue = buildComponent();
+    let vue = buildVue();
     vue.registerStoreModule(['Qwiki'], {namespaced: true});
     vue.registerStoreModule(['Qwiki', 'Document'], {
         namespaced: true,

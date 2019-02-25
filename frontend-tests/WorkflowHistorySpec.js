@@ -1,4 +1,4 @@
-import WorkflowHistory from "../dev/components/WorkflowHistory.vue";
+import WorkflowHistory from "../dev/components/WorkflowHistory";
 import {historyAjaxData} from './assets/HistoryListAjaxData';
 import {buildEnvironment} from './KVPEnvironmentBuilder';
 

@@ -1,5 +1,5 @@
 import {buildEnvironment} from './KVPEnvironmentBuilder';
-import TransitionMenu from "../dev/components/TransitionMenu.vue";
+import TransitionMenu from "../dev/components/TransitionMenu";
 import {WorkflowMetadataState} from './assets/StoreStates';
 
 describe("action menu", () => {
