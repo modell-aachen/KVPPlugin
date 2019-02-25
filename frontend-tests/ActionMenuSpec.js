@@ -43,4 +43,18 @@ describe("action menu", () => {
             changeStateStub.calls.mostRecent().args[0].remove_comments
         ).toEqual(0);
     });
+    describe("when double-clicking", async () => {
+        beforeEach(async () => {
+            spyOn(window.console, 'log');
+            transitionMenu.setData({selectedActionForSelect: [transitionMenu.vm.actionsList[1]]});
+            await transitionMenu.vm.doTransition();
+            await transitionMenu.vm.doTransition();
+        });
+        it("calls the callback only once", async () => {
+            expect(changeStateStub.calls.count()).toEqual(1);
+        });
+        it("gives a debug warning when attempting to transition multiple times", async () => {
+            expect(window.console.log).toHaveBeenCalled();
+        });
+    });
 });

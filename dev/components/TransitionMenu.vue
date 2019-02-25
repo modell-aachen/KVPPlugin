@@ -126,6 +126,7 @@ export default {
             isHistoryListLoading: false,
             remark: "",
             deleteComments: false,
+            isTransitioning: false,
         };
     },
     computed: {
@@ -212,6 +213,10 @@ export default {
         },
 
         async doTransition() {
+            if(this.isTransitioning) {
+                window.console.log('Transition already in progress -> cancelling request');
+                return;
+            }
             let action = this.selectedAction;
             if (
                 action.mandatoryNotSatisfied &&
@@ -241,6 +246,7 @@ export default {
             }
         },
         async requestTransitionChange() {
+            this.isTransitioning = true;
             let options = {
                 web: this.web,
                 topic: this.web+'.'+this.topic,
