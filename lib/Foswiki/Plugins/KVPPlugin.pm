@@ -23,6 +23,7 @@ use Foswiki::Sandbox ();
 
 use Foswiki::Contrib::MailTemplatesContrib;
 use Foswiki::Plugins::ModacHelpersPlugin;
+use Foswiki::Plugins::ModacHelpersPlugin::Logger;
 
 use HTML::Entities;
 use JSON;
@@ -318,7 +319,7 @@ sub _WORKFLOWSUFFIX {
     my $forkSuffix = $Foswiki::cfg{Extensions}{KVPPlugin}{suffix};
     if (not $forkSuffix) {
         $forkSuffix = 'TALK';
-        Foswiki::Func::writeWarning("No Suffix defined! Defaulting to $forkSuffix!");
+        logWarning("No Suffix defined! Defaulting to $forkSuffix!");
         _broadcast('%MAKETEXT{"No Suffix defined! Defaulting to [_1]!" args="'.$forkSuffix.'"}%');
     }
     return $forkSuffix;
@@ -420,7 +421,7 @@ sub _initTOPIC {
                     $workflowName );
                 $cache{$workflowCID} = $workflow;
             } else {
-                Foswiki::Func::writeWarning("Workflow topic for $web.$topic does not exist: '$wfWeb.$workflowName'");
+                logWarning("Workflow topic for $web.$topic does not exist: '$wfWeb.$workflowName'");
                 _broadcast('%MAKETEXT{"Workflow topic for [_1] does not exist: &#39;[_2]&#39;" args="'."[[$web.$topic]], $wfWeb.$workflowName".'"}%');
             }
         }
@@ -590,7 +591,7 @@ sub grinder {
             $data->{attachments},
         );
     } else {
-        Foswiki::Func::writeWarning("Unknown message for grinder: $type");
+        logError("Unknown message for grinder: $type");
     }
 }
 
@@ -607,7 +608,7 @@ sub _approvedRenameCatchup {
     my $newDiscussion = "$newTopic$suffix";
     # XXX what to do if there is already a discussion?!?
     if (Foswiki::Func::topicExists($newWeb, $newDiscussion)) {
-        Foswiki::Func::writeWarning("Throwing existing discussion away ($newWeb.$newDiscussion) after renaming $oldWeb.$oldTopic to $newWeb.$newDiscussion!");
+        logWarning("Throwing existing discussion away ($newWeb.$newDiscussion) after renaming $oldWeb.$oldTopic to $newWeb.$newDiscussion!");
         _trashTopic($newWeb, $newDiscussion);
     }
 
@@ -1322,7 +1323,7 @@ sub transitionTopic {
             while($actionAttributes !~ m/\G\)/gc) {
                 unless( $actionAttributes =~ m/\G([a-z]+)\s*=\s*"(.*?)(?<!\\)"\s*/gc ) {
                     my $err = "Error while parsing attributes '$actionAttributes' for $web.$topic in state '$state' for action '$action'";
-                    Foswiki::Func::writeWarning($err);
+                    logWarning($err);
                     throw Foswiki::OopsException(
                         'oopswrkflwsaveerr',
                         web => $web,
@@ -1369,7 +1370,7 @@ sub transitionTopic {
             if( $otherControlledTopic ) {
                 $synced = $otherControlledTopic->getWorkflowMeta( 'Revision' );
             } else {
-                Foswiki::Func::writeWarning("Could not SYNCREV $web.$topic to $otherWeb.$otherTopic");
+                logWarning("Could not SYNCREV $web.$topic to $otherWeb.$otherTopic");
             }
             $synced ||= 0;
             $controlledTopic->setRev( $synced );
@@ -1533,7 +1534,7 @@ sub _restLink {
 
     my ($web, $topic) = Foswiki::Func::normalizeWebTopicName( undef, $webtopic );
     unless( $webtopic and $state and $web and $topic ) {
-        Foswiki::Func::writeWarning("Wrong parameters for link: webtopici='$webtopic' state='$state'.");
+        logError("Wrong parameters for link: webtopici='$webtopic' state='$state'.");
         $url = Foswiki::Func::getScriptUrl(
             'Unknown', 'Unkown', 'oops',
             template => "oopsworkflowlink"
@@ -1826,7 +1827,7 @@ sub _restFork {
     }
 
     if ($erroneous) {
-        Foswiki::Func::writeWarning($erroneous);
+        logWarning($erroneous);
         my $message = Foswiki::Func::expandCommonVariables($erroneous);
         throw Foswiki::OopsException(
             'workflowfork',
@@ -2613,7 +2614,7 @@ sub _getIndexHash {
 
     # mild sanity-test if state exists (eg. Workflow-table changed and state got renamed)
     if($controlledTopic && not $controlledTopic->getRow('state') eq $state) {
-        Foswiki::Func::writeWarning("Workflow error in $web.$topic");
+        logWarning("Workflow error in $web.$topic");
         $indexFields{ workflow_tasked_lst } = 'KvpError';
     }
 
@@ -2669,7 +2670,7 @@ sub indexAttachmentHandler {
     our %indexFields;
 
     unless ( $indexCacheWebTopic && $indexCacheWebTopic eq $web.$topic ) {
-        Foswiki::Func::writeWarning("Cache missed for attachment: $web.$topic");
+        logDebug("Cache missed for attachment: $web.$topic");
         my ($meta, undef) = Foswiki::Func::readTopic( $web, $topic );
         $indexCacheWebTopic = $web.$topic;
         %indexFields = _getIndexHash( $web, $topic, $meta );
@@ -2692,7 +2693,8 @@ sub sendKVPMail {
 
     Foswiki::Contrib::MailTemplatesContrib::sendMail($mail->{template}, $mail->{options}, $mail->{settings}, 1);
 
-    Foswiki::Func::writeWarning("Topic: '$mail->{options}{webtopic}' Transition: '$mail->{extra}{action}' Notify column: '$mail->{extra}{ncolumn}'") if $Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails};
+    local $Foswiki::cfg{Extensions}{KVPPlugin}{ModacLogLevel} = 5 if $Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails};
+    logDebug("Topic: '$mail->{options}{webtopic}' Transition: '$mail->{extra}{action}' Notify column: '$mail->{extra}{ncolumn}'");
 }
 
 sub maintenanceHandler {

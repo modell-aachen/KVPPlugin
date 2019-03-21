@@ -26,6 +26,7 @@ use strict;
 use Foswiki::Func ();
 use Foswiki::Plugins ();
 use Foswiki::Plugins::ModacHelpersPlugin ();
+use Foswiki::Plugins::ModacHelpersPlugin::Logger;
 use Foswiki::Attrs ();
 
 sub new {
@@ -177,7 +178,7 @@ sub new {
         }
     }
     unless($this->{defaultState}) {
-        Foswiki::Func::writeWarning("Invalid state table in $web.$topic");
+        logWarning("Invalid state table in $web.$topic");
         Foswiki::Plugins::KVPPlugin::_broadcast( '%MAKETEXT{"Invalid state table in [_1]" args="'.$web.'.'.$topic.'"}%' );
         return undef;
     }
@@ -413,7 +414,7 @@ sub getTransitionAttributes {
 # will be undef if the transition doesn't exist, or is not allowed.
 sub getNextState {
     my ( $this, $topic, $action ) = @_;
-    unless($action) {Foswiki::Func::writeWarning("No action! topic: ".$topic); return undef;} # XXX
+    unless($action) {logWarning("No action! topic: ".$topic); return undef;} # XXX
     my $currentState = $topic->getState();
 
     my $t = $this->getTransition($currentState, $action);
@@ -444,7 +445,7 @@ sub getTask {
         }
     }
 
-    Foswiki::Func::writeWarning("Task not found: '$task'");
+    logWarning("Task not found: '$task'");
     return undef;
 }
 
@@ -461,7 +462,7 @@ sub getTaskForAction {
         }
     }
 
-    Foswiki::Func::writeWarning("No Task found for state '$currentState' and action '$action'");
+    logWarning("No Task found for state '$currentState' and action '$action'");
     return '';
 }
 
@@ -510,7 +511,7 @@ sub _topicAllows {
     my $allowed;
     my $state = $topic->getState();
     unless( $this->{states}->{$state} ) {
-        Foswiki::Func::writeWarning("Error in Workflow for $topic->{web}.$topic->{topic}: state '$state' does not exist!");
+        logWarning("Error in Workflow for $topic->{web}.$topic->{topic}: state '$state' does not exist!");
         Foswiki::Plugins::KVPPlugin::_broadcast('%MAKETEXT{"Error in Workflow: state [_1] does not exist!" args="'.$state.'"}%');
         $allowed = 'nobody'; # This will empower admins
     } else {
@@ -555,7 +556,7 @@ sub getRow {
 
     my $stateDefinition = $this->{states}->{$state};
     unless( $stateDefinition ) {
-        Foswiki::Func::writeWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
+        logWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
         return '';
     }
     my $value = $stateDefinition->{$row};
@@ -567,7 +568,7 @@ sub getDisplayname {
     my ( $this, $state, $languageOverwrite, $unescapeEntities ) = @_;
 
     unless( $this->{states}{$state} ) {
-        Foswiki::Func::writeWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
+        logWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
         return '';
     }
 

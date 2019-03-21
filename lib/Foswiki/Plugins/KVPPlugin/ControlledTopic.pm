@@ -26,6 +26,7 @@ use strict;
 use Foswiki (); # for regexes
 use Foswiki::Func ();
 use Foswiki::Plugins::KVPPlugin;
+use Foswiki::Plugins::ModacHelpersPlugin::Logger;
 use POSIX qw(strftime);
 
 # Constructor
@@ -654,7 +655,7 @@ sub changeState {
     my $state = $this->{workflow}->getNextState( $this, $action );
     unless ($state) {
         $action ||= '';
-        Foswiki::Func::writeWarning("changeState: No NextState! Action=".$action." currentState=".$this->{state}->{name});
+        logWarning("changeState: No NextState! Action=".$action." currentState=".$this->{state}->{name});
         return;
     }
     #Alex: Es muss garantiert sein, dass die Form nicht leer ist (also " ")
@@ -772,7 +773,8 @@ sub changeState {
             extra => { action => $action, ncolumn => $notify },
         };
     } else {
-        Foswiki::Func::writeWarning("Topic: '$this->{web}.$this->{topic}' Transition: '$action' Notify column: empty") if ($Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails});
+        local $Foswiki::cfg{Extensions}{KVPPlugin}{ModacLogLevel} = 5 if $Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails};
+        logDebug("Topic: '$this->{web}.$this->{topic}' Transition: '$action' Notify column: empty");
     }
 
     return $notification;
