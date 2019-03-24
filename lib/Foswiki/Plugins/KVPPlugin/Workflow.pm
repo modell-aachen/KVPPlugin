@@ -419,7 +419,7 @@ sub getNextState {
     my $t = $this->getTransition($currentState, $action);
     return undef unless $t;
 
-    unless($t->{attribute} && $t->{attribute} =~ m#\bIGNOREMANDATORY\b#) {
+    unless($t->{attribute} && ( $t->{attribute} =~ m#\bIGNOREMANDATORY\b# || $t->{attribute} =~ m#\bFORK\b# )) {
         return undef if scalar Foswiki::Plugins::ModacHelpersPlugin::getNonSatisfiedFormFields($topic->{meta});
     }
 
