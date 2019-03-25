@@ -348,7 +348,7 @@ sub _initTOPIC {
     my ( $web, $topic, $rev, $meta, $forceNew ) = @_;
 
     # Skip system web for performance
-    return undef if ($web eq "System");
+    return undef if ($web eq $Foswiki::cfg{SystemWebName} || $web eq $Foswiki::cfg{TrashWebName});
 
     # Filter out topics inhibited in configure
     my $exceptions = $Foswiki::cfg{Extensions}{KVPPlugin}{except};
