@@ -2876,6 +2876,49 @@ sub maintenanceHandler {
             return $error;
         }
     });
+    Foswiki::Plugins::MaintenancePlugin::registerCheck("KVPPlugin:TalksInApprovedState", {
+        name => "KVPPlugin: approved discussions",
+        description => "The following discussions kept approved state.",
+        check => sub {
+
+            sub _getProcessesWebs {
+                my @processesWebs = ();
+                foreach my $web ( Foswiki::Func::getPublicWebList() ) {
+                    my $defaultSources = Foswiki::Func::getPreferencesValue( 'DEFAULT_SOURCES', $web ) || "";
+                    push(@processesWebs, $web) if( $defaultSources =~ m#\bProcessesContentContrib\b# );
+                }
+                return @processesWebs;
+            }
+
+            sub _getTalks {
+                my $processesWeb = shift;
+                my @talks = ();
+                @talks = grep(/TALK$/, Foswiki::Func::getTopicList( $processesWeb ));
+                return @talks;
+            }
+
+            my @approvedTalks = ();
+
+            foreach my $processesWeb ( _getProcessesWebs() ) {
+                foreach my $talk ( _getTalks( $processesWeb ) ){
+                    my ( $meta, $text ) = Foswiki::Func::readTopic($processesWeb, $talk);
+                    if($meta->{'WORKFLOW'} && $meta->{'WORKFLOW'}[0]->{'name'} && $meta->{'WORKFLOW'}[0]->{'name'} =~ m#APPROVED# ){
+                        push(@approvedTalks, "[[$processesWeb.$talk][$processesWeb.$talk]]");
+                    }
+                }
+            }
+
+            if( @approvedTalks ){
+                return {
+                    result => 1,
+                    priority => $Foswiki::Plugins::MaintenancePlugin::CRITICAL,
+                    solution => "Compare the following TALKs to the approved topics and either remove the TALK or change <code>%META:WORKFLOW{name=\"APPROVED\"</code> to <code>%META:WORKFLOW{name=\"DISCUSSION\"</code>:<br>".join("<br>",@approvedTalks)
+                };
+            }
+            return { result => 0 };
+        }
+    });
+
 }
 
 1;
