@@ -10,6 +10,7 @@ use Foswiki::Serialise ();
 use JSON;
 
 use Foswiki::Plugins::SolrPlugin;
+use Foswiki::Plugins::ModacHelpersPlugin::Logger;
 
 sub _calculateFinalDestinations {
     my ($fromWeb, $fromTopic, $attachmentMoves) = @_;
@@ -62,7 +63,7 @@ sub handleReferencingAttachmentsOnApproval {
         my $fromName = $attachmentMove->{fromName};
         my ($toWeb, $toTopic, $toName) = decodeAttachmentData($finalMove);
         unless($toWeb && $toTopic && $toName) {
-            Foswiki::Func::writeWarning("Could not determine destination for $moveFrom when approving");
+            logWarning("Could not determine destination for $moveFrom when approving");
             next;
         }
         my $toTopicNormalized = ($toWeb eq $fromWeb && $toTopic eq $discussionTopic) ? $appTopic : $toTopic;

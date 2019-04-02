@@ -1,83 +1,60 @@
-import TestCase from "VueJSPlugin/unit-test-dist/frontend-unit-test-library";
-import TransitionMenu from "../dev/components/TransitionMenu.vue";
+import {buildEnvironment} from './KVPEnvironmentBuilder';
+import TransitionMenu from "../dev/components/TransitionMenu";
+import {WorkflowMetadataState} from './assets/StoreStates';
 
 describe("action menu", () => {
-    let wrapper;
-    const spy = jasmine.createSpy("callback");
-    const getRemoteDataSub = async () => {
-        return [];
-    };
-    const propsData = {
-        web: "DummyWeb",
-        topic: "DummyTopic",
-        origin: "DummyTopic",
-        current_state: "DummyState",
-        current_state_display: "Dummy state",
-        message: "State",
-        submit_callback: spy,
-        actions: [
-            {
-                proponent: 1,
-                action: "some mandatory",
-                label: "some mandatory",
-                warning: null,
-                suggest_delete_comments: null,
-                allow_delete_comments: null,
-                mandatoryNotSatisfied: ["Some field"],
-                remark: null,
-            },
-            {
-                remark: null,
-                warning: null,
-                proponent: 1,
-                action: "no mandatory",
-                label: "no mandatory",
-                allow_delete_comments: null,
-                suggest_delete_comments: null,
-                mandatoryNotSatisfied: null,
-            },
-        ],
-    };
+    let transitionMenu;
+    let changeStateStub;
+    let windowLocationStub;
+
     beforeEach(() => {
-        spy.calls.reset();
-        wrapper = TestCase.mount(TransitionMenu, {
-            propsData,
-            methods: {
-                getRemoteData: getRemoteDataSub,
-            },
+        changeStateStub = jasmine.createSpy().and.callFake(async () => {
+            return {redirect: 'http://localhost'};
+        });
+        windowLocationStub = jasmine.createSpy();
+        transitionMenu = buildEnvironment(TransitionMenu, {
             stubs: ['workflow-history'],
+            methods: {
+                performChangeStateRequest: changeStateStub,
+                redirect: windowLocationStub,
+            },
+            sync: false,
         });
         spyOn(window, "alert");
     });
-    it("aborts with a warning, if there are unmet mandatory fields", () => {
-        wrapper.vm.doTransition();
+    it("aborts with a warning, if there are unmet mandatory fields", async () => {
+        transitionMenu.vm.doTransition();
         expect(window.alert).toHaveBeenCalled();
-        expect(spy).not.toHaveBeenCalled();
+        expect(changeStateStub).not.toHaveBeenCalled();
     });
-    it("calls the callback, if all mandatory fields are satisfied", () => {
-        wrapper.setData({selectedActionValue: [wrapper.vm.actionsList[1]]});
-        wrapper.vm.doTransition();
+    it("calls the callback, if all mandatory fields are satisfied", async () => {
+        transitionMenu.vm.$store.commit('Qwiki/Document/WorkflowMetadata/setSelectedTransition', WorkflowMetadataState.possibleTransitions[1]);
+        await transitionMenu.vm.doTransition();
         expect(window.alert).not.toHaveBeenCalled();
-        expect(spy).toHaveBeenCalled();
+        expect(changeStateStub).toHaveBeenCalled();
     });
-    it("calls the callback only once", () => {
-        spyOn(window.console, 'log');
-        wrapper.setData({selectedActionValue: [wrapper.vm.actionsList[1]]});
-        wrapper.vm.doTransition();
-        wrapper.vm.doTransition();
-        expect(spy.calls.count()).toEqual(1);
+    it("call change transition ajax request with correct args", async () => {
+        transitionMenu.setData({selectedActionForSelect: [transitionMenu.vm.actionsList[1]]});
+        await transitionMenu.vm.doTransition();
+        expect(
+            changeStateStub.calls.mostRecent().args[0].WORKFLOWACTION
+        ).toEqual('Discard draft');
+        expect(
+            changeStateStub.calls.mostRecent().args[0].remove_comments
+        ).toEqual(0);
     });
-    it("gives a debug warning when attempting to transition multiple times", () => {
-        spyOn(window.console, 'log');
-        wrapper.setData({selectedActionValue: [wrapper.vm.actionsList[1]]});
-        wrapper.vm.doTransition();
-        wrapper.vm.doTransition();
-        expect(window.console.log).toHaveBeenCalled();
-    });
-    it("call action with correct args", () => {
-        wrapper.setData({selectedActionValue: [wrapper.vm.actionsList[1]]});
-        wrapper.vm.doTransition();
-        expect(spy.calls.mostRecent().args[0].action).toEqual(propsData.actions[1].action);
-        expect(spy.calls.mostRecent().args[0].deleteComments).toEqual(0);
+    describe("when double-clicking", async () => {
+        beforeEach(async () => {
+            spyOn(window.console, 'log');
+            transitionMenu.setData({selectedActionForSelect: [transitionMenu.vm.actionsList[1]]});
+            await transitionMenu.vm.doTransition();
+            await transitionMenu.vm.doTransition();
+        });
+        it("calls the callback only once", async () => {
+            expect(changeStateStub.calls.count()).toEqual(1);
+        });
+        it("gives a debug warning when attempting to transition multiple times", async () => {
+            expect(window.console.log).toHaveBeenCalled();
+        });
     });
 });

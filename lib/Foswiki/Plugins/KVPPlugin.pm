@@ -23,6 +23,7 @@ use Foswiki::Sandbox ();
 
 use Foswiki::Contrib::MailTemplatesContrib;
 use Foswiki::Plugins::ModacHelpersPlugin;
+use Foswiki::Plugins::ModacHelpersPlugin::Logger;
 
 use HTML::Entities;
 use JSON;
@@ -70,6 +71,8 @@ sub initPlugin {
         'WORKFLOWHISTORY', \&_WORKFLOWHISTORY );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWTRANSITION', \&_WORKFLOWTRANSITION );
+    Foswiki::Func::registerTagHandler(
+        'WORKFLOWTRANSITIONDATA', \&_WORKFLOWTRANSITIONDATA );
     Foswiki::Func::registerTagHandler(
         'WORKFLOWTRANSITIONVUE', \&_WORKFLOWTRANSITIONVUE );
     Foswiki::Func::registerTagHandler(
@@ -316,7 +319,7 @@ sub _WORKFLOWSUFFIX {
     my $forkSuffix = $Foswiki::cfg{Extensions}{KVPPlugin}{suffix};
     if (not $forkSuffix) {
         $forkSuffix = 'TALK';
-        Foswiki::Func::writeWarning("No Suffix defined! Defaulting to $forkSuffix!");
+        logWarning("No Suffix defined! Defaulting to $forkSuffix!");
         _broadcast('%MAKETEXT{"No Suffix defined! Defaulting to [_1]!" args="'.$forkSuffix.'"}%');
     }
     return $forkSuffix;
@@ -345,7 +348,7 @@ sub _initTOPIC {
     my ( $web, $topic, $rev, $meta, $forceNew ) = @_;
 
     # Skip system web for performance
-    return undef if ($web eq "System");
+    return undef if ($web eq $Foswiki::cfg{SystemWebName} || $web eq $Foswiki::cfg{TrashWebName});
 
     # Filter out topics inhibited in configure
     my $exceptions = $Foswiki::cfg{Extensions}{KVPPlugin}{except};
@@ -418,7 +421,7 @@ sub _initTOPIC {
                     $workflowName );
                 $cache{$workflowCID} = $workflow;
             } else {
-                Foswiki::Func::writeWarning("Workflow topic for $web.$topic does not exist: '$wfWeb.$workflowName'");
+                logWarning("Workflow topic for $web.$topic does not exist: '$wfWeb.$workflowName'");
                 _broadcast('%MAKETEXT{"Workflow topic for [_1] does not exist: &#39;[_2]&#39;" args="'."[[$web.$topic]], $wfWeb.$workflowName".'"}%');
             }
         }
@@ -472,9 +475,11 @@ sub afterRenameHandler {
 
     if($oldTopic) {
         if($oldAttachment) {
-            _storeAttachmentRenames($oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment);
-            Foswiki::Plugins::KVPPlugin::ReferenceService::replaceLocalAttachmentLinks($Foswiki::Plugins::SESSION, $oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment);
-            _replaceReferencingAttachmentLinks($oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment);
+            unless($newWeb =~ /$Foswiki::cfg{TrashWebName}/) {
+                _storeAttachmentRenames($oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment);
+                Foswiki::Plugins::KVPPlugin::ReferenceService::replaceLocalAttachmentLinks($Foswiki::Plugins::SESSION, $oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment);
+                _replaceReferencingAttachmentLinks($oldWeb, $oldTopic, $oldAttachment, $newWeb, $newTopic, $newAttachment);
+            }
         } else {
             _approvedRenameCatchup($oldWeb, $oldTopic, $newWeb, $newTopic);
             _handleDiscussionRename($oldWeb, $oldTopic, $newWeb, $newTopic);
@@ -586,7 +591,7 @@ sub grinder {
             $data->{attachments},
         );
     } else {
-        Foswiki::Func::writeWarning("Unknown message for grinder: $type");
+        logError("Unknown message for grinder: $type");
     }
 }
 
@@ -603,7 +608,7 @@ sub _approvedRenameCatchup {
     my $newDiscussion = "$newTopic$suffix";
     # XXX what to do if there is already a discussion?!?
     if (Foswiki::Func::topicExists($newWeb, $newDiscussion)) {
-        Foswiki::Func::writeWarning("Throwing existing discussion away ($newWeb.$newDiscussion) after renaming $oldWeb.$oldTopic to $newWeb.$newDiscussion!");
+        logWarning("Throwing existing discussion away ($newWeb.$newDiscussion) after renaming $oldWeb.$oldTopic to $newWeb.$newDiscussion!");
         _trashTopic($newWeb, $newDiscussion);
     }
 
@@ -718,7 +723,7 @@ sub WORKFLOWMETA {
     return  $alt;
 }
 
-sub _WORKFLOWTRANSITIONVUE {
+sub _WORKFLOWTRANSITIONDATA {
     my ( $session, $attributes, $topic, $web ) = @_;
 
     ($web, $topic) = _getTopicName($attributes, $web, $topic);
@@ -727,27 +732,33 @@ sub _WORKFLOWTRANSITIONVUE {
 
     my $transitions = $controlledTopic->getTransitionAttributesArray(1);
 
-    my $data = {
-        web => $web,
-        topic => $topic,
-        current_state => $controlledTopic->getState(),
-        current_state_display => $controlledTopic->getWorkflowMeta('displayname', undef, 0),
-        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message', unescapeEntities => 1}, $topic, $web) ),
-        actions => $transitions,
+    my $currentStatus = $controlledTopic->getState();
+    Foswiki::Plugins::VueJSPlugin::pushToStore('Qwiki/Document/WorkflowMetadata/setMetadata', {
+        status => $currentStatus,
         origin => _getOrigin($topic),
-    };
+        possibleTransitions => $transitions,
+    });
+
+    Foswiki::Plugins::VueJSPlugin::pushToStore('Qwiki/Workflow/setStatus', {
+        status => $currentStatus,
+        message => $session->i18n->maketext( _GETWORKFLOWROW($session, {_DEFAULT => 'message', unescapeEntities => 1}, $topic, $web) ),
+        displayName => $controlledTopic->getWorkflowMeta('displayname', undef, 0),
+    });
 
     Foswiki::Func::addToZone('script', 'WORKFLOW::VUE', <<SCRIPT, 'JQUERYPLUGIN::FOSWIKI,VUEJSPLUGIN,');
 <script type="text/javascript" src="%PUBURLPATH%/%SYSTEMWEB%/KVPPlugin/vue-transitions.js?v=$RELEASE"></script>
 SCRIPT
 
+    return '';
+}
+
+sub _WORKFLOWTRANSITIONVUE {
+    my ( $session, $attributes, $topic, $web ) = @_;
+
     my $clientToken = Foswiki::Plugins::VueJSPlugin::getClientToken();
-    my $json = to_json($data);
-    $json =~ s/([&<>%])/'&#'.ord($1).';'/ge;
     return <<HTML;
-        <div class="KVPPlugin vue-transitions foswikiHidden" data-vue-client-token="$clientToken">
-            <div class="json">$json</div>
-            <form method="post" name="strikeonedummy"></form>
+        <div class="workflow-vue" data-vue-client-token="$clientToken">
+            <transition-menu></transition-menu>
         </div>
 HTML
 }
@@ -1029,7 +1040,10 @@ sub _changeState {
             sendKVPMail($mail);
         }
         if ($json) {
-            $response = to_json({status => 'ok'});
+            $response = to_json({
+                status => 'ok',
+                redirect => $report->{url},
+            });
             return;
         }
 
@@ -1309,7 +1323,7 @@ sub transitionTopic {
             while($actionAttributes !~ m/\G\)/gc) {
                 unless( $actionAttributes =~ m/\G([a-z]+)\s*=\s*"(.*?)(?<!\\)"\s*/gc ) {
                     my $err = "Error while parsing attributes '$actionAttributes' for $web.$topic in state '$state' for action '$action'";
-                    Foswiki::Func::writeWarning($err);
+                    logWarning($err);
                     throw Foswiki::OopsException(
                         'oopswrkflwsaveerr',
                         web => $web,
@@ -1356,7 +1370,7 @@ sub transitionTopic {
             if( $otherControlledTopic ) {
                 $synced = $otherControlledTopic->getWorkflowMeta( 'Revision' );
             } else {
-                Foswiki::Func::writeWarning("Could not SYNCREV $web.$topic to $otherWeb.$otherTopic");
+                logWarning("Could not SYNCREV $web.$topic to $otherWeb.$otherTopic");
             }
             $synced ||= 0;
             $controlledTopic->setRev( $synced );
@@ -1520,7 +1534,7 @@ sub _restLink {
 
     my ($web, $topic) = Foswiki::Func::normalizeWebTopicName( undef, $webtopic );
     unless( $webtopic and $state and $web and $topic ) {
-        Foswiki::Func::writeWarning("Wrong parameters for link: webtopici='$webtopic' state='$state'.");
+        logError("Wrong parameters for link: webtopici='$webtopic' state='$state'.");
         $url = Foswiki::Func::getScriptUrl(
             'Unknown', 'Unkown', 'oops',
             template => "oopsworkflowlink"
@@ -1813,7 +1827,7 @@ sub _restFork {
     }
 
     if ($erroneous) {
-        Foswiki::Func::writeWarning($erroneous);
+        logWarning($erroneous);
         my $message = Foswiki::Func::expandCommonVariables($erroneous);
         throw Foswiki::OopsException(
             'workflowfork',
@@ -2600,7 +2614,7 @@ sub _getIndexHash {
 
     # mild sanity-test if state exists (eg. Workflow-table changed and state got renamed)
     if($controlledTopic && not $controlledTopic->getRow('state') eq $state) {
-        Foswiki::Func::writeWarning("Workflow error in $web.$topic");
+        logWarning("Workflow error in $web.$topic");
         $indexFields{ workflow_tasked_lst } = 'KvpError';
     }
 
@@ -2656,7 +2670,7 @@ sub indexAttachmentHandler {
     our %indexFields;
 
     unless ( $indexCacheWebTopic && $indexCacheWebTopic eq $web.$topic ) {
-        Foswiki::Func::writeWarning("Cache missed for attachment: $web.$topic");
+        logDebug("Cache missed for attachment: $web.$topic");
         my ($meta, undef) = Foswiki::Func::readTopic( $web, $topic );
         $indexCacheWebTopic = $web.$topic;
         %indexFields = _getIndexHash( $web, $topic, $meta );
@@ -2679,7 +2693,8 @@ sub sendKVPMail {
 
     Foswiki::Contrib::MailTemplatesContrib::sendMail($mail->{template}, $mail->{options}, $mail->{settings}, 1);
 
-    Foswiki::Func::writeWarning("Topic: '$mail->{options}{webtopic}' Transition: '$mail->{extra}{action}' Notify column: '$mail->{extra}{ncolumn}'") if $Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails};
+    local $Foswiki::cfg{Extensions}{KVPPlugin}{ModacLogLevel} = 5 if $Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails};
+    logDebug("Topic: '$mail->{options}{webtopic}' Transition: '$mail->{extra}{action}' Notify column: '$mail->{extra}{ncolumn}'");
 }
 
 sub maintenanceHandler {

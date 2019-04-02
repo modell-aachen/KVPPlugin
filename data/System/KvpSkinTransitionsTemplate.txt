@@ -13,7 +13,7 @@
 %IF{"$USE_VUE_TRANSITIONS='1'" then="$percentTMPL:P{kvp-vuetransitions}$percent" else="$percentTMPL:P{kvp-tmltransitions}$percent"}%
 %TMPL:END%
 
-%TMPL:DEF{"kvp-vuetransitions"}%<div class="flatskin-wrapped">%WORKFLOWTRANSITIONVUE%</div>%TMPL:END%
+%TMPL:DEF{"kvp-vuetransitions"}%<div class="flatskin-wrapped">%WORKFLOWTRANSITIONDATA%%WORKFLOWTRANSITIONVUE%</div>%TMPL:END%
 
 %TMPL:DEF{"kvp-tmltransitions"}%<div class="modacKVPtable ModacInlineButtons" id="KVPTransitions">
 | *%MAKETEXT{"Improvement Process"}%* ||

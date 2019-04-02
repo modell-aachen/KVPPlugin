@@ -2,10 +2,6 @@ const path = require('path');
 const zip = require('compression-webpack-plugin');
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
-const babelOpts = {
-    presets: ['latest'],
-    plugins: ['transform-object-rest-spread']
-};
 const devDir = path.join(__dirname, 'dev');
 const testDir = path.join(__dirname, 'tests');
 
@@ -47,7 +43,7 @@ module.exports = {
                 include: [devDir],
                 options: {
                     loaders: {
-                        js:'babel-loader?' + JSON.stringify(babelOpts),
+                        js:'babel-loader',
                     },
                 }
             },
@@ -55,7 +51,6 @@ module.exports = {
                 test: /\.js$/,
                 loader: 'babel-loader',
                 include: [devDir, testDir],
-                options: babelOpts
             },
             {
                 test: /\.s[ac]ss$/,
