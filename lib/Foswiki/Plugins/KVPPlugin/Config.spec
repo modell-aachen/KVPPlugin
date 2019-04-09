@@ -24,7 +24,7 @@ $Foswiki::cfg{Extensions}{KVPPlugin}{MonitorMails} = 0;
 
 # **BOOLEAN**
 # ACLs vom MetaCommentPlugin nicht verwalten.
-$Foswiki::cfg{Extensions}{KVPPlugin}{DoNotManageMetaCommentACLs} = 0;
+$Foswiki::cfg{Extensions}{KVPPlugin}{DoNotManageMetaCommentACLs} = 1;
 
 # **BOOLEAN**
 # ACL Regeln f&uuml;r MetaCommentPlugin entfernen, wenn eine Transition druchgef&uuml;hrt wird.<br/>Nur relevant wenn <em>DoNotManageMetaCommentACLs</em> aktiv.
