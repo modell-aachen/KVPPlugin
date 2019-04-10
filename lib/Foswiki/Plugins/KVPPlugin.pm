@@ -2646,7 +2646,7 @@ sub _addDisplayValuesToIndexHash {
         if($indexField =~ m#^(workflowmeta_lastprocessor.*)_s$#) {
             my $displayValueField = $1.'_dv_s';
             my $value = $indexFields->{$indexField};
-            $indexFields->{$displayValueField} = Foswiki::Func::expandCommonVariables("%RENDERUSER{\"$value\"}%");
+            $indexFields->{$displayValueField} = Foswiki::Func::expandCommonVariables("%RENDERUSER{\"$value\"}%") if defined $value;
         }
     }
 }
