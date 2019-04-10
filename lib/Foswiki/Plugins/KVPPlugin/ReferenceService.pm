@@ -90,14 +90,17 @@ sub updateAttachmentMoves {
         my $webTopics = _getTopicsFromSolr($search);
         foreach my $webTopic (@$webTopics) {
             my ($refWeb, $refTopic) = Foswiki::Func::normalizeWebTopicName(undef, $webTopic);
+            next unless Foswiki::Func::topicExists($refWeb, $refTopic);
             my ($referencingMeta) = Foswiki::Func::readTopic($refWeb, $refTopic);
+            my $unChangedSerial = Foswiki::Serialise::serialise($referencingMeta, 'Embedded');
             updateAttachmentMoveMetadata($referencingMeta, {
                 oldWeb => "$oldWeb/$oldTopic",
                 oldTopic => $attachment,
                 newWeb => "$newWeb/$newTopic",
                 newTopic => $attachment,
             });
-            $referencingMeta->save(minor => 1);
+            my $changedSerial = Foswiki::Serialise::serialise($referencingMeta, 'Embedded');
+            $referencingMeta->save(minor => 1) if $unChangedSerial ne $changedSerial;
         }
     }
 }
