@@ -1,4 +1,4 @@
-{
+module.exports = {
     "extends": [
         "eslint:recommended",
         "plugin:vue/recommended"
@@ -7,13 +7,9 @@
         "parser": "babel-eslint",
         "ecmaVersion": 8,
         "sourceType": "module",
-        "ecmaFeatures": {
-                "experimentalObjectRestSpread": true
-        }
     },
     "plugins": [
-        "json",
-        "vue"
+        "json"
     ],
     "env": {
         "browser": true,
@@ -49,4 +45,4 @@
         "brace-style":                  [1],
         "vue/html-closing-bracket-newline": ["error", { "singleline": "never", "multiline": "never" }]
     }
-}
+};

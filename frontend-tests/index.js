@@ -1,2 +1,0 @@
-require('./ActionMenuSpec');
-require('./WorkflowHistorySpec');
