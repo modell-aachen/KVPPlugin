@@ -10,7 +10,7 @@
     "postinstall": "yarn build",
     "build": "vue-cli-service build --no-clean",
     "test:unit": "vue-cli-service test:unit",
-    "lint": "vue-cli-service lint"
+    "lint": "vue-cli-service lint dev frontend-tests"
   },
   "author": "Modell Aachen GmbH",
   "license": "GPL-3.0",

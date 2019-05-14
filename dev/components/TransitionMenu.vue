@@ -8,7 +8,9 @@
                 <div class="grid-x align-justify">
                     <div class="cell medium-6 transitionmenu-left">
                         <div class="grid-x">
-                            <div class="cell small-4 kvp-label">{{ $t('current_state') }}</div>
+                            <div class="cell small-4 kvp-label">
+                                {{ $t('current_state') }}
+                            </div>
                             <div
                                 class="cell small-8"
                                 data-test="kvpCurrentState">
@@ -17,7 +19,7 @@
                         </div>
                         <vue-spacer
                             factor-vertical="2"
-                            factor-horizontal="full"/>
+                            factor-horizontal="full" />
                         <div
                             v-if="showCompare"
                             class="grid-x">
@@ -33,7 +35,7 @@
                             </div>
                             <vue-spacer
                                 factor-vertical="2"
-                                factor-horizontal="full"/>
+                                factor-horizontal="full" />
                         </div>
                         <div
                             v-if="actions.length">
@@ -48,12 +50,12 @@
                                     <textarea
                                         v-model="remark"
                                         name="message"
-                                        rows="3"/>
+                                        rows="3" />
                                 </div>
                             </div>
                             <vue-spacer
                                 factor-vertical="2"
-                                factor-horizontal="full"/>
+                                factor-horizontal="full" />
                             <div
                                 class="grid-x">
                                 <div
@@ -65,7 +67,7 @@
                                     <vue-select
                                         v-model="selectedActionForSelect"
                                         :initial-options="actionsList"
-                                        :sort-slot-options="false"/>
+                                        :sort-slot-options="false" />
                                     <slot name="transition-info" />
                                 </div>
                             </div>
@@ -79,16 +81,17 @@
                                     </vue-text-block>
                                     <vue-spacer
                                         v-if="selectedAction && !selectedAction.proponent && offerDeleteComments"
-                                        factor-vertical="2"/>
+                                        factor-vertical="2" />
                                     <vue-check-item
                                         v-if="offerDeleteComments"
                                         v-model="deleteComments"
-                                        checked>{{ $t('delete_comments') }}
+                                        checked>
+                                        {{ $t('delete_comments') }}
                                     </vue-check-item>
                                     <vue-spacer
                                         v-if="(selectedAction && !selectedAction.proponent) || offerDeleteComments"
-                                        factor-vertical="2"/>
-                                    <vue-spacer factor-vertical="1"/>
+                                        factor-vertical="2" />
+                                    <vue-spacer factor-vertical="1" />
                                     <vue-button
                                         :title="$t('submit_change_status')"
                                         :on-click="doTransition"
@@ -151,6 +154,7 @@ export default {
             if(this.selectedAction) {
                 return this.selectedAction.allow_delete_comments || this.selectedAction.suggest_delete_comments;
             }
+            return false;
         },
         selectedActionForSelect: {
             get() {
