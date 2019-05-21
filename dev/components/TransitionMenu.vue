@@ -29,7 +29,7 @@
                             </div>
                             <div
                                 class="cell small-8">
-                                <a :href="compare_href">
+                                <a :href="compareHref">
                                     {{ $t('compare_approved') }}
                                 </a>
                             </div>
@@ -137,22 +137,22 @@ export default {
             web: state => state.Qwiki.Document.web,
             topic: state => state.Qwiki.Document.topic,
             origin: state => state.Qwiki.Document.WorkflowMetadata.origin,
-            current_state: state => state.Qwiki.Document.WorkflowMetadata.status,
+            currentState: state => state.Qwiki.Document.WorkflowMetadata.status,
             actions: state => state.Qwiki.Document.WorkflowMetadata.possibleTransitions,
         }),
-        current_state_object() {
-            return this.$store.state.Qwiki.Workflow.states[this.current_state];
+        currentStateObject() {
+            return this.$store.state.Qwiki.Workflow.states[this.currentState];
         },
 
-        current_state_display() {
-            return this.current_state_object.displayName;
+        currentStateDisplay() {
+            return this.currentStateObject.displayName;
         },
         message() {
-            return this.current_state_object.message;
+            return this.currentStateObject.message;
         },
         offerDeleteComments() {
             if(this.selectedAction) {
-                return this.selectedAction.allow_delete_comments || this.selectedAction.suggest_delete_comments;
+                return this.selectedAction.allowDeleteComments || this.selectedAction.suggestDeleteComments;
             }
             return false;
         },
@@ -194,7 +194,7 @@ export default {
             }
             return true;
         },
-        compare_href() {
+        compareHref() {
             return this.$foswiki.getScriptUrlPath(
                 "compare",
                 this.web,
@@ -251,6 +251,7 @@ export default {
         },
         async requestTransitionChange() {
             this.isTransitioning = true;
+            /* eslint-disable @typescript-eslint/camelcase */
             let options = {
                 web: this.web,
                 topic: this.web+'.'+this.topic,
@@ -258,11 +259,12 @@ export default {
                 WORKFLOWACTION: this.selectedAction.action,
                 actionDisplayname: this.selectedAction.label,
                 remove_comments: this.deleteComments ? 1 : 0,
-                WORKFLOWSTATE: this.current_state,
-                current_state_displayname: this.current_state_display,
+                WORKFLOWSTATE: this.currentState,
+                current_state_displayname: this.currentStateDisplay,
                 validation_key: await this.$getStrikeOneToken(),
                 json: 1,
             };
+            /* eslint-enable @typescript-eslint/camelcase */
             try {
                 let result = await this.performChangeStateRequest(options);
                 if(result.redirect) {

@@ -20,9 +20,6 @@ module.exports = {
         },
     },
     css: {
-        //extract: {
-        //    filename: '[name].css',
-        //},
         extract: false,
     },
     chainWebpack: config => {
@@ -36,6 +33,6 @@ module.exports = {
     pages: {
         'vue-transitions': {
             entry: 'dev/js/vue-transitions.js',
-        }
+        },
     },
 };

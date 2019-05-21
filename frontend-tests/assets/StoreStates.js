@@ -1,7 +1,7 @@
 const StatusState = {
     status: "DRAFT",
     message: "This document is a draft.",
-    displayName: "Draft"
+    displayName: "Draft",
 };
 
 const WorkflowMetadataState = {
@@ -12,21 +12,21 @@ const WorkflowMetadataState = {
             action: "Request approval",
             proponent: 1,
             label: "Request approval",
-            allow_delete_comments: null,
+            allowDeleteComments: null,
             mandatoryNotSatisfied: ["TopitTitle"],
             remark: 1,
-            suggest_delete_comments: null
+            suggestDeleteComments: null,
         },
         {
-            suggest_delete_comments: null,
+            suggestDeleteComments: null,
             remark: null,
             label: "Discard draft",
             mandatoryNotSatisfied: null,
-            allow_delete_comments: null,
+            allowDeleteComments: null,
             action: "Discard draft",
-            proponent: 1
-        }
-    ]
+            proponent: 1,
+        },
+    ],
 };
 
 export {StatusState, WorkflowMetadataState};

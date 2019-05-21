@@ -16,15 +16,21 @@
   "license": "GPL-3.0",
   "devDependencies": {
     "@babel/core": "^7.4.4",
+    "@modac/eslint-config": "^0.1.2",
+    "@modac/jest-config": "^0.1.0",
+    "@modac/tsconfig": "^0.1.0",
+    "@types/jest": "^24.0.13",
     "@vue/cli-plugin-babel": "^3.7.0",
     "@vue/cli-plugin-eslint": "^3.7.0",
     "@vue/cli-plugin-unit-jest": "^3.7.0",
     "@vue/cli-service": "^3.7.0",
     "@vue/eslint-config-standard": "^4.0.0",
+    "@vue/eslint-config-typescript": "^4.0.0",
     "@vue/test-utils": "1.0.0-beta.29",
     "VueJSPlugin": "git://github.com/modell-aachen/VueJSPlugin.git#bd3c64700f5308bc1275f784734a971b3df03d3f",
     "ajv": "^5.5.0",
     "ajv-keywords": "^2.1.1",
+    "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
     "babel-jest": "^23.6.0",
     "compression-webpack-plugin": "^2.0.0",
@@ -35,11 +41,13 @@
     "node-sass": "^4.12.0",
     "sass-loader": "^6.0.6",
     "style-loader": "^0.19.0",
+    "ts-jest": "^23.6.0",
+    "typescript": "^3.4.5",
+    "vue": "^2.6.10",
     "vue-template-compiler": "^2.6.10"
   },
   "dependencies": {
     "core-js": "^2.6.5",
-    "vue": "^2.6.10",
     "vuex": "^3.0.1"
   },
   "keywords": []
