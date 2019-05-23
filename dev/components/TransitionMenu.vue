@@ -8,7 +8,9 @@
                 <div class="grid-x align-justify">
                     <div class="cell medium-6 transitionmenu-left">
                         <div class="grid-x">
-                            <div class="cell small-4 kvp-label">{{ $t('current_state') }}</div>
+                            <div class="cell small-4 kvp-label">
+                                {{ $t('current_state') }}
+                            </div>
                             <div
                                 class="cell small-8"
                                 data-test="kvpCurrentState">
@@ -17,7 +19,7 @@
                         </div>
                         <vue-spacer
                             factor-vertical="2"
-                            factor-horizontal="full"/>
+                            factor-horizontal="full" />
                         <div
                             v-if="showCompare"
                             class="grid-x">
@@ -27,13 +29,13 @@
                             </div>
                             <div
                                 class="cell small-8">
-                                <a :href="compare_href">
+                                <a :href="compareHref">
                                     {{ $t('compare_approved') }}
                                 </a>
                             </div>
                             <vue-spacer
                                 factor-vertical="2"
-                                factor-horizontal="full"/>
+                                factor-horizontal="full" />
                         </div>
                         <div
                             v-if="actions.length">
@@ -48,12 +50,12 @@
                                     <textarea
                                         v-model="remark"
                                         name="message"
-                                        rows="3"/>
+                                        rows="3" />
                                 </div>
                             </div>
                             <vue-spacer
                                 factor-vertical="2"
-                                factor-horizontal="full"/>
+                                factor-horizontal="full" />
                             <div
                                 class="grid-x">
                                 <div
@@ -65,7 +67,7 @@
                                     <vue-select
                                         v-model="selectedActionForSelect"
                                         :initial-options="actionsList"
-                                        :sort-slot-options="false"/>
+                                        :sort-slot-options="false" />
                                     <slot name="transition-info" />
                                 </div>
                             </div>
@@ -79,16 +81,17 @@
                                     </vue-text-block>
                                     <vue-spacer
                                         v-if="selectedAction && !selectedAction.proponent && offerDeleteComments"
-                                        factor-vertical="2"/>
+                                        factor-vertical="2" />
                                     <vue-check-item
                                         v-if="offerDeleteComments"
                                         v-model="deleteComments"
-                                        checked>{{ $t('delete_comments') }}
+                                        checked>
+                                        {{ $t('delete_comments') }}
                                     </vue-check-item>
                                     <vue-spacer
                                         v-if="(selectedAction && !selectedAction.proponent) || offerDeleteComments"
-                                        factor-vertical="2"/>
-                                    <vue-spacer factor-vertical="1"/>
+                                        factor-vertical="2" />
+                                    <vue-spacer factor-vertical="1" />
                                     <vue-button
                                         :title="$t('submit_change_status')"
                                         :on-click="doTransition"
@@ -134,23 +137,24 @@ export default {
             web: state => state.Qwiki.Document.web,
             topic: state => state.Qwiki.Document.topic,
             origin: state => state.Qwiki.Document.WorkflowMetadata.origin,
-            current_state: state => state.Qwiki.Document.WorkflowMetadata.status,
+            currentState: state => state.Qwiki.Document.WorkflowMetadata.status,
             actions: state => state.Qwiki.Document.WorkflowMetadata.possibleTransitions,
         }),
-        current_state_object() {
-            return this.$store.state.Qwiki.Workflow.states[this.current_state];
+        currentStateObject() {
+            return this.$store.state.Qwiki.Workflow.states[this.currentState];
         },
 
-        current_state_display() {
-            return this.current_state_object.displayName;
+        currentStateDisplay() {
+            return this.currentStateObject.displayName;
         },
         message() {
-            return this.current_state_object.message;
+            return this.currentStateObject.message;
         },
         offerDeleteComments() {
             if(this.selectedAction) {
-                return this.selectedAction.allow_delete_comments || this.selectedAction.suggest_delete_comments;
+                return this.selectedAction.allowDeleteComments || this.selectedAction.suggestDeleteComments;
             }
+            return false;
         },
         selectedActionForSelect: {
             get() {
@@ -190,7 +194,7 @@ export default {
             }
             return true;
         },
-        compare_href() {
+        compareHref() {
             return this.$foswiki.getScriptUrlPath(
                 "compare",
                 this.web,
@@ -247,6 +251,7 @@ export default {
         },
         async requestTransitionChange() {
             this.isTransitioning = true;
+            /* eslint-disable @typescript-eslint/camelcase */
             let options = {
                 web: this.web,
                 topic: this.web+'.'+this.topic,
@@ -254,11 +259,12 @@ export default {
                 WORKFLOWACTION: this.selectedAction.action,
                 actionDisplayname: this.selectedAction.label,
                 remove_comments: this.deleteComments ? 1 : 0,
-                WORKFLOWSTATE: this.current_state,
-                current_state_displayname: this.current_state_display,
+                WORKFLOWSTATE: this.currentState,
+                current_state_displayname: this.currentStateDisplay,
                 validation_key: await this.$getStrikeOneToken(),
                 json: 1,
             };
+            /* eslint-enable @typescript-eslint/camelcase */
             try {
                 let result = await this.performChangeStateRequest(options);
                 if(result.redirect) {

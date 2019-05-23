@@ -1291,7 +1291,7 @@ sub transitionTopic {
             my $transitionAttributes = $controlledTopic->getTransitionAttributesArray();
             my $isAllowed;
             foreach my $eachTransition ( @$transitionAttributes ) {
-                next unless $eachTransition->{allow_delete_comments} || $eachTransition->{suggest_delete_comments};
+                next unless $eachTransition->{allowDeleteComments} || $eachTransition->{suggestDeleteComments};
                 next unless $eachTransition->{action} eq $action;
                 $isAllowed = 1;
                 last;

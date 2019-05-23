@@ -6,3 +6,5 @@ pub/System/KVPPlugin/vue-transitions.js
 pub/System/KVPPlugin/vue-transitions.js.map
 pub/System/KVPPlugin/changewarning.js
 node_modules
+KVPPlugin_installer*
+yarn-error.log

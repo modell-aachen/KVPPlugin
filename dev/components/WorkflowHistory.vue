@@ -144,7 +144,7 @@ export default {
         },
         isCreationHistoryEntry(entry) {
             return entry.type === 'transition' && (entry.isCreation || entry.isFork);
-        }
+        },
     },
 };
 </script>

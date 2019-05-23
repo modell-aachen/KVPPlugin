@@ -1,0 +1,9 @@
+{
+  "extends": "@modac/tsconfig",
+  "compilerOptions": {
+    "baseUrl": "."
+  },
+  "exclude": [
+    "node_modules"
+  ]
+}
