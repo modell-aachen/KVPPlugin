@@ -7,7 +7,6 @@
     "url": "git://github.com/modell-aachen/KVPPlugin"
   },
   "scripts": {
-    "postinstall": "yarn build",
     "build": "vue-cli-service build --no-clean",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint dev frontend-tests"
@@ -15,11 +14,11 @@
   "author": "Modell Aachen GmbH",
   "license": "GPL-3.0",
   "devDependencies": {
-    "@babel/core": "^7.4.4",
     "@modac/eslint-config": "^0.1.2",
     "@modac/jest-config": "^0.1.0",
     "@modac/tsconfig": "^0.1.0",
-    "@types/jest": "^24.0.13",
+    "@types/jest": "^23.3.14",
+    "@typescript-eslint/eslint-plugin" : "^1.9.0",
     "@vue/cli-plugin-babel": "^3.7.0",
     "@vue/cli-plugin-eslint": "^3.7.0",
     "@vue/cli-plugin-unit-jest": "^3.7.0",
@@ -27,12 +26,11 @@
     "@vue/eslint-config-standard": "^4.0.0",
     "@vue/eslint-config-typescript": "^4.0.0",
     "@vue/test-utils": "1.0.0-beta.29",
-    "VueJSPlugin": "git://github.com/modell-aachen/VueJSPlugin.git#bd3c64700f5308bc1275f784734a971b3df03d3f",
+    "VueJSPlugin": "git://github.com/modell-aachen/VueJSPlugin.git#d68e3d3dcc4720b3692e5c6f39ae443bf1efb30a",
     "ajv": "^5.5.0",
     "ajv-keywords": "^2.1.1",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
-    "babel-jest": "^23.6.0",
     "compression-webpack-plugin": "^2.0.0",
     "eslint": "^5.16.0",
     "eslint-plugin-json": "^1.4.0",
