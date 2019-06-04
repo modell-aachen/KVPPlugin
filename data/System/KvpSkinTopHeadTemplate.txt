@@ -28,7 +28,7 @@
 			<td width='12%' style='text-align: center;'>
 				%MAKETEXT{"Version"}%&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
-				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+				<img alt='Logo' src='%WIKILOGOIMG{encode="none"}%' style='width: 90px; float: right;' /></td>
 		</tr>
 		<tr style='height: 24px;'>
 			<td colspan='3' style='text-align: center;'>
@@ -82,7 +82,7 @@
 			<td width='12%' style='text-align: center;'>
 				%MAKETEXT{"Version"}%&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
-				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
+				<img alt='Logo' src='%WIKILOGOIMG{encode="none"}%' style='width: 90px; float: right;' /></td>
 		</tr>
 		<tr style='height: 24px;'>
 			<td colspan='3' style='text-align: center;'>
@@ -92,13 +92,13 @@
 		</tr>
 		<tr style='height: 24px;'>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Last author"}%:<strong><br /><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
+				%MAKETEXT{"Last author"}%:<strong><br /><em>%RED{encode="none"}%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR{encode="none"}%</em></strong></td>
 			<td style='text-align: center;'>
 				%MAKETEXT{"Responsible"}%:<strong><br />%RENDERFORDISPLAY{fields="Responsible" format="$value" revision="%URLPARAM{"rev"}%" usericon="1"}%</strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Approved by"}%:<strong><br /><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
+				%MAKETEXT{"Approved by"}%:<strong><br /><em>%RED{encode="none"}%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR{encode="none"}%</em></strong></td>
 			<td style='text-align: center;'>
-				%MAKETEXT{"Release date"}%:<strong><br /><em>%RED%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR%</em></strong></td>
+				%MAKETEXT{"Release date"}%:<strong><br /><em>%RED{encode="none"}%%MAKETEXT{"under&#160;discussion"}%%ENDCOLOR{encode="none"}%</em></strong></td>
 			<td style='text-align: center;'>
 				%TMPL:P{"modacPageNr"}%</td>
 		</tr>
