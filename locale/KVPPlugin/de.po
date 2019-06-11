@@ -76,6 +76,10 @@ msgstr "Freigegeben durch"
 msgid "Area of application"
 msgstr "Geltungsbereich"
 
+#: data/System/KvpSkinTopHeadTemplate.txt
+msgid "Direct comparison version %1 &#62; %2"
+msgstr "Direktvergleich Version %1 &#62; %2"
+
 #: templates/oopswfplease.tmpl templates/oopsworkflowchanged.tmpl
 #: templates/oopsworkflowerr.tmpl templates/oopsworkflowfork.tmpl
 #: templates/oopsworkflowlink.tmpl templates/oopsworkflowmoved.tmpl
