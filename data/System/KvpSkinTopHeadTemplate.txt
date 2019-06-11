@@ -92,7 +92,7 @@
 			</td>
 			<td width='35%' style='text-align: center;'>
 				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
-				<td width='12%' style='text-align: center;'>
+			<td width='12%' style='text-align: center;'>
 					%MAKETEXT{"Version"}%&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
 				<img alt='Logo' src='%WIKILOGOIMG{encode="none"}%' style='width: 90px; float: right;' /></td>
