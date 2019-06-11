@@ -9,7 +9,13 @@
 %{ definition left for compatibility }%
 %TMPL:DEF{"top_head_approved_auto"}%%TMPL:P{"top_head_approved"}%%TMPL:END%
 
+%{<verbatim class="tml" />}%
 %TMPL:DEF{"top_head_approved"}%
+<style type="text/css">
+	@media print {
+		.hide-print { display: none; }
+	}
+</style>
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
 	<tbody>
@@ -26,7 +32,7 @@
 			</td>
 			<td width='35%' style='text-align: center;'> </td>
 			<td width='12%' style='text-align: center;'>
-				%MAKETEXT{"Version"}%&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+				%MAKETEXT{"Version"}%&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%IF{"%WORKFLOWMETA{"Revision"}% > 1" then="<a class=\"hide-print\" href=\"%SCRIPTURLPATH%/compare/%WEB%/%TOPIC%?rev2=%CALC{"$EVAL(1+%WORKFLOWMETA{"LASTVERSION_APPROVED"}%)"}%&rev1=%WORKFLOWMETA{"LASTVERSION_DISCUSSION"}%&render=interweave&context=-1\" title=\" %MAKETEXT{"Direct comparison version [_1] &#62; [_2]" arg1="%WORKFLOWMETA{"Revision"}%" arg2="%CALC{"$EVAL(%WORKFLOWMETA{"Revision"}%-1)"}%"}% \" style=\"color:black\">&nbsp;<i class=\"far fa-history\"></i></a>"}%%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
 				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
 		</tr>
@@ -52,6 +58,7 @@
 </table>
 <span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
 %TMPL:END%
+%{</verbatim>}%
 
 %{ definition left for compatibility }%
 %TMPL:DEF{"top_head_discussion_de"}%%TMPL:P{"top_head_discussion"}%%TMPL:END%
@@ -62,7 +69,13 @@
 %{ definition left for compatibility }%
 %TMPL:DEF{"top_head_discussion_auto"}%%TMPL:P{"top_head_discussion"}%%TMPL:END%
 
+%{<verbatim class="tml" />}%
 %TMPL:DEF{"top_head_discussion"}%
+<style type="text/css">
+	@media print {
+		.hide-print { display: none; }
+	}
+</style>
 <div class='patternTop'>
 <table class='modacHeaderTable' border='1' cellpadding='0' cellspacing='0' style='width: 100%; height: 24px; '>
 	<tbody>
@@ -79,8 +92,8 @@
 			</td>
 			<td width='35%' style='text-align: center;'>
 				%{ProzentMAKETEXT{"Number"}Prozent: <strong>ProzentQUERY{"Nummer"}Prozent</strong>}%</td>
-			<td width='12%' style='text-align: center;'>
-				%MAKETEXT{"Version"}%&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
+				<td width='12%' style='text-align: center;'>
+					%MAKETEXT{"Version"}%&#58; <strong>%WORKFLOWMETA{"Revision"}%</strong>%{REVINFO{format="$rev"}}%</td>
 			<td rowspan='3' width='12%'>
 				<img alt='Logo' src='%WIKILOGOIMG%' style='width: 90px; float: right;' /></td>
 		</tr>
@@ -106,6 +119,7 @@
 </table>
 <span class='patternHomePath'>%TMPL:P{"breadcrumb"}%</span></div><!--/patternTop-->
 %TMPL:END%
+%{</verbatim>}%
 
 %{<verbatim class="tml" />}%
 %TMPL:DEF{"top_head"}%%TMPL:P{context="KVPControlled" then="top_head_kvp" else="top_head_standard"}%%TMPL:END%
