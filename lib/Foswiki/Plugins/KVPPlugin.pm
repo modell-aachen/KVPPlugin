@@ -635,8 +635,8 @@ sub _WORKFLOWGETREVFOR {
     return ((defined $attributes->{uncontrolled}) ? $attributes->{uncontrolled} : '0') unless $controlledTopic;
 
     unless (defined $rev) {
-        my %info = $controlledTopic->{meta}->getRevisionInfo();
-        $rev = $info{version} || 0;
+        my $info = $controlledTopic->{meta}->getRevisionInfo();
+        $rev = $info->{version} || 0;
     }
 
     my $version;
