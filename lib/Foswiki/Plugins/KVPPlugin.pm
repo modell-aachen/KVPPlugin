@@ -421,7 +421,7 @@ sub _initTOPIC {
                     $workflowName );
                 $cache{$workflowCID} = $workflow;
             } else {
-                logWarning("Workflow topic for $web.$topic does not exist: '$wfWeb.$workflowName'");
+                logInfo("Workflow topic for $web.$topic does not exist: '$wfWeb.$workflowName'");
                 _broadcast('%MAKETEXT{"Workflow topic for [_1] does not exist: &#39;[_2]&#39;" args="'."[[$web.$topic]], $wfWeb.$workflowName".'"}%');
             }
         }
