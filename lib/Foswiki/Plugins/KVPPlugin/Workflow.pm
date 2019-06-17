@@ -556,7 +556,7 @@ sub getRow {
 
     my $stateDefinition = $this->{states}->{$state};
     unless( $stateDefinition ) {
-        logWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
+        logInfo("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
         return '';
     }
     my $value = $stateDefinition->{$row};
