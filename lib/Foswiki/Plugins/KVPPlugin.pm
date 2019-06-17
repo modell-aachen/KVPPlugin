@@ -608,7 +608,7 @@ sub _approvedRenameCatchup {
     my $newDiscussion = "$newTopic$suffix";
     # XXX what to do if there is already a discussion?!?
     if (Foswiki::Func::topicExists($newWeb, $newDiscussion)) {
-        logWarning("Throwing existing discussion away ($newWeb.$newDiscussion) after renaming $oldWeb.$oldTopic to $newWeb.$newDiscussion!");
+        logInfo("Throwing existing discussion away ($newWeb.$newDiscussion) after renaming $oldWeb.$oldTopic to $newWeb.$newDiscussion!");
         _trashTopic($newWeb, $newDiscussion);
     }
 
