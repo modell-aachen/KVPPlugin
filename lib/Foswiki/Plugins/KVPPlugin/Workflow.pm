@@ -341,8 +341,8 @@ sub getTransitionAttributesArray {
 
         my $attributes = {
             action => $transition->{action},
-            allow_delete_comments => $allow,
-            suggest_delete_comments => $suggest,
+            allowDeleteComments => $allow,
+            suggestDeleteComments => $suggest,
             remark => $comment,
             proponent => $topic->isPotentialProponent($transition->{action}),
             mandatoryNotSatisfied => $mandatoryNotSatisfied,
@@ -556,7 +556,7 @@ sub getRow {
 
     my $stateDefinition = $this->{states}->{$state};
     unless( $stateDefinition ) {
-        logWarning("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
+        logInfo("Undefined state '$state'; known states are: ". join(' ', sort keys %{$this->{states}}));
         return '';
     }
     my $value = $stateDefinition->{$row};

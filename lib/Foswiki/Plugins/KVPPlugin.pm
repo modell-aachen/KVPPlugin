@@ -421,7 +421,7 @@ sub _initTOPIC {
                     $workflowName );
                 $cache{$workflowCID} = $workflow;
             } else {
-                logWarning("Workflow topic for $web.$topic does not exist: '$wfWeb.$workflowName'");
+                logInfo("Workflow topic for $web.$topic does not exist: '$wfWeb.$workflowName'");
                 _broadcast('%MAKETEXT{"Workflow topic for [_1] does not exist: &#39;[_2]&#39;" args="'."[[$web.$topic]], $wfWeb.$workflowName".'"}%');
             }
         }
@@ -608,7 +608,7 @@ sub _approvedRenameCatchup {
     my $newDiscussion = "$newTopic$suffix";
     # XXX what to do if there is already a discussion?!?
     if (Foswiki::Func::topicExists($newWeb, $newDiscussion)) {
-        logWarning("Throwing existing discussion away ($newWeb.$newDiscussion) after renaming $oldWeb.$oldTopic to $newWeb.$newDiscussion!");
+        logInfo("Throwing existing discussion away ($newWeb.$newDiscussion) after renaming $oldWeb.$oldTopic to $newWeb.$newDiscussion!");
         _trashTopic($newWeb, $newDiscussion);
     }
 
@@ -635,8 +635,8 @@ sub _WORKFLOWGETREVFOR {
     return ((defined $attributes->{uncontrolled}) ? $attributes->{uncontrolled} : '0') unless $controlledTopic;
 
     unless (defined $rev) {
-        my %info = $controlledTopic->{meta}->getRevisionInfo();
-        $rev = $info{version} || 0;
+        my $info = $controlledTopic->{meta}->getRevisionInfo();
+        $rev = $info->{version} || 0;
     }
 
     my $version;
@@ -1291,7 +1291,7 @@ sub transitionTopic {
             my $transitionAttributes = $controlledTopic->getTransitionAttributesArray();
             my $isAllowed;
             foreach my $eachTransition ( @$transitionAttributes ) {
-                next unless $eachTransition->{allow_delete_comments} || $eachTransition->{suggest_delete_comments};
+                next unless $eachTransition->{allowDeleteComments} || $eachTransition->{suggestDeleteComments};
                 next unless $eachTransition->{action} eq $action;
                 $isAllowed = 1;
                 last;
@@ -2556,17 +2556,19 @@ sub _getIndexHash {
     }
 
     # alias to workflowmeta_..._currentstate_..
-    for my $key (keys %$workflow) {
-        next unless $key =~ m#$state$#;
-        my $keycopy = $key;
-        $keycopy =~ s#$state$#currentstate#;
-        my $lckey = lc($keycopy);
-        $indexFields{ "workflowmeta_${lckey}_s" } = $workflow->{$key};
-        if($workflow->{"${key}_DT"}) {
-            $indexFields{ "workflowmeta_${lckey}_dt" } = Foswiki::Time::formatTime($workflow->{"${key}_DT"}, '$year-$mo-$dayT$hours:$mins:$secondsZ', 'gmtime');
-        } else {
-            if($lckey =~ m#^lasttime_# && $workflow->{$key} =~ m#(\d{1,2})\.(\d{1,2})\.(\d{4})#) {
-                $indexFields{ "workflowmeta_${lckey}_dt" } = "$3-$2-${1}T00:00:00Z";
+    if ($state) {
+        for my $key (keys %$workflow) {
+            next unless $key =~ m#$state$#;
+            my $keycopy = $key;
+            $keycopy =~ s#$state$#currentstate#;
+            my $lckey = lc($keycopy);
+            $indexFields{ "workflowmeta_${lckey}_s" } = $workflow->{$key};
+            if($workflow->{"${key}_DT"}) {
+                $indexFields{ "workflowmeta_${lckey}_dt" } = Foswiki::Time::formatTime($workflow->{"${key}_DT"}, '$year-$mo-$dayT$hours:$mins:$secondsZ', 'gmtime');
+            } else {
+                if($lckey =~ m#^lasttime_# && $workflow->{$key} =~ m#(\d{1,2})\.(\d{1,2})\.(\d{4})#) {
+                    $indexFields{ "workflowmeta_${lckey}_dt" } = "$3-$2-${1}T00:00:00Z";
+                }
             }
         }
     }

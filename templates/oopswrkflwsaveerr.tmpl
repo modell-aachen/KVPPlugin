@@ -6,7 +6,7 @@
 
 %TMPL:DEF{"heading"}%%MAKETEXT{"Error in workflow"}%%TMPL:END%
 
-%TMPL:DEF{"topicactionbuttons"}% [[%IF{"'%URLPARAM{cstate}%'" then="%WEB%.%TOPIC%" else="%WIKILOGOURL%"}%][%MAKETEXT{"OK"}%]] %TMPL:END%
+%TMPL:DEF{"topicactionbuttons"}% [[%IF{"'%URLPARAM{cstate}%'" then="%WEB%.%TOPIC%" else="%WIKILOGOURL{encode="none"}%"}%][%MAKETEXT{"OK"}%]] %TMPL:END%
 
 %TMPL:DEF{"message"}%
 %MAKETEXT{"While changing [_1] an error occured in the workflow." args="<nop>%WEB%.<nop>%TOPIC%"}%

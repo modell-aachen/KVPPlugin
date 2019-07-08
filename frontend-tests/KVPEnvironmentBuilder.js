@@ -11,7 +11,7 @@ const buildEnvironment = (component, options = {}) => {
         state: {
             web: "DummyWeb",
             topic: "DummyTopic",
-        }
+        },
     });
     vue.registerStoreModule(['Qwiki', 'Document', 'WorkflowMetadata'], WorkflowMetadataStore);
     vue.registerStoreModule(['Qwiki', 'Workflow'], WorkflowStore);
