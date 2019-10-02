@@ -12,6 +12,7 @@
     "history_list_show_transitions_only": "Only show changes of the state",
     "load_older_entries": "Show older changes",
     "loading_error": "The data could not be loaded",
+    "lease_error": "The document is currently being edited by another user. Please try again later.",
     "missing_mandatory": "Please fill in the following mandatory fields:",
     "more": "more",
     "next_step": "Next step:",
