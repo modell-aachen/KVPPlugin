@@ -95,7 +95,7 @@
                                     <vue-button
                                         :title="$t('submit_change_status')"
                                         :on-click="doTransition"
-                                        :is-disabled="selectedAction && !selectedAction.proponent"
+                                        :is-disabled="isDoTransitionDisabled"
                                         type="primary" />
                                 </div>
                             </div>
@@ -142,6 +142,10 @@ export default {
         }),
         currentStateObject() {
             return this.$store.state.Qwiki.Workflow.states[this.currentState];
+        },
+
+        isDoTransitionDisabled() {
+            return (this.selectedAction && !this.selectedAction.proponent) || this.isTransitioning;
         },
 
         currentStateDisplay() {
@@ -218,7 +222,6 @@ export default {
 
         async doTransition() {
             if(this.isTransitioning) {
-                window.console.log('Transition already in progress -> cancelling request');
                 return;
             }
             let action = this.selectedAction;
@@ -270,14 +273,11 @@ export default {
                 if(result.redirect) {
                     this.redirect(result.redirect);
                 }
+                if(result.data && result.data.type === "LeaseOtherUser") {
+                    this.showTransitionError("lease_error");
+                }
             } catch (error) {
-                this.$showAlert({
-                    type: "error",
-                    title: this.$t("error"),
-                    text: this.$t("loading_error"),
-                    confirmButtonText: this.$t("ok"),
-                });
-                window.console.log(error);
+                this.showTransitionError("loading_error");
             }
         },
         async performChangeStateRequest(options) {
@@ -292,6 +292,15 @@ export default {
         },
         redirect(target) {
             window.location.href = target;
+        },
+        showTransitionError(messageId) {
+            this.$showAlert({
+                type: "error",
+                title: this.$t("error"),
+                text: this.$t(messageId),
+                confirmButtonText: this.$t("ok"),
+            });
+            this.isTransitioning = false;
         },
     },
 };
