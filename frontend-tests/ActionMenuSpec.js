@@ -43,18 +43,32 @@ describe("action menu", () => {
             changeStateStub.calls.mostRecent().args[0].remove_comments
         ).toEqual(0);
     });
+    it('should show an error message if the document is already edited by another user', async () => {
+        const changeStateStub = jasmine.createSpy().and.callFake(async () => {
+            return {status: 'error', data: {type: "LeaseOtherUser"}};
+        });
+        transitionMenu = buildEnvironment(TransitionMenu, {
+            stubs: ['workflow-history'],
+            methods: {
+                performChangeStateRequest: changeStateStub,
+            },
+            sync: false,
+        });
+        spyOn(transitionMenu.vm, 'showTransitionError');
+
+        transitionMenu.setData({selectedActionForSelect: [transitionMenu.vm.actionsList[1]]});
+        await transitionMenu.vm.doTransition();
+        expect(transitionMenu.vm.showTransitionError).toHaveBeenCalledWith("lease_error");
+
+    });
     describe("when double-clicking", async () => {
         beforeEach(async () => {
-            spyOn(window.console, 'log');
             transitionMenu.setData({selectedActionForSelect: [transitionMenu.vm.actionsList[1]]});
-            await transitionMenu.vm.doTransition();
-            await transitionMenu.vm.doTransition();
+            transitionMenu.vm.doTransition();
+            transitionMenu.vm.doTransition();
         });
         it("calls the callback only once", async () => {
             expect(changeStateStub.calls.count()).toEqual(1);
-        });
-        it("gives a debug warning when attempting to transition multiple times", async () => {
-            expect(window.console.log).toHaveBeenCalled();
         });
     });
 });

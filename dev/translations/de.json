@@ -12,6 +12,7 @@
     "history_list_show_transitions_only": "Nur Status-Wechsel anzeigen",
     "load_older_entries": "Ältere Änderungen anzeigen",
     "loading_error": "Daten konnten nicht geladen werden",
+    "lease_error": "Das Dokument wird gerade von einem anderen Benutzer bearbeitet. Bitte versuchen Sie es später noch einmal.",
     "missing_mandatory": "Bitte füllen Sie die folgenden Pflichtfelder aus:",
     "more": "mehr",
     "next_step": "Nächster Schritt:",
