@@ -27,7 +27,7 @@
     "@vue/eslint-config-typescript": "^4.0.0",
     "@vue/test-utils": "1.0.0-beta.29",
     "VueJSPlugin": "git://github.com/modell-aachen/VueJSPlugin.git#d68e3d3dcc4720b3692e5c6f39ae443bf1efb30a",
-    "ajv": "^5.5.0",
+    "ajv": "^6.12.3",
     "ajv-keywords": "^2.1.1",
     "babel-core": "^7.0.0-bridge.0",
     "babel-eslint": "^10.0.1",
